@@ -1,0 +1,41 @@
+// Design tokens. Components use only these CSS variables, never raw colours.
+// TODO(HW3): replace the placeholder values with the Talking Club Figma variables
+// and map them to the WM Light/Dark Mode Color System names.
+
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  --color-bg: #ffffff;
+  --color-surface: #f7f8fa;
+  --color-border: #dfe3e8;
+  --color-text: #1f2329;
+  --color-text-muted: #5f6873;
+  --color-primary: #3b5bdb;
+  --color-primary-contrast: #ffffff;
+  --color-danger: #c92a2a;
+  --color-focus-ring: #3b5bdb;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --font-sans: var(--font-pretendard, system-ui), -apple-system, "Segoe UI", sans-serif;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-bg: #121417;
+  --color-surface: #1b1e23;
+  --color-border: #2f343b;
+  --color-text: #e8eaed;
+  --color-text-muted: #a3abb5;
+  --color-primary: #748ffc;
+  --color-primary-contrast: #0b0d10;
+  --color-danger: #ff8787;
+  --color-focus-ring: #91a7ff;
+}
