@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
+import { DEFAULT_AFTER_LOGIN } from "@/lib/auth/redirect";
 
-// Entry point. The auth layer (to be built) sends logged-out users to /login.
+// "/" goes to the main admin page; the route guard sends logged-out users to /login.
 export default function Home() {
-  redirect("/login");
+  redirect(DEFAULT_AFTER_LOGIN);
 }

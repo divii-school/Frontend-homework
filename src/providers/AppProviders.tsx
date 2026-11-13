@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PrimeReactProvider } from "primereact/api";
 import { ApiError } from "@/services/http";
+import { AuthProvider } from "@/features/auth/AuthProvider";
 
 function shouldRetry(failureCount: number, error: unknown): boolean {
   // Don't retry client errors (401/403/404/422…); retry network and 5xx once.
@@ -24,7 +25,9 @@ export function AppProviders({ children }: { children: ReactNode }) {
 
   return (
     <PrimeReactProvider value={{ ripple: false }}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>{children}</AuthProvider>
+      </QueryClientProvider>
     </PrimeReactProvider>
   );
 }
