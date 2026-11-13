@@ -1,0 +1,238 @@
+@use 'tokens' as *;
+
+// Figma: side menu 230px wide, items 15px padding / 12px semibold, header 54px with bottom border.
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--color-bg-page);
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: $space-2 $space-4;
+  background: var(--color-bg-surface);
+  color: var(--color-text-strong);
+
+  &:focus {
+    left: $space-2;
+    top: $space-2;
+  }
+}
+
+.app-sidebar {
+  position: sticky;
+  top: 0;
+  flex: 0 0 $sidebar-width;
+  width: $sidebar-width;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--color-bg-surface);
+  border-right: 1px solid var(--color-border);
+  transition: margin-left 0.2s ease;
+}
+
+.menu-collapsed .app-sidebar {
+  margin-left: -$sidebar-width;
+}
+
+.app-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  height: $header-height;
+  padding: 0 $space-6;
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+// The header ☰ only appears when the side menu is hidden (collapsed, or drawer mode).
+// Scoped under .app-header so it outranks the generic .icon-button display rule.
+.app-header .header-menu-button {
+  display: none;
+}
+
+.menu-collapsed .app-header .header-menu-button {
+  display: inline-flex;
+}
+
+.header-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+}
+
+.header-divider {
+  width: 1px;
+  height: 8px;
+  background: var(--color-border-strong);
+}
+
+.header-user {
+  font-size: $font-size-sm;
+  line-height: 20px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+.app-main {
+  flex: 1;
+  min-width: 0;
+  outline: none;
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+  padding: $space-1;
+  border: 0;
+  border-radius: $radius-sm;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-bg-subtle);
+    color: var(--color-text-strong);
+  }
+
+  &:focus-visible {
+    @include focus-visible;
+  }
+}
+
+// Side menu
+.side-menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.side-menu-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-4;
+  height: 55px;
+  padding: 15px;
+}
+
+.side-logo {
+  display: inline-flex;
+
+  img {
+    border-radius: $radius-sm;
+  }
+}
+
+.menu-groups,
+.sub-menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menu-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 15px;
+  border: 0;
+  background: var(--color-bg-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: $font-size-xs;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: left;
+  cursor: pointer;
+
+  &.is-active {
+    color: var(--color-primary);
+  }
+
+  &:focus-visible {
+    @include focus-visible;
+    outline-offset: -2px;
+  }
+}
+
+.menu-group-label {
+  flex: 1;
+}
+
+.sub-menu-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px $space-2 10px $space-6;
+  font-size: $font-size-xs;
+  font-weight: 500;
+  line-height: 14px;
+  color: var(--color-text);
+  text-decoration: none;
+
+  &:hover {
+    background: var(--color-bg-subtle);
+  }
+
+  &.is-active {
+    background: var(--color-bg-page);
+    color: var(--color-primary);
+  }
+
+  &:focus-visible {
+    @include focus-visible;
+    outline-offset: -2px;
+  }
+}
+
+// Tablet and phone: the side menu becomes a drawer over the page.
+@media (max-width: $bp-tablet) {
+  .app-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 50;
+    margin-left: -$sidebar-width;
+    box-shadow: var(--shadow-popover);
+  }
+
+  .drawer-open .app-sidebar {
+    margin-left: 0;
+  }
+
+  .app-header .header-menu-button {
+    display: inline-flex;
+  }
+
+  .drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: var(--color-backdrop);
+  }
+
+  .app-header {
+    padding: 0 $space-4;
+  }
+}

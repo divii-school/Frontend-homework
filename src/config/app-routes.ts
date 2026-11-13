@@ -20,19 +20,17 @@ export interface AppRoute {
   label: string;
   /** Permission needed to open the route (and to see its menu entry). */
   permission: PermissionKey;
-  /** PrimeIcons class for the menu. */
-  icon: string;
 }
 
 export interface MenuGroup {
   label: string;
+  /** Icon file in /public/icons (drawn through a CSS mask so it follows the theme colour). */
   icon: string;
   routes: AppRoute[];
 }
 
 export const ROUTES = {
   login: '/login',
-  forbidden: '/forbidden',
   home: '/shopping/products',
   categories: '/shopping/categories',
   products: '/shopping/products',
@@ -44,10 +42,11 @@ export const ROUTES = {
 export const MENU: MenuGroup[] = [
   {
     label: '쇼핑몰 관리',
-    icon: 'pi pi-shopping-bag',
+    icon: '/icons/icon-cart.svg',
+    // Order as in the Figma side menu (8.1.0): 상품 관리, then 상품 카테고리 관리.
     routes: [
-      { path: ROUTES.categories, label: '상품 카테고리 관리', permission: 'categoryManagement', icon: 'pi pi-sitemap' },
-      { path: ROUTES.products, label: '상품 관리', permission: 'productManagement', icon: 'pi pi-box' },
+      { path: ROUTES.products, label: '상품 관리', permission: 'productManagement' },
+      { path: ROUTES.categories, label: '상품 카테고리 관리', permission: 'categoryManagement' },
     ],
   },
 ];

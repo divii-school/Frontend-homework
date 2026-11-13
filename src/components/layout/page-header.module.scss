@@ -1,0 +1,85 @@
+@use 'tokens' as *;
+
+// Figma pageHeader: padding 20px 24px, title 24/34 bold, breadcrumb 14/20 #737373.
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: $space-8;
+  padding: $space-5 $space-6;
+  background: var(--color-bg-surface);
+
+  @media (max-width: $bp-mobile) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $space-3;
+    padding: $space-4;
+  }
+}
+
+.page-heading {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $space-2 $space-5;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 24px;
+  line-height: 34px;
+  font-weight: 700;
+  color: var(--color-text-strong);
+
+  @media (max-width: $bp-mobile) {
+    font-size: $font-size-lg;
+    line-height: 28px;
+  }
+}
+
+.breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: $font-size-sm;
+  line-height: 20px;
+  color: var(--color-text-muted);
+
+  li {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.separator {
+  padding: 0 $space-2;
+  font-size: $font-size-xs;
+  color: var(--color-border-strong);
+}
+
+.page-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-2;
+
+  @media (max-width: $bp-mobile) {
+    justify-content: stretch;
+
+    > * {
+      flex: 1;
+    }
+  }
+}

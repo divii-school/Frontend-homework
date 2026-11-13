@@ -6,14 +6,14 @@ import { AuthService } from '@/services/auth-service';
 import { clearSession, getAccessToken, getStoredUser, saveSession, secondsUntilExpiry } from '@/lib/auth/session-storage';
 import { hasPermission } from '@/lib/auth/permissions';
 import type { PermissionKey } from '@/config/app-routes';
-import type { AuthUser, LoginRequest } from '@/types/auth';
+import type { AuthUser, LoginFormValues } from '@/types/auth';
 
 interface AuthContextValue {
   /** Logged-in user, or null. */
   user: AuthUser | null;
   /** False until the stored session has been read on the client (avoids a flash of the wrong UI). */
   ready: boolean;
-  login: (body: LoginRequest) => Promise<AuthUser>;
+  login: (body: LoginFormValues) => Promise<AuthUser>;
   logout: () => Promise<void>;
   can: (permission: PermissionKey) => boolean;
 }
@@ -35,9 +35,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setReady(true);
   }, []);
 
-  const login = useCallback(async (body: LoginRequest) => {
+  const login = useCallback(async (body: LoginFormValues) => {
     const result = await AuthService.login(body);
-    saveSession(result.token, result.user);
+    saveSession(result.token, result.user, body.remember);
     setUser(result.user);
     return result.user;
   }, []);

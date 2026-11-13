@@ -11,6 +11,7 @@ import type { AuthUser } from '@/types/auth';
  */
 export const ACCESS_TOKEN_COOKIE = 'hw3_at';
 const USER_KEY = 'hw3_user';
+const REMEMBER_KEY = 'hw3_remember';
 
 /** Seconds until the JWT expires, from its `exp` claim (no signature check, display only). */
 export function secondsUntilExpiry(token: string, nowMs: number = Date.now()): number {
@@ -30,10 +31,12 @@ export function getAccessToken(): string | null {
   return match ? decodeURIComponent(match.slice(ACCESS_TOKEN_COOKIE.length + 1)) : null;
 }
 
+/** With 자동 로그인 the cookie lives until the token expires; without it, until the browser closes. */
 export function setAccessToken(token: string): void {
-  const maxAge = Math.max(secondsUntilExpiry(token), 0);
+  const remember = window.localStorage.getItem(REMEMBER_KEY) === '1';
+  const lifetime = remember ? `; Max-Age=${Math.max(secondsUntilExpiry(token), 0)}` : '';
   const secure = window.location.protocol === 'https:' ? '; Secure' : '';
-  document.cookie = `${ACCESS_TOKEN_COOKIE}=${encodeURIComponent(token)}; Path=/; Max-Age=${maxAge}; SameSite=Lax${secure}`;
+  document.cookie = `${ACCESS_TOKEN_COOKIE}=${encodeURIComponent(token)}; Path=/${lifetime}; SameSite=Lax${secure}`;
 }
 
 export function getStoredUser(): AuthUser | null {
@@ -46,7 +49,8 @@ export function getStoredUser(): AuthUser | null {
   }
 }
 
-export function saveSession(token: string, user: AuthUser): void {
+export function saveSession(token: string, user: AuthUser, remember: boolean): void {
+  window.localStorage.setItem(REMEMBER_KEY, remember ? '1' : '0');
   setAccessToken(token);
   window.localStorage.setItem(USER_KEY, JSON.stringify(user));
 }
@@ -54,4 +58,5 @@ export function saveSession(token: string, user: AuthUser): void {
 export function clearSession(): void {
   document.cookie = `${ACCESS_TOKEN_COOKIE}=; Path=/; Max-Age=0; SameSite=Lax`;
   window.localStorage.removeItem(USER_KEY);
+  window.localStorage.removeItem(REMEMBER_KEY);
 }

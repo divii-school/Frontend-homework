@@ -1,0 +1,218 @@
+@use 'tokens' as *;
+
+// Figma 1.1.0 로그인: 460 × 518 card, 54px side padding, 70px between logo and fields.
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-4;
+  background: var(--color-bg-page);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: $space-14;
+  padding: 80px $space-14;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-md;
+  box-shadow: var(--shadow-card);
+
+  @media (max-width: $bp-mobile) {
+    padding: $space-10 $space-6;
+    gap: $space-8;
+  }
+}
+
+.login-logo {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 $space-4;
+
+  img {
+    // The logo PNG has a white background; keep it readable on a dark card.
+    border-radius: $radius-sm;
+    background: #{'var(--color-bg-surface)'};
+  }
+}
+
+.login-notice {
+  margin: 0;
+  padding: $space-2 $space-3;
+  border-radius: $radius-sm;
+  background: var(--color-info-soft);
+  color: var(--color-info);
+  font-size: $font-size-sm;
+}
+
+.login-fields {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.field {
+  min-height: 60px;
+}
+
+.input-line {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  border-bottom: 1px solid var(--color-border-strong);
+  background: var(--color-bg-surface);
+
+  &:focus-within {
+    border-bottom-color: var(--color-border-focus);
+  }
+
+  &.is-invalid {
+    border-bottom-color: var(--color-danger);
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    padding: $space-2 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--color-text-strong);
+    font: inherit;
+    font-size: $font-size-md;
+    line-height: 24px;
+    caret-color: var(--color-primary-strong);
+
+    &::placeholder {
+      color: var(--color-text-placeholder);
+    }
+  }
+}
+
+.eye-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-1;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-radius: $radius-sm;
+
+  &:focus-visible {
+    @include focus-visible;
+  }
+}
+
+.field-error {
+  margin: $space-1 0 0;
+  color: var(--color-danger);
+  font-size: $font-size-xs;
+  line-height: 18px;
+}
+
+.remember {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: $font-size-sm;
+  color: var(--color-text-strong);
+  cursor: pointer;
+  align-self: flex-start;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+
+  input:focus-visible + .remember-box {
+    @include focus-visible;
+  }
+}
+
+.remember-box {
+  width: 20px;
+  height: 20px;
+  margin: $space-1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: $radius-sm;
+  background: var(--color-bg-surface);
+  color: var(--color-on-primary);
+  font-size: $font-size-xs;
+
+  &.is-checked {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+}
+
+.login-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: $control-height;
+  padding: 0 $space-4;
+  border: 0;
+  border-radius: $radius-sm;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font: inherit;
+  font-size: $font-size-sm;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: var(--color-primary-hover);
+  }
+
+  &:disabled {
+    background: var(--color-bg-disabled);
+    color: var(--color-text-on-dark);
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    @include focus-visible;
+  }
+}
+
+.no-permission {
+  width: min(440px, calc(100vw - #{$space-8}));
+}
+
+.no-permission-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-6;
+  padding: $space-10 $space-6 $space-6;
+  text-align: center;
+
+  p {
+    margin: 0;
+    color: var(--color-text-strong);
+    font-size: $font-size-md;
+    line-height: 24px;
+  }
+}
+
+.text-button {
+  border: 0;
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+}

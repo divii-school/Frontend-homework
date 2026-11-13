@@ -31,18 +31,29 @@ export function readRefreshTokenFrom(response: Response): string | null {
   return null;
 }
 
-export function setRefreshCookie(res: NextResponse, token: string): void {
-  res.cookies.set(REFRESH_COOKIE, token, {
+/** Name of the cookie that remembers 자동 로그인 (no value of its own, just on/off). */
+export const REMEMBER_COOKIE = 'hw3_remember';
+const SEVEN_DAYS = 60 * 60 * 24 * 7;
+
+/**
+ * Stores the refresh token. With 자동 로그인 it survives closing the browser (7 days);
+ * without it, it is a session cookie and ends with the browser.
+ */
+export function setRefreshCookie(res: NextResponse, token: string, remember: boolean): void {
+  const options = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    sameSite: 'lax' as const,
     path: '/api/auth',
-    maxAge: 60 * 60 * 24 * 7,
-  });
+    ...(remember ? { maxAge: SEVEN_DAYS } : {}),
+  };
+  res.cookies.set(REFRESH_COOKIE, token, options);
+  res.cookies.set(REMEMBER_COOKIE, remember ? '1' : '0', options);
 }
 
 export function clearRefreshCookie(res: NextResponse): void {
   res.cookies.set(REFRESH_COOKIE, '', { httpOnly: true, path: '/api/auth', maxAge: 0 });
+  res.cookies.set(REMEMBER_COOKIE, '', { httpOnly: true, path: '/api/auth', maxAge: 0 });
 }
 
 /** Body the browser gets when the API cannot be reached at all. */

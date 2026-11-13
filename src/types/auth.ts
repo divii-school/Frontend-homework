@@ -14,6 +14,12 @@ export interface LoginRequest {
   password: string;
 }
 
+/** What the login screen sends to our /api/auth/login route. */
+export interface LoginFormValues extends LoginRequest {
+  /** 자동 로그인: keep the refresh token after the browser closes. */
+  remember: boolean;
+}
+
 /** `data.user` from POST /auth/login. Only the fields this app reads are typed. */
 export interface AuthUser {
   id: number;

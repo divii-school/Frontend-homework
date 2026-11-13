@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import {
   REFRESH_COOKIE,
+  REMEMBER_COOKIE,
   apiHeaders,
   apiUrl,
   clearRefreshCookie,
@@ -32,6 +33,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
   // The API may rotate the refresh token; keep the newest one.
   const rotated = readRefreshTokenFrom(upstream);
-  if (rotated) setRefreshCookie(res, rotated);
+  if (rotated) setRefreshCookie(res, rotated, request.cookies.get(REMEMBER_COOKIE)?.value === '1');
   return res;
 }

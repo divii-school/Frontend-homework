@@ -6,10 +6,11 @@ import { ApiError } from './api-error';
  * List has no texts yet, so the Korean is ours. Keys seen on the QA server are marked ✔.
  */
 const MESSAGES: Record<string, string> = {
-  invalidPassword: '비밀번호가 일치하지 않습니다.', // ✔ wrong password for an existing ID
-  invalidCredentials: '아이디 또는 비밀번호가 일치하지 않습니다.', // ✔ unknown ID
+  invalidPassword: '아이디와 비밀번호가 일치하지 않습니다. 다시 확인해 주세요.', // ✔ Figma 비밀번호가 일치하지 않습니다
+  invalidCredentials: '등록되지 않은 계정입니다.', // ✔ unknown ID — Figma 등록된 아이디가 아닙니다
   Unauthorized: '로그인이 필요합니다.', // ✔
   productNotFound: '상품을 찾을 수 없습니다.', // ✔
+  maximumCategoryLimitReached: '대분류 개수가 최대치에 도달하여 새 대분류를 등록할 수 없습니다.', // ✔ isCreatable=false
   networkError: '서버에 연결할 수 없습니다. 네트워크 상태를 확인한 후 다시 시도해 주세요.',
   invalidFileType: 'JPG, PNG, WEBP 이미지만 업로드할 수 있습니다.',
   fileTooLarge: '이미지 용량이 너무 큽니다.',
