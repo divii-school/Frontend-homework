@@ -36,7 +36,7 @@ export function SideMenu({ onNavigate, onToggle }: SideMenuProps) {
     <nav className={styles['side-menu']} aria-label="관리자 메뉴">
       <div className={styles['side-menu-top']}>
         <Link href="/" className={styles['side-logo']} onClick={onNavigate}>
-          <Image src="/images/logo-talkingclub.png" alt="토킹클럽 관리자 홈" width={158} height={30} />
+          <Image src="/images/logo-talkingclub.png" alt="토킹클럽 관리자 홈" width={158} height={30} priority />
         </Link>
         <button type="button" className={styles['icon-button']} onClick={onToggle} aria-label="메뉴 닫기">
           <MaskIcon src="/icons/icon-bars.svg" size={22} />

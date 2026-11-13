@@ -48,3 +48,34 @@ export function formatBytes(bytes: number): string {
   if (bytes >= 1024 * 1024) return `${formatNumber(bytes / (1024 * 1024))}MB`;
   return `${formatNumber(Math.ceil(bytes / 1024))}KB`;
 }
+
+/** Screen 8.1.0 list price: "₩4,000" (₩ sign, comma every three digits, no decimals). */
+export function formatPriceSymbol(value: number | null | undefined): string {
+  return typeof value === 'number' && Number.isFinite(value) ? `₩${Math.round(value).toLocaleString('en-US')}` : '-';
+}
+
+/** Screen 8.1.0 registration date: "YYYY/MM/DD HH:MM", Korea time, 24-hour. */
+export function formatDateTimeSlash(iso: string | null | undefined): string {
+  const date = iso ? new Date(iso) : null;
+  if (!date || Number.isNaN(date.getTime())) return '-';
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Seoul',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    })
+      .formatToParts(date)
+      .map((p) => [p.type, p.value]),
+  );
+  return `${parts.year}/${parts.month}/${parts.day} ${parts.hour}:${parts.minute}`;
+}
+
+/** "대분류 > 중분류 > 소분류", skipping empty levels; "-" when there is none (8.1.0). */
+export function formatCategoryPath(...names: Array<string | null | undefined>): string {
+  const present = names.filter((n): n is string => Boolean(n && n.trim()));
+  return present.length ? present.join(' > ') : '-';
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ROUTES } from '@/config/app-routes';
 import { canOpenPath } from '@/lib/auth/permissions';
@@ -18,6 +18,10 @@ export function RouteGuard({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const search = useSearchParams();
   const router = useRouter();
+  // This guard sits in a Suspense boundary that hydrates AFTER the auth provider has read the
+  // session, so its first render must not depend on it (else server and client HTML differ).
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
 
   useEffect(() => {
     if (ready && !user) {
@@ -27,7 +31,7 @@ export function RouteGuard({ children }: { children: ReactNode }) {
     }
   }, [ready, user, pathname, search, router]);
 
-  if (!ready || !user) return <StateBlock variant="loading" title="불러오는 중입니다." />;
+  if (!hydrated || !ready || !user) return <StateBlock variant="loading" title="불러오는 중입니다." />;
 
   if (!canOpenPath(user, pathname)) {
     return (
