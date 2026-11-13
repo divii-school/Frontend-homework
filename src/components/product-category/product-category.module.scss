@@ -1,0 +1,312 @@
+@use 'tokens' as *;
+
+// Figma 8.2.0: search box + 모두 펼치기 / 모두 접기, then a bordered tree panel.
+.category-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.category-panel {
+  margin: 0 $space-6 $space-6;
+  padding: $space-5;
+  background: var(--color-bg-surface);
+  border-radius: $radius-md;
+
+  @media (max-width: $bp-mobile) {
+    margin: 0 0 $space-4;
+    padding: $space-3;
+    border-radius: 0;
+  }
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-3;
+  margin-bottom: $space-4;
+}
+
+.search-box {
+  flex: 1 1 360px;
+  max-width: 460px;
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  height: $control-height;
+  padding: 0 $space-2 0 $space-3;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-sm;
+  color: var(--color-text-muted);
+
+  &:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--color-text-strong);
+    font: inherit;
+
+    &::placeholder {
+      color: var(--color-text-placeholder);
+    }
+  }
+
+  @media (max-width: $bp-mobile) {
+    max-width: none;
+  }
+}
+
+.search-submit {
+  height: 30px;
+  padding: 0 $space-3;
+  border: 0;
+  border-radius: $radius-sm;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:focus-visible {
+    @include focus-visible;
+  }
+}
+
+.toolbar-buttons {
+  display: flex;
+  gap: $space-2;
+
+  @media (max-width: $bp-mobile) {
+    width: 100%;
+
+    > * {
+      flex: 1;
+    }
+  }
+}
+
+.notice {
+  margin: 0 0 $space-3;
+  padding: $space-2 $space-3;
+  border-radius: $radius-sm;
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+  font-size: $font-size-xs;
+  line-height: 18px;
+}
+
+.tree,
+.tree-children {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tree {
+  border: 1px solid var(--color-border);
+  border-radius: $radius-md;
+  overflow: hidden;
+}
+
+.tree-children {
+  padding-left: $space-6;
+
+  @media (max-width: $bp-mobile) {
+    padding-left: $space-3;
+  }
+}
+
+.tree-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $space-2;
+  min-height: 47px;
+  padding: $space-2 $space-3;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-strong);
+  font-size: $font-size-sm;
+
+  &:hover {
+    background: var(--color-bg-subtle);
+  }
+}
+
+// Figma draws every 대분류 row on a light grey band.
+.level-1 {
+  background: var(--color-bg-page);
+}
+
+.toggle,
+.drag-handle,
+.icon-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: $radius-sm;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-bg-subtle);
+    color: var(--color-text-strong);
+  }
+
+  &:focus-visible {
+    @include focus-visible;
+  }
+}
+
+.drag-handle {
+  cursor: grab;
+}
+
+.toggle-spacer {
+  width: 32px;
+}
+
+.level-badge {
+  padding: 2px $space-2;
+  border-radius: $radius-pill;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 16px;
+  color: var(--color-on-primary);
+}
+
+.badge-1 {
+  background: var(--color-level-1);
+}
+
+.badge-2 {
+  background: var(--color-level-2);
+}
+
+.badge-3 {
+  background: var(--color-level-3);
+}
+
+.node-code {
+  color: var(--color-text-muted);
+}
+
+.node-name {
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.node-count {
+  color: var(--color-text-muted);
+  font-size: $font-size-xs;
+}
+
+.node-actions {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+}
+
+.add-child {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  height: 28px;
+  padding: 0 $space-3;
+  border: 0;
+  border-radius: $radius-sm;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font: inherit;
+  font-size: $font-size-xs;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:focus-visible {
+    @include focus-visible;
+  }
+}
+
+.child-state {
+  margin: 0;
+  padding: $space-3 $space-4 $space-3 56px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: $font-size-xs;
+}
+
+.link-button {
+  border: 0;
+  background: transparent;
+  color: var(--color-primary);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.result-count {
+  margin: $space-3 0 0;
+  color: var(--color-text-muted);
+  font-size: $font-size-xs;
+}
+
+.category-dialog {
+  width: min(480px, calc(100vw - #{$space-8}));
+}
+
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+
+  :global(.p-inputtext) {
+    width: 100%;
+  }
+}
+
+.dialog-parent {
+  margin: 0 0 $space-2;
+  color: var(--color-text-muted);
+}
+
+.field-label {
+  font-weight: 600;
+  color: var(--color-text-strong);
+}
+
+.required {
+  color: var(--color-danger);
+}
+
+.field-error {
+  color: var(--color-danger);
+}
+
+.field-help {
+  color: var(--color-text-muted);
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-2;
+}
+
+.dialog-text {
+  margin: 0;
+  line-height: 22px;
+  color: var(--color-text-strong);
+}

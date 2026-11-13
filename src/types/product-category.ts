@@ -8,6 +8,9 @@ interface CategoryNodeBase {
   updatedAt: string;
 }
 
+/** One node as the per-level endpoints return it (no children inside). */
+export type CategoryNode = CategoryNodeBase;
+
 export type ProductChildCategory = CategoryNodeBase;
 
 export interface ProductSubCategory extends CategoryNodeBase {
@@ -24,8 +27,22 @@ export interface ProductCategoryListExtras {
   isCreatable: boolean;
 }
 
-/** The three tree levels. Each level has its own add/edit/delete endpoints. */
+/** The three tree levels. Each level has its own add/edit/delete/reorder endpoints. */
 export type CategoryLevel = 'category' | 'subCategory' | 'childCategory';
+
+/** Korean name of each level (Figma 8.2.0: 대분류 / 중분류 / 소분류). */
+export const LEVEL_LABEL: Record<CategoryLevel, string> = {
+  category: '대분류',
+  subCategory: '중분류',
+  childCategory: '소분류',
+};
+
+/** The level below each level (소분류 has none: the tree is at most 3 deep). */
+export const CHILD_LEVEL: Record<CategoryLevel, CategoryLevel | null> = {
+  category: 'subCategory',
+  subCategory: 'childCategory',
+  childCategory: null,
+};
 
 /** Body for add/edit at each level (addEditCategoryDto / addEditSubCategoryDto / addEditChildCategoryDto). */
 export type CategorySaveRequest =
