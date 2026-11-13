@@ -60,9 +60,12 @@ export const ProductService = {
     await httpClient.put(`/products/edit/${id}`, editable);
   },
 
-  /** DELETE /products/delete with a body { ids: string[] } — used for single and bulk delete. */
+  /**
+   * DELETE /products/delete with { ids: number[] } — single and bulk delete.
+   * The OpenAPI doc says string items, but the server refuses strings ("each value in ids must be a number").
+   */
   async remove(ids: number[]): Promise<void> {
-    await httpClient.delete('/products/delete', { data: { ids: ids.map(String) } });
+    await httpClient.delete('/products/delete', { data: { ids } });
   },
 
   /** PUT /products/update-status/{id}/{status}. */

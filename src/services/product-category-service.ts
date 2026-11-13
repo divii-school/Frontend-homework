@@ -80,8 +80,8 @@ export const ProductCategoryService = {
     await httpClient.delete(`${LEVEL_PATH[level]}/delete/${id}`);
   },
 
-  /** Saves a new order for siblings of one parent. */
+  /** Saves a new order for siblings of one parent. Ids go as numbers: the server refuses strings (doc says string). */
   async reorder(level: CategoryLevel, orderedIds: number[]): Promise<void> {
-    await httpClient.put(REORDER_PATH[level], { ids: orderedIds.map(String) });
+    await httpClient.put(REORDER_PATH[level], { ids: orderedIds });
   },
 };
