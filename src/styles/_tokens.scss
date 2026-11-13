@@ -32,6 +32,22 @@
   --color-icon-muted: #afafaf;
   --color-focus-ring: #ef325b;
 
+  // Admin shell + category tree (Figma 8.1.0 / 8.2.0)
+  --color-nav-text: #293241;
+  --color-nav-sub-bg: #fafafa;
+  --color-nav-brand-icon: #2d2f8e;
+  --color-heading: #101828;
+  --color-text-secondary: #6a7282;
+  --color-text-tertiary: #99a1af;
+  --color-button-text: #364153;
+  --color-border-subtle: #e0e0e0;
+  --color-surface-group: #f5f7fa;
+  --color-input-bg: #f3f3f5;
+  --color-input-placeholder: #717182;
+  --color-accent: #7c3aed;
+  --color-accent-contrast: #ffffff;
+  --color-row-hover: #fafafb;
+
   --shadow-card: 0 4px 4px rgb(0 0 0 / 25%);
   --logo-filter: none;
   --logo-blend: normal;
@@ -74,6 +90,21 @@
   --color-icon: #a8a8b0;
   --color-icon-muted: #7c7c84;
   --color-focus-ring: #ff6b8b;
+
+  --color-nav-text: #d6d8de;
+  --color-nav-sub-bg: #232327;
+  --color-nav-brand-icon: #a5a7ff;
+  --color-heading: #f1f1f3;
+  --color-text-secondary: #a3abb8;
+  --color-text-tertiary: #7f8896;
+  --color-button-text: #d6d8de;
+  --color-border-subtle: #34343a;
+  --color-surface-group: #232327;
+  --color-input-bg: #26262a;
+  --color-input-placeholder: #8b8b96;
+  --color-accent: #9f6bff;
+  --color-accent-contrast: #ffffff;
+  --color-row-hover: #222226;
 
   --shadow-card: 0 4px 12px rgb(0 0 0 / 50%);
   // The Figma logo is a dark-text PNG on white: invert lightness but keep the hues,

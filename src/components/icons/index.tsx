@@ -51,6 +51,102 @@ export function IconEye(props: IconProps) {
   );
 }
 
+// ---- Admin shell (Figma "Main menu_admin", "header") ----
+
+export function IconBars(props: IconProps) {
+  return (
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden focusable={false} {...props}>
+      <path d="M6.7 10h18.6M6.7 16h18.6M6.7 22h18.6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function IconCart(props: IconProps) {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden focusable={false} {...props}>
+      <path
+        fill="currentColor"
+        d="M19 6h-2c0-2.8-2.2-5-5-5S7 3.2 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2Zm-7-3c1.7 0 3 1.3 3 3H9c0-1.7 1.3-3 3-3Zm7 17H5V8h14v12Zm-7-8c-1.7 0-3-1.3-3-3H7c0 2.8 2.2 5 5 5s5-2.2 5-5h-2c0 1.7-1.3 3-3 3Z"
+      />
+    </svg>
+  );
+}
+
+export function IconArrowDown(props: IconProps) {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden focusable={false} {...props}>
+      <path d="M19 8.5 12 15.5 5 8.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function IconLogout(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path
+        fill="currentColor"
+        d="M3 9a.75.75 0 0 0 .75.75h5.693l-1.726 1.718a.75.75 0 0 0 1.066 1.064l3-3a.75.75 0 0 0 0-1.064l-3-3a.753.753 0 0 0-1.066 1.064L9.443 8.25H3.75A.75.75 0 0 0 3 9Zm9.75-7.5h-7.5A2.25 2.25 0 0 0 3 3.75V6a.75.75 0 0 0 1.5 0V3.75A.75.75 0 0 1 5.25 3h7.5a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-7.5a.75.75 0 0 1-.75-.75V12a.75.75 0 0 0-1.5 0v2.25a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 15 14.25V3.75a2.25 2.25 0 0 0-2.25-2.25Z"
+      />
+    </svg>
+  );
+}
+
+// ---- Category tree (Figma 8.2.0), 16px stroke icons ----
+
+const stroke16 = {
+  width: 16,
+  height: 16,
+  viewBox: "0 0 16 16",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 1.333,
+  strokeLinecap: "round",
+  strokeLinejoin: "round",
+  "aria-hidden": true,
+  focusable: false,
+} as const;
+
+export function IconChevronDown16(props: IconProps) {
+  return (
+    <svg {...stroke16} {...props}>
+      <path d="M4 6l4 4 4-4" />
+    </svg>
+  );
+}
+
+export function IconSearch16(props: IconProps) {
+  return (
+    <svg {...stroke16} {...props}>
+      <path d="M14 14l-2.9-2.9" />
+      <circle cx="7.333" cy="7.333" r="5.333" />
+    </svg>
+  );
+}
+
+export function IconPlus16(props: IconProps) {
+  return (
+    <svg {...stroke16} {...props}>
+      <path d="M3.333 8h9.334M8 3.336v9.333" />
+    </svg>
+  );
+}
+
+export function IconPencil16(props: IconProps) {
+  return (
+    <svg {...stroke16} {...props}>
+      <path d="M14.117 4.544a1.88 1.88 0 0 0-2.658-2.658l-8.897 8.9a1.333 1.333 0 0 0-.334.553l-.88 2.901a.333.333 0 0 0 .415.415l2.902-.88c.209-.063.399-.177.554-.331l8.898-8.9Z" />
+    </svg>
+  );
+}
+
+export function IconTrash16(props: IconProps) {
+  return (
+    <svg {...stroke16} {...props}>
+      <path d="M6.666 7.336v4M9.334 7.336v4M12.667 4v9.333a1.333 1.333 0 0 1-1.333 1.334H4.667a1.333 1.333 0 0 1-1.333-1.334V4M2 4h12M5.334 4V2.67a1.333 1.333 0 0 1 1.333-1.334h2.667a1.333 1.333 0 0 1 1.333 1.333V4" />
+    </svg>
+  );
+}
+
 export function IconCheck(props: IconProps) {
   return (
     <svg width="10" height="8" viewBox="0 0 10 8" fill="none" aria-hidden focusable={false} {...props}>

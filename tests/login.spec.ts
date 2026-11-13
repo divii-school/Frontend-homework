@@ -37,6 +37,14 @@ test.describe("login", () => {
   });
 
   test("wrong ID/password shows the API error and keeps the user on the form", async ({ page }) => {
+    // Same response the QA API gives for a wrong login (captured 2026-11-13), mocked so the test doesn't need the server.
+    await page.route("**/api/v1/auth/login", (route) =>
+      route.fulfill({
+        status: 400,
+        contentType: "application/json",
+        body: JSON.stringify({ success: false, message: "invalidCredentials", data: null, errors: null, statusCode: 400 }),
+      }),
+    );
     await page.goto("/login");
     await page.getByLabel("ID").fill("HW3-Sandip-no-such-user");
     await page.getByLabel("Password", { exact: true }).fill("wrong-password-1");
