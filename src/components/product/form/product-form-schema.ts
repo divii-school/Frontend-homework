@@ -64,6 +64,12 @@ export const productFormSchema = z
   .refine((v) => v.unitPrice < v.price, {
     path: ['unitPrice'],
     message: '단가는 판매가보다 작아야 합니다.',
+    // Zod normally skips an object rule while ANY field is invalid — and on step 1 the later
+    // steps are always still empty, so the rule would never run. Run it once both prices are numbers.
+    when: (payload) => {
+      const value = payload.value as { price?: unknown; unitPrice?: unknown };
+      return typeof value.price === 'number' && typeof value.unitPrice === 'number';
+    },
   });
 
 export type ProductFormValues = z.infer<typeof productFormSchema>;

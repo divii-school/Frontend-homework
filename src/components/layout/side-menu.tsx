@@ -44,10 +44,10 @@ export function SideMenu({ onNavigate, onToggle }: SideMenuProps) {
       </div>
 
       <ul className={styles['menu-groups']}>
-        {groups.map((group) => {
+        {groups.map((group, groupIndex) => {
           const groupActive = group.routes.some((r) => r.path === activeRoute?.path);
           const expanded = open[group.label] ?? true;
-          const listId = `menu-${group.label}`;
+          const listId = `menu-group-${groupIndex}`;
           return (
             <li key={group.label}>
               <button

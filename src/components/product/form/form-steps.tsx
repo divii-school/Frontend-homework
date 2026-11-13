@@ -5,7 +5,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { InputNumber } from 'primereact/inputnumber';
-import { Dropdown } from 'primereact/dropdown';
+import { AppDropdown } from '@/components/common/app-dropdown';
 import { AMOUNT_MAX, DESCRIPTION_MAX, ERP_NAME_MAX, NAME_MAX, type ProductFormInput } from './product-form-schema';
 import { ImageUploader } from './image-uploader';
 import styles from './product-form.module.scss';
@@ -154,7 +154,7 @@ export function MediaStep() {
             control={control}
             name="isVisible"
             render={({ field }) => (
-              <Dropdown inputId="isVisible" value={field.value} options={YES_NO} onChange={(ev) => field.onChange(ev.value)} className={styles['full-width']} aria-describedby="isVisible-help" />
+              <AppDropdown label="노출 상태" inputId="isVisible" value={field.value} options={YES_NO} onChange={(ev) => field.onChange(ev.value)} className={styles['full-width']} aria-describedby="isVisible-help" />
             )}
           />
         </FormField>
@@ -163,7 +163,7 @@ export function MediaStep() {
             control={control}
             name="onSale"
             render={({ field }) => (
-              <Dropdown inputId="onSale" value={field.value} options={YES_NO} onChange={(ev) => field.onChange(ev.value)} className={styles['full-width']} aria-describedby="onSale-help" />
+              <AppDropdown label="판매 상태" inputId="onSale" value={field.value} options={YES_NO} onChange={(ev) => field.onChange(ev.value)} className={styles['full-width']} aria-describedby="onSale-help" />
             )}
           />
         </FormField>
@@ -206,7 +206,7 @@ export function ErpStep({ erpCode }: { erpCode?: string }) {
             control={control}
             name="taxType"
             render={({ field }) => (
-              <Dropdown inputId="taxType" value={field.value} options={TAX_OPTIONS} onChange={(ev) => field.onChange(ev.value)} className={styles['full-width']} />
+              <AppDropdown label="과세 구분" inputId="taxType" value={field.value} options={TAX_OPTIONS} onChange={(ev) => field.onChange(ev.value)} className={styles['full-width']} />
             )}
           />
         </FormField>

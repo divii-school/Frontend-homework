@@ -14,8 +14,8 @@ export const IMAGE_UPLOAD = {
    * our /api/upload route, so anything larger could never succeed when deployed.
    */
   maxBytes: 4 * 1024 * 1024,
-  /** Most images one product may have. */
-  maxCount: 5,
+  /** Most images one product may have (Figma 8.1.1: "최대 4장까지 등록 가능"). */
+  maxCount: 4,
   /** Folder the API puts product images in (matches existing keys "products/..."). */
   location: 'products',
 } as const;

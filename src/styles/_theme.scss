@@ -8,8 +8,11 @@
 :root,
 :root[data-theme='light'] {
   // Brand
-  --color-primary: #ef325b; // Talking Club/Talking Club — Register buttons
-  --color-primary-hover: #d92a50;
+  // Figma brand pink is #EF325B (Talking Club/Talking Club), but white text on it is 3.98:1, below
+  // WCAG AA 4.5:1. #D9264F is the closest shade that passes (4.84:1) — raised as a design question.
+  --color-primary: #d9264f;
+  --color-primary-hover: #c21f45;
+  --color-brand: #ef325b; // decorative use only (never under text)
   --color-primary-soft: #fff1f3; // Primary/Primary 80 — table header, active menu
   --color-primary-strong: #cd121f; // Primary/Primary 100 — cursor, error text
   --color-on-primary: #ffffff;
@@ -57,6 +60,7 @@
 :root[data-theme='dark'] {
   --color-primary: #ff5c7f;
   --color-primary-hover: #ff7d98;
+  --color-brand: #ff5c7f;
   --color-primary-soft: #3a1820;
   --color-primary-strong: #ff6b74;
   --color-on-primary: #1a0a0e;

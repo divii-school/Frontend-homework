@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { DataTable, type DataTableSelectionMultipleChangeEvent } from 'primereact/datatable';
+import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { Dropdown } from 'primereact/dropdown';
+import { AppDropdown } from '@/components/common/app-dropdown';
 import { Paginator } from 'primereact/paginator';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
@@ -82,14 +82,26 @@ export function ProductList() {
     setParams({ q: draftQ.trim(), type: draftType });
   };
 
-  const onSelectionChange = (rows: ProductListItem[]) => {
-    if (rows.length > MAX_SELECTION) {
-      toast.show('warn', `한 번에 최대 ${MAX_SELECTION}개까지 선택할 수 있습니다.`);
-      setSelected(rows.slice(0, MAX_SELECTION));
-      return;
-    }
-    setSelected(rows);
+  const rows = useMemo(() => list.data?.items ?? [], [list.data]);
+  const total = list.data?.totalRecords ?? 0;
+  const selectedIds = useMemo(() => new Set(selected.map((p) => p.id)), [selected]);
+  // DataTable memoises its rows and would keep showing old checkbox states; new row objects
+  // whenever the selection changes make it redraw them.
+  const tableRows = useMemo(() => rows.map((r) => ({ ...r, selectedTick: selectedIds.has(r.id) })), [rows, selectedIds]);
+
+  /** Adds rows to the selection without going over the 100-row limit (8.1.0). */
+  const addToSelection = (more: ProductListItem[]) => {
+    const fresh = more.filter((r) => !selectedIds.has(r.id));
+    const room = MAX_SELECTION - selected.length;
+    if (fresh.length > room) toast.show('warn', `한 번에 최대 ${MAX_SELECTION}개까지 선택할 수 있습니다.`);
+    setSelected([...selected, ...fresh.slice(0, Math.max(room, 0))]);
   };
+
+  const toggleRow = (row: ProductListItem, checked: boolean) =>
+    checked ? addToSelection([row]) : setSelected(selected.filter((p) => p.id !== row.id));
+
+  const togglePage = (checked: boolean) =>
+    checked ? addToSelection(rows) : setSelected(selected.filter((p) => !rows.some((r) => r.id === p.id)));
 
   const changeVisibility = (product: ProductListItem, visible: boolean) => {
     visibility.mutate(
@@ -122,9 +134,6 @@ export function ProductList() {
     }
   };
 
-  const rows = list.data?.items ?? [];
-  const total = list.data?.totalRecords ?? 0;
-
   return (
     <div className={styles['product-page']}>
       <PageHeader
@@ -139,7 +148,8 @@ export function ProductList() {
             <label htmlFor="product-search-type" className="sr-only">
               검색 항목
             </label>
-            <Dropdown
+            <AppDropdown
+              label="검색 항목"
               inputId="product-search-type"
               value={draftType}
               options={SEARCH_TYPES}
@@ -198,12 +208,10 @@ export function ProductList() {
         ) : (
           <div className={styles['table-wrap']}>
             <DataTable
-              value={rows}
+              value={tableRows}
               dataKey="id"
               loading={list.isFetching}
-              selectionMode="checkbox"
-              selection={selected}
-              onSelectionChange={(e: DataTableSelectionMultipleChangeEvent<ProductListItem[]>) => onSelectionChange(e.value)}
+              rowClassName={(p: ProductListItem) => (selectedIds.has(p.id) ? styles['is-selected'] : '')}
               className={styles['table']}
               emptyMessage={
                 list.isLoading ? (
@@ -214,7 +222,31 @@ export function ProductList() {
               }
               aria-label="상품 목록"
             >
-              {canEdit && <Column selectionMode="multiple" header="선택" headerClassName={styles['col-select']} />}
+              {canEdit && (
+                <Column
+                  headerClassName={styles['col-select']}
+                  header={
+                    <label className={styles['check']}>
+                      <input
+                        type="checkbox"
+                        checked={rows.length > 0 && rows.every((r) => selectedIds.has(r.id))}
+                        onChange={(e) => togglePage(e.target.checked)}
+                        aria-label="현재 페이지 전체 선택"
+                      />
+                      <span>선택</span>
+                    </label>
+                  }
+                  body={(p: ProductListItem) => (
+                    <input
+                      type="checkbox"
+                      className={styles['row-check']}
+                      checked={selectedIds.has(p.id)}
+                      onChange={(e) => toggleRow(p, e.target.checked)}
+                      aria-label={`${decodeEntities(p.productName)} 선택`}
+                    />
+                  )}
+                />
+              )}
               <Column header="썸네일" body={thumbnail} headerClassName={styles['col-thumb']} />
               <Column
                 header="상품명"
@@ -235,11 +267,11 @@ export function ProductList() {
                 header="노출 여부"
                 body={(p: ProductListItem) =>
                   canEdit ? (
-                    <Dropdown
+                    <AppDropdown
+                      label={`${decodeEntities(p.productName)} 노출 여부`}
                       value={p.isVisible}
                       options={VISIBILITY}
                       onChange={(e) => changeVisibility(p, e.value as boolean)}
-                      aria-label={`${decodeEntities(p.productName)} 노출 여부`}
                       className={styles['visibility']}
                     />
                   ) : p.isVisible ? (

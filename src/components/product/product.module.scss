@@ -237,3 +237,25 @@
   line-height: 22px;
   color: var(--color-text-strong);
 }
+
+// Native checkboxes (accessible by default; PrimeReact's row checkbox failed axe).
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.check input,
+.row-check {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.table :global(.p-datatable-tbody > tr).is-selected {
+  background: var(--color-primary-soft);
+}
