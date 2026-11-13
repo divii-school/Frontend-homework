@@ -30,3 +30,14 @@ export function checkImageFile(file: { type: string; size: number }): ImageCheck
   if (file.size > IMAGE_UPLOAD.maxBytes) return 'size';
   return null;
 }
+
+/** Figma 8.1.1 ⑦: 800×800px is recommended, not required, so a different size only gets a note. */
+export const RECOMMENDED_IMAGE_SIZE = 800;
+
+/** Returns a note when an image's pixel size differs from the recommended square, or null. */
+export function imageSizeNote(size: { width: number; height: number }): string | null {
+  const { width, height } = size;
+  if (width === RECOMMENDED_IMAGE_SIZE && height === RECOMMENDED_IMAGE_SIZE) return null;
+  const shape = width === height ? '' : ', 정사각형이 아님';
+  return `${width}×${height}px${shape} — 권장 크기(${RECOMMENDED_IMAGE_SIZE}×${RECOMMENDED_IMAGE_SIZE}px)와 달라 잘리거나 흐리게 보일 수 있습니다.`;
+}

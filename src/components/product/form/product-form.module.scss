@@ -278,6 +278,14 @@
   line-height: 18px;
 }
 
+.upload-notes {
+  margin: 0;
+  padding-left: $space-5;
+  color: var(--color-text-muted);
+  font-size: $font-size-xs;
+  line-height: 18px;
+}
+
 // Categories (three columns)
 .category-columns {
   display: grid;

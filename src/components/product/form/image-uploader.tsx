@@ -2,7 +2,7 @@
 
 import { useId, useRef, useState, type ChangeEvent } from 'react';
 import Image from 'next/image';
-import { ACCEPT_ATTRIBUTE, IMAGE_UPLOAD, checkImageFile } from '@/config/upload';
+import { ACCEPT_ATTRIBUTE, IMAGE_UPLOAD, checkImageFile, imageSizeNote } from '@/config/upload';
 import { useUploadProductImage } from '@/hooks/api/product/use-products';
 import { errorMessage } from '@/lib/api/error-messages';
 import { formatBytes } from '@/lib/format';
@@ -26,6 +26,7 @@ export function ImageUploader({ value, onChange, error, describedById }: Props) 
   const inputRef = useRef<HTMLInputElement>(null);
   const upload = useUploadProductImage();
   const [problems, setProblems] = useState<string[]>([]);
+  const [sizeNotes, setSizeNotes] = useState<string[]>([]);
   const [uploading, setUploading] = useState(0);
   const room = IMAGE_UPLOAD.maxCount - value.length;
 
@@ -33,6 +34,7 @@ export function ImageUploader({ value, onChange, error, describedById }: Props) 
     const files = Array.from(event.target.files ?? []);
     event.target.value = ''; // the same file can be chosen again after removing it
     const messages: string[] = [];
+    const notes: string[] = [];
     if (files.length > room) {
       messages.push(`이미지는 최대 ${IMAGE_UPLOAD.maxCount}장까지 등록할 수 있습니다. 앞의 ${room}장만 올립니다.`);
     }
@@ -41,7 +43,16 @@ export function ImageUploader({ value, onChange, error, describedById }: Props) 
       const problem = checkImageFile(file);
       if (problem === 'type') messages.push(`${file.name}: JPG, PNG, WEBP 이미지만 등록할 수 있습니다.`);
       else if (problem === 'size') messages.push(`${file.name}: ${formatBytes(IMAGE_UPLOAD.maxBytes)} 이하 이미지만 등록할 수 있습니다.`);
-      else accepted.push(file);
+      else {
+        const size = await readPixelSize(file);
+        if (!size) {
+          messages.push(`${file.name}: 이미지 파일을 읽을 수 없습니다. 다른 파일을 선택해 주세요.`);
+          continue;
+        }
+        const note = imageSizeNote(size);
+        if (note) notes.push(`${file.name}: ${note}`);
+        accepted.push(file);
+      }
     }
 
     let next = value;
@@ -58,6 +69,7 @@ export function ImageUploader({ value, onChange, error, describedById }: Props) 
       }
     }
     setProblems(messages);
+    setSizeNotes(notes);
   };
 
   const remove = (index: number) => onChange(value.filter((_, i) => i !== index));
@@ -120,6 +132,25 @@ export function ImageUploader({ value, onChange, error, describedById }: Props) 
           ))}
         </ul>
       )}
+      {sizeNotes.length > 0 && (
+        <ul className={styles['upload-notes']} role="status">
+          {sizeNotes.map((note) => (
+            <li key={note}>{note}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
+}
+
+/** Decodes the file to read its pixel size; null when it is not a readable image (e.g. a renamed file). */
+async function readPixelSize(file: File): Promise<{ width: number; height: number } | null> {
+  try {
+    const bitmap = await createImageBitmap(file);
+    const size = { width: bitmap.width, height: bitmap.height };
+    bitmap.close();
+    return size;
+  } catch {
+    return null;
+  }
 }
