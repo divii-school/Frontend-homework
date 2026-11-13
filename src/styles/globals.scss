@@ -69,6 +69,12 @@ img {
   letter-spacing: $letter-spacing;
 }
 
+// A link styled as a button (목록, 수정, 등록) must look exactly like a button: no link underline.
+a.p-button {
+  justify-content: center;
+  text-decoration: none;
+}
+
 .p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary):not(.p-button-danger) {
   background: var(--color-primary);
   border-color: var(--color-primary);

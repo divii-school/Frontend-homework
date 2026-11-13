@@ -21,13 +21,13 @@ for (const theme of THEMES) {
       const shot = (page: Page, name: string) =>
         page.screenshot({ path: `${OUT}/${width}-${theme}-${name}.png`, fullPage: true });
 
-      test('login', async ({ browser }) => {
-        const context = await browser.newContext({ viewport: { width, height: 900 }, colorScheme: theme, locale: 'ko-KR' });
-        const page = await context.newPage();
-        await page.goto('/login');
-        await expect(page.getByRole('button', { name: '로그인', exact: true })).toBeVisible();
-        await shot(page, '1-login');
-        await context.close();
+      test.describe('logged out', () => {
+        test.use({ storageState: { cookies: [], origins: [] } });
+        test('login', async ({ page }) => {
+          await page.goto('/login');
+          await expect(page.getByRole('button', { name: '로그인', exact: true })).toBeVisible();
+          await shot(page, '1-login');
+        });
       });
 
       test('product list, details, register', async ({ page }) => {

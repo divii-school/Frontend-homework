@@ -43,7 +43,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         본문으로 바로가기
       </a>
       <aside className={styles['app-sidebar']}>
-        <SideMenu onToggle={toggleMenu} onNavigate={() => setDrawerOpen(false)} />
+        <div className={styles['sidebar-inner']}>
+          <SideMenu onToggle={toggleMenu} onNavigate={() => setDrawerOpen(false)} />
+        </div>
       </aside>
       {drawerOpen && <div className={styles['drawer-backdrop']} onClick={() => setDrawerOpen(false)} aria-hidden />}
 

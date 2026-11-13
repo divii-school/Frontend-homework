@@ -205,8 +205,9 @@
   }
 }
 
+// Fixed width so 예 and 아니오 rows line up (the dropdown sizes to its label otherwise).
 .visibility {
-  min-width: 96px;
+  width: 128px;
 }
 
 .paginator {
