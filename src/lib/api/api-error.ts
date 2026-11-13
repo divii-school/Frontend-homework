@@ -9,7 +9,8 @@ export type ApiErrorKind =
   | 'notFound' // 404, or the API's own "...NotFound" key
   | 'validation' // 400 with a list of field sentences
   | 'business' // 400/409/422 with one message key
-  | 'server'; // 5xx
+  | 'unavailable' // 502/503/504 and Cloudflare 520–530: the API server itself is down
+  | 'server'; // other 5xx
 
 /** One normalised error, so components never read axios internals. */
 export class ApiError extends Error {
@@ -31,10 +32,16 @@ function isApiErrorBody(value: unknown): value is ApiErrorBody {
   return typeof value === 'object' && value !== null && 'success' in value && 'message' in value;
 }
 
+/** A gateway answered but the API behind it did not (e.g. Cloudflare 521 "web server is down"). */
+function isGatewayStatus(status: number): boolean {
+  return status === 502 || status === 503 || status === 504 || (status >= 520 && status <= 530);
+}
+
 function kindFor(status: number, messages: string[]): ApiErrorKind {
   if (status === 401) return 'unauthorized';
   if (status === 403) return 'forbidden';
   if (status === 404 || messages.some((m) => /notfound$/i.test(m))) return 'notFound';
+  if (isGatewayStatus(status)) return 'unavailable';
   if (status >= 500) return 'server';
   if (messages.length > 1 || messages.some((m) => m.includes(' '))) return 'validation';
   return 'business';

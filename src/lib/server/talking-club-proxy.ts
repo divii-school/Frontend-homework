@@ -56,10 +56,13 @@ export function clearRefreshCookie(res: NextResponse): void {
   res.cookies.set(REMEMBER_COOKIE, '', { httpOnly: true, path: '/api/auth', maxAge: 0 });
 }
 
-/** Body the browser gets when the API cannot be reached at all. */
+/**
+ * Body the browser gets when our server cannot reach the API at all. The user's own network is fine
+ * (they reached us), so the message is "the server is not responding", not "check your network".
+ */
 export function upstreamUnreachable(): NextResponse {
   return NextResponse.json(
-    { success: false, message: 'networkError', data: null, errors: null, statusCode: 502 },
+    { success: false, message: 'serverUnavailable', data: null, errors: null, statusCode: 502 },
     { status: 502 },
   );
 }

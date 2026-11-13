@@ -65,8 +65,11 @@ export function LoginForm() {
     } catch (error) {
       const message = errorMessage(error);
       const key = error instanceof ApiError ? error.apiMessages[0] : undefined;
-      // Unknown ID belongs under the ID field; everything else under the password.
-      setError(key === 'invalidCredentials' ? 'loginId' : 'password', { message });
+      // Figma: unknown ID under the ID, wrong password under the password.
+      // Anything else (server down, network) is not the user's typing, so no field is marked wrong.
+      if (key === 'invalidCredentials') setError('loginId', { message });
+      else if (key === 'invalidPassword') setError('password', { message });
+      else setError('root.server', { message });
     }
   });
 
@@ -152,6 +155,12 @@ export function LoginForm() {
             자동 로그인
           </label>
         </div>
+
+        {errors.root?.server && (
+          <p className={styles['login-alert']} role="alert">
+            {errors.root.server.message}
+          </p>
+        )}
 
         <button type="submit" className={styles['login-button']} disabled={!canSubmit} aria-busy={isSubmitting}>
           {isSubmitting ? '로그인 중…' : '로그인'}

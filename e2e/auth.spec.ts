@@ -52,7 +52,19 @@ test.describe('로그인 (logged out)', () => {
     await page.getByPlaceholder('아이디').fill('someone');
     await page.getByPlaceholder('비밀번호').fill('something');
     await page.getByRole('button', { name: '로그인', exact: true }).click();
-    await expect(page.locator('#password-error')).toContainText('네트워크');
+    await expect(page.getByRole('alert').filter({ hasText: '네트워크' })).toBeVisible();
+    await expect(page.getByPlaceholder('비밀번호')).not.toHaveAttribute('aria-invalid', 'true');
+  });
+
+  test('API server down (Cloudflare 521) says the server is not responding, no field marked wrong', async ({ page }) => {
+    await page.route('**/api/auth/login', (route) => route.fulfill({ status: 521, contentType: 'text/html', body: 'error code: 521' }));
+    await page.goto('/login');
+    await page.getByPlaceholder('아이디').fill('someone');
+    await page.getByPlaceholder('비밀번호').fill('something');
+    await page.getByRole('button', { name: '로그인', exact: true }).click();
+    await expect(page.getByRole('alert').filter({ hasText: '서버가 응답하지 않습니다. 잠시 후 다시 시도해 주세요.' })).toBeVisible();
+    await expect(page.getByPlaceholder('아이디')).toHaveValue('someone');
+    await expect(page.getByPlaceholder('비밀번호')).not.toHaveAttribute('aria-invalid', 'true');
   });
 });
 

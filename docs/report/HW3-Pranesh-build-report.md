@@ -59,8 +59,8 @@ five people share this server. My own test category branch: 학원 Shop › `HW3
 
 ## 7. What to test
 
-Full list with steps and expected results: `docs/qa/HW3-Pranesh-unit-test-cases.csv` (82 cases, 44 positive /
-38 negative, each mapped to its Playwright test). Main points:
+Full list with steps and expected results: `docs/qa/HW3-Pranesh-unit-test-cases.csv` (83 cases, 44 positive /
+39 negative, each mapped to its Playwright test). Main points:
 
 1. Login: empty, unknown ID, wrong password, network down; 자동 로그인 on/off.
 2. Open a page while logged out → login → back to the same URL (with its search).

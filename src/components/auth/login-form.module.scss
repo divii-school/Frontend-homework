@@ -49,6 +49,16 @@
   font-size: $font-size-sm;
 }
 
+// Not about the ID or password (server down, network): one box, no field marked wrong.
+.login-alert {
+  margin: 0;
+  padding: $space-2 $space-3;
+  border-radius: $radius-sm;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-size: $font-size-sm;
+}
+
 .login-fields {
   display: flex;
   flex-direction: column;

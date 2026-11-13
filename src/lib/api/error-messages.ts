@@ -12,6 +12,7 @@ const MESSAGES: Record<string, string> = {
   productNotFound: '상품을 찾을 수 없습니다.', // ✔
   maximumCategoryLimitReached: '대분류 개수가 최대치에 도달하여 새 대분류를 등록할 수 없습니다.', // ✔ isCreatable=false
   networkError: '서버에 연결할 수 없습니다. 네트워크 상태를 확인한 후 다시 시도해 주세요.',
+  serverUnavailable: '서버가 응답하지 않습니다. 잠시 후 다시 시도해 주세요.',
   invalidFileType: 'JPG, PNG, WEBP 이미지만 업로드할 수 있습니다.',
   fileTooLarge: '이미지 용량이 너무 큽니다.',
   fileRequired: '업로드할 파일을 선택해 주세요.',
@@ -26,6 +27,7 @@ const BY_KIND: Record<ApiError['kind'], string> = {
   notFound: '요청한 정보를 찾을 수 없습니다.',
   validation: '입력한 내용을 다시 확인해 주세요.',
   business: '요청을 처리하지 못했습니다.',
+  unavailable: MESSAGES.serverUnavailable,
   server: '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
 };
 

@@ -44,7 +44,17 @@ describe('toApiError (real QA response shapes)', () => {
   });
 
   it('a non-JSON error body still gives a status-based message', () => {
-    expect(toApiError(axiosFailure(502, null)).kind).toBe('server');
+    expect(toApiError(axiosFailure(500, null)).kind).toBe('server');
+  });
+
+  it.each([502, 503, 504, 521, 522, 530])('gateway %s (API server down) → "서버가 응답하지 않습니다"', (status) => {
+    const error = toApiError(axiosFailure(status, null));
+    expect(error.kind).toBe('unavailable');
+    expect(errorMessage(error)).toBe('서버가 응답하지 않습니다. 잠시 후 다시 시도해 주세요.');
+  });
+
+  it('our proxy reporting the API unreachable reads the same', () => {
+    expect(errorMessage(toApiError(axiosFailure(502, 'serverUnavailable')))).toBe('서버가 응답하지 않습니다. 잠시 후 다시 시도해 주세요.');
   });
 
   it('an unknown business key is shown with the key, never silently dropped', () => {
