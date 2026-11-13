@@ -13,7 +13,8 @@
     "test:e2e:mutation": "playwright test --project=mutation",
     "test:e2e:ui": "playwright test --project=readonly --ui",
     "test:e2e:headed": "playwright test --project=readonly --headed",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "screenshots": "playwright test --project=screenshots"
   },
   "dependencies": {
     "@hookform/resolvers": "^7.0.6",

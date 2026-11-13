@@ -12,6 +12,7 @@ export const AUTH_FILE = 'e2e/.auth/admin.json';
  *  setup     – logs in once through the real login screen and saves the session.
  *  readonly  – default (`npm run test:e2e`): reads data, never changes it.
  *  mutation  – `npm run test:e2e:mutation`: creates/edits/deletes ONLY HW3-Pranesh-* records, then cleans up.
+ *  screenshots – `npm run screenshots`: read-only, every screen at 1920/1440/1366/768/375, light and dark.
  */
 export default defineConfig({
   testDir: 'e2e',
@@ -34,6 +35,12 @@ export default defineConfig({
       testIgnore: /\.mutation\.spec\.ts$/,
       dependencies: ['setup'],
       use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 }, storageState: AUTH_FILE },
+    },
+    {
+      name: 'screenshots',
+      testMatch: /.capture.ts$/,
+      dependencies: ['setup'],
+      use: { ...devices['Desktop Chrome'], storageState: AUTH_FILE },
     },
     {
       name: 'mutation',
