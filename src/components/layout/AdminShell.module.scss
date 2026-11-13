@@ -241,7 +241,7 @@ $drawer-breakpoint: 1024px;
     position: fixed;
     inset: 0;
     z-index: 40;
-    background: rgb(0 0 0 / 40%);
+    background: var(--color-overlay);
   }
 
   .header {

@@ -86,6 +86,12 @@
   }
 }
 
+// Figma: "registration" 120×40 at the right end of the toolbar.
+.register {
+  min-width: 120px;
+  margin-left: auto;
+}
+
 .panel {
   overflow: hidden;
   border: 1px solid var(--color-border-subtle);

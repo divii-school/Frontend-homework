@@ -6,8 +6,11 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { IconSearch16 } from "@/components/icons";
 import { useProductCategories } from "@/hooks/useProductCategories";
 import { errorMessage } from "@/lib/errors";
-import type { CategoryNode } from "@/types/category";
-import { CategoryTree } from "./CategoryTree";
+import type { CategoryLevel, CategoryNode } from "@/types/category";
+import btn from "@/components/ui/Button.module.scss";
+import { CategoryTree, type CategoryTreeActions } from "./CategoryTree";
+import { CategoryFormDialog, type CategoryFormTarget } from "./CategoryFormDialog";
+import { DeleteCategoryDialog } from "./DeleteCategoryDialog";
 import styles from "./CategoryManagement.module.scss";
 
 function collectExpandableIds(nodes: CategoryNode[], into = new Set<number>()): Set<number> {
@@ -30,6 +33,29 @@ export function CategoryManagement() {
   const [draft, setDraft] = useState(search);
   // Rows the user collapsed; everything else is open (the design shows the tree expanded).
   const [collapsed, setCollapsed] = useState<ReadonlySet<number>>(new Set());
+  const [formTarget, setFormTarget] = useState<CategoryFormTarget | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<CategoryNode | null>(null);
+
+  const actions: CategoryTreeActions = {
+    onAddChild: (parent) => {
+      // Make sure the new child is visible once it appears.
+      setCollapsed((prev) => {
+        const next = new Set(prev);
+        next.delete(parent.id);
+        return next;
+      });
+      setFormTarget({ mode: "create", level: (parent.level + 1) as CategoryLevel, parent });
+    },
+    onEdit: (node) => setFormTarget({ mode: "edit", node }),
+    onDelete: (node) => setDeleteTarget(node),
+  };
+
+  const formKey =
+    formTarget?.mode === "edit"
+      ? `edit-${formTarget.node.level}-${formTarget.node.id}`
+      : formTarget
+        ? `create-${formTarget.level}-${formTarget.parent?.id ?? "root"}`
+        : "";
 
   const query = useProductCategories(search);
   const nodes = useMemo(() => query.data ?? [], [query.data]);
@@ -87,6 +113,14 @@ export function CategoryManagement() {
               Fold all
             </button>
           </div>
+
+          <button
+            type="button"
+            className={`${btn.button} ${btn.primary} ${styles.register}`}
+            onClick={() => setFormTarget({ mode: "create", level: 1, parent: null })}
+          >
+            Registration
+          </button>
         </div>
 
         <section className={styles.panel} aria-label="Category tree" aria-busy={query.isFetching}>
@@ -109,10 +143,15 @@ export function CategoryManagement() {
               <p>{search ? "No search results found." : "No categories yet."}</p>
             </div>
           ) : (
-            <CategoryTree nodes={nodes} expanded={expanded} onToggle={toggle} />
+            <CategoryTree nodes={nodes} expanded={expanded} onToggle={toggle} actions={actions} />
           )}
         </section>
       </div>
+
+      {formTarget && <CategoryFormDialog key={formKey} target={formTarget} onClose={() => setFormTarget(null)} />}
+      {deleteTarget && (
+        <DeleteCategoryDialog key={`${deleteTarget.level}-${deleteTarget.id}`} node={deleteTarget} onClose={() => setDeleteTarget(null)} />
+      )}
     </>
   );
 }

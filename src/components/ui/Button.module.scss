@@ -1,0 +1,66 @@
+// Shared buttons. Primary = Figma "buttons" (#ef325b, 40px, r4); outline = 8.2.0 "Expand all".
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 80px;
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.primary {
+  background: var(--color-brand);
+  color: var(--color-brand-contrast);
+
+  &:hover:not(:disabled) {
+    background: var(--color-brand-hover);
+  }
+
+  &:disabled {
+    background: var(--color-disabled-bg);
+    color: var(--color-disabled-text);
+  }
+}
+
+.outline {
+  border-color: var(--color-border-subtle);
+  background: var(--color-surface);
+  color: var(--color-button-text);
+  font-weight: 500;
+
+  &:hover:not(:disabled) {
+    background: var(--color-surface-muted);
+  }
+
+  &:disabled {
+    color: var(--color-text-tertiary);
+  }
+}
+
+.danger {
+  background: var(--color-danger);
+  color: var(--color-brand-contrast);
+
+  &:hover:not(:disabled) {
+    filter: brightness(0.94);
+  }
+
+  &:disabled {
+    background: var(--color-disabled-bg);
+    color: var(--color-disabled-text);
+  }
+}

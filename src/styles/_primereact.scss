@@ -1,0 +1,127 @@
+// PrimeReact 10 ships structure only (primereact.min.css, no theme). These rules give
+// Dialog and Toast the Talking Club look through our tokens, so light/dark both work.
+
+.p-dialog-mask.p-component-overlay {
+  background: var(--color-overlay);
+}
+
+.p-dialog {
+  width: min(440px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  border: 1px solid var(--color-border-card);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-dialog);
+
+  .p-dialog-header {
+    padding: 20px 24px 8px;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    background: var(--color-surface);
+  }
+
+  .p-dialog-title {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 26px;
+  }
+
+  .p-dialog-header-icon {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--color-surface-muted);
+      color: var(--color-text);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-focus-ring);
+      outline-offset: 2px;
+    }
+  }
+
+  .p-dialog-content {
+    padding: 8px 24px 16px;
+    background: var(--color-surface);
+    font-size: 14px;
+    line-height: 21px;
+  }
+
+  .p-dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-2);
+    padding: 8px 24px 20px;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    background: var(--color-surface);
+  }
+}
+
+.p-toast {
+  width: min(360px, calc(100vw - 32px));
+  opacity: 1;
+
+  .p-toast-message {
+    margin-bottom: var(--space-2);
+    border: 1px solid var(--color-border-card);
+    border-left: 4px solid var(--color-text-muted);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: var(--shadow-toast);
+  }
+
+  .p-toast-message-success {
+    border-left-color: var(--color-success);
+  }
+
+  .p-toast-message-error {
+    border-left-color: var(--color-danger);
+  }
+
+  .p-toast-message-content {
+    align-items: center;
+    gap: var(--space-3);
+    padding: 12px 12px 12px 16px;
+  }
+
+  .p-toast-message-icon {
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .p-toast-message-success .p-toast-message-icon {
+    color: var(--color-success);
+  }
+
+  .p-toast-message-error .p-toast-message-icon {
+    color: var(--color-danger);
+  }
+
+  .p-toast-detail {
+    margin: 0;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .p-toast-summary:empty {
+    display: none;
+  }
+
+  .p-toast-icon-close {
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+  }
+}

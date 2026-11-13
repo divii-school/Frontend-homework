@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { apiRequest } from "@/services/http";
+import { apiRequest, request } from "@/services/http";
 import type { CategoryLevel, CategoryNode } from "@/types/category";
 
 /*
@@ -8,6 +8,16 @@ import type { CategoryLevel, CategoryNode } from "@/types/category";
  * The child-list key names below are a best guess; confirm against a real response and drop the extras.
  */
 const CHILD_KEYS = ["subCategories", "subcategories", "childCategories", "children", "subSubCategories"] as const;
+
+interface RawNode {
+  id: number;
+  name: string;
+  subCategories?: RawNode[];
+  subcategories?: RawNode[];
+  childCategories?: RawNode[];
+  children?: RawNode[];
+  subSubCategories?: RawNode[];
+}
 
 const rawNodeSchema: z.ZodType<RawNode> = z.lazy(() =>
   z
@@ -23,26 +33,37 @@ const rawNodeSchema: z.ZodType<RawNode> = z.lazy(() =>
     .passthrough(),
 );
 
-interface RawNode {
-  id: number;
-  name: string;
-  subCategories?: RawNode[];
-  subcategories?: RawNode[];
-  childCategories?: RawNode[];
-  children?: RawNode[];
-  subSubCategories?: RawNode[];
-}
-
 const listSchema = z.union([z.array(rawNodeSchema), z.object({ list: z.array(rawNodeSchema) }).transform((d) => d.list)]);
 
-function toNode(raw: RawNode, level: CategoryLevel): CategoryNode {
+function toNode(raw: RawNode, level: CategoryLevel, parentId: number | null): CategoryNode {
   const kids = CHILD_KEYS.map((key) => raw[key]).find((value) => Array.isArray(value)) ?? [];
   return {
     id: raw.id,
     name: raw.name,
     level,
-    children: level < 3 ? kids.map((kid) => toNode(kid, (level + 1) as CategoryLevel)) : [],
+    parentId,
+    children: level < 3 ? kids.map((kid) => toNode(kid, (level + 1) as CategoryLevel, raw.id)) : [],
   };
+}
+
+/** Each level has its own endpoints; the parent id goes in a level-specific field. */
+const ENDPOINTS: Record<CategoryLevel, { base: string; parentField: "categoryId" | "subCategoryId" | null }> = {
+  1: { base: "/api/v1/product-category", parentField: null },
+  2: { base: "/api/v1/product-category/subcategory", parentField: "categoryId" },
+  3: { base: "/api/v1/product-category/subcategory-child", parentField: "subCategoryId" },
+};
+
+function bodyFor(level: CategoryLevel, name: string, parentId: number | null): Record<string, string | number> {
+  const { parentField } = ENDPOINTS[level];
+  if (parentField === null) return { name };
+  if (parentId === null) throw new Error(`A level-${level} category needs a parent.`);
+  return { name, [parentField]: parentId };
+}
+
+export interface CategoryInput {
+  level: CategoryLevel;
+  name: string;
+  parentId: number | null;
 }
 
 export const productCategoryService = {
@@ -51,6 +72,18 @@ export const productCategoryService = {
       query: { search: search.trim() || undefined },
       signal,
     });
-    return listSchema.parse(data).map((node) => toNode(node, 1));
+    return listSchema.parse(data).map((node) => toNode(node, 1, null));
+  },
+
+  async create({ level, name, parentId }: CategoryInput): Promise<void> {
+    await request<unknown>(`${ENDPOINTS[level].base}/add`, { method: "POST", body: bodyFor(level, name.trim(), parentId) });
+  },
+
+  async update(id: number, { level, name, parentId }: CategoryInput): Promise<void> {
+    await request<unknown>(`${ENDPOINTS[level].base}/edit/${id}`, { method: "PUT", body: bodyFor(level, name.trim(), parentId) });
+  },
+
+  async remove(id: number, level: CategoryLevel): Promise<void> {
+    await request<unknown>(`${ENDPOINTS[level].base}/delete/${id}`, { method: "DELETE" });
   },
 };

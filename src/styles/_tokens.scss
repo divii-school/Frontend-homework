@@ -48,6 +48,11 @@
   --color-accent-contrast: #ffffff;
   --color-row-hover: #fafafb;
 
+  --color-success: #2f9e44;
+  --color-overlay: rgb(0 0 0 / 45%);
+  --shadow-dialog: 0 12px 32px rgb(0 0 0 / 20%);
+  --shadow-toast: 0 6px 20px rgb(0 0 0 / 15%);
+
   --shadow-card: 0 4px 4px rgb(0 0 0 / 25%);
   --logo-filter: none;
   --logo-blend: normal;
@@ -105,6 +110,11 @@
   --color-accent: #9f6bff;
   --color-accent-contrast: #ffffff;
   --color-row-hover: #222226;
+
+  --color-success: #51cf66;
+  --color-overlay: rgb(0 0 0 / 65%);
+  --shadow-dialog: 0 12px 32px rgb(0 0 0 / 60%);
+  --shadow-toast: 0 6px 20px rgb(0 0 0 / 50%);
 
   --shadow-card: 0 4px 12px rgb(0 0 0 / 50%);
   // The Figma logo is a dark-text PNG on white: invert lightness but keep the hues,

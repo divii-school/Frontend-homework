@@ -1,0 +1,171 @@
+import { test, expect, type Page, type Request } from "@playwright/test";
+
+// Category add / edit / delete UI, with the API mocked by an in-memory tree (no QA data is touched).
+// The real-API version will be categories.mutation.spec.ts (HW3-Sandip-* records) once the QA server is back.
+
+interface Node {
+  id: number;
+  name: string;
+  subCategories?: Node[];
+  childCategories?: Node[];
+}
+
+function seed(): Node[] {
+  return [
+    {
+      id: 67,
+      name: "Main textbook",
+      subCategories: [{ id: 72, name: "Phonics & Alphabet", childCategories: [{ id: 536, name: "ACE Alphabet" }] }],
+    },
+    { id: 74, name: "Main", subCategories: [] },
+  ];
+}
+
+const ok = (data: unknown = null) => JSON.stringify({ success: true, message: "ok", data, errors: null, statusCode: 200 });
+
+async function setup(page: Page, opts: { failWrites?: boolean } = {}) {
+  const tree = seed();
+  const calls: { method: string; path: string; body: unknown }[] = [];
+  let nextId = 900;
+
+  const findSub = (id: number) => tree.flatMap((m) => m.subCategories ?? []).find((s) => s.id === id);
+
+  await page.addInitScript(() => {
+    sessionStorage.setItem("tc-admin-auth", JSON.stringify({ accessToken: "test", refreshToken: "test" }));
+  });
+
+  await page.route("**/api/v1/product-category/**", async (route) => {
+    const req: Request = route.request();
+    const url = new URL(req.url());
+    const path = url.pathname.replace("/api/v1/product-category", "");
+    const body = req.postData() ? JSON.parse(req.postData() as string) : null;
+    if (req.method() !== "GET") calls.push({ method: req.method(), path, body });
+
+    if (req.method() === "GET" && path === "/list") {
+      return route.fulfill({ status: 200, contentType: "application/json", body: ok(tree) });
+    }
+    if (opts.failWrites) {
+      return route.fulfill({
+        status: 400,
+        contentType: "application/json",
+        body: JSON.stringify({ success: false, message: "Category name already exists", data: null, errors: null, statusCode: 400 }),
+      });
+    }
+    if (path === "/add") tree.push({ id: nextId++, name: body.name, subCategories: [] });
+    if (path === "/subcategory/add") tree.find((m) => m.id === body.categoryId)?.subCategories?.push({ id: nextId++, name: body.name, childCategories: [] });
+    if (path === "/subcategory-child/add") findSub(body.subCategoryId)?.childCategories?.push({ id: nextId++, name: body.name });
+    const edit = path.match(/^\/subcategory\/edit\/(\d+)$/);
+    if (edit) {
+      const sub = findSub(Number(edit[1]));
+      if (sub) sub.name = body.name;
+    }
+    const del = path.match(/^\/subcategory-child\/delete\/(\d+)$/);
+    if (del) for (const sub of tree.flatMap((m) => m.subCategories ?? [])) sub.childCategories = sub.childCategories?.filter((c) => c.id !== Number(del[1]));
+    return route.fulfill({ status: 200, contentType: "application/json", body: ok() });
+  });
+
+  await page.goto("/shopping/categories");
+  await expect(inTree(page, "Main textbook")).toBeVisible();
+  return { calls };
+}
+
+const dialog = (page: Page) => page.getByRole("dialog");
+const confirmDialog = (page: Page) => page.getByRole("alertdialog");
+const inTree = (page: Page, text: string) => page.getByRole("region", { name: "Category tree" }).getByText(text, { exact: true });
+
+test.describe("product category add / edit / delete (mocked API)", () => {
+  test("register a main category: name required, trimmed, then added with a toast", async ({ page }) => {
+    const { calls } = await setup(page);
+    await page.getByRole("button", { name: "Registration" }).click();
+    await expect(dialog(page).getByText("Add main category")).toBeVisible();
+    await expect(dialog(page).getByLabel("Category name")).toBeFocused();
+
+    // Empty / spaces only → validation message, no request.
+    await dialog(page).getByLabel("Category name").fill("   ");
+    await dialog(page).getByRole("button", { name: "Add" }).click();
+    await expect(dialog(page).getByRole("alert")).toHaveText("Please enter a category name.");
+    expect(calls).toHaveLength(0);
+
+    await dialog(page).getByLabel("Category name").fill("  HW3-Sandip-Books  ");
+    await dialog(page).getByRole("button", { name: "Add" }).click();
+
+    await expect(dialog(page)).toBeHidden();
+    await expect(page.getByText("“HW3-Sandip-Books” was added.")).toBeVisible();
+    await expect(inTree(page, "HW3-Sandip-Books")).toBeVisible();
+    expect(calls).toEqual([{ method: "POST", path: "/add", body: { name: "HW3-Sandip-Books" } }]);
+  });
+
+  test("add a subcategory and a child send the parent id in the right field", async ({ page }) => {
+    const { calls } = await setup(page);
+
+    await page.getByRole("button", { name: "Subcategory under Main", exact: true }).click();
+    await expect(dialog(page).getByText("Parent:")).toContainText("[74] Main");
+    await dialog(page).getByLabel("Category name").fill("HW3-Sandip-Sub");
+    await dialog(page).getByRole("button", { name: "Add" }).click();
+    await expect(dialog(page)).toBeHidden();
+
+    await page.getByRole("button", { name: "Subcategory under Phonics & Alphabet" }).click();
+    await expect(dialog(page).getByText("Add child category")).toBeVisible();
+    await dialog(page).getByLabel("Category name").fill("HW3-Sandip-Child");
+    await dialog(page).getByRole("button", { name: "Add" }).click();
+    await expect(dialog(page)).toBeHidden();
+
+    expect(calls).toEqual([
+      { method: "POST", path: "/subcategory/add", body: { name: "HW3-Sandip-Sub", categoryId: 74 } },
+      { method: "POST", path: "/subcategory-child/add", body: { name: "HW3-Sandip-Child", subCategoryId: 72 } },
+    ]);
+    await expect(inTree(page, "HW3-Sandip-Child")).toBeVisible();
+  });
+
+  test("edit keeps the parent id; Save stays disabled until the name changes", async ({ page }) => {
+    const { calls } = await setup(page);
+    await page.getByRole("button", { name: "Edit Phonics & Alphabet" }).click();
+
+    const name = dialog(page).getByLabel("Category name");
+    await expect(name).toHaveValue("Phonics & Alphabet");
+    await expect(dialog(page).getByRole("button", { name: "Save" })).toBeDisabled();
+
+    await name.fill("HW3-Sandip-Phonics");
+    await dialog(page).getByRole("button", { name: "Save" }).click();
+    await expect(dialog(page)).toBeHidden();
+    await expect(inTree(page, "HW3-Sandip-Phonics")).toBeVisible();
+    expect(calls).toEqual([{ method: "PUT", path: "/subcategory/edit/72", body: { name: "HW3-Sandip-Phonics", categoryId: 67 } }]);
+  });
+
+  test("API error keeps the dialog open with the typed name", async ({ page }) => {
+    await setup(page, { failWrites: true });
+    await page.getByRole("button", { name: "Registration" }).click();
+    await dialog(page).getByLabel("Category name").fill("HW3-Sandip-Dup");
+    await dialog(page).getByRole("button", { name: "Add" }).click();
+
+    await expect(dialog(page).getByRole("alert")).toHaveText("Category name already exists");
+    await expect(dialog(page).getByLabel("Category name")).toHaveValue("HW3-Sandip-Dup");
+  });
+
+  test("delete: blocked while it has subcategories; a leaf is deleted after confirm", async ({ page }) => {
+    const { calls } = await setup(page);
+
+    await page.getByRole("button", { name: "Delete Main textbook" }).click();
+    await expect(confirmDialog(page).getByText("Can't delete this category")).toBeVisible();
+    await expect(confirmDialog(page)).toContainText("It still has 1 subcategory");
+    await confirmDialog(page).getByRole("button", { name: "OK" }).click();
+    expect(calls).toHaveLength(0);
+
+    await page.getByRole("button", { name: "Delete ACE Alphabet" }).click();
+    await expect(confirmDialog(page).getByText("Delete category?")).toBeVisible();
+    await expect(confirmDialog(page).getByRole("button", { name: "Cancel" })).toBeFocused();
+    await confirmDialog(page).getByRole("button", { name: "Delete" }).click();
+    await expect(confirmDialog(page)).toBeHidden();
+    await expect(inTree(page, "ACE Alphabet")).toBeHidden();
+    expect(calls).toEqual([{ method: "DELETE", path: "/subcategory-child/delete/536", body: null }]);
+  });
+
+  test("Escape closes the dialog without saving", async ({ page }) => {
+    const { calls } = await setup(page);
+    await page.getByRole("button", { name: "Registration" }).click();
+    await dialog(page).getByLabel("Category name").fill("HW3-Sandip-Esc");
+    await page.keyboard.press("Escape");
+    await expect(dialog(page)).toBeHidden();
+    expect(calls).toHaveLength(0);
+  });
+});

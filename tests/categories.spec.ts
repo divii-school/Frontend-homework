@@ -42,24 +42,24 @@ test.describe("product category management", () => {
   test("renders the 3-level tree expanded, with codes and child counts", async ({ page }) => {
     await openWithMock(page, () => ({ status: 200, data: TREE }));
     await expect(page.getByRole("heading", { name: "Product Category Management" })).toBeVisible();
-    await expect(tree(page).getByText("ACE Alphabet")).toBeVisible();
-    await expect(tree(page).getByText("[536]")).toBeVisible();
-    await expect(tree(page).getByText("(2 subcategories)").first()).toBeVisible();
+    await expect(tree(page).getByText("ACE Alphabet", { exact: true })).toBeVisible();
+    await expect(tree(page).getByText("[536]", { exact: true })).toBeVisible();
+    await expect(tree(page).getByText("(2 subcategories)", { exact: true }).first()).toBeVisible();
     // A subcategory with no children shows no count.
-    await expect(tree(page).getByText("(0 subcategories)")).toHaveCount(0);
+    await expect(tree(page).getByText("(0 subcategories)", { exact: true })).toHaveCount(0);
   });
 
   test("Fold all / Expand all and a single toggle", async ({ page }) => {
     await openWithMock(page, () => ({ status: 200, data: TREE }));
     await page.getByRole("button", { name: "Fold all" }).click();
-    await expect(tree(page).getByText("Phonics & Alphabet")).toBeHidden();
+    await expect(tree(page).getByText("Phonics & Alphabet", { exact: true })).toBeHidden();
 
     await page.getByRole("button", { name: "Expand Main textbook" }).click();
-    await expect(tree(page).getByText("Phonics & Alphabet")).toBeVisible();
-    await expect(tree(page).getByText("ACE Alphabet")).toBeHidden();
+    await expect(tree(page).getByText("Phonics & Alphabet", { exact: true })).toBeVisible();
+    await expect(tree(page).getByText("ACE Alphabet", { exact: true })).toBeHidden();
 
     await page.getByRole("button", { name: "Expand all" }).click();
-    await expect(tree(page).getByText("ACE Alphabet")).toBeVisible();
+    await expect(tree(page).getByText("ACE Alphabet", { exact: true })).toBeVisible();
   });
 
   test("search goes to the server, lives in the URL and survives a reload", async ({ page }) => {
@@ -72,18 +72,18 @@ test.describe("product category management", () => {
     await page.keyboard.press("Enter");
 
     await expect(page).toHaveURL("/shopping/categories?search=Main");
-    await expect(tree(page).getByText("Booster")).toBeVisible();
-    await expect(tree(page).getByText("Main textbook")).toBeHidden();
+    await expect(tree(page).getByText("Booster", { exact: true })).toBeVisible();
+    await expect(tree(page).getByText("Main textbook", { exact: true })).toBeHidden();
     expect(seen).toContain("Main");
 
     await page.reload();
     await expect(page.getByPlaceholder("Category search...")).toHaveValue("Main");
-    await expect(tree(page).getByText("Booster")).toBeVisible();
+    await expect(tree(page).getByText("Booster", { exact: true })).toBeVisible();
   });
 
   test("empty search result message", async ({ page }) => {
     await openWithMock(page, () => ({ status: 200, data: [] }), "/shopping/categories?search=nothing");
-    await expect(tree(page).getByText("No search results found.")).toBeVisible();
+    await expect(tree(page).getByText("No search results found.", { exact: true })).toBeVisible();
   });
 
   test("server error shows a message and Try again", async ({ page }) => {
@@ -93,6 +93,6 @@ test.describe("product category management", () => {
     await expect(tree(page).getByRole("alert")).toContainText("Something went wrong on the server", { timeout: 10_000 });
     failing = false;
     await page.getByRole("button", { name: "Try again" }).click();
-    await expect(tree(page).getByText("Main textbook")).toBeVisible();
+    await expect(tree(page).getByText("Main textbook", { exact: true })).toBeVisible();
   });
 });
