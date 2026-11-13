@@ -12,6 +12,16 @@ export function useProductList(query: ProductListQuery) {
   });
 }
 
+/** Products in the same 소분류 (details page tab); only runs when the tab is open. */
+export function useProductsInChildCategory(childCategoryId: number | undefined, page: number) {
+  return useQuery({
+    queryKey: queryKeys.products.byChildCategory(childCategoryId ?? 0, page),
+    queryFn: () => ProductService.byChildCategory(childCategoryId as number, page, 10),
+    enabled: Boolean(childCategoryId),
+    placeholderData: keepPreviousData,
+  });
+}
+
 export function useProductDetails(id: number) {
   return useQuery({
     queryKey: queryKeys.products.details(id),

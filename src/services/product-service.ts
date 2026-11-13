@@ -31,6 +31,14 @@ export const ProductService = {
     return { items: data.data, totalRecords: data.totalRecords, totalPage: data.totalPage, page: data.page };
   },
 
+  /** GET /products/get-products-by-category → products in one 소분류 (details page tab). */
+  async byChildCategory(childCategoryId: number, page: number, limit: number): Promise<ProductPage> {
+    const { data } = await httpClient.get<ApiPagedResponse<ProductListItem>>('/products/get-products-by-category', {
+      params: { childCategoryId, page, limit },
+    });
+    return { items: data.data, totalRecords: data.totalRecords, totalPage: data.totalPage, page: data.page };
+  },
+
   async details(id: number): Promise<ProductDetails> {
     const { data } = await httpClient.get<ApiResponse<ProductDetails>>(`/products/details/${id}`);
     return data.data;

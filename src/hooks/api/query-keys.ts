@@ -17,6 +17,7 @@ export const queryKeys = {
     all: ['products'] as const,
     list: (query: ProductListQuery) => ['products', 'list', query] as const,
     details: (id: number) => ['products', 'details', id] as const,
+    byChildCategory: (childCategoryId: number, page: number) => ['products', 'by-category', childCategoryId, page] as const,
     generatedCode: () => ['products', 'generated-code'] as const,
   },
 };
