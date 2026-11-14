@@ -10,7 +10,7 @@ Items marked **[fill at hand-over]** are written in only once the final build is
 |---|---|
 | Branch | `hw3/pranesh` (from `main`) in `divii-school/Frontend-homework` |
 | Commit | **[fill at hand-over]** — `git log -1 --oneline` on the pushed branch |
-| Link (Vercel) | **[fill at hand-over]** — frontend only, calls the Talking Club **QA** API |
+| Link (Vercel) | https://hw3-pranesh-talking-club-admin.vercel.app — frontend only, calls the Talking Club **QA** API (deployed with the Vercel CLI from this branch; no Vercel login needed) |
 | Date | **[fill at hand-over]** (target: 2026-11-17) |
 | API | `NEXT_PUBLIC_API_BASE_URL` = QA server. Never production. |
 
