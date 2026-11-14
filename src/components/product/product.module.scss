@@ -1,0 +1,262 @@
+@use 'tokens' as *;
+
+// Figma 8.1.0: content panel 1188 wide, search row 80px, table header on Primary 80 (pink tint).
+.product-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.panel {
+  margin: 0 $space-6 $space-6;
+  padding: $space-5;
+  background: var(--color-bg-surface);
+  border-radius: $radius-md;
+
+  @media (max-width: $bp-mobile) {
+    margin: 0 0 $space-4;
+    padding: $space-3;
+    border-radius: 0;
+  }
+}
+
+.register-link {
+  min-width: 120px;
+  height: $control-height;
+  justify-content: center;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  margin-bottom: $space-4;
+}
+
+.search {
+  display: flex;
+  flex: 1 1 420px;
+  max-width: 520px;
+  gap: $space-2;
+  align-items: center;
+
+  @media (max-width: $bp-mobile) {
+    flex-basis: 100%;
+    max-width: none;
+  }
+}
+
+.search-type {
+  width: 120px;
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  height: $control-height;
+  border-bottom: 1px solid var(--color-border-strong);
+
+  &:focus-within {
+    border-bottom-color: var(--color-primary);
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--color-text-strong);
+    font: inherit;
+    font-size: $font-size-sm;
+
+    &::placeholder {
+      color: var(--color-text-placeholder);
+    }
+  }
+}
+
+.search-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: $radius-sm;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-text-strong);
+  }
+
+  &:focus-visible {
+    @include focus-visible;
+  }
+}
+
+.toolbar-right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2;
+
+  @media (max-width: $bp-mobile) {
+    width: 100%;
+  }
+}
+
+.total {
+  margin: 0 0 0 $space-2;
+  color: var(--color-text-strong);
+  font-size: $font-size-sm;
+  white-space: nowrap;
+}
+
+// The table scrolls inside its own box; the page itself never scrolls sideways.
+.table-wrap {
+  overflow-x: auto;
+  border-top: 1px solid var(--color-border);
+}
+
+.table {
+  min-width: 860px;
+  font-size: $font-size-sm;
+
+  :global(.p-datatable-thead > tr > th) {
+    background: var(--color-primary-soft);
+    color: var(--color-text-strong);
+    font-weight: 600;
+    border-color: var(--color-border);
+    white-space: nowrap;
+  }
+
+  :global(.p-datatable-tbody > tr) {
+    background: var(--color-bg-surface);
+    color: var(--color-text-strong);
+  }
+
+  :global(.p-datatable-tbody > tr > td) {
+    border-color: var(--color-border);
+    vertical-align: middle;
+  }
+
+  :global(.p-datatable-tbody > tr.p-highlight) {
+    background: var(--color-primary-soft);
+    color: var(--color-text-strong);
+  }
+}
+
+.col-select {
+  width: 64px;
+}
+
+.col-thumb {
+  width: 88px;
+}
+
+.col-price,
+.col-date {
+  white-space: nowrap;
+}
+
+.thumb {
+  display: block;
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: $radius-sm;
+  background: var(--color-bg-subtle);
+}
+
+.thumb-empty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: $radius-sm;
+  background: var(--color-bg-subtle);
+  color: var(--color-text-placeholder);
+}
+
+.name-link {
+  color: var(--color-text-strong);
+  font-weight: 600;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+
+  &:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    @include focus-visible;
+  }
+}
+
+// Fixed width so 예 and 아니오 rows line up (the dropdown sizes to its label otherwise).
+.visibility {
+  width: 128px;
+}
+
+.paginator {
+  margin-top: $space-4;
+  background: transparent;
+
+  :global(.p-paginator-page),
+  :global(.p-paginator-next),
+  :global(.p-paginator-prev),
+  :global(.p-paginator-first),
+  :global(.p-paginator-last) {
+    color: var(--color-text);
+  }
+}
+
+.dialog {
+  width: min(440px, calc(100vw - #{$space-8}));
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-2;
+}
+
+.dialog-text {
+  margin: 0;
+  line-height: 22px;
+  color: var(--color-text-strong);
+}
+
+// Native checkboxes (accessible by default; PrimeReact's row checkbox failed axe).
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.check input,
+.row-check {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.table :global(.p-datatable-tbody > tr).is-selected {
+  background: var(--color-primary-soft);
+}

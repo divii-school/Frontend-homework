@@ -1,0 +1,388 @@
+@use 'tokens' as *;
+
+// Figma 8.1.1: a single 640px form column; here split into four steps.
+.product-form {
+  margin: 0 $space-6 $space-6;
+  padding: $space-6;
+  background: var(--color-bg-surface);
+  border-radius: $radius-md;
+
+  @media (max-width: $bp-mobile) {
+    margin: 0 0 $space-4;
+    padding: $space-4;
+    border-radius: 0;
+  }
+}
+
+.stepper {
+  display: flex;
+  gap: $space-2;
+  margin: 0 0 $space-6;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.stepper-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding-bottom: $space-3;
+  border-bottom: 3px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: $font-size-sm;
+  min-width: 0;
+
+  &.is-current {
+    border-bottom-color: var(--color-primary);
+    color: var(--color-text-strong);
+    font-weight: 700;
+  }
+
+  &.is-done {
+    border-bottom-color: var(--color-primary-hover);
+    color: var(--color-text);
+  }
+}
+
+.stepper-number {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: $radius-pill;
+  background: var(--color-bg-subtle);
+  font-size: $font-size-xs;
+
+  .is-current & {
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  .is-done & {
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+  }
+}
+
+.stepper-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-width: $bp-mobile) {
+    // Phone: numbers only, the title below names the step.
+    .stepper-item:not(.is-current) & {
+      display: none;
+    }
+  }
+}
+
+.step {
+  max-width: 720px;
+}
+
+.step-title {
+  margin: 0 0 $space-5;
+  font-size: $font-size-lg;
+  color: var(--color-text-strong);
+  outline: none;
+}
+
+.step-body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-4;
+
+  @media (max-width: $bp-mobile) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field-label {
+  font-size: $font-size-sm;
+  font-weight: 600;
+  color: var(--color-text-strong);
+}
+
+.required {
+  color: var(--color-danger);
+}
+
+.field-help {
+  margin: 0;
+  font-size: $font-size-xs;
+  line-height: 18px;
+  color: var(--color-text-muted);
+}
+
+.field-error {
+  margin: 0;
+  font-size: $font-size-xs;
+  line-height: 18px;
+  color: var(--color-danger);
+}
+
+.full-width {
+  width: 100%;
+
+  :global(.p-inputtext) {
+    width: 100%;
+  }
+}
+
+.submit-error {
+  margin: 0 0 $space-4;
+  padding: $space-3 $space-4;
+  border-radius: $radius-sm;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-size: $font-size-sm;
+  line-height: 20px;
+  white-space: pre-line;
+}
+
+.readonly-path {
+  margin: 0;
+  padding: $space-3 $space-4;
+  border-radius: $radius-sm;
+  background: var(--color-bg-subtle);
+  color: var(--color-text-strong);
+}
+
+// Images
+.uploader {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.image-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.image-item {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: $radius-sm;
+  background: var(--color-bg-subtle);
+  overflow: hidden;
+  color: var(--color-text-muted);
+
+  @media (max-width: $bp-mobile) {
+    width: calc(50% - #{$space-2});
+    height: auto;
+    aspect-ratio: 1;
+  }
+}
+
+.image-preview {
+  object-fit: cover;
+}
+
+.image-badge {
+  position: absolute;
+  left: $space-1;
+  top: $space-1;
+  padding: 0 6px;
+  border-radius: $radius-sm;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 11px;
+  line-height: 18px;
+}
+
+.image-remove {
+  position: absolute;
+  right: $space-1;
+  top: $space-1;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: $radius-pill;
+  background: var(--color-bg-surface);
+  color: var(--color-text-strong);
+  box-shadow: var(--shadow-popover);
+  cursor: pointer;
+
+  &:focus-visible {
+    @include focus-visible;
+  }
+}
+
+.uploader-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-3;
+}
+
+.add-file {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  height: $control-height;
+  padding: 0 $space-4;
+  border: 1px solid var(--color-border-strong);
+  border-radius: $radius-sm;
+  background: var(--color-bg-subtle);
+  color: var(--color-text-strong);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    @include focus-visible;
+  }
+}
+
+.upload-problems {
+  margin: 0;
+  padding-left: $space-5;
+  color: var(--color-danger);
+  font-size: $font-size-xs;
+  line-height: 18px;
+}
+
+.upload-notes {
+  margin: 0;
+  padding-left: $space-5;
+  color: var(--color-text-muted);
+  font-size: $font-size-xs;
+  line-height: 18px;
+}
+
+// Categories (three columns)
+.category-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $space-3;
+
+  @media (max-width: $bp-mobile) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.category-column {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: $radius-sm;
+
+  &.is-invalid {
+    border-color: var(--color-danger);
+  }
+
+  .field-error {
+    padding: 0 $space-3 $space-2;
+  }
+}
+
+.category-column-title {
+  width: 100%;
+  padding: $space-3;
+  background: var(--color-bg-subtle);
+  font-weight: 600;
+  color: var(--color-text-strong);
+}
+
+.category-options {
+  max-height: 220px;
+  overflow-y: auto;
+  padding: $space-1;
+}
+
+.category-option {
+  display: block;
+  padding: $space-2 $space-3;
+  border-radius: $radius-sm;
+  color: var(--color-text);
+  cursor: pointer;
+  overflow-wrap: anywhere;
+
+  &:hover {
+    background: var(--color-bg-subtle);
+  }
+
+  &.is-selected {
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+
+  &:focus-within {
+    @include focus-visible;
+  }
+}
+
+.column-state {
+  margin: 0;
+  padding: $space-3;
+  color: var(--color-text-muted);
+  font-size: $font-size-xs;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: $space-2;
+  margin-top: $space-8;
+  padding-top: $space-5;
+  border-top: 1px solid var(--color-border);
+}
+
+.form-actions-right {
+  display: flex;
+  gap: $space-2;
+}
+
+.dialog {
+  width: min(440px, calc(100vw - #{$space-8}));
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-2;
+}
+
+.dialog-text {
+  margin: 0;
+  line-height: 22px;
+  color: var(--color-text-strong);
+}
