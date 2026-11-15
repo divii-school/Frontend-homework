@@ -1,0 +1,154 @@
+// App frame: sidebar, top bar, main area. Below the tablet breakpoint the sidebar becomes a drawer.
+@use "variables" as *;
+@use "mixins" as *;
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-sidebar {
+  position: sticky;
+  top: 0;
+  flex: 0 0 $sidebar-width;
+  width: $sidebar-width;
+  height: 100vh;
+  padding: $space-5 $space-3;
+  background: token("white-b1");
+  border-right: $border-width solid token("grey-b4");
+  overflow-y: auto;
+
+  @include mq-down("tablet") {
+    position: fixed;
+    left: 0;
+    z-index: $z-sidebar;
+    transform: translateX(-100%);
+    transition: transform $transition-fast;
+    // A closed drawer must not be reachable with Tab
+    visibility: hidden;
+
+    &.app-sidebar-open {
+      transform: translateX(0);
+      visibility: visible;
+    }
+  }
+}
+
+.app-sidebar-logo {
+  display: block;
+  padding: 0 $space-2 $space-6;
+}
+
+.app-sidebar-group {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-3 $space-2;
+  color: token("pink-b1");
+  font-weight: $font-weight-bold;
+  border-left: $border-width-strong solid token("pink-b1");
+}
+
+.app-sidebar-empty {
+  padding: $space-3;
+  color: token("grey-b2");
+}
+
+.app-sidebar-list {
+  padding: $space-1 0;
+  background: token("grey-b5");
+  border-radius: $radius-md;
+}
+
+.app-sidebar-link {
+  display: block;
+  padding: $space-3 $space-4 $space-3 $space-8;
+  color: token("black-b2");
+  text-decoration: none;
+  border-radius: $radius-md;
+
+  &:hover {
+    background: token("grey-b6");
+  }
+}
+
+.app-sidebar-link-active {
+  background: token("pink-b3");
+  color: token("pink-b1");
+  font-weight: $font-weight-bold;
+}
+
+.app-shell-overlay {
+  display: none;
+
+  @include mq-down("tablet") {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: $z-overlay;
+    background: token("overlay-b1");
+    border: 0;
+  }
+}
+
+.app-shell-body {
+  flex: 1 1 auto;
+  // Without this a wide table would stretch the page instead of scrolling inside its own box
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-topbar {
+  position: sticky;
+  top: 0;
+  z-index: $z-topbar;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  min-height: $topbar-height;
+  padding: $space-2 $space-6;
+  background: token("white-b1");
+  border-bottom: $border-width solid token("grey-b4");
+
+  @include mq-down("mobile") {
+    padding: $space-2 $space-3;
+  }
+}
+
+.app-topbar-menu {
+  visibility: hidden;
+
+  @include mq-down("tablet") {
+    visibility: visible;
+  }
+}
+
+.app-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  min-width: 0;
+}
+
+.app-topbar-user {
+  color: token("black-b1");
+  font-weight: $font-weight-bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @include mq-down("xxs") {
+    display: none;
+  }
+}
+
+.app-main {
+  flex: 1 1 auto;
+  padding: $space-6 $space-8 $space-10;
+
+  @include mq-down("mobile") {
+    padding: $space-4 $space-3 $space-8;
+  }
+}

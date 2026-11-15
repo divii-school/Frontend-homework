@@ -1,0 +1,136 @@
+// ------------------------------------------------------------------
+// Design tokens for the Talking Club admin (shopping part).
+// Values are read from the live Talking Club QA admin, which is built from the same Figma file.
+//
+// Rules applied
+//  - WM | HTML development guideline: colour variables are "colour + code" ($pink-b1),
+//    class names are lowercase-with-hyphens, no hardcoded colours or sizes outside this file.
+//  - WM | Light/Dark Mode Color System: every [day] colour has exactly one [night] colour with
+//    the same name. The design has no dark frames, so the night palette is ours
+//    (docs/design-questions.md, Q2).
+// ------------------------------------------------------------------
+@use "sass:map";
+
+// ---- Colour palette [day] ------------------------------------------
+$colors-day: (
+  "pink-b1": #ef325b, // primary: buttons, active menu, active page
+  "pink-b2": #d42a4f, // primary hover
+  "pink-b3": #fff1f3, // primary tint: table header, active menu background
+  "black-b1": #181818, // headings
+  "black-b2": #343a40, // body text
+  "grey-b1": #505050, // table header text, secondary text
+  "grey-b2": #83888f, // placeholders, hints, muted icons
+  "grey-b3": #d9d9d9, // input borders
+  "grey-b4": #e9ecef, // dividers, table lines
+  "grey-b5": #f7f7f7, // page background
+  "grey-b6": #f2f4f6, // hover rows, placeholder boxes
+  "white-b1": #ffffff, // panels, inputs, text on primary
+  "red-b1": #c62828, // error text and borders, danger buttons
+  "red-b2": #fdecea, // error background
+  "green-b1": #1b7a3d, // success text
+  "green-b2": #e8f5ec, // success background
+  "overlay-b1": rgba(0, 0, 0, 0.4), // behind a dialog or the mobile menu
+  "shadow-b1": rgba(24, 24, 24, 0.08), // panel and dialog shadow
+);
+
+// ---- Colour palette [night] — same keys, dark counterparts ---------
+$colors-night: (
+  "pink-b1": #ff5c7f,
+  "pink-b2": #ff7d99,
+  "pink-b3": #3a1a22,
+  "black-b1": #f5f5f5,
+  "black-b2": #dee2e6,
+  "grey-b1": #c4c8cc,
+  "grey-b2": #9aa0a6,
+  "grey-b3": #4a4f55,
+  "grey-b4": #33373c,
+  "grey-b5": #121416,
+  "grey-b6": #24272b,
+  "white-b1": #1b1d20,
+  "red-b1": #ff8a80,
+  "red-b2": #3b1614,
+  "green-b1": #7ddc9c,
+  "green-b2": #14301e,
+  "overlay-b1": rgba(0, 0, 0, 0.65),
+  "shadow-b1": rgba(0, 0, 0, 0.5),
+);
+
+// Read a colour as a CSS custom property, so day/night switch at runtime: color: token("pink-b1");
+@function token($name) {
+  @if not map.has-key($colors-day, $name) {
+    @error "Unknown colour token #{$name}. Add it to $colors-day AND $colors-night.";
+  }
+  @return var(--#{$name});
+}
+
+// Text drawn on the primary colour stays white in both themes, so it is not a themed token.
+$color-on-primary: #ffffff;
+
+// ---- Typography -----------------------------------------------------
+$font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic",
+  "Segoe UI", Roboto, sans-serif;
+$font-size-xs: 12px;
+$font-size-sm: 13px;
+$font-size-md: 14px;
+$font-size-lg: 16px;
+$font-size-xl: 20px;
+$font-size-title: 24px;
+$font-weight-regular: 400;
+$font-weight-bold: 700;
+$line-height: 1.5;
+$line-height-title: 1.2;
+
+// ---- Spacing (4px steps) --------------------------------------------
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 20px;
+$space-6: 24px;
+$space-8: 32px;
+$space-10: 40px;
+$space-16: 64px;
+
+// ---- Sizes ----------------------------------------------------------
+$sidebar-width: 230px;
+$topbar-height: 64px;
+$control-height: 40px;
+$login-card-width: 500px;
+$dialog-width: 480px;
+$search-width: 240px;
+$select-width: 180px;
+$stepper-number-size: 28px;
+$switch-width: 44px;
+$switch-height: 24px;
+$switch-knob-size: 18px;
+$icon-size-lg: 40px;
+$field-label-width: 140px;
+$table-min-width: 880px;
+$grid-min-column: 260px;
+
+$radius-sm: 4px;
+$radius-md: 10px;
+$radius-round: 50%;
+$border-width: 1px;
+$border-width-strong: 3px;
+$focus-ring-width: 2px;
+$focus-ring-offset: 2px;
+
+$z-sidebar: 30;
+$z-overlay: 20;
+$z-topbar: 10;
+
+$transition-fast: 0.15s ease;
+
+// ---- WM breakpoints (HTML development guideline) --------------------
+$breakpoints: (
+  "xxl": 1920px,
+  "xl": 1600px,
+  "lg": 1366px,
+  "md": 1280px,
+  "sm": 1024px,
+  "tablet": 991px,
+  "mobile": 768px,
+  "xs": 640px,
+  "xxs": 480px,
+);
