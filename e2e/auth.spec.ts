@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { credentials, login } from "./helpers";
+import { credentials, login, typeSecret } from "./helpers";
 
 // These tests are about signing in, so they start with no session.
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -26,11 +26,12 @@ test.describe("login and protected routes", () => {
 
   test("a wrong password shows the API's error and keeps the typed ID", async ({ page }) => {
     await page.goto("/auth/login");
-    await page.getByLabel("아이디").fill(credentials().loginId);
+    await typeSecret(page, "아이디", credentials().loginId);
     await page.getByLabel("비밀번호", { exact: true }).fill("wrong-password-1!");
     await page.getByRole("button", { name: "로그인" }).click();
     await expect(page.getByRole("alert").filter({ hasText: "아이디 또는 비밀번호가 올바르지 않습니다." })).toBeVisible();
-    await expect(page.getByLabel("아이디")).toHaveValue(credentials().loginId);
+    // Compared inside the page so the ID is not printed in the report
+    expect(await page.getByLabel("아이디", { exact: true }).evaluate((element, id) => (element as HTMLInputElement).value === id, credentials().loginId)).toBe(true);
     await expect(page).toHaveURL(/\/auth\/login/);
   });
 

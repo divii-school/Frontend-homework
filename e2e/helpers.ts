@@ -10,10 +10,23 @@ export function credentials(): { loginId: string; password: string } {
   return { loginId, password };
 }
 
+/**
+ * Type a value without writing it into the Playwright report. `fill("…")` prints its text in the report's step
+ * list, and the report is attached for QA, so the login must not go through it. The value is set inside the
+ * page instead, the way React expects (native setter + an input event).
+ */
+export async function typeSecret(page: Page, label: string, value: string): Promise<void> {
+  await page.getByLabel(label, { exact: true }).evaluate((element, text) => {
+    const input = element as HTMLInputElement;
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set?.call(input, text);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  }, value);
+}
+
 export async function login(page: Page): Promise<void> {
   const { loginId, password } = credentials();
-  await page.getByLabel("아이디").fill(loginId);
-  await page.getByLabel("비밀번호", { exact: true }).fill(password);
+  await typeSecret(page, "아이디", loginId);
+  await typeSecret(page, "비밀번호", password);
   await page.getByRole("button", { name: "로그인" }).click();
 }
 
