@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // The floating dev badge would cover the menu in local screenshots.
+  devIndicators: false,
   // Product images are public files on the QA bucket; they are shown as they are (no optimiser round trip).
   images: {
     unoptimized: true,
