@@ -1,0 +1,129 @@
+import { describe, expect, it } from "vitest";
+import { canDo, canOpen, visibleNavItems } from "@/config/navigation";
+import type { AuthUser } from "@/types/auth";
+import { toCsv } from "@/utils/csv";
+import { formatDateTime, formatWon } from "@/utils/format";
+import { parseProductParams, toProductQuery } from "@/utils/product-params";
+import { EMPTY_PRODUCT_FORM, firstInvalidStep, imageFileError, salePrice, storageKey, toProductRequest, validateStep } from "@/utils/product-rules";
+import { isTokenValid, safeRedirectPath } from "@/utils/session";
+
+const user = (role: string, permissions: AuthUser["permissions"]): AuthUser => ({ id: 1, uuid: "u", fullName: "Tester", userId: "tester", role, permissions });
+
+describe("permissions (one config for menu, guard and buttons)", () => {
+  it("SUPER_ADMIN may open and do everything without a grant", () => {
+    const admin = user("SUPER_ADMIN", []);
+    expect(visibleNavItems(admin).map((item) => item.key)).toEqual(["products", "categories"]);
+    expect(canDo(admin, "product.delete")).toBe(true);
+  });
+
+  it("a grant opens only its own page, including sub-pages", () => {
+    const categoryOnly = user("ADMIN", [{ module: "shopping_mall", subModules: ["category_management"] }]);
+    expect(canOpen(categoryOnly, "/categories")).toBe(true);
+    expect(canOpen(categoryOnly, "/products")).toBe(false);
+    expect(canOpen(categoryOnly, "/products/20000/edit")).toBe(false);
+  });
+
+  it("delete needs an administrator role on top of the page permission", () => {
+    const teacher = user("TEACHER", ["product_management"]);
+    expect(canDo(teacher, "product.write")).toBe(true);
+    expect(canDo(teacher, "product.delete")).toBe(false);
+  });
+
+  it("nobody signed in may open nothing", () => {
+    expect(canOpen(null, "/products")).toBe(false);
+    expect(visibleNavItems(null)).toEqual([]);
+  });
+});
+
+describe("product list state in the URL", () => {
+  it("falls back to defaults for missing or invalid values", () => {
+    const params = parseProductParams(new URLSearchParams("page=abc&limit=7&sort=hack&order=up&categoryId=-1"));
+    expect(params).toMatchObject({ page: 1, limit: 10, sort: "createdAt", order: "desc", categoryId: null, type: "productName" });
+  });
+
+  it("round-trips and leaves defaults out of the query string", () => {
+    const params = parseProductParams(new URLSearchParams("page=3&limit=20&search=FLY&sort=price&order=asc"));
+    expect(toProductQuery(params)).toBe("page=3&limit=20&search=FLY&sort=price&order=asc");
+    expect(toProductQuery(parseProductParams(new URLSearchParams("")))).toBe("");
+  });
+});
+
+describe("product form rules", () => {
+  const valid = {
+    ...EMPTY_PRODUCT_FORM,
+    productName: "HW3-Sachin-A",
+    productCode: "PRD-1",
+    erpName: "ERP",
+    quantity: "2",
+    unitPrice: "1500",
+    erpUnitPrice: "1000",
+    categoryId: 1,
+    subCategoryId: 2,
+    childCategoryId: 3,
+    description: "text",
+    images: [{ key: "products/a.png", previewUrl: "https://x/products/a.png", name: "a.png" }],
+  };
+
+  it("each step reports only its own fields", () => {
+    expect(Object.keys(validateStep(0, EMPTY_PRODUCT_FORM)).sort()).toEqual(["erpName", "productCode", "productName"]);
+    expect(Object.keys(validateStep(1, { ...EMPTY_PRODUCT_FORM, quantity: "0", unitPrice: "x", erpUnitPrice: "-1" })).sort()).toEqual(["erpUnitPrice", "quantity", "unitPrice"]);
+    expect(Object.keys(validateStep(3, EMPTY_PRODUCT_FORM)).sort()).toEqual(["description", "images"]);
+  });
+
+  it("finds the first invalid step, or none", () => {
+    expect(firstInvalidStep(valid)).toBe(-1);
+    expect(firstInvalidStep({ ...valid, childCategoryId: null })).toBe(2);
+  });
+
+  it("sale price is quantity × unit price, and the request uses the API's yes/no strings", () => {
+    expect(salePrice({ quantity: "3", unitPrice: "1500" })).toBe(4500);
+    expect(salePrice({ quantity: "", unitPrice: "1500" })).toBeNull();
+    expect(toProductRequest(valid)).toMatchObject({ price: 3000, quantity: 2, isVisible: "no", onSale: "no", images: ["products/a.png"] });
+  });
+
+  it("checks image count, type and size before any upload", () => {
+    expect(imageFileError({ type: "image/png", size: 1024 }, 0)).toBeNull();
+    expect(imageFileError({ type: "text/plain", size: 10 }, 0)).toContain("PNG");
+    expect(imageFileError({ type: "image/png", size: 6 * 1024 * 1024 }, 0)).toContain("5MB");
+    expect(imageFileError({ type: "image/png", size: 10 }, 4)).toContain("최대 4장");
+  });
+
+  it("turns a full image address back into its storage key", () => {
+    expect(storageKey("https://bucket.s3.amazonaws.com/products/1-a/HW3%20test.png")).toBe("products/1-a/HW3 test.png");
+    expect(storageKey("products/1-a/x.png")).toBe("products/1-a/x.png");
+  });
+});
+
+describe("WM formats", () => {
+  it("won: three-digit comma, no decimals, unit with no space", () => {
+    expect(formatWon(1980000)).toBe("1,980,000원");
+  });
+
+  it("Korean date: no leading zero on month/day, 오전/오후 before the time", () => {
+    expect(formatDateTime(new Date(2026, 4, 7, 20, 3).toISOString())).toBe("2026년 5월 7일 오후 08:03");
+    expect(formatDateTime(new Date(2026, 10, 13, 0, 9).toISOString())).toBe("2026년 11월 13일 오전 12:09");
+  });
+
+  it("CSV quotes commas and quotes", () => {
+    expect(toCsv([["a,b", 'say "hi"', 3]])).toBe('"a,b","say ""hi""",3');
+  });
+});
+
+describe("session helpers", () => {
+  const token = (exp: number) => `x.${btoa(JSON.stringify({ exp }))}.y`;
+
+  it("a token is valid only before its expiry", () => {
+    expect(isTokenValid(token(2000), 1_000_000)).toBe(true);
+    expect(isTokenValid(token(500), 1_000_000)).toBe(false);
+    expect(isTokenValid("garbage")).toBe(false);
+    expect(isTokenValid(undefined)).toBe(false);
+  });
+
+  it("only paths inside the app are accepted as a return address", () => {
+    expect(safeRedirectPath("/products?page=2")).toBe("/products?page=2");
+    expect(safeRedirectPath("https://example.com")).toBe("/products");
+    expect(safeRedirectPath("//example.com")).toBe("/products");
+    expect(safeRedirectPath("/auth/login")).toBe("/products");
+    expect(safeRedirectPath(null)).toBe("/products");
+  });
+});
