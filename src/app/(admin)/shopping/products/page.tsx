@@ -1,9 +1,14 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
-import { PageHeader } from "@/components/layout/PageHeader";
+import { ProductList } from "@/features/products/ProductList";
 
 export const metadata: Metadata = { title: "Product Management · Talking Club Admin" };
 
-// Placeholder until the 8.1.0 product list is built.
 export default function ProductsPage() {
-  return <PageHeader title="Product Management" />;
+  // ProductList reads the table state from the URL (useSearchParams) → needs a Suspense boundary.
+  return (
+    <Suspense>
+      <ProductList />
+    </Suspense>
+  );
 }

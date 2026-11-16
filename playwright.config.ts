@@ -1,4 +1,8 @@
+import { existsSync } from "node:fs";
 import { defineConfig, devices } from "@playwright/test";
+
+// E2E_LOGIN_ID / E2E_PASSWORD for the *.real.spec.ts files come from .env.local (never committed).
+if (existsSync(".env.local")) process.loadEnvFile(".env.local");
 
 const PORT = 3003;
 // PLAYWRIGHT_BASE_URL=https://… runs the suites against a deployed app instead of the dev server.
