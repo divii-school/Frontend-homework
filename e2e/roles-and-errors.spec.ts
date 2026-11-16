@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { actAs, expectProductRows } from "./helpers";
+import { actAs, expectProductRows, login } from "./helpers";
 
 // Read-only. Only one real account exists (SUPER_ADMIN), so other roles are simulated by replacing the stored
 // user (see actAs), and API failures by answering the request inside the test.
@@ -22,10 +22,11 @@ test.describe("roles: menu, route guard and buttons follow one config", () => {
     for (const url of ["/products", "/products/create", "/products/20000", "/products/20000/edit"]) {
       await page.goto(url);
       await expect(page.getByText("접근 권한이 없습니다. (403)")).toBeVisible();
-      await expect(page.getByRole("heading", { level: 1 })).toHaveCount(0);
+      // The page's own heading is not drawn: the only h1 is the 403 message
+      await expect(page.getByRole("heading", { level: 1 })).toHaveText("접근 권한이 없습니다. (403)");
     }
     // The 403 block offers the first page this user may open
-    await page.getByRole("link", { name: "상품 카테고리 관리(으)로 이동" }).click();
+    await page.getByRole("link", { name: "상품 카테고리 관리로 이동" }).click();
     await expect(page).toHaveURL(/\/categories$/);
   });
 
@@ -74,7 +75,13 @@ test.describe("error handling", () => {
     );
     await page.goto("/products?page=2&limit=20");
     await expect(page).toHaveURL(/\/auth\/login\?redirect=%2Fproducts%3Fpage%3D2%26limit%3D20/);
-    await expect(page.getByRole("heading", { name: "관리자 로그인" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "로그인" })).toBeVisible();
+
+    // Logging in again returns to the same page with the same query
+    await page.unroute("**/api/v1/products?*");
+    await login(page);
+    await expect(page).toHaveURL(/\/products\?page=2&limit=20$/);
+    await expect(page.locator(".p-datatable-tbody > tr")).toHaveCount(20);
   });
 
   test("403 from the API shows the API's refusal, not a blank page", async ({ page }) => {
@@ -85,9 +92,17 @@ test.describe("error handling", () => {
     await expect(page.getByText("이 작업을 할 권한이 없습니다.")).toBeVisible();
   });
 
+  test("a signed-in browser that lost its stored user is sent to login once, not into a redirect loop", async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.removeItem("tc_admin_user"));
+    await page.goto("/categories");
+    await expect(page).toHaveURL(/\/auth\/login\?redirect=%2Fcategories$/);
+    await expect(page.getByRole("button", { name: "로그인" })).toBeVisible();
+  });
+
   test("an unknown URL shows the 404 page", async ({ page }) => {
     await page.goto("/no-such-page");
-    await expect(page.getByText("페이지를 찾을 수 없습니다. (404)")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "페이지를 찾을 수 없습니다. (404)" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "상품 관리로 이동" })).toBeVisible();
   });
 
   test("dark mode is applied through the theme attribute and remembered", async ({ page }) => {

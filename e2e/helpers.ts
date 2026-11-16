@@ -25,6 +25,8 @@ export async function typeSecret(page: Page, label: string, value: string): Prom
 
 export async function login(page: Page): Promise<void> {
   const { loginId, password } = credentials();
+  // The button is enabled once the page is interactive; typing before that would be lost.
+  await expect(page.getByRole("button", { name: "로그인" })).toBeEnabled();
   await typeSecret(page, "아이디", loginId);
   await typeSecret(page, "비밀번호", password);
   await page.getByRole("button", { name: "로그인" }).click();

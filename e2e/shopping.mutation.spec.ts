@@ -10,6 +10,10 @@ import { expect, test, type Page } from "@playwright/test";
  */
 test.describe.configure({ mode: "serial" });
 
+// Writes to the shared QA server happen only when asked for: `npm run test:e2e:mutation` sets this variable,
+// so a plain `npx playwright test` skips this file.
+test.skip(process.env.E2E_ALLOW_WRITES !== "yes", "Writes to the shared QA server: run with npm run test:e2e:mutation");
+
 const stamp = Date.now().toString().slice(-6);
 const PARENT_CATEGORY = "학원 Shop"; // existing 대분류; our 중분류 is added under it and removed again
 const SUB = `HW3-Sachin-Sub-${stamp}`;
@@ -53,15 +57,6 @@ async function toLastStep(page: Page): Promise<void> {
     await page.getByRole("button", { name: "다음" }).click();
     await expect(page).toHaveURL(new RegExp(`step=${step}`));
   }
-}
-
-async function toFirstStep(page: Page): Promise<void> {
-  for (const step of ["category", "price"]) {
-    await page.getByRole("button", { name: "이전" }).click();
-    await expect(page).toHaveURL(new RegExp(`step=${step}`));
-  }
-  await page.getByRole("button", { name: "이전" }).click();
-  await expect(page).not.toHaveURL(/step=/);
 }
 
 test("category: create a 중분류 and a 소분류, rename the 소분류", async ({ page }) => {
@@ -173,7 +168,15 @@ test("product: an API error on save keeps every value", async ({ page }) => {
   await page.getByRole("button", { name: "저장" }).click();
   await expect(page.getByRole("alert").filter({ hasText: "서버에서 오류가 발생했습니다." })).toBeVisible();
   await expect(page.getByLabel("상세설명")).toHaveValue("HW3 Playwright test product");
-  await toFirstStep(page);
+  // Every earlier step still holds its values
+  await page.getByRole("button", { name: "이전" }).click();
+  await expect(page).toHaveURL(/step=category/);
+  await expect(page.locator(".form-field", { has: page.locator("#product-childCategoryId") }).locator(".p-dropdown")).toContainText(FIXTURE_CHILD);
+  await page.getByRole("button", { name: "이전" }).click();
+  await expect(page).toHaveURL(/step=price/);
+  await expect(page.getByLabel("수량")).toHaveValue("2");
+  await page.getByRole("button", { name: "이전" }).click();
+  await expect(page).not.toHaveURL(/step=/);
   await expect(page.getByLabel("상품명")).toHaveValue(PRODUCT_RENAMED);
 
   // The real save now goes through
@@ -183,6 +186,8 @@ test("product: an API error on save keeps every value", async ({ page }) => {
   await expect(page.getByText("수정 완료")).toBeVisible();
   await page.goto(`/products?search=${PRODUCT_RENAMED}`);
   await expect(page.locator(".p-datatable-tbody > tr")).toHaveCount(1);
+  // Only the name was changed, so the saved price is unchanged
+  await expect(page.locator(".p-datatable-tbody > tr").first()).toContainText("3,000원");
 });
 
 test("product: visibility switch, then bulk delete of our own record only", async ({ page }) => {

@@ -3,6 +3,8 @@ import { canDo, canOpen, visibleNavItems } from "@/config/navigation";
 import type { AuthUser } from "@/types/auth";
 import { toCsv } from "@/utils/csv";
 import { formatDateTime, formatWon } from "@/utils/format";
+import { MESSAGES } from "@/constants/messages";
+import { withDirectionParticle, withObjectParticle } from "@/utils/korean";
 import { parseProductParams, toProductQuery } from "@/utils/product-params";
 import { EMPTY_PRODUCT_FORM, firstInvalidStep, imageFileError, salePrice, storageKey, toProductRequest, validateStep } from "@/utils/product-rules";
 import { isTokenValid, safeRedirectPath } from "@/utils/session";
@@ -66,7 +68,9 @@ describe("product form rules", () => {
 
   it("each step reports only its own fields", () => {
     expect(Object.keys(validateStep(0, EMPTY_PRODUCT_FORM)).sort()).toEqual(["erpName", "productCode", "productName"]);
-    expect(Object.keys(validateStep(1, { ...EMPTY_PRODUCT_FORM, quantity: "0", unitPrice: "x", erpUnitPrice: "-1" })).sort()).toEqual(["erpUnitPrice", "quantity", "unitPrice"]);
+    expect(Object.keys(validateStep(1, { ...EMPTY_PRODUCT_FORM, quantity: "x", unitPrice: "x", erpUnitPrice: "-1" })).sort()).toEqual(["erpUnitPrice", "quantity", "unitPrice"]);
+    // 0 is a valid quantity (the API's rule is only "a number"; many saved products have 0)
+    expect(validateStep(1, { ...EMPTY_PRODUCT_FORM, quantity: "0", unitPrice: "0", erpUnitPrice: "0" })).toEqual({});
     expect(Object.keys(validateStep(3, EMPTY_PRODUCT_FORM)).sort()).toEqual(["description", "images"]);
   });
 
@@ -79,12 +83,15 @@ describe("product form rules", () => {
     expect(salePrice({ quantity: "3", unitPrice: "1500" })).toBe(4500);
     expect(salePrice({ quantity: "", unitPrice: "1500" })).toBeNull();
     expect(toProductRequest(valid)).toMatchObject({ price: 3000, quantity: 2, isVisible: "no", onSale: "no", images: ["products/a.png"] });
+    // Edit mode keeps the saved price, even when it is not 수량 × 단가
+    expect(toProductRequest({ ...valid, storedPrice: 1500 }).price).toBe(1500);
   });
 
   it("checks image count, type and size before any upload", () => {
     expect(imageFileError({ type: "image/png", size: 1024 }, 0)).toBeNull();
     expect(imageFileError({ type: "text/plain", size: 10 }, 0)).toContain("PNG");
-    expect(imageFileError({ type: "image/png", size: 6 * 1024 * 1024 }, 0)).toContain("5MB");
+    expect(imageFileError({ type: "image/png", size: 5 * 1024 * 1024 }, 0)).toContain("4MB");
+    expect(imageFileError({ type: "image/png", size: 4 * 1024 * 1024 }, 0)).toBeNull();
     expect(imageFileError({ type: "image/png", size: 10 }, 4)).toContain("최대 4장");
   });
 
@@ -106,6 +113,24 @@ describe("WM formats", () => {
 
   it("CSV quotes commas and quotes", () => {
     expect(toCsv([["a,b", 'say "hi"', 3]])).toBe('"a,b","say ""hi""",3');
+    // A text that Excel would run as a formula is written as text
+    expect(toCsv([["=1+1", "@SUM(A1)", -5]])).toBe("'=1+1,'@SUM(A1),-5");
+  });
+});
+
+describe("Korean particles", () => {
+  it("을 after a final consonant, 를 after a vowel", () => {
+    expect(withObjectParticle("상품명")).toBe("상품명을");
+    expect(withObjectParticle("아이디")).toBe("아이디를");
+    expect(MESSAGES.required("비밀번호")).toBe("비밀번호를 입력해 주세요.");
+    expect(MESSAGES.selectRequired("대분류")).toBe("대분류를 선택해 주세요.");
+    expect(MESSAGES.required("중분류 이름")).toBe("중분류 이름을 입력해 주세요.");
+  });
+
+  it("로 after a vowel or ㄹ, 으로 after another consonant", () => {
+    expect(withDirectionParticle("상품 카테고리 관리")).toBe("상품 카테고리 관리로");
+    expect(withDirectionParticle("서울")).toBe("서울로");
+    expect(withDirectionParticle("목록")).toBe("목록으로");
   });
 });
 
@@ -125,5 +150,8 @@ describe("session helpers", () => {
     expect(safeRedirectPath("//example.com")).toBe("/products");
     expect(safeRedirectPath("/auth/login")).toBe("/products");
     expect(safeRedirectPath(null)).toBe("/products");
+    // Browsers read a backslash as a slash and drop tabs, so these lead to another site
+    expect(safeRedirectPath("/\\example.com")).toBe("/products");
+    expect(safeRedirectPath("/\t/example.com")).toBe("/products");
   });
 });

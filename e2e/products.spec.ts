@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { expectProductRows, watchConsole } from "./helpers";
 
@@ -13,6 +14,10 @@ test.describe("product list", () => {
     // WM formats: won with a three-digit comma and no space, Korean date with 오전/오후 before the time
     await expect(page.locator(".p-datatable-tbody > tr").first()).toContainText(/[\d,]+원/);
     await expect(page.locator(".p-datatable-tbody > tr").first()).toContainText(/\d{4}년 \d{1,2}월 \d{1,2}일 (오전|오후) \d{2}:\d{2}/);
+    // Every price has its three-digit comma: at least one is 1,000원 or more, and none shows four digits in a row
+    const prices = await page.locator(".p-datatable-tbody > tr > td:nth-child(4)").allTextContents();
+    expect(prices.some((text) => /\d,\d{3}원/.test(text))).toBe(true);
+    expect(prices.filter((text) => /\d{4}/.test(text))).toEqual([]);
     expect(problems).toEqual([]);
   });
 
@@ -67,8 +72,13 @@ test.describe("product list", () => {
     await page.goto("/products");
     await expectProductRows(page);
     const request = page.waitForRequest((item) => item.url().includes("get-products-by-category") && item.url().includes("categoryId="));
-    await page.locator(".list-toolbar-category").click();
-    await page.locator(".p-dropdown-panel .p-dropdown-item").first().click();
+    // The select opens only once its options have loaded, so the click is repeated until the list shows
+    const firstOption = page.locator(".p-dropdown-panel .p-dropdown-item").first();
+    await expect(async () => {
+      if (!(await firstOption.isVisible())) await page.locator(".list-toolbar-category").click();
+      await expect(firstOption).toBeVisible({ timeout: 2_000 });
+    }).toPass({ timeout: 60_000 });
+    await firstOption.click();
     await request;
     await expect(page).toHaveURL(/categoryId=\d+/);
   });
@@ -84,13 +94,42 @@ test.describe("product list", () => {
     await expect(page.locator(".p-datatable-tbody > tr")).toHaveCount(10);
   });
 
-  test("export downloads the filtered result as CSV", async ({ page }) => {
-    await page.goto("/products?search=FLY+HIGH+6");
+  test("a page past the end goes to the last page that exists", async ({ page }) => {
+    await page.goto("/products?search=FLY+HIGH&page=999");
     await expectProductRows(page);
-    const download = page.waitForEvent("download");
+    await expect(page).not.toHaveURL(/page=999/);
+    await expect(page.getByRole("button", { name: "Last Page" })).toBeDisabled();
+    await expect(page.getByLabel("상품 검색")).toHaveValue("FLY HIGH");
+  });
+
+  test("a search with a space typed slowly keeps the space", async ({ page }) => {
+    await page.goto("/products");
+    await expectProductRows(page);
+    const box = page.getByLabel("상품 검색");
+    await box.pressSequentially("FLY ");
+    await expect(page).toHaveURL(/search=FLY$/);
+    await box.pressSequentially("HIGH");
+    await expect(box).toHaveValue("FLY HIGH");
+    await expect(page).toHaveURL(/search=FLY\+HIGH/);
+  });
+
+  test("export downloads exactly the filtered result as CSV", async ({ page }) => {
+    await page.goto("/products?search=FLY+HIGH");
+    await expectProductRows(page);
+    const total = Number((await page.getByText(/총 게시물:/).textContent())?.replace(/[^\d]/g, ""));
+    const downloadEvent = page.waitForEvent("download");
     await page.getByRole("button", { name: "내보내기" }).click();
-    expect((await download).suggestedFilename()).toBe("products.csv");
+    const download = await downloadEvent;
+    expect(download.suggestedFilename()).toBe("products.csv");
     await expect(page.getByText("내보내기 완료")).toBeVisible();
+
+    // The header, then one row per product of the search (not only the page on screen), each matching it
+    const text = readFileSync(await download.path(), "utf8").replace(/^﻿/, "");
+    const [header, ...rows] = text.split("\r\n");
+    expect(header).toBe("상품코드,상품명,판매금액,카테고리,노출여부,판매상태,등록일자");
+    expect(rows).toHaveLength(total);
+    expect(rows.every((row) => row.toUpperCase().includes("FLY HIGH"))).toBe(true);
+    expect(rows.every((row) => /"\d{1,3}(,\d{3})*원"|,\d{1,3}원,/.test(row))).toBe(true);
   });
 });
 
@@ -132,8 +171,8 @@ test.describe("product form (no save)", () => {
 
     // Step 1: "next" with empty fields stays on the step and explains why
     await page.getByRole("button", { name: "다음" }).click();
-    await expect(page.getByText("상품명을(를) 입력해 주세요.")).toBeVisible();
-    await expect(page.getByText("상품 ERP명을(를) 입력해 주세요.")).toBeVisible();
+    await expect(page.getByText("상품명을 입력해 주세요.")).toBeVisible();
+    await expect(page.getByText("상품 ERP명을 입력해 주세요.")).toBeVisible();
     await page.getByLabel("상품명").fill("HW3-Sachin-Draft");
     await page.getByLabel("상품 ERP명").fill("HW3-Sachin-ERP");
     await page.getByRole("button", { name: "다음" }).click();
@@ -142,7 +181,7 @@ test.describe("product form (no save)", () => {
     // Step 2: wrong format, then the sale price is calculated
     await page.getByLabel("수량").fill("abc");
     await page.getByRole("button", { name: "다음" }).click();
-    await expect(page.getByText("수량은 1 이상의 숫자로 입력해 주세요.")).toBeVisible();
+    await expect(page.getByText("수량은 0 이상의 숫자로 입력해 주세요.")).toBeVisible();
     await page.getByLabel("수량").fill("3");
     await page.getByLabel("단가(원)", { exact: true }).fill("1500");
     await page.getByLabel("ERP 단가(원)").fill("1000");
@@ -158,13 +197,15 @@ test.describe("product form (no save)", () => {
     await page.getByRole("button", { name: "다음" }).click();
     await expect(page).toHaveURL(/step=category/);
     await page.getByRole("button", { name: "다음" }).click();
-    await expect(page.getByText("대분류을(를) 선택해 주세요.")).toBeVisible();
+    await expect(page.getByText("대분류를 선택해 주세요.")).toBeVisible();
+    const subSelect = page.locator(".form-field", { has: page.locator("#product-subCategoryId") }).locator(".p-dropdown");
+    await expect(subSelect).toHaveClass(/p-disabled/);
   });
 
   test("a wrong file type is refused without an upload request", async ({ page }) => {
     let uploadCalls = 0;
     page.on("request", (request) => {
-      if (request.url().includes("/utils/upload-file-urls")) uploadCalls += 1;
+      if (request.url().includes("/api/upload")) uploadCalls += 1;
     });
     await page.goto("/products/create?step=media");
     await expect(page.getByRole("button", { name: "파일추가" })).toBeVisible();
