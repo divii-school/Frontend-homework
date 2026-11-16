@@ -113,5 +113,6 @@ HTML report: zipped `playwright-report/` attached to the submission page (checke
 - **Sizes:** 1920, 1440, 1366, 768, 375, each in light and dark: 50 screenshots in `docs/screenshots/`, taken by
   `npm run screenshots`. Side-by-side images (design | build) are on the submission page.
 - **Browser:** Chromium (Playwright, same engine as Chrome and Edge) on Windows 11, against the production build
-  and the Vercel deployment.
+  of commit `1643925`. The Vercel deployment of the same commit was checked without logging in (login page,
+  redirect to login with `returnTo`, wrong-login message from the API, upload refused without login).
 - Not checked: Safari / iOS (no device available).
