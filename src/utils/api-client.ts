@@ -22,14 +22,26 @@ apiClient.interceptors.request.use((config) => {
 
 // Token expired or revoked: forget the session and go to login, remembering the page to come back to.
 // The login call itself is left alone so the form can show "wrong ID or password".
-apiClient.interceptors.response.use(undefined, (error: unknown) => {
+function handleFailure(error: unknown): Promise<never> {
   const isLoginCall = error instanceof AxiosError && error.config?.url === API_ENDPOINTS.auth.login;
-  if (error instanceof AxiosError && error.response?.status === 401 && !isLoginCall && typeof window !== "undefined") {
-    clearSession();
-    window.location.assign(loginUrlFor(window.location.pathname + window.location.search));
+  if (error instanceof AxiosError && error.response?.status === 401 && !isLoginCall) {
+    if (typeof window !== "undefined") {
+      clearSession();
+      window.location.assign(loginUrlFor(window.location.pathname + window.location.search));
+    }
+    // Shown for the moment before the login page opens: "wrong ID or password" would be misleading here.
+    return Promise.reject(new ApiError({ status: 401, kind: "unauthorized", code: "Unauthorized", messages: [MESSAGES.sessionExpired] }));
   }
   return Promise.reject(toApiError(error));
-});
+}
+apiClient.interceptors.response.use(undefined, handleFailure);
+
+/**
+ * Calls to this app's own route handlers (src/app/api). Same origin, so the browser sends the token cookie
+ * by itself and no base URL or header is needed. Failures are handled exactly like the QA API's.
+ */
+export const appClient = axios.create({ timeout: API_TIMEOUT_MS });
+appClient.interceptors.response.use(undefined, handleFailure);
 
 // The API answers a missing record with 400 and one of these keys, not with 404.
 const NOT_FOUND_KEYS = new Set(["productNotFound", "categoryNotFound"]);

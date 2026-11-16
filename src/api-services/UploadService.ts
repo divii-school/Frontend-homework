@@ -1,40 +1,19 @@
-import axios from "axios";
-import { IMAGE_RULES } from "@/constants/products";
+import { UPLOAD_TIMEOUT_MS } from "@/constants/api";
+import { ROUTES } from "@/constants/routes";
 import type { ApiEnvelope } from "@/types/api";
 import type { ProductImage } from "@/types/product";
-import { apiClient, toApiError } from "@/utils/api-client";
-import { API_ENDPOINTS } from "@/utils/api-integration";
-
-interface SignedUrl {
-  /** Where the file is sent (PUT). Valid for a short time. */
-  url: string;
-  /** Public address of the file after the upload. */
-  preview: string;
-  /** Storage key that goes into the product's `images`. */
-  filePath: string;
-}
+import { appClient } from "@/utils/api-client";
 
 export const UploadService = {
   /**
-   * Two steps: ask the API for a signed address, then send the file straight to storage.
-   * The file never passes through our own server.
+   * Send one image to this app's own upload route (src/app/api/upload/route.ts), which stores it and answers
+   * with the storage key and the public address. The browser does not talk to the storage server itself:
+   * the bucket refuses uploads from sites that are not on its list, and a Vercel address is not.
    */
   async uploadImage(file: File): Promise<ProductImage> {
-    const extension = file.name.split(".").pop()?.toLowerCase() ?? "png";
-    const { data } = await apiClient.post<ApiEnvelope<{ urls: SignedUrl[] }>>(API_ENDPOINTS.upload.signedUrls, {
-      location: IMAGE_RULES.uploadLocation,
-      extension,
-      count: 1,
-      fileName: file.name,
-    });
-    const signed = data.data.urls[0];
-
-    try {
-      // A plain axios call: the storage server must not receive our API token or headers.
-      await axios.put(signed.url, file, { headers: { "Content-Type": file.type } });
-    } catch (error) {
-      throw toApiError(error);
-    }
-    return { key: signed.filePath, previewUrl: signed.preview, name: file.name };
+    const form = new FormData();
+    form.append("file", file);
+    const { data } = await appClient.post<ApiEnvelope<ProductImage>>(ROUTES.uploadApi, form, { timeout: UPLOAD_TIMEOUT_MS });
+    return data.data;
   },
 };

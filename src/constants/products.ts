@@ -28,10 +28,13 @@ export const TAX_TYPE_OPTIONS: { label: string; value: TaxType }[] = [
 export const SEARCH_DEBOUNCE_MS = 400;
 export const TOAST_LIFE_MS = 4_000;
 
-/** Image rules of the product form. Count and size hint come from the live admin ("최대 4장", 800x800). */
+/**
+ * Image rules of the product form. Count and size hint come from the live admin ("최대 4장", 800x800).
+ * 4 MB per file: the upload passes through this app's server route, and Vercel accepts request bodies up to 4.5 MB.
+ */
 export const IMAGE_RULES = {
   maxCount: 4,
-  maxBytes: 5 * 1024 * 1024,
+  maxBytes: 4 * 1024 * 1024,
   mimeTypes: ["image/png", "image/jpeg", "image/webp"],
   accept: "image/png,image/jpeg,image/webp",
   uploadLocation: "products",

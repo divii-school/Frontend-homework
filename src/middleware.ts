@@ -26,5 +26,5 @@ export function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-// Every page except Next.js internals and static files.
-export const config = { matcher: ["/((?!_next/|assets/|favicon.ico).*)"] };
+// Every page except Next.js internals, static files and the app's own route handlers (they answer 401 themselves).
+export const config = { matcher: ["/((?!_next/|api/|assets/|favicon.ico).*)"] };
