@@ -6,6 +6,9 @@
   @each $name, $value in $colors-day {
     --#{$name}: #{$value};
   }
+  @each $name, $value in $colors-constant {
+    --#{$name}: #{$value};
+  }
   color-scheme: light;
 }
 
@@ -95,7 +98,7 @@ select {
   z-index: $z-sidebar + 1;
   padding: $space-2 $space-4;
   background: token("pink-b1");
-  color: $color-on-primary;
+  color: token("white-b2");
   border-radius: $radius-sm;
 
   &:focus {

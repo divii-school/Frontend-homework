@@ -7,20 +7,19 @@
   min-height: 100vh;
 }
 
+// The column stretches to the full page height (so its background never stops half way down a long page);
+// the menu inside stays in view while the page scrolls.
 .app-sidebar {
-  position: sticky;
-  top: 0;
   flex: 0 0 $sidebar-width;
   width: $sidebar-width;
-  height: 100vh;
-  padding: $space-5 $space-3;
   background: token("white-b1");
   border-right: $border-width solid token("grey-b4");
-  overflow-y: auto;
 
   @include mq-down("tablet") {
     position: fixed;
+    top: 0;
     left: 0;
+    height: 100vh;
     z-index: $z-sidebar;
     transform: translateX(-100%);
     transition: transform $transition-fast;
@@ -34,9 +33,17 @@
   }
 }
 
+.app-sidebar-inner {
+  position: sticky;
+  top: 0;
+  max-height: 100vh;
+  padding: $space-5 $space-3;
+  overflow-y: auto;
+}
+
 .app-sidebar-logo {
   display: block;
-  padding: 0 $space-2 $space-6;
+  padding: 0 0 $space-6;
 }
 
 .app-sidebar-group {

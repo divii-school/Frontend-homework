@@ -12,7 +12,7 @@
   min-height: $control-height;
   padding: $space-2 $space-5;
   background: token("pink-b1");
-  color: $color-on-primary;
+  color: token("white-b2");
   border: $border-width solid token("pink-b1");
   border-radius: $radius-sm;
   font-weight: $font-weight-bold;
@@ -88,6 +88,13 @@
       background: transparent;
       border-color: transparent;
       color: token("red-b1");
+
+      // Out-ranks the solid red hover of a filled danger button, which would hide the red icon
+      &:not(:disabled):hover {
+        background: token("red-b2");
+        border-color: transparent;
+        opacity: 1;
+      }
     }
   }
 }
@@ -262,7 +269,7 @@
     background: token("white-b1");
     border: $border-width solid token("grey-b2");
     border-radius: $radius-sm;
-    color: $color-on-primary;
+    color: token("white-b2");
   }
 
   &.p-highlight .p-checkbox-box {
@@ -309,7 +316,7 @@
       left: ($switch-height - $switch-knob-size) * 0.5;
       width: $switch-knob-size;
       height: $switch-knob-size;
-      background: $color-on-primary;
+      background: token("white-b2");
       border-radius: $radius-round;
       transition: transform $transition-fast;
     }
@@ -413,9 +420,11 @@
     }
   }
 
-  .p-paginator-page.p-highlight {
+  // The current page keeps its colours under the pointer too (the hover rule would otherwise win)
+  .p-paginator-page.p-highlight,
+  .p-paginator-page.p-highlight:not(.p-disabled):hover {
     background: token("pink-b1");
-    color: $color-on-primary;
+    color: token("white-b2");
     font-weight: $font-weight-bold;
   }
 

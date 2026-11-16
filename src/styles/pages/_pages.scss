@@ -19,6 +19,7 @@
   width: 100%;
   max-width: $login-card-width;
   padding: $space-10;
+  border-radius: $radius-sm;
   box-shadow: 0 $space-2 $space-8 token("shadow-b1");
 
   @include mq-down("xxs") {
@@ -28,18 +29,56 @@
 
 .login-logo {
   align-self: center;
-  height: auto;
 }
 
-.login-title {
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+}
+
+// Icon + underlined input, as in the design: no box, only a line under the field
+.login-input {
+  position: relative;
+  display: block;
+
+  > i {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    color: token("black-b2");
+    font-size: $font-size-lg;
+  }
+
+  .p-inputtext {
+    min-height: $login-control-height;
+    padding-left: $space-8;
+    background: transparent;
+    border: 0;
+    border-bottom: $border-width solid token("grey-b3");
+    border-radius: 0;
+    font-size: $font-size-lg;
+
+    &.p-invalid {
+      border-bottom-color: token("red-b1");
+    }
+  }
+}
+
+.login-remember {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  align-self: flex-start;
   color: token("black-b1");
-  font-size: $font-size-xl;
-  font-weight: $font-weight-bold;
-  text-align: center;
+  cursor: pointer;
 }
 
 .login-submit {
-  min-height: $control-height + $space-2;
+  min-height: $login-control-height;
+  border-radius: $radius-md;
+  font-size: $font-size-lg;
 }
 
 // ---- Product form ---------------------------------------------------
@@ -78,7 +117,7 @@
   .stepper-number {
     background: token("pink-b1");
     border-color: token("pink-b1");
-    color: $color-on-primary;
+    color: token("white-b2");
   }
 }
 

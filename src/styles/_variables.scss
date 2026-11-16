@@ -19,12 +19,13 @@ $colors-day: (
   "black-b1": #181818, // headings
   "black-b2": #343a40, // body text
   "grey-b1": #505050, // table header text, secondary text
-  "grey-b2": #83888f, // placeholders, hints, muted icons
+  "grey-b2": #6b7078, // placeholders, breadcrumb, muted text and icons (4.5:1 or more on every light surface)
   "grey-b3": #d9d9d9, // input borders
   "grey-b4": #e9ecef, // dividers, table lines
   "grey-b5": #f7f7f7, // page background
   "grey-b6": #f2f4f6, // hover rows, placeholder boxes
-  "white-b1": #ffffff, // panels, inputs, text on primary
+  "white-b1": #ffffff, // panels, inputs
+  "white-b2": #ffffff, // text and icons drawn on the primary colour
   "red-b1": #c62828, // error text and borders, danger buttons
   "red-b2": #fdecea, // error background
   "green-b1": #1b7a3d, // success text
@@ -47,6 +48,7 @@ $colors-night: (
   "grey-b5": #121416,
   "grey-b6": #24272b,
   "white-b1": #1b1d20,
+  "white-b2": #1b1d20, // dark text on the lighter night primary keeps 4.5:1
   "red-b1": #ff8a80,
   "red-b2": #3b1614,
   "green-b1": #7ddc9c,
@@ -55,16 +57,18 @@ $colors-night: (
   "shadow-b1": rgba(0, 0, 0, 0.5),
 );
 
+// ---- Constant colours: the same in both themes (WM colour system: "Constant") ----
+$colors-constant: (
+  "white-c1": #ffffff, // plate behind the logo, whose file has a white background
+);
+
 // Read a colour as a CSS custom property, so day/night switch at runtime: color: token("pink-b1");
 @function token($name) {
-  @if not map.has-key($colors-day, $name) {
-    @error "Unknown colour token #{$name}. Add it to $colors-day AND $colors-night.";
+  @if not (map.has-key($colors-day, $name) or map.has-key($colors-constant, $name)) {
+    @error "Unknown colour token #{$name}. Add it to $colors-day AND $colors-night, or to $colors-constant.";
   }
   @return var(--#{$name});
 }
-
-// Text drawn on the primary colour stays white in both themes, so it is not a themed token.
-$color-on-primary: #ffffff;
 
 // ---- Typography -----------------------------------------------------
 $font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic",
@@ -96,6 +100,7 @@ $sidebar-width: 230px;
 $topbar-height: 64px;
 $control-height: 40px;
 $login-card-width: 500px;
+$login-control-height: 56px;
 $dialog-width: 480px;
 $search-width: 240px;
 $select-width: 180px;

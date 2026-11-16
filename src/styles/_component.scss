@@ -41,6 +41,16 @@
   gap: $space-2;
 }
 
+// ---- Logo -----------------------------------------------------------
+// The logo file has a white background. The plate keeps the same white in both themes, so at night the logo
+// sits on a deliberate white label instead of showing as a bare rectangle.
+.brand-logo {
+  display: inline-flex;
+  padding: $space-1 $space-2;
+  background: token("white-c1");
+  border-radius: $radius-sm;
+}
+
 // ---- Panel ----------------------------------------------------------
 .panel {
   @include panel;
@@ -73,7 +83,7 @@
 .link-button-primary {
   background: token("pink-b1");
   border-color: token("pink-b1");
-  color: $color-on-primary;
+  color: token("white-b2");
 
   &:hover {
     background: token("pink-b2");
@@ -225,6 +235,15 @@
   gap: $space-5;
 }
 
+// The three category selects side by side on wide screens, one under another on phones
+.form-grid-three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  @include mq-down("mobile") {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .form-stack {
   display: flex;
   flex-direction: column;
@@ -304,6 +323,12 @@
   &:hover {
     color: token("black-b1");
   }
+}
+
+// The tab bar scrolls sideways on narrow screens, which would cut off a ring drawn outside the tab,
+// so the focus ring of a tab is drawn just inside it.
+.tabs-tab:focus-visible {
+  outline-offset: -$focus-ring-width;
 }
 
 .tabs-tab-active {
