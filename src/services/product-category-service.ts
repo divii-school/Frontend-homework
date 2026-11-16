@@ -15,7 +15,7 @@ const LEVEL_PATH: Record<CategoryLevel, string> = {
   childCategory: '/product-category/subcategory-child',
 };
 
-/** Reorder endpoint per level (body { ids: string[] } in the new order). */
+/** Reorder endpoint per level (body { ids: number[] } in the new order). */
 const REORDER_PATH: Record<CategoryLevel, string> = {
   category: '/product-category/reorder-categories',
   subCategory: '/product-category/reorder-subcategories',

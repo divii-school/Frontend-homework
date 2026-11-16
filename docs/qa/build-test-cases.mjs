@@ -40,6 +40,7 @@ const cases = [
   ['상품 카테고리 관리', '대분류 등록 제한', N, 'Medium', 'API isCreatable=false', '1) 대분류 등록 버튼 확인', '-', '버튼 비활성 + 툴팁/안내 "대분류 개수가 최대치에 도달하여…"', 'categories.spec · 대분류 등록 is disabled…'],
   ['상품 카테고리 관리', '하위 등록', P, 'High', IN, '1) HW3-Pranesh-Sub 행 [+ 소분류] 2) 이름 입력 후 등록', '"  HW3-Pranesh-E2E-xxx  "', '앞뒤 공백 제거되어 등록, "소분류가 등록되었습니다." 토스트, 트리 즉시 갱신', 'categories.mutation.spec'],
   ['상품 카테고리 관리', '빈 이름', N, 'High', IN, '1) 등록 모달에서 공백만 입력 후 등록', '"   "', '"카테고리명을 입력해 주세요." 표시, API 호출 없음', 'categories.spec · empty name…'],
+  ['상품 카테고리 관리', '중복 이름', N, 'High', IN, '1) HW3-Pranesh-Sub 에 소분류 등록 2) 기존 이름을 대소문자만 바꿔 입력 후 등록', 'hw3-pranesh-child', '"이미 등록된 소분류명입니다. 다른 이름을 입력해 주세요." 표시, 입력값 유지, 등록 안 됨 (API: childSubcategoryAlreadyExists)', 'categories.mutation.spec · a duplicate name…'],
   ['상품 카테고리 관리', '이름 길이', N, 'Low', IN, '1) 51자 이상 입력 후 등록', '51자', '"카테고리명은 50자 이하로 입력해 주세요." 표시', '-'],
   ['상품 카테고리 관리', '수정', P, 'High', IN, '1) 연필 아이콘 2) 이름 변경 후 저장', 'HW3-Pranesh-E2E-xxx-수정', '현재 이름이 채워진 모달, 저장 후 "소분류가 수정되었습니다." 토스트', 'categories.mutation.spec'],
   ['상품 카테고리 관리', '삭제 확인', P, 'High', IN, '1) 휴지통 2) 취소 3) 다시 휴지통 4) 삭제', '본인 소분류', '취소 시 유지, 삭제 시 "되돌릴 수 없습니다" 확인 후 삭제 및 토스트', 'categories.mutation.spec'],

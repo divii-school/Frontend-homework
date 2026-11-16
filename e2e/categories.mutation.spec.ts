@@ -45,3 +45,16 @@ test('add, rename and delete a 소분류 under our own 중분류', async ({ page
   await expect(page.getByText(/소분류가 삭제되었습니다/)).toBeVisible();
   await expect(page.getByText(renamed, { exact: true })).toHaveCount(0);
 });
+
+test('a duplicate name is refused with the API message (case does not matter); nothing is created', async ({ page }) => {
+  await page.goto('/shopping/categories?q=HW3-Pranesh-Sub');
+  const subRow = page.locator('li', { has: page.getByRole('button', { name: 'HW3-Pranesh-Sub 수정' }) }).first();
+  await subRow.getByRole('button', { name: /소분류/ }).first().click();
+  const add = page.getByRole('dialog', { name: '소분류 등록' });
+  await add.getByLabel('카테고리명').fill('hw3-pranesh-child'); // existing: HW3-Pranesh-Child
+  await add.getByRole('button', { name: '등록' }).click();
+  await expect(add.getByText('이미 등록된 소분류명입니다. 다른 이름을 입력해 주세요.')).toBeVisible();
+  await expect(add.getByLabel('카테고리명')).toHaveValue('hw3-pranesh-child'); // typed value kept
+  await add.getByRole('button', { name: '취소' }).click();
+  await expect(page.getByText('hw3-pranesh-child', { exact: true })).toHaveCount(0);
+});

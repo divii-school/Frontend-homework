@@ -11,6 +11,10 @@ const MESSAGES: Record<string, string> = {
   Unauthorized: '로그인이 필요합니다.', // ✔
   productNotFound: '상품을 찾을 수 없습니다.', // ✔
   maximumCategoryLimitReached: '대분류 개수가 최대치에 도달하여 새 대분류를 등록할 수 없습니다.', // ✔ isCreatable=false
+  // 8.2.0 "no duplicate names": the API refuses a name already used at that level (case-insensitive).
+  categoryAlreadyExists: '이미 등록된 대분류명입니다. 다른 이름을 입력해 주세요.', // top level is capped, so not reachable today
+  subCategoryAlreadyExists: '이미 등록된 중분류명입니다. 다른 이름을 입력해 주세요.', // ✔
+  childSubcategoryAlreadyExists: '이미 등록된 소분류명입니다. 다른 이름을 입력해 주세요.', // ✔
   networkError: '서버에 연결할 수 없습니다. 네트워크 상태를 확인한 후 다시 시도해 주세요.',
   serverUnavailable: '서버가 응답하지 않습니다. 잠시 후 다시 시도해 주세요.',
   invalidFileType: 'JPG, PNG, WEBP 이미지만 업로드할 수 있습니다.',
