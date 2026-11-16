@@ -48,15 +48,15 @@ const cases = [
   ['상품 카테고리 관리', 'API 오류', N, 'Medium', IN, '1) 카테고리 API 500 상태로 진입 2) 다시 시도', '-', '"카테고리를 불러오지 못했습니다." + 다시 시도 버튼, 재시도 시 정상 표시', 'categories.spec · API failure…'],
   ['상품 카테고리 관리', '정렬(드래그)', P, 'Low', '형제가 모두 HW3-Pranesh-* 인 그룹', '1) 드래그 핸들로 순서 변경(또는 핸들에서 ↑/↓ 키)', '-', '순서 변경 저장 토스트. 다른 사람 데이터가 섞인 그룹은 핸들 미표시(공용 QA 데이터 보호)', '-'],
   // 상품 목록
-  ['상품 관리', '목록', P, 'High', IN, '1) 메뉴 > 상품 관리', '-', '10건/페이지, 총 게시물 수, 썸네일(없으면 회색), ₩ 판매가, 대>중>소 카테고리, 노출 여부, 등록일 YYYY/MM/DD HH:MM', 'products.spec · loads a page of 10…'],
+  ['상품 관리', '목록', P, 'High', IN, '1) 메뉴 > 상품 관리', '-', '10건/페이지, 총 게시물 수, 썸네일(없으면 회색), ₩ 판매금액, 대>중>소 카테고리, 노출여부, 등록일자 YYYY/MM/DD HH:MM', 'products.spec · loads a page of 10…'],
   ['상품 관리', '검색(상품명)', P, 'High', IN, '1) 상품명 선택 2) 검색어 입력 후 검색', '토킹클럽', '결과만 표시, URL ?q= 반영', 'products.spec · search, type and page…'],
   ['상품 관리', '검색(카테고리)', P, 'Medium', IN, '1) 카테고리 선택 2) 검색', 'HW3-Pranesh-Child', '해당 카테고리 상품 표시, URL ?type=categoryName', 'products.spec · category search type'],
-  ['상품 관리', '검색 결과 없음', N, 'Medium', IN, '1) 없는 검색어 검색', 'zz-no-such-product', '"검색 결과가 없습니다." + 총 게시물 0건', 'products.spec · empty search…'],
+  ['상품 관리', '검색 결과 없음', N, 'Medium', IN, '1) 없는 검색어 검색', 'zz-no-such-product', '"검색 결과가 없습니다." + "총 게시물 : 0"', 'products.spec · empty search…'],
   ['상품 관리', '페이지 이동', P, 'High', IN, '1) 2페이지 클릭 2) 새로고침 3) 뒤로가기', '-', 'URL page=2 유지, 새로고침 후 같은 데이터, 뒤로가기 시 이전 페이지', 'products.spec · search, type and page…'],
   ['상품 관리', '잘못된 URL', N, 'Low', IN, '1) ?page=-4&size=9999&type=hack 접속', '-', '오류 없이 기본값(1페이지, 10건)으로 표시', 'products.spec · a bad URL…'],
   ['상품 관리', '선택·일괄 삭제', P, 'High', IN, '1) 행 체크 2) 삭제 (n) 3) 취소', 'HW3 상품', '확인 팝업 "선택한 n개 상품을 삭제하시겠습니까?", 취소 시 삭제 안 됨', 'products.spec · selection enables…'],
   ['상품 관리', '선택 최대 100개', N, 'Medium', IN, '1) 50건/페이지로 3페이지 전체 선택', '-', '100개 초과 시 "한 번에 최대 100개까지 선택할 수 있습니다." 안내, 100개까지만 선택', '-'],
-  ['상품 관리', '노출 여부 변경', P, 'High', IN, '1) 행의 노출 드롭다운에서 아니오 선택', 'HW3 상품', '즉시 저장 + "노출 여부가 변경되었습니다." 토스트', 'products.mutation.spec'],
+  ['상품 관리', '노출여부 변경', P, 'High', IN, '1) 행의 노출 드롭다운에서 아니오 선택', 'HW3 상품', '즉시 저장 + "노출여부가 변경되었습니다." 토스트', 'products.mutation.spec'],
   ['상품 관리', 'CSV 내보내기', P, 'Medium', IN, '1) 검색 후 CSV 내보내기', 'HW3-Pranesh', '현재 검색 결과 전체(모든 페이지)가 products_YYYYMMDDHHMM.csv 로 다운로드, 엑셀에서 한글 정상', 'products.spec · CSV export…'],
   ['상품 관리', 'API 오류 / 네트워크', N, 'High', IN, '1) 목록 API 500 2) 다시 시도 시 네트워크 끊김', '-', '"상품 목록을 불러오지 못했습니다." + 다시 시도, 네트워크 안내 문구', 'products.spec · API error…'],
   // 등록/수정

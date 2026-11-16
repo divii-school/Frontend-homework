@@ -55,8 +55,8 @@ export const productFormSchema = z
     erpName: z
       .string()
       .trim()
-      .min(1, 'ERP 상품명을 입력해 주세요.')
-      .max(ERP_NAME_MAX, `ERP 상품명은 ${ERP_NAME_MAX}자 이하로 입력해 주세요.`),
+      .min(1, '상품ERP명을 입력해 주세요.')
+      .max(ERP_NAME_MAX, `상품ERP명은 ${ERP_NAME_MAX}자 이하로 입력해 주세요.`),
     quantity: amount('수량'),
     taxType: z.enum(['tax', 'tax_free'], { error: '과세 구분을 선택해 주세요.' }),
     erpUnitPrice: amount('ERP 단가'),

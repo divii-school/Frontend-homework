@@ -165,17 +165,6 @@ export function CategoryManagement() {
       <PageHeader
         title="상품 카테고리 관리"
         breadcrumb={[{ label: '쇼핑몰 관리' }, { label: '상품 카테고리 관리' }]}
-        actions={
-          canEdit && (
-            <Button
-              label="대분류 등록"
-              onClick={() => setDialog({ mode: 'add', level: 'category' })}
-              disabled={!topCreatable}
-              tooltip={topCreatable ? undefined : '대분류 개수가 최대치에 도달하여 새 대분류를 등록할 수 없습니다.'}
-              tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
-            />
-          )
-        }
       />
 
       <section className={styles['category-panel']} aria-label="카테고리 트리">
@@ -206,6 +195,18 @@ export function CategoryManagement() {
             <Button type="button" label="모두 펼치기" outlined onClick={() => (setAllExpanded(true), setOverrides({}))} disabled={Boolean(term)} />
             <Button type="button" label="모두 접기" outlined onClick={() => (setAllExpanded(false), setOverrides({}))} disabled={Boolean(term)} />
           </div>
+          {/* 8.2.0 ⑤: 대분류 등록 sits at the right end of the search row. */}
+          {canEdit && (
+            <Button
+              type="button"
+              label="대분류 등록"
+              className={styles['add-top']}
+              onClick={() => setDialog({ mode: 'add', level: 'category' })}
+              disabled={!topCreatable}
+              tooltip={topCreatable ? undefined : '대분류 개수가 최대치에 도달하여 새 대분류를 등록할 수 없습니다.'}
+              tooltipOptions={{ showOnDisabled: true, position: 'bottom' }}
+            />
+          )}
         </div>
 
         {canEdit && !topCreatable && creatable.isSuccess && (

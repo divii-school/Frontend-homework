@@ -6,9 +6,9 @@ test.describe('상품 관리 목록 (read only)', () => {
   test('loads a page of 10 with the total count', async ({ page }) => {
     await page.goto('/shopping/products');
     await expect(page.getByRole('heading', { name: '상품 관리', level: 1 })).toBeVisible();
-    await expect(page.getByText(/총 게시물 [\d,]+건/)).toBeVisible();
+    await expect(page.getByText(/총 게시물 : [\d,]+/)).toBeVisible();
     await expect(page.locator('tbody tr')).toHaveCount(10);
-    await expect(page.locator('thead')).toContainText('판매가');
+    await expect(page.locator('thead')).toContainText('판매금액');
     await expect(page.locator('tbody tr').first()).toContainText('₩');
   });
 
@@ -45,7 +45,7 @@ test.describe('상품 관리 목록 (read only)', () => {
   test('empty search shows the design message', async ({ page }) => {
     await page.goto('/shopping/products?q=zz-no-such-product-hw3');
     await expect(page.getByText('검색 결과가 없습니다.')).toBeVisible();
-    await expect(page.getByText(/총 게시물 0건/)).toBeVisible();
+    await expect(page.getByText(/총 게시물 : 0(?![\d,])/)).toBeVisible();
   });
 
   test('selection enables bulk delete; cancel deletes nothing', async ({ page }) => {

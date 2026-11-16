@@ -34,7 +34,22 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<ThemeMode>('light');
 
   useEffect(() => {
-    setTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
+    // The boot script normally set <html data-theme> already. If React re-rendered <html> during
+    // hydration (it can drop attributes it did not render), work the theme out again and re-apply it.
+    const fromBoot = document.documentElement.dataset.theme;
+    let initial: ThemeMode;
+    if (fromBoot === 'dark' || fromBoot === 'light') initial = fromBoot;
+    else {
+      let saved: string | null = null;
+      try {
+        saved = window.localStorage.getItem(STORAGE_KEY);
+      } catch {
+        // Private mode: fall back to the OS setting.
+      }
+      initial = saved === 'dark' || saved === 'light' ? saved : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    applyTheme(initial);
+    setTheme(initial);
   }, []);
 
   const toggleTheme = useCallback(() => {

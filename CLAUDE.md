@@ -34,4 +34,6 @@ e2e/                         *.spec.ts read-only · *.mutation.spec.ts writes
 - A new page = add it to app-routes.ts (menu, guard and permission in one place).
 - API calls only through services + hooks; no `any`; errors through ApiError/errorMessage.
 - Shared QA data: only create/edit/delete HW3-Pranesh-* records. Never commit .env.local or logins.
+- In Playwright, type the real QA login only with `fillSecret` (e2e/helpers.ts): `fill()` writes the typed
+  text into the HTML report, which is shared on Notion.
 - Company rules are in WM (Notion); fetch them, don't guess.

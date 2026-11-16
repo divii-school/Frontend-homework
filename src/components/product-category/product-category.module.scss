@@ -93,6 +93,17 @@
   }
 }
 
+// 8.2.0 ⑤: right end of the search row; full width on phones.
+.add-top {
+  margin-left: auto;
+  font-weight: 700;
+
+  @media (max-width: $bp-mobile) {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
 .notice {
   margin: 0 0 $space-3;
   padding: $space-2 $space-3;

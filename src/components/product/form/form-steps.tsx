@@ -149,21 +149,21 @@ export function MediaStep() {
         />
       </div>
       <div className={styles['field-row']}>
-        <FormField id="isVisible" label="노출 상태" required help="예: 쇼핑몰에 노출 / 아니오: 미노출">
+        <FormField id="isVisible" label="노출상태" required help="예: 쇼핑몰에 노출 / 아니오: 미노출">
           <Controller
             control={control}
             name="isVisible"
             render={({ field }) => (
-              <AppDropdown label="노출 상태" inputId="isVisible" value={field.value} options={YES_NO} onChange={(ev) => field.onChange(ev.value)} className={styles['full-width']} aria-describedby="isVisible-help" />
+              <AppDropdown label="노출상태" inputId="isVisible" value={field.value} options={YES_NO} onChange={(ev) => field.onChange(ev.value)} className={styles['full-width']} aria-describedby="isVisible-help" />
             )}
           />
         </FormField>
-        <FormField id="onSale" label="판매 상태" required help="아니오: 결제 진행 불가">
+        <FormField id="onSale" label="판매상태" required help="아니오: 결제 진행 불가">
           <Controller
             control={control}
             name="onSale"
             render={({ field }) => (
-              <AppDropdown label="판매 상태" inputId="onSale" value={field.value} options={YES_NO} onChange={(ev) => field.onChange(ev.value)} className={styles['full-width']} aria-describedby="onSale-help" />
+              <AppDropdown label="판매상태" inputId="onSale" value={field.value} options={YES_NO} onChange={(ev) => field.onChange(ev.value)} className={styles['full-width']} aria-describedby="onSale-help" />
             )}
           />
         </FormField>
@@ -186,11 +186,11 @@ export function ErpStep({ erpCode }: { erpCode?: string }) {
       <FormField id="erpCode" label="ERP 코드" help="ERP 코드는 서버에서 자동으로 부여됩니다.">
         <InputText id="erpCode" value={erpCode ?? '저장 시 자동 부여'} readOnly aria-readonly className={styles['full-width']} aria-describedby="erpCode-help" />
       </FormField>
-      <FormField id="erpName" label="ERP 상품명" required error={e.erpName?.message} help={`최대 ${ERP_NAME_MAX}자`}>
+      <FormField id="erpName" label="상품ERP명" required error={e.erpName?.message} help={`최대 ${ERP_NAME_MAX}자`}>
         <InputText
           id="erpName"
           maxLength={ERP_NAME_MAX + 20}
-          placeholder="ERP 상품명을 입력해 주세요."
+          placeholder="상품ERP명을 입력해 주세요."
           invalid={Boolean(e.erpName)}
           aria-invalid={Boolean(e.erpName)}
           aria-required

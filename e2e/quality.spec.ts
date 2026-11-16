@@ -9,6 +9,14 @@ import { expect, test, type Page } from '@playwright/test';
  */
 type Screen = { name: string; open: (page: Page) => Promise<void>; loggedOut?: boolean };
 
+/** Finds our probe product in the list and opens its details by URL (no race with a click before hydration). */
+async function openProbeDetails(page: Page) {
+  await page.goto('/shopping/products?q=HW3-Pranesh-Probe');
+  const href = await page.getByRole('link', { name: /HW3-Pranesh-Probe/ }).first().getAttribute('href');
+  if (!href) throw new Error('probe product link not found');
+  await page.goto(href);
+}
+
 const SCREENS: Screen[] = [
   {
     name: '로그인',
@@ -28,16 +36,14 @@ const SCREENS: Screen[] = [
   {
     name: '상품 상세',
     open: async (page) => {
-      await page.goto('/shopping/products?q=HW3-Pranesh-Probe');
-      await page.getByRole('link', { name: /HW3-Pranesh-Probe/ }).first().click();
+      await openProbeDetails(page);
       await expect(page.getByRole('tabpanel')).toContainText('상품코드');
     },
   },
   ...(['이미지', 'ERP 정보', '같은 카테고리 상품'] as const).map((tab) => ({
     name: `상품 상세 · ${tab}`,
     open: async (page: Page) => {
-      await page.goto('/shopping/products?q=HW3-Pranesh-Probe');
-      await page.getByRole('link', { name: /HW3-Pranesh-Probe/ }).first().click();
+      await openProbeDetails(page);
       await page.getByRole('tab', { name: tab }).click();
       await expect(page.getByRole('tab', { name: tab })).toHaveAttribute('aria-selected', 'true');
     },

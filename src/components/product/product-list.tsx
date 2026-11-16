@@ -107,7 +107,7 @@ export function ProductList() {
     visibility.mutate(
       { id: product.id, visible },
       {
-        onSuccess: () => toast.show('success', `'${decodeEntities(product.productName)}' 노출 여부가 변경되었습니다.`),
+        onSuccess: () => toast.show('success', `'${decodeEntities(product.productName)}' 노출여부가 변경되었습니다.`),
         onError: (error) => toast.show('error', errorMessage(error)),
       },
     );
@@ -166,7 +166,7 @@ export function ProductList() {
                 value={draftQ}
                 maxLength={SEARCH_MAX}
                 onChange={(e) => setDraftQ(e.target.value)}
-                placeholder="검색어를 입력해 주세요."
+                placeholder="검색어 입력"
               />
               <button type="submit" className={styles['search-button']} aria-label="검색">
                 <i className="pi pi-search" aria-hidden />
@@ -193,7 +193,7 @@ export function ProductList() {
               onClick={() => void runExport()}
             />
             <p className={styles['total']} aria-live="polite">
-              총 게시물 <strong>{formatNumber(total)}</strong>건
+              총 게시물 : <strong>{formatNumber(total)}</strong>
             </p>
           </div>
         </div>
@@ -256,7 +256,7 @@ export function ProductList() {
                   </Link>
                 )}
               />
-              <Column header="판매가" body={(p: ProductListItem) => formatPriceSymbol(p.price)} className={styles['col-price']} />
+              <Column header="판매금액" body={(p: ProductListItem) => formatPriceSymbol(p.price)} className={styles['col-price']} />
               <Column
                 header="카테고리(과정)"
                 body={(p: ProductListItem) =>
@@ -264,11 +264,11 @@ export function ProductList() {
                 }
               />
               <Column
-                header="노출 여부"
+                header="노출여부"
                 body={(p: ProductListItem) =>
                   canEdit ? (
                     <AppDropdown
-                      label={`${decodeEntities(p.productName)} 노출 여부`}
+                      label={`${decodeEntities(p.productName)} 노출여부`}
                       value={p.isVisible}
                       options={VISIBILITY}
                       onChange={(e) => changeVisibility(p, e.value as boolean)}
@@ -281,7 +281,7 @@ export function ProductList() {
                   )
                 }
               />
-              <Column header="등록일" body={(p: ProductListItem) => formatDateTimeSlash(p.createdAt)} className={styles['col-date']} />
+              <Column header="등록일자" body={(p: ProductListItem) => formatDateTimeSlash(p.createdAt)} className={styles['col-date']} />
             </DataTable>
           </div>
         )}

@@ -91,3 +91,7 @@ because a reorder rewrites the order of all siblings.
 - 대분류 are **capped** (`isCreatable: false`, `maximumCategoryLimitReached`) → 대분류 등록 is disabled with a note.
 - A **logout ends every session of the account** — all testers share one QA admin account, so one person's logout
   signs everyone out (the app then sends you to login and back to the same page).
+  **For Playwright this means:** if many tests fail at once and their page shows
+  "로그인이 만료되었습니다", someone logged out of the shared account during the run. Run the suite again.
+- Bulk delete and category reorder send `ids` as **numbers**: the API's OpenAPI doc says strings, but the server
+  refuses them.

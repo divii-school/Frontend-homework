@@ -62,13 +62,13 @@ test('create through the 4 steps (validation, image upload, values kept going ba
   await page.getByRole('button', { name: '다음' }).click();
 
   // Step 4: ERP, then go all the way back — everything is still there.
-  await page.getByLabel('ERP 상품명').fill(`${name}-ERP`);
+  await page.getByLabel('상품ERP명').fill(`${name}-ERP`);
   await typeAmount(page, 'ERP 단가', '1200');
   for (let i = 0; i < 3; i += 1) await page.getByRole('button', { name: '이전' }).click();
   await expect(page.getByRole('textbox', { name: '상품명', exact: true })).toHaveValue(name);
   await expect(page.getByRole('spinbutton', { name: '단가', exact: true })).toHaveValue('₩ 1,500');
   for (let i = 0; i < 3; i += 1) await page.getByRole('button', { name: '다음' }).click();
-  await expect(page.getByLabel('ERP 상품명')).toHaveValue(`${name}-ERP`);
+  await expect(page.getByLabel('상품ERP명')).toHaveValue(`${name}-ERP`);
 
   await page.getByRole('button', { name: '등록', exact: true }).click();
   await expect(page.getByText('상품이 등록되었습니다.')).toBeVisible();
@@ -92,12 +92,12 @@ test('an API error keeps everything typed (server refused the save)', async ({ p
   await pickCategory(page, 'HW3-Pranesh-Sub');
   await pickCategory(page, 'HW3-Pranesh-Child');
   await page.getByRole('button', { name: '다음' }).click();
-  await page.getByLabel('ERP 상품명').fill('x');
+  await page.getByLabel('상품ERP명').fill('x');
   await typeAmount(page, 'ERP 단가', '100');
   await page.getByRole('button', { name: '등록', exact: true }).click();
 
   await expect(page.getByRole('alert').filter({ hasText: '입력한 내용은 그대로 유지됩니다' })).toBeVisible();
-  await expect(page.getByLabel('ERP 상품명')).toHaveValue('x');
+  await expect(page.getByLabel('상품ERP명')).toHaveValue('x');
   await page.getByRole('button', { name: '이전' }).click();
   await page.getByRole('button', { name: '이전' }).click();
   await page.getByRole('button', { name: '이전' }).click();
@@ -112,9 +112,9 @@ test('find it, toggle 노출 inline, edit it, then delete it', async ({ page }) 
   await expect(row).toContainText('학원 Shop > HW3-Pranesh-Sub > HW3-Pranesh-Child');
 
   // Inline 노출 toggle with toast.
-  await row.getByRole("button", { name: `${name} 노출 여부 목록 열기` }).click();
+  await row.getByRole("button", { name: `${name} 노출여부 목록 열기` }).click();
   await page.getByRole('option', { name: '아니오' }).click();
-  await expect(page.getByText(/노출 여부가 변경되었습니다/)).toBeVisible();
+  await expect(page.getByText(/노출여부가 변경되었습니다/)).toBeVisible();
 
   // Details → edit price → saved.
   await row.getByRole('link', { name }).click();

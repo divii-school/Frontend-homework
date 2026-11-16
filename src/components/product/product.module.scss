@@ -49,8 +49,9 @@
   }
 }
 
+// Wide enough for the longest option (카테고리) with the ▼ button, in any font fallback.
 .search-type {
-  width: 120px;
+  width: 144px;
   flex-shrink: 0;
 }
 

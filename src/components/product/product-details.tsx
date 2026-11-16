@@ -66,8 +66,8 @@ function BasicTab({ id }: { id: number }) {
             ['판매가', formatPriceSymbol(p.price)],
             ['단가', formatPriceSymbol(p.unitPrice)],
             ['카테고리', decodeEntities(formatCategoryPath(p.category?.name, p.subCategory?.name, p.childCategory?.name))],
-            ['노출 상태', yesNo(p.isVisible)],
-            ['판매 상태', yesNo(p.onSale)],
+            ['노출상태', yesNo(p.isVisible)],
+            ['판매상태', yesNo(p.onSale)],
             ['등록일', formatDateTimeSlash(p.createdAt)],
             ['수정일', formatDateTimeSlash(p.updatedAt)],
             ['상세설명', <span key="d" className={styles['pre-line']}>{p.description ? decodeEntities(p.description) : '-'}</span>],
@@ -108,7 +108,7 @@ function ErpTab({ id }: { id: number }) {
         <InfoList
           rows={[
             ['ERP 코드', p.erpCode || '-'],
-            ['ERP 상품명', p.erpName ? decodeEntities(p.erpName) : '-'],
+            ['상품ERP명', p.erpName ? decodeEntities(p.erpName) : '-'],
             ['수량', `${formatNumber(p.quantity)} 개`],
             ['과세 구분', p.taxType === 'tax_free' ? '비과세' : '과세'],
             ['ERP 단가', formatPriceSymbol(p.erpUnitPrice)],

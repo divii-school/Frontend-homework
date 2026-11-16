@@ -8,7 +8,7 @@ import type { ProductListItem, ProductListQuery } from '@/types/product';
 /** Rows per API call while exporting (fewer calls; the API accepts it). */
 const EXPORT_PAGE_SIZE = 100;
 
-const HEADER = ['상품 ID', '상품코드', '상품명', '판매가', '단가', '카테고리', '노출 여부', '판매 여부', 'ERP 코드', 'ERP 상품명', '등록일'];
+const HEADER = ['상품 ID', '상품코드', '상품명', '판매금액', '단가', '카테고리', '노출여부', '판매상태', 'ERP 코드', '상품ERP명', '등록일자'];
 
 function toRow(p: ProductListItem) {
   return [

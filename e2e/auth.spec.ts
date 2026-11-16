@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { API_GLOB } from './helpers';
+import { API_GLOB, fillSecret, qaLogin } from './helpers';
 
 test.describe('로그인 (logged out)', () => {
   test.use({ storageState: { cookies: [], origins: [] } });
@@ -11,9 +11,9 @@ test.describe('로그인 (logged out)', () => {
 
     const login = page.getByRole('button', { name: '로그인', exact: true });
     await expect(login).toBeDisabled(); // Figma: disabled until both fields are filled
-    await page.getByPlaceholder('아이디').fill(process.env.E2E_LOGIN_ID ?? '');
+    await fillSecret(page.getByPlaceholder('아이디'), qaLogin().id);
     await expect(login).toBeDisabled();
-    await page.getByPlaceholder('비밀번호').fill(process.env.E2E_PASSWORD ?? '');
+    await fillSecret(page.getByPlaceholder('비밀번호'), qaLogin().password);
     await expect(login).toBeEnabled();
     await login.click();
 
@@ -23,7 +23,7 @@ test.describe('로그인 (logged out)', () => {
 
   test('wrong password shows the Figma message under the password', async ({ page }) => {
     await page.goto('/login');
-    await page.getByPlaceholder('아이디').fill(process.env.E2E_LOGIN_ID ?? '');
+    await fillSecret(page.getByPlaceholder('아이디'), qaLogin().id);
     await page.getByPlaceholder('비밀번호').fill('wrong-password-e2e');
     await page.getByRole('button', { name: '로그인', exact: true }).click();
     await expect(page.locator('#password-error')).toHaveText('아이디와 비밀번호가 일치하지 않습니다. 다시 확인해 주세요.');
@@ -82,8 +82,8 @@ test.describe('세션 만료 (logged in)', () => {
     await expect(page.getByRole('status')).toContainText('로그인이 만료되었습니다');
 
     await page.unrouteAll({ behavior: 'ignoreErrors' });
-    await page.getByPlaceholder('아이디').fill(process.env.E2E_LOGIN_ID ?? '');
-    await page.getByPlaceholder('비밀번호').fill(process.env.E2E_PASSWORD ?? '');
+    await fillSecret(page.getByPlaceholder('아이디'), qaLogin().id);
+    await fillSecret(page.getByPlaceholder('비밀번호'), qaLogin().password);
     await page.getByRole('button', { name: '로그인', exact: true }).click();
     await expect(page).toHaveURL(/\/shopping\/products\?page=2$/);
   });
@@ -117,8 +117,8 @@ test.describe('세션 만료 (logged in)', () => {
       route.fulfill({ status: 200, contentType: 'application/json', body: '{"success":true,"message":"logoutSuccess","data":null}' }),
     );
     await page.goto('/login');
-    await page.getByPlaceholder('아이디').fill(process.env.E2E_LOGIN_ID ?? '');
-    await page.getByPlaceholder('비밀번호').fill(process.env.E2E_PASSWORD ?? '');
+    await fillSecret(page.getByPlaceholder('아이디'), qaLogin().id);
+    await fillSecret(page.getByPlaceholder('비밀번호'), qaLogin().password);
     await page.getByRole('button', { name: '로그인', exact: true }).click();
     await expect(page).toHaveURL(/\/shopping\/products/);
     await page.getByRole('button', { name: '로그아웃' }).click();

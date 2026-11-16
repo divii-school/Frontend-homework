@@ -83,23 +83,36 @@ Full list with steps and expected results: `docs/qa/HW3-Pranesh-unit-test-cases.
 - Drag-reorder of categories is shown only where every sibling is a `HW3-Pranesh-` record, so other people's
   order can't be changed by accident.
 - Limited roles checked with a mocked login only (questions A9).
+- **Shared account:** a logout by anyone ends every session of the QA account (questions A4). If many screens
+  suddenly show "로그인이 만료되었습니다", that is the cause, not a bug; log in again. The same applies to Playwright runs.
+- Labels follow the **Korean** Figma frames (e.g. 판매금액, 노출여부, 등록일자, 상품ERP명). Fields the design names
+  twice (two "단가") are labelled 단가 and ERP 단가 so they can be told apart.
 
 ## 9. Check results
 
-**[fill at hand-over]** — real output pasted from the final commit:
+Run on 2026-11-16 against the Talking Club QA API. Lint, type-check, unit tests and build were run in a **fresh
+clone** of the branch (`npm ci` first); Playwright ran against the **production build** (`next build` + `next start`).
 
 | Check | Command | Result |
 |---|---|---|
-| Lint | `npm run lint` | |
-| Type-check | `npm run typecheck` | |
-| Unit tests | `npm run test` | |
-| Build | `npm run build` | |
-| Playwright read-only | `npm run test:e2e` | |
-| Playwright mutation | `npm run test:e2e:mutation` | |
+| Lint | `npm run lint` | clean: 0 errors, 0 warnings |
+| Type-check | `npm run typecheck` | clean |
+| Unit tests | `npm run test` | 69 passed (7 files) |
+| Build | `npm run build` | compiled successfully, no warnings |
+| Playwright read-only | `npm run test:e2e` | 60 passed (auth 9 · roles 4 · categories 8 · products 14 · quality 25) |
+| Playwright mutation | `npm run test:e2e:mutation` | 5 passed (only `HW3-Pranesh-*` records; all deleted afterwards) |
+| Total in the HTML report | read-only + mutation + login setup | **66 passed, 0 failed, 0 flaky** |
 
-HTML report: zipped `playwright-report/` attached to the submission page.
+The quality tests check every screen (login, list, details and its 4 tabs, register, categories) for zero console
+errors/warnings, zero WCAG 2 A/AA violations (axe) in light **and** dark, and no sideways page scroll at
+1440 / 768 / 375.
+
+HTML report: zipped `playwright-report/` attached to the submission page (checked: it contains no login data).
 
 ## 10. Screen sizes and browsers checked
 
-**[fill at hand-over]** — planned: 1920, 1440, 1366, 768, 375 in light and dark; Chrome (Playwright Chromium)
-and Edge on Windows 11. Side-by-side screenshots (design | build) are on the submission page.
+- **Sizes:** 1920, 1440, 1366, 768, 375, each in light and dark: 50 screenshots in `docs/screenshots/`, taken by
+  `npm run screenshots`. Side-by-side images (design | build) are on the submission page.
+- **Browser:** Chromium (Playwright, same engine as Chrome and Edge) on Windows 11, against the production build
+  and the Vercel deployment.
+- Not checked: Safari / iOS (no device available).
