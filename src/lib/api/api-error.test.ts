@@ -82,3 +82,19 @@ describe('upload, shared data and token checks', () => {
     expect(secondsUntilExpiry('not-a-jwt')).toBe(0);
   });
 });
+
+describe('every API key seen on the QA server has Korean text (never a raw key on screen)', () => {
+  it.each([
+    'invalidPassword',
+    'invalidCredentials',
+    'productNotFound',
+    'maximumCategoryLimitReached',
+    'subCategoryAlreadyExists',
+    'childSubcategoryAlreadyExists',
+    'unitPriceMustBeLessThanPrice',
+  ])('%s', (key) => {
+    const text = errorMessage(toApiError(axiosFailure(400, key)));
+    expect(text).not.toContain(key);
+    expect(text).toMatch(/[가-힣]/);
+  });
+});

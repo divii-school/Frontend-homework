@@ -11,6 +11,7 @@ const MESSAGES: Record<string, string> = {
   Unauthorized: '로그인이 필요합니다.', // ✔
   productNotFound: '상품을 찾을 수 없습니다.', // ✔
   maximumCategoryLimitReached: '대분류 개수가 최대치에 도달하여 새 대분류를 등록할 수 없습니다.', // ✔ isCreatable=false
+  unitPriceMustBeLessThanPrice: '단가는 판매가보다 작아야 합니다.', // ✔ same text as the form's own check
   // 8.2.0 "no duplicate names": the API refuses a name already used at that level (case-insensitive).
   categoryAlreadyExists: '이미 등록된 대분류명입니다. 다른 이름을 입력해 주세요.', // top level is capped, so not reachable today
   subCategoryAlreadyExists: '이미 등록된 중분류명입니다. 다른 이름을 입력해 주세요.', // ✔
