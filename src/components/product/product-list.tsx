@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { AppDropdown } from '@/components/common/app-dropdown';
+import { AppDropdown, dropdownNamePt } from '@/components/common/app-dropdown';
 import { Paginator } from 'primereact/paginator';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
@@ -295,6 +295,7 @@ export function ProductList() {
             onPageChange={(e) => (e.rows !== params.size ? setParams({ size: e.rows }) : setParams({ page: e.page + 1 }))}
             className={styles['paginator']}
             template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+            pt={{ RPPDropdown: dropdownNamePt('페이지당 표시 개수') }}
           />
         )}
       </section>

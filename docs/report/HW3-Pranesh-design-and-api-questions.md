@@ -24,8 +24,8 @@ None of them blocks the build; each needs an answer from design (Bhagyashree) or
 
 | # | Question | How I checked | What I built meanwhile |
 |---|---|---|---|
-| A1 | No sort parameter on `GET /products`. | Sent `sort`, `sortBy`, `order` with several values; the order of results never changed. | No sort UI (a client-side sort of one page would be wrong for a paged list). Brief asks for server-side sort → needs the API. |
-| A2 | `GET /product-category/list` without `search` returns 3 of the 12 대분류, and has no paging or sort. | Compared with `/products/categories` (12 rows). | Tree read level by level (`/products/categories` → `/subcategories/{id}` → `/childcategories/{id}`); search still uses `/product-category/list?search=`. |
+| A1 | No sort parameter on `GET /products`. | The API's own spec (`/docs-json`) lists only `page, limit, type, search` for this endpoint. Also sent `sort`, `sortBy`, `order` with several values; the order of results never changed. | No sort UI (a client-side sort of one page would be wrong for a paged list). Brief asks for server-side sort → needs the API. |
+| A2 | `GET /product-category/list` without `search` returns 3 of the 12 대분류, and has no paging or sort (spec: `search` is its only parameter). The brief asks for server-side sort and paging on categories. | Compared with `/products/categories` (12 rows). | Tree read level by level (`/products/categories` → `/subcategories/{id}` → `/childcategories/{id}`); search still uses `/product-category/list?search=`. |
 | A3 | 대분류 are capped. | `isCreatable: false`; add returns `maximumCategoryLimitReached`. | 대분류 등록 disabled with the reason shown. |
 | A4 | Logout ends every session of the account. | Logged out in one browser; the other browser's next call got 401. Everyone shares one QA admin account. | The app sends the user to login and back to the same page. Playwright mocks the logout call so tests don't sign others out. |
 | A5 | Allowed values of `PUT /products/update-status/{id}/{status}`. | Not in the docs. `yes` sets 노출 on; any other value sets it off. | Sends `yes` / `no`. |

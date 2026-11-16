@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import { ROUTES } from '@/config/app-routes';
 import { StateBlock } from '@/components/common/state-block';
+import styles from './not-found.module.scss';
 
 /** 404 for any URL that has no page. */
 export default function NotFound() {
   return (
-    <main style={{ minHeight: '100vh', display: 'grid', placeItems: 'center' }}>
+    <main className={styles['not-found-page']}>
       <StateBlock
         variant="not-found"
         title="404 · 페이지를 찾을 수 없습니다."

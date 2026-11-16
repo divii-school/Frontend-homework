@@ -1,0 +1,7 @@
+// 404 sits outside the admin shell, so it centres itself on the page background.
+.not-found-page {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  background: var(--color-bg-page);
+}

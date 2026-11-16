@@ -36,9 +36,10 @@
     line-height: 22px;
   }
 
+  // Muted grey on the grey label cell is 4.36:1 (WCAG AA needs 4.5:1), so labels use body text.
   dt {
     background: var(--color-bg-subtle);
-    color: var(--color-text-muted);
+    color: var(--color-text);
     font-weight: 600;
   }
 

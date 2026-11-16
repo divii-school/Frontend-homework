@@ -1,7 +1,9 @@
 import type { Page } from '@playwright/test';
 
-/** The real API host, read from the same env variable the app uses. */
-export const API_GLOB = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://tkclub-admn-api-qa.dvconsulting.org'}/api/v1`;
+/** The real API host, read from the same env variable the app uses (.env.local); never hard-coded. */
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+if (!apiBaseUrl) throw new Error('NEXT_PUBLIC_API_BASE_URL is not set. Copy .env.example to .env.local.');
+export const API_GLOB = `${apiBaseUrl.replace(/\/+$/, '')}/api/v1`;
 
 /** A JWT-shaped string whose payload has `exp`; only the app's expiry check reads it (never the API). */
 export function fakeJwt(expiresInSeconds: number): string {
