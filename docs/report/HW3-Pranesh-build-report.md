@@ -2,7 +2,6 @@
 
 Format: WM | Report, 10 parts from the training page Step 8 Part C.
 For: Archana (QA) · Bhagyashree (design) · Kakali (code).
-Items marked **[fill at hand-over]** are written in only once the final build is deployed.
 
 ## 1. Build
 
