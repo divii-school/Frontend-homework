@@ -3,7 +3,6 @@
 import { Button } from "primereact/button";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useTheme } from "@/components/providers/ThemeProvider";
-import { ROUTES } from "@/constants/routes";
 import { useLogout } from "@/hooks/API/auth/useAuthMutations";
 
 /** Top bar: menu button (small screens), theme switch, user name and logout. */
@@ -14,12 +13,7 @@ export function Topbar({ menuOpen, onToggleMenu }: { menuOpen: boolean; onToggle
 
   // The session ends in this browser even if the API call fails (server down): the user asked to leave.
   const handleLogout = () => {
-    logout.mutate(undefined, {
-      onSettled: () => {
-        signOut();
-        window.location.assign(ROUTES.login);
-      },
-    });
+    logout.mutate(undefined, { onSettled: signOut });
   };
 
   return (

@@ -25,12 +25,15 @@ export function readToken(): string | undefined {
   return entry ? decodeURIComponent(entry.slice(TOKEN_COOKIE.length + 1)) : undefined;
 }
 
-/** Keep the token until it expires. SameSite=Lax: the cookie is only for the pages of this app. */
-export function saveSession(token: string, user: AuthUser): void {
+/**
+ * Keep the token. With 자동 로그인 (`remember`) the cookie lives until the token itself expires; without it the
+ * cookie has no lifetime, so the browser drops it when it closes. SameSite=Lax: only for the pages of this app.
+ */
+export function saveSession(token: string, user: AuthUser, remember: boolean): void {
   const exp = tokenExpiry(token);
-  const maxAge = exp ? Math.max(0, exp - Math.floor(Date.now() / 1000)) : 0;
+  const lifetime = remember && exp ? `; Max-Age=${Math.max(0, exp - Math.floor(Date.now() / 1000))}` : "";
   const secure = window.location.protocol === "https:" ? "; Secure" : "";
-  document.cookie = `${TOKEN_COOKIE}=${encodeURIComponent(token)}; Path=/; Max-Age=${maxAge}; SameSite=Lax${secure}`;
+  document.cookie = `${TOKEN_COOKIE}=${encodeURIComponent(token)}; Path=/${lifetime}; SameSite=Lax${secure}`;
   window.localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
 }
 
@@ -48,12 +51,24 @@ export function readStoredUser(): AuthUser | null {
   }
 }
 
-/** Only paths inside this app are accepted as a return address ("/products?page=2"), never another site. */
+/**
+ * Only paths inside this app are accepted as a return address ("/products?page=2"), never another site.
+ * The value is read the way a browser reads it: "/\\evil.example" and "/<TAB>/evil.example" both become
+ * "//evil.example", which is another site. So it is resolved against a placeholder origin and accepted only
+ * when the result stays on that origin.
+ */
 export function safeRedirectPath(value: string | null | undefined): string {
-  if (!value || !value.startsWith("/") || value.startsWith("//") || value.startsWith(ROUTES.login)) {
+  if (!value || !value.startsWith("/")) return ROUTES.home;
+  const placeholder = "http://app.invalid";
+  let target: URL;
+  try {
+    target = new URL(value, placeholder);
+  } catch {
     return ROUTES.home;
   }
-  return value;
+  const path = `${target.pathname}${target.search}${target.hash}`;
+  if (target.origin !== placeholder || path.startsWith(ROUTES.login)) return ROUTES.home;
+  return path;
 }
 
 /** "/auth/login?redirect=%2Fproducts%3Fpage%3D2" for the page the user is on now. */

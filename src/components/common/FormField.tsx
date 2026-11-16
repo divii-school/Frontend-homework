@@ -5,17 +5,20 @@ interface FormFieldProps {
   id: string;
   label: string;
   required?: boolean;
+  /** Keep the label for screen readers but do not draw it (the login design shows only a placeholder). */
+  hideLabel?: boolean;
   error?: string;
   hint?: string;
   children: ReactNode;
 }
 
 /** Label + input + hint + error message in one consistent block. */
-export function FormField({ id, label, required, error, hint, children }: FormFieldProps) {
+export function FormField({ id, label, required, hideLabel, error, hint, children }: FormFieldProps) {
+  const labelClass = hideLabel ? "visually-hidden" : `form-field-label${required ? " form-field-label-required" : ""}`;
   return (
     <div className={`form-field${error ? " form-field-invalid" : ""}`}>
       {/* The red asterisk is drawn by CSS, so the label text read by screen readers stays the plain field name. */}
-      <label className={`form-field-label${required ? " form-field-label-required" : ""}`} htmlFor={id}>
+      <label className={labelClass} htmlFor={id}>
         {label}
       </label>
       {children}

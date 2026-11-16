@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { ROUTES } from "@/constants/routes";
 import type { AuthUser } from "@/types/auth";
 import { clearSession, isTokenValid, readStoredUser, readToken, saveSession } from "@/utils/session";
 
@@ -9,7 +10,7 @@ interface AuthContextValue {
   user: AuthUser | null;
   /** False until the browser storage has been read. Screens wait for it before deciding "not signed in". */
   ready: boolean;
-  signIn: (token: string, user: AuthUser) => void;
+  signIn: (token: string, user: AuthUser, remember: boolean) => void;
   signOut: () => void;
 }
 
@@ -30,14 +31,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setReady(true);
   }, []);
 
-  const signIn = useCallback((token: string, nextUser: AuthUser) => {
-    saveSession(token, nextUser);
+  const signIn = useCallback((token: string, nextUser: AuthUser, remember: boolean) => {
+    saveSession(token, nextUser, remember);
     setUser(nextUser);
   }, []);
 
+  // Ends the session and opens the login page with a full page load. The user in memory is not cleared first:
+  // that would make RouteGuard send the browser to login with ?redirect=<this page>, and the next person to log
+  // in on this browser would land on the previous user's page.
   const signOut = useCallback(() => {
     clearSession();
-    setUser(null);
+    window.location.assign(ROUTES.login);
   }, []);
 
   const value = useMemo(() => ({ user, ready, signIn, signOut }), [user, ready, signIn, signOut]);
