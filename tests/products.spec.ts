@@ -190,3 +190,21 @@ test.describe("product list (mocked API)", () => {
     await expect(page).toHaveURL("/shopping/products?page=3");
   });
 });
+
+test("soft-deleted rows returned by the API are not shown", async ({ page }) => {
+  await fakeSession(page);
+  const row = (id: number, name: string, isDeleted: boolean) => ({
+    id, productName: name, productCode: `P-${id}`, price: 1000, isVisible: true, image: null,
+    category: null, subCategory: null, childCategory: null, createdAt: "2026-11-16T00:00:00.000Z", isDeleted,
+  });
+  await page.route("**/api/v1/products**", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ success: true, message: "Success", data: [row(1, "Live product", false), row(2, "Deleted product", true)], totalRecords: 2, totalPage: 1, page: 1 }),
+    }),
+  );
+  await page.goto("/shopping/products?search=ACE&type=categoryName");
+  await expect(page.getByRole("link", { name: "Live product" })).toBeVisible();
+  await expect(page.getByText("Deleted product")).toHaveCount(0);
+});

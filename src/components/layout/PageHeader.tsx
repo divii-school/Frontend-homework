@@ -6,8 +6,9 @@ import { breadcrumbFor } from "@/config/navigation";
 import styles from "./PageHeader.module.scss";
 
 /** Figma "pageHeader": 24px bold title, breadcrumb from the navigation config, actions on the right. */
-export function PageHeader({ title, actions }: { title: string; actions?: ReactNode }) {
-  const crumbs = breadcrumbFor(usePathname());
+export function PageHeader({ title, actions, crumb }: { title: string; actions?: ReactNode; /** Extra last breadcrumb item (e.g. "Product Registration"). */ crumb?: string }) {
+  const base = breadcrumbFor(usePathname());
+  const crumbs = crumb && base.length ? [...base, crumb] : base;
   return (
     <div className={styles.header}>
       <div className={styles.titleRow}>

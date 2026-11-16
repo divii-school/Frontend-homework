@@ -17,7 +17,15 @@ const rowSchema = z.object({
   subCategory: categoryRef,
   childCategory: categoryRef,
   createdAt: z.string(),
+  isDeleted: z.boolean().optional(),
 });
+
+/**
+ * API bug (QA 2026-11-16): `type=categoryName` searches also return soft-deleted products
+ * (isDeleted: true); `productName` searches don't. Deleted rows are dropped here. The server's
+ * totalRecords still counts them, so totals on a category search can be slightly high.
+ */
+const live = (rows: z.infer<typeof rowSchema>[]) => rows.filter((row) => !row.isDeleted);
 
 function toItem(raw: z.infer<typeof rowSchema>): ProductListItem {
   return {
@@ -48,7 +56,7 @@ export const productService = {
       query: { page: params.page, limit: PRODUCT_PAGE_SIZE, ...filterQuery(params) },
       signal,
     });
-    return { ...result, rows: z.array(rowSchema).parse(result.rows).map(toItem) };
+    return { ...result, rows: live(z.array(rowSchema).parse(result.rows)).map(toItem) };
   },
 
   /** Every row matching the current search (for export). */
@@ -56,7 +64,7 @@ export const productService = {
     const result = await pagedRequest("/api/v1/products", {
       query: { page: 1, limit: Math.min(Math.max(total, 1), EXPORT_MAX), ...filterQuery(filter) },
     });
-    return z.array(rowSchema).parse(result.rows).map(toItem);
+    return live(z.array(rowSchema).parse(result.rows)).map(toItem);
   },
 
   /** DELETE /api/v1/products/delete with { ids: number[] } (ids must be numbers). */
