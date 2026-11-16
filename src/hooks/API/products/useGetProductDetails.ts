@@ -29,7 +29,10 @@ export function useGenerateProductCode(enabled: boolean) {
     queryKey: QUERIES.products.code,
     queryFn: ProductService.generateCode,
     enabled,
-    staleTime: 0,
+    // One code per visit of the create screen: not fetched again while the form is open (a new code would not
+    // reach the form anyway), and dropped when the screen closes, so the next visit asks for a new one.
+    staleTime: Infinity,
     gcTime: 0,
+    refetchOnReconnect: false,
   });
 }

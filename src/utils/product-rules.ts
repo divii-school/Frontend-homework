@@ -18,15 +18,24 @@ export const EMPTY_PRODUCT_FORM: ProductFormValues = {
   images: [],
   isVisible: false,
   onSale: false,
+  storedPrice: null,
 };
 
 const isWholeNumber = (value: string): boolean => /^\d+$/.test(value.trim());
 
-/** 판매가 is not typed: it is always 수량 × 단가 (the live admin does the same). */
+/** 수량 × 단가, or null while either is not a whole number. 판매가 is never typed (the live admin does the same). */
 export function salePrice(values: Pick<ProductFormValues, "quantity" | "unitPrice">): number | null {
   if (!isWholeNumber(values.quantity) || !isWholeNumber(values.unitPrice)) return null;
   return Number(values.quantity) * Number(values.unitPrice);
 }
+
+/**
+ * The 판매가 the form shows and saves. A new product: 수량 × 단가, as in the live admin. An existing product
+ * keeps its saved price until 수량 or 단가 is changed, so editing only the name never changes the price
+ * (many products on the server have a price that is not 수량 × 단가, and 수량 0).
+ */
+export const formPrice = (values: Pick<ProductFormValues, "quantity" | "unitPrice" | "storedPrice">): number | null =>
+  values.storedPrice ?? salePrice(values);
 
 /**
  * The API's rules (class-validator on addProductDto): every field is required, numbers must be numbers,
@@ -42,7 +51,7 @@ const STEP_RULES: Array<(values: ProductFormValues) => ProductFormErrors> = [
   },
   (values) => {
     const errors: ProductFormErrors = {};
-    if (!isWholeNumber(values.quantity) || Number(values.quantity) < 1) errors.quantity = "수량은 1 이상의 숫자로 입력해 주세요.";
+    if (!isWholeNumber(values.quantity)) errors.quantity = "수량은 0 이상의 숫자로 입력해 주세요.";
     if (!isWholeNumber(values.unitPrice)) errors.unitPrice = "단가는 0 이상의 숫자로 입력해 주세요.";
     if (!isWholeNumber(values.erpUnitPrice)) errors.erpUnitPrice = "ERP 단가는 0 이상의 숫자로 입력해 주세요.";
     return errors;
@@ -81,7 +90,7 @@ export function toProductRequest(values: ProductFormValues): ProductRequest {
   return {
     productName: values.productName.trim(),
     productCode: values.productCode.trim(),
-    price: salePrice(values) ?? 0,
+    price: formPrice(values) ?? 0,
     description: values.description.trim(),
     erpName: values.erpName.trim(),
     erpUnitPrice: Number(values.erpUnitPrice),
@@ -117,6 +126,7 @@ export function toFormValues(product: Product): ProductFormValues {
     }),
     isVisible: product.isVisible,
     onSale: product.onSale,
+    storedPrice: product.price,
   };
 }
 

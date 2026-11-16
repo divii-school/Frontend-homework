@@ -9,15 +9,17 @@ import { ImageUploader } from "@/components/products/ImageUploader";
 import { TAX_TYPE_OPTIONS } from "@/constants/products";
 import { useCategoryOptions } from "@/hooks/API/categories/useCategories";
 import type { CategoryLevel } from "@/types/category";
-import type { ProductFormErrors, ProductFormValues } from "@/types/product";
+import type { ProductFormErrors, ProductFormValues, ProductImage } from "@/types/product";
 import { formatWon } from "@/utils/format";
-import { salePrice } from "@/utils/product-rules";
+import { formPrice } from "@/utils/product-rules";
 
 /** Every step gets the same three props. The values live in the parent (ProductForm), so a step holds no state of its own. */
 export interface StepProps {
   values: ProductFormValues;
   errors: ProductFormErrors;
   onChange: (changes: Partial<ProductFormValues>) => void;
+  /** Images change through an updater (see ImageUploader). */
+  onImagesChange: (update: (images: ProductImage[]) => ProductImage[]) => void;
 }
 
 /** A text input bound to one string field of the form. */
@@ -28,6 +30,7 @@ function TextField(props: StepProps & { name: "productName" | "erpName" | "quant
     <FormField id={id} label={label} required error={errors[name]}>
       <InputText
         id={id}
+        aria-required
         value={values[name]}
         placeholder={placeholder}
         inputMode={numeric ? "numeric" : undefined}
@@ -57,13 +60,18 @@ export function BasicStep(props: StepProps) {
 
 /** Step 2: numbers. 판매가 is shown, not typed: 수량 × 단가. */
 export function PriceStep(props: StepProps) {
-  const price = salePrice(props.values);
+  const price = formPrice(props.values);
+  const keepsSavedPrice = props.values.storedPrice !== null;
   return (
     <div className="form-grid">
       <TextField {...props} name="quantity" label="수량" numeric placeholder="0" />
       <TextField {...props} name="unitPrice" label="단가(원)" numeric placeholder="0" />
       <TextField {...props} name="erpUnitPrice" label="ERP 단가(원)" numeric placeholder="0" />
-      <FormField id="product-price" label="판매가" hint="수량 × 단가로 자동 계산됩니다.">
+      <FormField
+        id="product-price"
+        label="판매가"
+        hint={keepsSavedPrice ? "저장된 판매가입니다. 수량이나 단가를 바꾸면 수량 × 단가로 다시 계산됩니다." : "수량 × 단가로 자동 계산됩니다."}
+      >
         <InputText id="product-price" value={price === null ? "" : formatWon(price)} readOnly placeholder="수량 × 단가 자동 계산" />
       </FormField>
     </div>
@@ -139,15 +147,16 @@ export function CategoryStep({ values, errors, onChange }: StepProps) {
 }
 
 /** Step 4: images, description and the two switches. */
-export function MediaStep({ values, errors, onChange }: StepProps) {
+export function MediaStep({ values, errors, onChange, onImagesChange }: StepProps) {
   return (
     <div className="form-stack">
       <FormField id="product-images" label="이미지" required>
-        <ImageUploader images={values.images} error={errors.images} onChange={(images) => onChange({ images })} />
+        <ImageUploader images={values.images} error={errors.images} onImagesChange={onImagesChange} />
       </FormField>
       <FormField id="product-description" label="상세설명" required error={errors.description}>
         <InputTextarea
           id="product-description"
+          aria-required
           value={values.description}
           rows={6}
           autoResize

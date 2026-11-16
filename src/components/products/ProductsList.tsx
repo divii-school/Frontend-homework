@@ -15,9 +15,10 @@ import { ROUTES } from "@/constants/routes";
 import { useGetProductsList } from "@/hooks/API/products/useGetProductsList";
 import { useDeleteProducts, useExportProducts, useSetProductVisible } from "@/hooks/API/products/useProductMutations";
 import { useProductListParams } from "@/hooks/useProductListParams";
+import type { ApiError } from "@/types/api";
 import type { Product } from "@/types/product";
 import { downloadCsv, toCsv } from "@/utils/csv";
-import { formatCount, formatDateTime } from "@/utils/format";
+import { formatCount, formatDateTime, formatWon } from "@/utils/format";
 
 const EXPORT_HEADER = ["상품코드", "상품명", "판매금액", "카테고리", "노출여부", "판매상태", "등록일자"];
 
@@ -37,12 +38,22 @@ export function ProductsList() {
   const exportProducts = useExportProducts();
   const [selected, setSelected] = useState<Product[]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  // Rows whose visibility is being saved. Each switch keeps its own state and gets its own error toast.
+  const [savingIds, setSavingIds] = useState<ReadonlySet<number>>(new Set());
 
   const canWrite = canDo(user, "product.write");
   const canDelete = canDo(user, "product.delete");
 
   // A selection belongs to the rows on screen: a new page or filter starts with nothing selected.
   useEffect(() => setSelected([]), [params]);
+
+  // A page past the end (a hand-typed URL, or the last row of the last page was deleted) has no rows although
+  // the filter has results: go to the last page that exists.
+  const pastTheEnd = list.isSuccess && !list.isPlaceholderData && list.data.items.length === 0 && list.data.totalRecords > 0;
+  const lastPage = list.data?.totalPages ?? 1;
+  useEffect(() => {
+    if (pastTheEnd && params.page > lastPage) update({ page: Math.max(1, lastPage) }, "replace");
+  }, [pastTheEnd, lastPage, params.page, update]);
 
   const handleDelete = () => {
     deleteProducts.mutate(
@@ -58,10 +69,19 @@ export function ProductsList() {
   };
 
   const handleToggleVisible = (product: Product) => {
-    setVisible.mutate(
-      { id: product.id, visible: !product.isVisible },
-      { onError: (error) => showToast({ severity: "error", summary: "저장 실패", detail: error.messages[0] }) },
-    );
+    setSavingIds((current) => new Set(current).add(product.id));
+    setVisible
+      .mutateAsync({ id: product.id, visible: !product.isVisible })
+      .catch((error: ApiError) =>
+        showToast({ severity: "error", summary: "저장 실패", detail: `${product.productName}: ${error.messages[0]}` }),
+      )
+      .finally(() =>
+        setSavingIds((current) => {
+          const next = new Set(current);
+          next.delete(product.id);
+          return next;
+        }),
+      );
   };
 
   const handleExport = () => {
@@ -70,7 +90,7 @@ export function ProductsList() {
         const body = rows.map((product) => [
           product.productCode,
           product.productName,
-          product.price,
+          formatWon(product.price),
           categoryPath(product),
           product.isVisible ? "예" : "아니오",
           product.onSale ? "예" : "아니오",
@@ -126,7 +146,7 @@ export function ProductsList() {
               selected={selected}
               selectable={canDelete}
               editable={canWrite}
-              savingId={setVisible.isPending ? (setVisible.variables?.id ?? null) : null}
+              savingIds={savingIds}
               onSelect={setSelected}
               onSort={(sort, order) => update({ sort, order, page: params.page })}
               onToggleVisible={handleToggleVisible}

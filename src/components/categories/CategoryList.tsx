@@ -4,7 +4,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CategoryDialog, LEVEL_LABEL } from "@/components/categories/CategoryDialog";
 import { CategoryTree } from "@/components/categories/CategoryTree";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
@@ -58,9 +58,18 @@ export function CategoryList() {
   const [editing, setEditing] = useState<CategoryTarget | null>(null);
   const [deleting, setDeleting] = useState<CategoryTarget | null>(null);
   const [searchText, setSearchText] = useState(search);
+  // The last value this box wrote to the URL (see ProductsToolbar): our own update keeps what was typed in the
+  // meantime; any other change of the URL (Back button, a shared link) is copied into the box.
+  const sentSearch = useRef(search);
+  useEffect(() => {
+    if (search === sentSearch.current) return;
+    sentSearch.current = search;
+    setSearchText(search);
+  }, [search]);
 
+  // Reads the address as it is when called, so a change started a moment earlier (sort, page) is kept.
   const setQuery = (changes: Record<string, string | number | null>) => {
-    const query = new URLSearchParams(searchParams);
+    const query = new URLSearchParams(window.location.search);
     Object.entries(changes).forEach(([key, value]) => {
       if (value === null || value === "") query.delete(key);
       else query.set(key, String(value));
@@ -71,15 +80,21 @@ export function CategoryList() {
 
   // Typing waits a moment, then the search goes to the URL and from there to the server. A new search starts at page 1.
   useEffect(() => {
-    if (searchText.trim() === search) return;
-    const timer = window.setTimeout(() => setQuery({ search: searchText.trim(), page: null }), SEARCH_DEBOUNCE_MS);
+    const wanted = searchText.trim();
+    if (wanted === sentSearch.current) return;
+    const timer = window.setTimeout(() => {
+      sentSearch.current = wanted;
+      setQuery({ search: wanted, page: null });
+    }, SEARCH_DEBOUNCE_MS);
     return () => window.clearTimeout(timer);
     // setQuery is recreated on every render; the effect must follow the text only.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchText, search]);
+  }, [searchText]);
 
-  const sorted = useMemo(() => sortCategories(tree.data ?? [], sort), [tree.data, sort]);
-  const pageRows = sorted.slice((page - 1) * limit, page * limit);
+  const sorted = useMemo(() => sortCategories(tree.data?.categories ?? [], sort), [tree.data, sort]);
+  // A page past the end (the last row of the last page was deleted) shows the last page that exists.
+  const currentPage = Math.min(page, Math.max(1, Math.ceil(sorted.length / limit)));
+  const pageRows = sorted.slice((currentPage - 1) * limit, currentPage * limit);
   const allKeys = useMemo(
     () => sorted.flatMap((category) => [`category-${category.id}`, ...category.subCategories.map((sub) => `sub-${sub.id}`)]),
     [sorted],
@@ -113,7 +128,11 @@ export function CategoryList() {
       <PageHeading
         title="상품 카테고리 관리"
         breadcrumb={[NAV_GROUP_LABEL, "상품 카테고리 관리"]}
-        actions={canWrite && <Button type="button" label="대분류 등록" icon="pi pi-plus" onClick={() => setEditing({ level: "category" })} />}
+        actions={
+          // The API says when another 대분류 may be added (isCreatable); the QA server has reached its limit.
+          canWrite &&
+          tree.data?.canCreateTopLevel && <Button type="button" label="대분류 등록" icon="pi pi-plus" onClick={() => setEditing({ level: "category" })} />
+        }
       />
       <section className="panel" aria-label="카테고리 목록">
         <div className="list-toolbar">
@@ -126,7 +145,7 @@ export function CategoryList() {
           </div>
           <div className="list-toolbar-actions">
             <p className="list-toolbar-count" aria-live="polite">
-              대분류: <strong>{tree.data ? formatCount(tree.data.length) : "-"}</strong>
+              대분류: <strong>{tree.data ? formatCount(tree.data.categories.length) : "-"}</strong>
             </p>
             <Button type="button" label="모두 펼치기" outlined disabled={allKeys.length === 0} onClick={() => setExpanded(new Set(allKeys))} />
             <Button type="button" label="모두 접기" outlined disabled={expanded.size === 0} onClick={() => setExpanded(new Set())} />
@@ -150,7 +169,7 @@ export function CategoryList() {
               onDelete={setDeleting}
             />
             <Pagination
-              page={page}
+              page={currentPage}
               limit={limit}
               totalRecords={sorted.length}
               onChange={(nextPage, nextLimit) =>
@@ -174,7 +193,8 @@ export function CategoryList() {
         }}
       >
         <p>
-          <strong>{deleting?.name}</strong> 카테고리를 삭제하시겠습니까? 하위 카테고리도 함께 삭제되며 되돌릴 수 없습니다.
+          <strong>{deleting?.name}</strong> 카테고리를 삭제하시겠습니까?{" "}
+          {deleting?.level === "child" ? "삭제하면 되돌릴 수 없습니다." : "하위 카테고리도 함께 삭제되며 되돌릴 수 없습니다."}
         </p>
       </ConfirmDialog>
     </>

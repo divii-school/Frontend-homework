@@ -14,7 +14,8 @@ interface ImageUploaderProps {
   images: ProductImage[];
   /** The form's validation message for this field ("at least one image"). */
   error?: string;
-  onChange: (images: ProductImage[]) => void;
+  /** Changes the form's images through an updater, so an upload that ends after a removal adds to the list as it is then. */
+  onImagesChange: (update: (images: ProductImage[]) => ProductImage[]) => void;
 }
 
 /**
@@ -23,7 +24,7 @@ interface ImageUploaderProps {
  * so "save" never has to wait for an upload. Removing takes the image out of the form; the product is
  * changed only when the form is saved.
  */
-export function ImageUploader({ images, error, onChange }: ImageUploaderProps) {
+export function ImageUploader({ images, error, onImagesChange }: ImageUploaderProps) {
   const fileInput = useRef<HTMLInputElement>(null);
   const upload = useUploadProductImage();
   const [fileError, setFileError] = useState<string | null>(null);
@@ -34,16 +35,18 @@ export function ImageUploader({ images, error, onChange }: ImageUploaderProps) {
     event.target.value = "";
     setFileError(null);
 
-    let current = images;
+    let count = images.length;
     for (const file of files) {
-      const problem = imageFileError(file, current.length);
+      const problem = imageFileError(file, count);
       if (problem) {
         setFileError(`${file.name}: ${problem}`);
         break;
       }
       try {
-        current = [...current, await upload.mutateAsync(file)];
-        onChange(current);
+        const uploaded = await upload.mutateAsync(file);
+        count += 1;
+        // An image may have been removed while this file was uploading: add to the list as it is now.
+        onImagesChange((list) => (list.length >= IMAGE_RULES.maxCount ? list : [...list, uploaded]));
       } catch {
         // upload.error holds the API's message and is shown below; images already added stay.
         break;
@@ -99,7 +102,7 @@ export function ImageUploader({ images, error, onChange }: ImageUploaderProps) {
                 rounded
                 severity="danger"
                 aria-label={`${image.name} 삭제`}
-                onClick={() => onChange(images.filter((item) => item.key !== image.key))}
+                onClick={() => onImagesChange((list) => list.filter((item) => item.key !== image.key))}
               />
             </li>
           ))}

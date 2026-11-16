@@ -86,6 +86,8 @@ export interface ProductFormValues {
   images: ProductImage[];
   isVisible: boolean;
   onSale: boolean;
+  /** Edit mode: the price saved on the server, kept until 수량 or 단가 is changed. Null in create mode. */
+  storedPrice: number | null;
 }
 
 export type ProductFormErrors = Partial<Record<keyof ProductFormValues, string>>;

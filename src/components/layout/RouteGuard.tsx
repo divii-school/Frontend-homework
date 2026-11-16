@@ -6,7 +6,8 @@ import { useEffect, type ReactNode } from "react";
 import { StateBlock } from "@/components/common/StateBlock";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { canOpen, visibleNavItems } from "@/config/navigation";
-import { loginUrlFor } from "@/utils/session";
+import { withDirectionParticle } from "@/utils/korean";
+import { clearSession, loginUrlFor } from "@/utils/session";
 
 /**
  * Wraps every page inside the shell and decides, from config/navigation.ts, whether this user may see it.
@@ -21,6 +22,9 @@ export function RouteGuard({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (ready && !user) {
+      // A token without a stored user is half a session. Drop the token too, or middleware would send the
+      // login page straight back here and the two would redirect to each other forever.
+      clearSession();
       const query = searchParams.toString();
       window.location.assign(loginUrlFor(query ? `${pathname}?${query}` : pathname));
     }
@@ -33,12 +37,13 @@ export function RouteGuard({ children }: { children: ReactNode }) {
     return (
       <StateBlock
         kind="forbidden"
+        isPage
         title="접근 권한이 없습니다. (403)"
         description="이 페이지를 볼 수 있는 권한이 없습니다. 권한이 필요하면 관리자에게 문의해 주세요."
         action={
           firstAllowed && (
             <Link className="link-button" href={firstAllowed.path}>
-              {firstAllowed.label}(으)로 이동
+              {withDirectionParticle(firstAllowed.label)} 이동
             </Link>
           )
         }

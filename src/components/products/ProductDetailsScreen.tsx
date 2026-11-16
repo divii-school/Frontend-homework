@@ -56,7 +56,7 @@ function InfoTab({ id }: { id: number }) {
           <dd className="details-description">{item.description || "-"}</dd>
         </div>
       </dl>
-      <h3 className="details-subtitle">이미지</h3>
+      <h2 className="details-subtitle">이미지</h2>
       {item.images.length === 0 ? (
         <StateBlock kind="empty" title="등록된 이미지가 없습니다." />
       ) : (
@@ -80,7 +80,7 @@ function CategoryTab({ id }: { id: number }) {
   if (product.isError) return <ErrorState error={product.error} onRetry={() => product.refetch()} />;
   if (tree.isError) return <ErrorState error={tree.error} onRetry={() => tree.refetch()} />;
 
-  const category = tree.data?.find((item) => item.id === product.data.category?.id);
+  const category = tree.data?.categories.find((item) => item.id === product.data.category?.id);
   const sub = category?.subCategories.find((item) => item.id === product.data.subCategory?.id);
   if (!category) return <StateBlock kind="empty" title="이 상품에 연결된 카테고리가 없습니다." />;
   return (

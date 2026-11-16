@@ -18,14 +18,16 @@ interface StateBlockProps {
   description?: string;
   /** Usually a "try again" or "back to list" button. */
   action?: ReactNode;
+  /** True when the block is the whole page (404, 403, a crash): its title is then the page's h1. */
+  isPage?: boolean;
 }
 
 /** The one block every screen uses for loading, empty, error, 403 and 404, so they look the same everywhere. */
-export function StateBlock({ kind, title, description, action }: StateBlockProps) {
+export function StateBlock({ kind, title, description, action, isPage = false }: StateBlockProps) {
   return (
     <div className={`state-block state-block-${kind}`} role={kind === "error" ? "alert" : "status"} aria-live="polite">
       <i className={`state-block-icon ${ICONS[kind]}`} aria-hidden="true" />
-      <p className="state-block-title">{title}</p>
+      {isPage ? <h1 className="state-block-title">{title}</h1> : <p className="state-block-title">{title}</p>}
       {description && <p className="state-block-description">{description}</p>}
       {action && <div className="state-block-action">{action}</div>}
     </div>

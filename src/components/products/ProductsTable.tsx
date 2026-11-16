@@ -18,8 +18,8 @@ interface ProductsTableProps {
   selectable: boolean;
   /** False for read-only roles: the visibility switch is disabled. */
   editable: boolean;
-  /** Id of the row whose visibility is being saved, to disable only that switch. */
-  savingId: number | null;
+  /** Rows whose visibility is being saved: their switches wait for the answer. */
+  savingIds: ReadonlySet<number>;
   onSelect: (products: Product[]) => void;
   onSort: (sort: ProductSortField, order: "asc" | "desc") => void;
   onToggleVisible: (product: Product) => void;
@@ -37,7 +37,7 @@ export const categoryPath = (product: Product): string =>
  * the right page in the right order, and a click on a header only reports the new sort to the parent (-> URL).
  */
 export function ProductsTable(props: ProductsTableProps) {
-  const { products, params, selected, selectable, editable, savingId, onSelect, onSort, onToggleVisible } = props;
+  const { products, params, selected, selectable, editable, savingIds, onSelect, onSort, onToggleVisible } = props;
 
   const handleSort = (event: DataTableSortEvent) => {
     onSort(event.sortField as ProductSortField, event.sortOrder === 1 ? "asc" : "desc");
@@ -80,7 +80,7 @@ export function ProductsTable(props: ProductsTableProps) {
           body={(product: Product) => (
             <InputSwitch
               checked={product.isVisible}
-              disabled={!editable || savingId === product.id}
+              disabled={!editable || savingIds.has(product.id)}
               aria-label={`${product.productName} 노출여부`}
               onChange={() => onToggleVisible(product)}
             />

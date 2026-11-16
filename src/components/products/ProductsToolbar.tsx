@@ -3,7 +3,7 @@
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SEARCH_DEBOUNCE_MS, SEARCH_TYPE_OPTIONS } from "@/constants/products";
 import { useCategoryOptions } from "@/hooks/API/categories/useCategories";
 import type { ProductListParams } from "@/types/product";
@@ -27,12 +27,24 @@ export function ProductsToolbar(props: ProductsToolbarProps) {
 
   // The box shows what the user types at once; the URL (and so the API call) follows after a short pause.
   const [searchText, setSearchText] = useState(params.search);
-  useEffect(() => setSearchText(params.search), [params.search]);
+  // The last value this box wrote to the URL. When the URL comes back with it, that is our own update and the
+  // box keeps whatever was typed in the meantime. Any other change of the URL (Back button, a shared link) is
+  // copied into the box.
+  const sentSearch = useRef(params.search);
   useEffect(() => {
-    if (searchText.trim() === params.search) return;
-    const timer = window.setTimeout(() => onChange({ search: searchText.trim() }, "replace"), SEARCH_DEBOUNCE_MS);
+    if (params.search === sentSearch.current) return;
+    sentSearch.current = params.search;
+    setSearchText(params.search);
+  }, [params.search]);
+  useEffect(() => {
+    const wanted = searchText.trim();
+    if (wanted === sentSearch.current) return;
+    const timer = window.setTimeout(() => {
+      sentSearch.current = wanted;
+      onChange({ search: wanted }, "replace");
+    }, SEARCH_DEBOUNCE_MS);
     return () => window.clearTimeout(timer);
-  }, [searchText, params.search, onChange]);
+  }, [searchText, onChange]);
 
   return (
     <div className="list-toolbar">
@@ -65,7 +77,7 @@ export function ProductsToolbar(props: ProductsToolbarProps) {
           aria-label="카테고리 필터"
           showClear
           loading={categories.isLoading}
-          emptyMessage="카테고리가 없습니다."
+          emptyMessage={categories.isError ? categories.error.messages[0] : "카테고리가 없습니다."}
           onChange={(event) => onChange({ categoryId: event.value ?? null, type: "productName" })}
         />
       </div>

@@ -17,6 +17,13 @@ export interface Category extends ChildCategory {
   subCategories: SubCategory[];
 }
 
+/** What GET /product-category/list gives the screen. */
+export interface CategoryTreeResult {
+  categories: Category[];
+  /** The API's `isCreatable` flag: false when no more 대분류 may be added. */
+  canCreateTopLevel: boolean;
+}
+
 export type CategoryLevel = "category" | "sub" | "child";
 
 /** A row of the cascading selects in the product form (GET /products/categories and friends). */

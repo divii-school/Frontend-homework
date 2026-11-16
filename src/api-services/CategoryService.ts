@@ -1,9 +1,14 @@
 import type { ApiEnvelope } from "@/types/api";
-import type { Category, CategoryLevel } from "@/types/category";
+import type { Category, CategoryLevel, CategoryTreeResult } from "@/types/category";
 import { apiClient } from "@/utils/api-client";
 import { API_ENDPOINTS } from "@/utils/api-integration";
 
 const ENDPOINTS = API_ENDPOINTS.categories;
+
+/** The list answer carries one extra flag beside `data`. */
+interface CategoryListEnvelope extends ApiEnvelope<Category[]> {
+  isCreatable?: boolean;
+}
 
 /** The three category levels share one shape, so each write takes the level and picks the endpoint. */
 const WRITE_ENDPOINTS: Record<
@@ -22,9 +27,9 @@ const body = (level: CategoryLevel, name: string, parentId?: number) => {
 
 export const CategoryService = {
   /** The whole tree in one call. `search` is matched by the server on every level. */
-  async tree(search: string): Promise<Category[]> {
-    const { data } = await apiClient.get<ApiEnvelope<Category[]>>(ENDPOINTS.list, { params: { search: search || undefined } });
-    return data.data;
+  async tree(search: string): Promise<CategoryTreeResult> {
+    const { data } = await apiClient.get<CategoryListEnvelope>(ENDPOINTS.list, { params: { search: search || undefined } });
+    return { categories: data.data, canCreateTopLevel: data.isCreatable === true };
   },
 
   async create(level: CategoryLevel, name: string, parentId?: number): Promise<void> {

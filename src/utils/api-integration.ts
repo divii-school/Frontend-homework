@@ -2,7 +2,7 @@ import type { ProductListParams } from "@/types/product";
 
 /** Every endpoint path the app calls, relative to /api/v1. */
 export const API_ENDPOINTS = {
-  auth: { login: "/auth/login", logout: "/auth/logout", profile: "/admin/profile" },
+  auth: { login: "/auth/login", logout: "/auth/logout" },
   products: {
     list: "/products",
     byCategory: "/products/get-products-by-category",
@@ -33,7 +33,6 @@ export const API_ENDPOINTS = {
 
 /** TanStack Query keys. Invalidating `all` refreshes every list and details of that domain. */
 export const QUERIES = {
-  profile: ["profile"] as const,
   products: {
     all: ["products"] as const,
     list: (params: ProductListParams) => ["products", "list", params] as const,

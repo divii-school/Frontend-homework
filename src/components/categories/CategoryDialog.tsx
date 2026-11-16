@@ -49,6 +49,7 @@ export function CategoryDialog({ target, onClose }: { target: CategoryTarget; on
         <FormField id="category-name" label="카테고리 이름" required error={submitted ? error : undefined}>
           <InputText
             id="category-name"
+            aria-required
             value={name}
             autoFocus
             onChange={(event) => setName(event.target.value)}

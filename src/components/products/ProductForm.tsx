@@ -11,7 +11,7 @@ import { PRODUCT_FORM_STEPS } from "@/constants/products";
 import { ROUTES } from "@/constants/routes";
 import { useUrlParam } from "@/hooks/useUrlParam";
 import type { ApiError } from "@/types/api";
-import type { ProductFormErrors, ProductFormValues, ProductRequest } from "@/types/product";
+import type { ProductFormErrors, ProductFormValues, ProductImage, ProductRequest } from "@/types/product";
 import { firstInvalidStep, toProductRequest, validateStep } from "@/utils/product-rules";
 
 const STEP_KEYS = PRODUCT_FORM_STEPS.map((step) => step.key);
@@ -44,12 +44,23 @@ export function ProductForm({ mode, initialValues, saving, saveError, onSave }: 
   const isLast = stepIndex === STEP_KEYS.length - 1;
   const Step = STEP_COMPONENTS[stepIndex];
 
-  // Typing in a field removes that field's error at once.
+  // Typing in a field removes that field's error at once. A new 수량 or 단가 replaces a saved price with 수량 × 단가.
   const handleChange = (changes: Partial<ProductFormValues>) => {
-    setValues((current) => ({ ...current, ...changes }));
+    const resetsPrice = "quantity" in changes || "unitPrice" in changes;
+    setValues((current) => ({ ...current, ...changes, ...(resetsPrice ? { storedPrice: null } : {}) }));
     setErrors((current) => {
       const next = { ...current };
       (Object.keys(changes) as (keyof ProductFormValues)[]).forEach((key) => delete next[key]);
+      return next;
+    });
+  };
+
+  // Images change through an updater, so an upload that ends after a removal adds to the list as it is then.
+  const handleImagesChange = (update: (images: ProductImage[]) => ProductImage[]) => {
+    setValues((current) => ({ ...current, images: update(current.images) }));
+    setErrors((current) => {
+      const next = { ...current };
+      delete next.images;
       return next;
     });
   };
@@ -82,7 +93,7 @@ export function ProductForm({ mode, initialValues, saving, saveError, onSave }: 
 
   return (
     <form className="panel product-form" onSubmit={handleSubmit} noValidate aria-label={mode === "create" ? "상품 등록" : "상품 수정"}>
-      <ol className="stepper" aria-label="등록 단계">
+      <ol className="stepper" aria-label={mode === "create" ? "등록 단계" : "수정 단계"}>
         {PRODUCT_FORM_STEPS.map((step, index) => (
           <li
             key={step.key}
@@ -99,7 +110,7 @@ export function ProductForm({ mode, initialValues, saving, saveError, onSave }: 
         <legend className="product-form-legend">
           {stepIndex + 1}. {PRODUCT_FORM_STEPS[stepIndex].label}
         </legend>
-        <Step values={values} errors={errors} onChange={handleChange} />
+        <Step values={values} errors={errors} onChange={handleChange} onImagesChange={handleImagesChange} />
       </fieldset>
       <div className="form-actions">
         <Link className="link-button" href={ROUTES.products}>

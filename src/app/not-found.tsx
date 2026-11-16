@@ -8,6 +8,7 @@ export default function NotFound() {
     <main className="login-page">
       <StateBlock
         kind="not-found"
+        isPage
         title="페이지를 찾을 수 없습니다. (404)"
         description="주소가 바뀌었거나 삭제된 페이지입니다."
         action={

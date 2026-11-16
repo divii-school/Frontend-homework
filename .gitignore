@@ -47,12 +47,5 @@ next-env.d.ts
 /blob-report/
 /playwright/.cache/
 
-# scratch
-/.tmp-assets/
-
-.vercel
-
-# local Playwright blob and merged-report scratch (the published copy lives in public/qa/)
-/.blob/
-/.qa-report/
+# Playwright: the login saved by e2e/auth.setup.ts (holds a token; never committed)
 /playwright/.auth/

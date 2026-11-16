@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   // Product images are public files on the QA bucket; they are shown as they are (no optimiser round trip).
   images: {
     unoptimized: true,
-    remotePatterns: [{ protocol: "https", hostname: "*.amazonaws.com" }],
+    remotePatterns: [{ protocol: "https", hostname: "**.amazonaws.com" }],
   },
   // The product list is the home screen of this app.
   async redirects() {

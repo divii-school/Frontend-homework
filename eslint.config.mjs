@@ -22,8 +22,6 @@ const eslintConfig = [
       "playwright-report/**",
       "test-results/**",
       "blob-report/**",
-      // the copy of the HTML report published for QA at /qa/playwright-report/
-      "public/qa/**",
     ],
   },
 ];
