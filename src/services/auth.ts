@@ -1,55 +1,44 @@
 import { z } from "zod";
 import { apiRequest, request } from "@/services/http";
+import type { SessionUser } from "@/types/auth";
 
-// TODO(HW3): confirm these shapes against a real QA login (the OpenAPI spec has no response schemas).
+// Confirmed against the QA server (2026-11-16):
+// POST /auth/login → data: { token, user: { id, fullName, role, permissions, … } } (+ httpOnly refreshToken cookie)
 const loginDataSchema = z.object({
-  accessToken: z.string().min(1),
-  refreshToken: z.string().min(1),
+  token: z.string().min(1),
+  user: z.object({
+    id: z.number(),
+    fullName: z.string().nullable(),
+    role: z.string(),
+  }),
 });
-
-const refreshDataSchema = z.object({
-  accessToken: z.string().min(1),
-});
-
-const profileSchema = z
-  .object({
-    name: z.string().optional(),
-    loginId: z.string().optional(),
-    role: z.string().optional(),
-  })
-  .passthrough();
-
-export type LoginTokens = z.infer<typeof loginDataSchema>;
-export type AdminProfile = z.infer<typeof profileSchema>;
 
 export interface LoginInput {
   loginId: string;
   password: string;
 }
 
+export interface LoginResult {
+  accessToken: string;
+  user: SessionUser;
+}
+
 export const authService = {
-  async login(input: LoginInput): Promise<LoginTokens> {
+  async login(input: LoginInput): Promise<LoginResult> {
     const data = await apiRequest<unknown>("/api/v1/auth/login", { method: "POST", body: input, anonymous: true });
     const parsed = loginDataSchema.safeParse(data);
     if (!parsed.success) throw new Error("Unexpected login response from the server.");
-    return parsed.data;
+    const { token, user } = parsed.data;
+    return { accessToken: token, user: { id: user.id, fullName: user.fullName ?? "", role: user.role } };
   },
 
-  /** Exchanges the refresh token for a new access token. */
-  async refresh(refreshToken: string): Promise<string> {
-    const data = await apiRequest<unknown>("/api/v1/auth/get-access-token", {
-      anonymous: true,
-      headers: { Authorization: `Bearer ${refreshToken}` },
-    });
-    return refreshDataSchema.parse(data).accessToken;
-  },
-
+  /** Ends the session on the server (the token stops working right away). */
   async logout(): Promise<void> {
     await request<unknown>("/api/v1/auth/logout");
   },
 
-  async profile(signal?: AbortSignal): Promise<AdminProfile> {
-    const data = await apiRequest<unknown>("/api/v1/admin/profile", { signal });
-    return profileSchema.parse(data);
+  /** Logout for a token that was never stored (e.g. a non-admin account right after login). */
+  async logoutWith(token: string): Promise<void> {
+    await request<unknown>("/api/v1/auth/logout", { anonymous: true, headers: { Authorization: `Bearer ${token}` } });
   },
 };

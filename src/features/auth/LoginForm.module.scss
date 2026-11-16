@@ -210,3 +210,19 @@
     gap: 40px;
   }
 }
+
+.notice {
+  margin: -30px 0 0;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-group);
+  color: var(--color-text);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.popupBody {
+  margin: 0;
+  text-align: center;
+  color: var(--color-text);
+}

@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { NAVIGATION } from "@/config/navigation";
+import { NAVIGATION, navigationFor } from "@/config/navigation";
 import { useAuth } from "@/features/auth/AuthProvider";
 import { LOGIN_PATH } from "@/lib/auth/redirect";
 import { IconArrowDown, IconBars, IconLogout } from "@/components/icons";
@@ -14,7 +14,9 @@ import styles from "./AdminShell.module.scss";
 export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
+  // Only the pages this role may open (same config as the route guard).
+  const menu = useMemo(() => navigationFor(user?.role ?? ""), [user?.role]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(NAVIGATION.map((g) => [g.label, true])),
@@ -56,7 +58,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
         <nav>
           <ul className={styles.menu}>
-            {NAVIGATION.map((group) => {
+            {menu.map((group) => {
               const GroupIcon = group.icon;
               const active = group.pages.some((p) => pathname.startsWith(p.href));
               const open = openGroups[group.label] ?? false;
@@ -120,7 +122,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
               <IconLogout />
             </button>
             <span className={styles.divider} aria-hidden />
-            <span className={styles.userName}>Admin</span>
+            <span className={styles.userName}>{user?.fullName || "Admin"}</span>
           </div>
         </header>
 

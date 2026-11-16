@@ -1,3 +1,4 @@
+import { fakeSession } from "./helpers/session";
 import { test, expect, type Page } from "@playwright/test";
 
 // Read-only UI tests for 8.2.0 with the category API mocked (page.route), so they don't depend on QA data.
@@ -20,9 +21,7 @@ function envelope(data: unknown, statusCode = 200) {
 }
 
 async function openWithMock(page: Page, handler: (search: string | null) => { status: number; data: unknown }, path = "/shopping/categories") {
-  await page.addInitScript(() => {
-    sessionStorage.setItem("tc-admin-auth", JSON.stringify({ accessToken: "test", refreshToken: "test" }));
-  });
+  await fakeSession(page);
   await page.route("**/api/v1/product-category/list**", async (route) => {
     const search = new URL(route.request().url()).searchParams.get("search");
     const { status, data } = handler(search);

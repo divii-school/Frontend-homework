@@ -3,7 +3,9 @@
 import { useEffect, useId, useState, type FormEvent } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useAuth } from "@/features/auth/AuthProvider";
+import { Dialog } from "primereact/dialog";
+import { NotAdminError, useAuth } from "@/features/auth/AuthProvider";
+import btn from "@/components/ui/Button.module.scss";
 import { safeReturnPath } from "@/lib/auth/redirect";
 import { errorMessage } from "@/lib/errors";
 import { IconAdmin, IconCheck, IconEye, IconEyeOff, IconLock } from "@/components/icons";
@@ -14,6 +16,7 @@ export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnTo = safeReturnPath(searchParams.get("next"));
+  const expired = searchParams.get("expired") === "1";
 
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
@@ -21,6 +24,7 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notAdmin, setNotAdmin] = useState(false);
 
   const idFieldId = useId();
   const pwFieldId = useId();
@@ -42,7 +46,8 @@ export function LoginForm() {
       await login({ loginId: loginId.trim(), password, remember });
       router.replace(returnTo);
     } catch (err) {
-      setError(errorMessage(err));
+      if (err instanceof NotAdminError) setNotAdmin(true);
+      else setError(errorMessage(err));
       setSubmitting(false);
     }
   }
@@ -66,6 +71,11 @@ export function LoginForm() {
 
       <form className={styles.form} onSubmit={handleSubmit} noValidate>
         <h1 className="visually-hidden">Log in to Talking Club Admin</h1>
+        {expired && !error && (
+          <p className={styles.notice} role="status">
+            Your session has ended. Please log in again.
+          </p>
+        )}
 
         <div className={styles.fields}>
           <div className={styles.field}>
@@ -143,6 +153,29 @@ export function LoginForm() {
           {submitting ? "Logging in…" : "Log in"}
         </button>
       </form>
+
+      {/* Figma "권한없음" popup: valid account without an admin role. */}
+      <Dialog
+        visible={notAdmin}
+        header="No admin permission"
+        onHide={() => setNotAdmin(false)}
+        draggable={false}
+        resizable={false}
+        footer={
+          <button type="button" className={`${btn.button} ${btn.primary}`} onClick={() => setNotAdmin(false)}>
+            OK
+          </button>
+        }
+      >
+        <p className={styles.popupBody}>
+          You don&apos;t have admin permission.
+          <br />
+          Please contact customer service.
+          <br />
+          <br />
+          02-2014-8374
+        </p>
+      </Dialog>
     </div>
   );
 }

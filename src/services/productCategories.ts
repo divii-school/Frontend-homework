@@ -4,39 +4,29 @@ import type { CategoryLevel, CategoryNode } from "@/types/category";
 
 /*
  * GET /api/v1/product-category/list?search=… returns the whole 3-level tree (no paging/sort params).
- * TODO(HW3): the OpenAPI spec has no response schema and the QA server was down when this was written.
- * The child-list key names below are a best guess; confirm against a real response and drop the extras.
+ * Confirmed on the QA server (2026-11-16):
+ *   data: [{ id, name, sortOrder, …, subCategories: [{ id, name, …, childCategories: [{ id, name, … }] }] }]
  */
-const CHILD_KEYS = ["subCategories", "subcategories", "childCategories", "children", "subSubCategories"] as const;
-
 interface RawNode {
   id: number;
   name: string;
   subCategories?: RawNode[];
-  subcategories?: RawNode[];
   childCategories?: RawNode[];
-  children?: RawNode[];
-  subSubCategories?: RawNode[];
 }
 
 const rawNodeSchema: z.ZodType<RawNode> = z.lazy(() =>
-  z
-    .object({
-      id: z.coerce.number(),
-      name: z.string(),
-      subCategories: z.array(rawNodeSchema).optional(),
-      subcategories: z.array(rawNodeSchema).optional(),
-      childCategories: z.array(rawNodeSchema).optional(),
-      children: z.array(rawNodeSchema).optional(),
-      subSubCategories: z.array(rawNodeSchema).optional(),
-    })
-    .passthrough(),
+  z.object({
+    id: z.number(),
+    name: z.string(),
+    subCategories: z.array(rawNodeSchema).optional(),
+    childCategories: z.array(rawNodeSchema).optional(),
+  }),
 );
 
-const listSchema = z.union([z.array(rawNodeSchema), z.object({ list: z.array(rawNodeSchema) }).transform((d) => d.list)]);
+const listSchema = z.array(rawNodeSchema);
 
 function toNode(raw: RawNode, level: CategoryLevel, parentId: number | null): CategoryNode {
-  const kids = CHILD_KEYS.map((key) => raw[key]).find((value) => Array.isArray(value)) ?? [];
+  const kids = (level === 1 ? raw.subCategories : raw.childCategories) ?? [];
   return {
     id: raw.id,
     name: raw.name,

@@ -20,18 +20,18 @@ export class ApiError extends Error {
 /**
  * The auth layer plugs in here, so this module never imports auth code:
  * - getAccessToken: current access token (or null)
- * - refreshAccessToken: get a new access token, or null if the session is over
- * - onSessionExpired: called once when refresh fails (clear session, go to login)
+ * - onSessionExpired: called on a 401 for a logged-in request (clear session, go to login, come back)
+ *
+ * There is no token refresh: the API's refresh token is an httpOnly cookie on .dvconsulting.org,
+ * and its CORS (Access-Control-Allow-Origin: *, no credentials) means a browser on our origin can't send it.
  */
 export interface AuthHooks {
   getAccessToken: () => string | null;
-  refreshAccessToken: () => Promise<string | null>;
   onSessionExpired: () => void;
 }
 
 let authHooks: AuthHooks = {
   getAccessToken: () => null,
-  refreshAccessToken: async () => null,
   onSessionExpired: () => {},
 };
 
@@ -47,7 +47,7 @@ export interface RequestOptions {
   /** Plain object → JSON. FormData is sent as multipart. */
   body?: unknown;
   signal?: AbortSignal;
-  /** Skip the Authorization header and the 401 refresh (login, refresh itself). */
+  /** Skip the Authorization header and the 401 session-expired handling (login). */
   anonymous?: boolean;
   headers?: Record<string, string>;
 }
@@ -109,16 +109,12 @@ async function parse(response: Response): Promise<unknown> {
 /** Sends a request and returns the parsed JSON body (the whole envelope). */
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const anonymous = options.anonymous ?? false;
-  let response = await send(path, options, anonymous ? null : authHooks.getAccessToken());
+  const token = anonymous ? null : authHooks.getAccessToken();
+  const response = await send(path, options, token);
 
-  // Access token expired → refresh once and retry. If refresh fails, the session is over.
-  if (response.status === 401 && !anonymous && authHooks.getAccessToken()) {
-    const newToken = await authHooks.refreshAccessToken();
-    if (newToken) {
-      response = await send(path, options, newToken);
-    } else {
-      authHooks.onSessionExpired();
-    }
+  // Token expired or revoked → session over; login brings the user back to this page.
+  if (response.status === 401 && token) {
+    authHooks.onSessionExpired();
   }
 
   const data = await parse(response);
@@ -127,6 +123,26 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     throw new ApiError(response.status, code ?? `Request failed (${response.status})`, code, data);
   }
   return data as T;
+}
+
+/** List responses carry paging next to `data`: { data: [...], totalRecords, totalPage, page }. */
+export interface PagedResult<T> {
+  rows: T[];
+  totalRecords: number;
+  totalPage: number;
+  page: number;
+}
+
+/** Rows come back unvalidated (`unknown`); each service parses them with its own schema. */
+export async function pagedRequest(path: string, options: RequestOptions = {}): Promise<PagedResult<unknown>> {
+  const envelope = await request<ApiEnvelope<unknown> & { totalRecords?: number; totalPage?: number; page?: number }>(path, options);
+  const rows = Array.isArray(envelope.data) ? (envelope.data as unknown[]) : [];
+  return {
+    rows,
+    totalRecords: envelope.totalRecords ?? rows.length,
+    totalPage: envelope.totalPage ?? 1,
+    page: envelope.page ?? 1,
+  };
 }
 
 /** Same as `request`, but returns only `data` from the API envelope. */

@@ -1,3 +1,4 @@
+import { fakeSession } from "./helpers/session";
 import { test, expect, type Page, type Request } from "@playwright/test";
 
 // Category add / edit / delete UI, with the API mocked by an in-memory tree (no QA data is touched).
@@ -30,9 +31,7 @@ async function setup(page: Page, opts: { failWrites?: boolean } = {}) {
 
   const findSub = (id: number) => tree.flatMap((m) => m.subCategories ?? []).find((s) => s.id === id);
 
-  await page.addInitScript(() => {
-    sessionStorage.setItem("tc-admin-auth", JSON.stringify({ accessToken: "test", refreshToken: "test" }));
-  });
+  await fakeSession(page);
 
   await page.route("**/api/v1/product-category/**", async (route) => {
     const req: Request = route.request();
