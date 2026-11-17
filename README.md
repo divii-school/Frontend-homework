@@ -39,6 +39,17 @@ npm run test:e2e:report         # open the HTML report
 Playwright starts `npm run dev` itself if nothing is running on port 3000.
 To test a deployed build: `PLAYWRIGHT_BASE_URL=https://<vercel-url> npm run test:e2e`.
 
+**Test case sheet** (`docs/qa/HW3-Pranesh-unit-test-cases.csv`): the cases are in `docs/qa/test-cases.data.mjs`, each naming
+its exact test(s). `node docs/qa/build-test-cases.mjs` fills Actual Result, Pass / Fail and Last Run Date from the JSON
+results in `docs/qa/evidence/` and stops if a named test does not exist. To refresh the results:
+
+```bash
+PLAYWRIGHT_JSON_OUTPUT_NAME=docs/qa/evidence/playwright-local.json npx playwright test --project=readonly --project=mutation --workers=1 --reporter=list,json,html
+PLAYWRIGHT_BASE_URL=https://<vercel-url> PLAYWRIGHT_JSON_OUTPUT_NAME=docs/qa/evidence/playwright-vercel.json npx playwright test --project=readonly --workers=1 --reporter=list,json
+npx vitest run --reporter=json --outputFile=docs/qa/evidence/vitest.json
+node docs/qa/build-test-cases.mjs
+```
+
 ## Folders
 
 ```

@@ -1,0 +1,4409 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Assignments\\Frontend-homework\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--project=readonly",
+      "--project=mutation",
+      "--workers=1",
+      "--reporter=list,json,html"
+    ],
+    "configFile": "C:\\Assignments\\Frontend-homework\\playwright.config.ts",
+    "rootDir": "C:/Assignments/Frontend-homework/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Assignments/Frontend-homework/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "setup",
+        "name": "setup",
+        "testDir": "C:/Assignments/Frontend-homework/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/auth\\.setup\\.ts/"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "C:/Assignments/Frontend-homework/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "readonly",
+        "name": "readonly",
+        "testDir": "C:/Assignments/Frontend-homework/e2e",
+        "testIgnore": [
+          "/\\.mutation\\.spec\\.ts$/"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "C:/Assignments/Frontend-homework/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "screenshots",
+        "name": "screenshots",
+        "testDir": "C:/Assignments/Frontend-homework/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/.capture.ts$/"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "C:/Assignments/Frontend-homework/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mutation",
+        "name": "mutation",
+        "testDir": "C:/Assignments/Frontend-homework/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/\\.mutation\\.spec\\.ts$/"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Assignments\\Frontend-homework\\test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "readonly",
+        "testDir": "C:\\Assignments\\Frontend-homework\\e2e",
+        "snapshotDir": "C:\\Assignments\\Frontend-homework\\e2e",
+        "testIgnore": {},
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 60000,
+        "use": {
+          "baseURL": "http://localhost:3100",
+          "locale": "ko-KR",
+          "timezoneId": "Asia/Seoul",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.8127.18 Safari/537.36",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium",
+          "storageState": "e2e/.auth/admin.json"
+        },
+        "dependencies": [
+          "setup"
+        ],
+        "ignoreSnapshots": false,
+        "__projectId": "readonly"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Assignments\\Frontend-homework\\test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "mutation",
+        "testDir": "C:\\Assignments\\Frontend-homework\\e2e",
+        "snapshotDir": "C:\\Assignments\\Frontend-homework\\e2e",
+        "testIgnore": [],
+        "testMatch": {},
+        "timeout": 60000,
+        "use": {
+          "baseURL": "http://localhost:3100",
+          "locale": "ko-KR",
+          "timezoneId": "Asia/Seoul",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.8127.18 Safari/537.36",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium",
+          "storageState": "e2e/.auth/admin.json"
+        },
+        "dependencies": [
+          "setup"
+        ],
+        "ignoreSnapshots": false,
+        "__projectId": "mutation"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ],
+      [
+        "html"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.65.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "auth.setup.ts",
+      "file": "auth.setup.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "log in as the QA admin",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "setup",
+              "projectName": "setup",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3888,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T12:12:04.026Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "17e3fe6f4d9d8bd79c6b-291fd0fe600b6aa3dc7f",
+          "file": "auth.setup.ts",
+          "line": 6,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "auth.spec.ts",
+      "file": "auth.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "로그인 (logged out)",
+          "file": "auth.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "a protected page sends you to login and back afterwards",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3538,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:10.642Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-83325aed515f09cf8d80",
+              "file": "auth.spec.ts",
+              "line": 7,
+              "column": 3
+            },
+            {
+              "title": "wrong password shows the Figma message under the password",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2635,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:14.724Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-8bbabba4780cf7496592",
+              "file": "auth.spec.ts",
+              "line": 24,
+              "column": 3
+            },
+            {
+              "title": "unknown ID shows the Figma message under the ID",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2013,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:17.398Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-d8542fbd9f1f4db1e870",
+              "file": "auth.spec.ts",
+              "line": 33,
+              "column": 3
+            },
+            {
+              "title": "spaces only in the ID keep the login button disabled",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 942,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:19.445Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-1b6a85231bad69341171",
+              "file": "auth.spec.ts",
+              "line": 41,
+              "column": 3
+            },
+            {
+              "title": "자동 로그인 checked: the session cookies outlive the browser (persistent, up to 7 days)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2875,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:20.436Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-3ed40b259a11c50917e4",
+              "file": "auth.spec.ts",
+              "line": 61,
+              "column": 3
+            },
+            {
+              "title": "자동 로그인 unchecked: every session cookie ends when the browser closes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2524,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:23.356Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-27c9598ab6f69e49b7d7",
+              "file": "auth.spec.ts",
+              "line": 73,
+              "column": 3
+            },
+            {
+              "title": "show/hide password toggle",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1008,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:25.924Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-a0a412d44d1f53115637",
+              "file": "auth.spec.ts",
+              "line": 81,
+              "column": 3
+            },
+            {
+              "title": "server unreachable on login shows a network message",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 932,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:26.967Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-5e6d226930c27be9810a",
+              "file": "auth.spec.ts",
+              "line": 89,
+              "column": 3
+            },
+            {
+              "title": "API server down (Cloudflare 521) says the server is not responding, no field marked wrong",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 754,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:27.929Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-ef326d5ca42cd527adb1",
+              "file": "auth.spec.ts",
+              "line": 99,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "세션 만료 (logged in)",
+          "file": "auth.spec.ts",
+          "line": 111,
+          "column": 6,
+          "specs": [
+            {
+              "title": "401 + failed refresh → login with returnTo, then the same page after login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3489,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:28.703Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-b1fdc63f138c17ab14d3",
+              "file": "auth.spec.ts",
+              "line": 112,
+              "column": 3
+            },
+            {
+              "title": "401 + successful refresh → the call is retried and the page just works",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1267,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:32.214Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-b05e908a357e7f183124",
+              "file": "auth.spec.ts",
+              "line": 131,
+              "column": 3
+            },
+            {
+              "title": "logout clears the session; protected pages need login again",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3315,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:33.501Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-a54bca2dfd02e50e1d01",
+              "file": "auth.spec.ts",
+              "line": 151,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "자동 로그인 (access token expired, refresh token kept)",
+          "file": "auth.spec.ts",
+          "line": 172,
+          "column": 6,
+          "specs": [
+            {
+              "title": "the token is renewed and the page opens, with no trip to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1476,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:36.833Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-e8dddef0687df6371da1",
+              "file": "auth.spec.ts",
+              "line": 181,
+              "column": 3
+            },
+            {
+              "title": "if the renewal is refused: login says the session expired, then back to the same page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1192,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:38.336Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-63fd4ec9ffb5acdf7db3",
+              "file": "auth.spec.ts",
+              "line": 196,
+              "column": 3
+            },
+            {
+              "title": "no access token and no renewable session still goes straight to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 631,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:39.552Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-ea0e0046a95a7f94d479",
+              "file": "auth.spec.ts",
+              "line": 206,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "categories.spec.ts",
+      "file": "categories.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "a failure no screen shows itself still gets the default error toast",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "readonly",
+              "projectName": "readonly",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4262,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T12:13:19.641Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "262c5455b60c16e7a404-e785bedd8e60d77264b3",
+          "file": "categories.spec.ts",
+          "line": 177,
+          "column": 1
+        }
+      ],
+      "suites": [
+        {
+          "title": "상품 카테고리 관리 (read only)",
+          "file": "categories.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "shows every 대분류 with its 중분류 count, and expands",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3366,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:40.220Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "262c5455b60c16e7a404-7b6b4ba204f0706c1aae",
+              "file": "categories.spec.ts",
+              "line": 5,
+              "column": 3
+            },
+            {
+              "title": "모두 펼치기 / 모두 접기",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2738,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:43.604Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "262c5455b60c16e7a404-ab5ab2e4f77c7cbf8aae",
+              "file": "categories.spec.ts",
+              "line": 17,
+              "column": 3
+            },
+            {
+              "title": "search lives in the URL and survives a reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3945,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:46.370Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "262c5455b60c16e7a404-bb9fab58c9a9e45025e1",
+              "file": "categories.spec.ts",
+              "line": 25,
+              "column": 3
+            },
+            {
+              "title": "no result shows the design message",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2526,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:50.334Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "262c5455b60c16e7a404-5a66164b2c2fd7736fba",
+              "file": "categories.spec.ts",
+              "line": 36,
+              "column": 3
+            },
+            {
+              "title": "대분류 등록 is disabled while the API caps top-level categories",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2485,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:52.873Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "262c5455b60c16e7a404-110ad4d948e86b463af1",
+              "file": "categories.spec.ts",
+              "line": 41,
+              "column": 3
+            },
+            {
+              "title": "a category with children cannot be deleted",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3644,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:55.375Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "262c5455b60c16e7a404-f5c348aa5f7ef7ff5632",
+              "file": "categories.spec.ts",
+              "line": 47,
+              "column": 3
+            },
+            {
+              "title": "empty name is refused in the add dialog (nothing is sent)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3255,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:12:59.041Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "262c5455b60c16e7a404-f7f6e30d59249175f595",
+              "file": "categories.spec.ts",
+              "line": 56,
+              "column": 3
+            },
+            {
+              "title": "a 51-character name is refused in the add dialog (nothing is sent)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2901,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:13:02.318Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "262c5455b60c16e7a404-9ea881ec8a06475673b3",
+              "file": "categories.spec.ts",
+              "line": 71,
+              "column": 3
+            },
+            {
+              "title": "edit dialog: opens with the current name; empty and 51-character names refused; 취소 changes nothing",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4009,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:13:05.236Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "262c5455b60c16e7a404-9a41ce8ba584c104b75c",
+              "file": "categories.spec.ts",
+              "line": 84,
+              "column": 3
+            },
+            {
+              "title": "with a search active, delete checks the REAL children, not the filtered ones",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3757,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:13:09.269Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "262c5455b60c16e7a404-07c6935410fbf34169cd",
+              "file": "categories.spec.ts",
+              "line": 105,
+              "column": 3
+            },
+            {
+              "title": "disabled 대분류 등록 looks disabled (grey), not like the brand-red 검색 button",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1008,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:13:13.051Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "262c5455b60c16e7a404-0739e1082a4cc145f4a9",
+              "file": "categories.spec.ts",
+              "line": 118,
+              "column": 3
+            },
+            {
+              "title": "a category name with HTML is shown as text, never run",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 987,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:13:14.075Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "262c5455b60c16e7a404-3309c80c71e31b169616",
+              "file": "categories.spec.ts",
+              "line": 141,
+              "column": 3
+            },
+            {
+              "title": "API failure shows an error with retry",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4548,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:13:15.077Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "262c5455b60c16e7a404-cfbac72ffd0d74a55546",
+              "file": "categories.spec.ts",
+              "line": 167,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "product-form.spec.ts",
+      "file": "product-form.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "상품 등록 (read only, saves answered here)",
+          "file": "product-form.spec.ts",
+          "line": 55,
+          "column": 6,
+          "specs": [
+            {
+              "title": "a file named .png that is not an image is refused before upload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3469,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:13:23.948Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a33f0e6a1dae2ce591f6-d693aa3484dd395fe15f",
+              "file": "product-form.spec.ts",
+              "line": 56,
+              "column": 3
+            },
+            {
+              "title": "X removes an image; the next one becomes 대표",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3237,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:13:27.433Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a33f0e6a1dae2ce591f6-d92cea4c00405a004988",
+              "file": "product-form.spec.ts",
+              "line": 69,
+              "column": 3
+            },
+            {
+              "title": "choosing 5 images: a message, only the first 4 upload, then 파일 추가 is disabled",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3077,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:13:30.690Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a33f0e6a1dae2ce591f6-aa899f8014b63e27b7b1",
+              "file": "product-form.spec.ts",
+              "line": 81,
+              "column": 3
+            },
+            {
+              "title": "step 2 defaults: 노출상태 예 and 판매상태 예",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3005,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:13:33.784Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a33f0e6a1dae2ce591f6-f6536526d87da36707e1",
+              "file": "product-form.spec.ts",
+              "line": 91,
+              "column": 3
+            },
+            {
+              "title": "step 4 (ERP): empty ERP명 and ERP 단가 are refused; nothing is sent",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7201,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:13:36.812Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a33f0e6a1dae2ce591f6-414d42f1a8b6e40f10eb",
+              "file": "product-form.spec.ts",
+              "line": 97,
+              "column": 3
+            },
+            {
+              "title": "double-clicking 등록 sends one save only",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6684,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:13:44.044Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a33f0e6a1dae2ce591f6-d728352d0d338dd5216b",
+              "file": "product-form.spec.ts",
+              "line": 113,
+              "column": 3
+            },
+            {
+              "title": "취소 with input: asks first; 아니오 keeps everything, 예 goes back to the list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3042,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:13:50.747Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a33f0e6a1dae2ce591f6-da12dbf402c44db7ea06",
+              "file": "product-form.spec.ts",
+              "line": 128,
+              "column": 3
+            },
+            {
+              "title": "closing or reloading the tab with unsaved input asks the browser to confirm",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2161,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:13:53.811Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a33f0e6a1dae2ce591f6-520cc1685e5cdde63491",
+              "file": "product-form.spec.ts",
+              "line": 141,
+              "column": 3
+            },
+            {
+              "title": "browser Back from a half-filled form returns to the list (in-app navigation: no browser prompt)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2693,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:13:56.001Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a33f0e6a1dae2ce591f6-d199a4c4ae792d2dd35b",
+              "file": "product-form.spec.ts",
+              "line": 151,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "상품 수정 (read only, saves answered here)",
+          "file": "product-form.spec.ts",
+          "line": 162,
+          "column": 6,
+          "specs": [
+            {
+              "title": "edit: an emptied 상품명 is refused on 다음",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2650,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:13:58.708Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a33f0e6a1dae2ce591f6-f23d44a4b603c8410a59",
+              "file": "product-form.spec.ts",
+              "line": 163,
+              "column": 3
+            },
+            {
+              "title": "edit: add and remove an image",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2319,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:14:01.373Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a33f0e6a1dae2ce591f6-c1b26b94d2951d34c835",
+              "file": "product-form.spec.ts",
+              "line": 172,
+              "column": 3
+            },
+            {
+              "title": "edit: an API error keeps every value typed",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2659,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:14:03.703Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a33f0e6a1dae2ce591f6-347c819d6b98fc768dad",
+              "file": "product-form.spec.ts",
+              "line": 184,
+              "column": 3
+            },
+            {
+              "title": "edit: 취소 after a change asks first, then returns to the details page unchanged",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3891,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:14:06.377Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a33f0e6a1dae2ce591f6-c971635f515c030da866",
+              "file": "product-form.spec.ts",
+              "line": 203,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "product-images.spec.ts",
+      "file": "product-images.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "an image removed while another is still uploading stays removed",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "readonly",
+              "projectName": "readonly",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2862,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T12:14:10.301Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c0ed2362c3f88296adef-90c2564b7f1f37d0f945",
+          "file": "product-images.spec.ts",
+          "line": 29,
+          "column": 1
+        },
+        {
+          "title": "an expired token during upload is renewed once and the upload goes through",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "readonly",
+              "projectName": "readonly",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3187,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T12:14:13.177Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c0ed2362c3f88296adef-0082f066f4baebbffa88",
+          "file": "product-images.spec.ts",
+          "line": 53,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "products.spec.ts",
+      "file": "products.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "상품 관리 목록 (read only)",
+          "file": "products.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "loads a page of 10 with the total count",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2715,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:14:16.515Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-7ff009434ab1cec21b53",
+              "file": "products.spec.ts",
+              "line": 6,
+              "column": 3
+            },
+            {
+              "title": "search, type and page live in the URL; reload and back keep them",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4931,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:14:19.253Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-3e83740dd8a9a8d5c6e1",
+              "file": "products.spec.ts",
+              "line": 15,
+              "column": 3
+            },
+            {
+              "title": "a bad URL falls back to a working list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2236,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:14:24.207Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-d8400fb942253365fa7e",
+              "file": "products.spec.ts",
+              "line": 35,
+              "column": 3
+            },
+            {
+              "title": "category search type",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2934,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:14:26.469Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-619b2afa3640dd7a4d64",
+              "file": "products.spec.ts",
+              "line": 40,
+              "column": 3
+            },
+            {
+              "title": "deleted products the API still returns in a 카테고리 search are marked, not linked (API question A14)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2513,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:14:29.428Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-7cc6816f66bded42a11a",
+              "file": "products.spec.ts",
+              "line": 48,
+              "column": 3
+            },
+            {
+              "title": "empty search shows the design message",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2558,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:14:31.965Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-2fc87305309ad903dc5e",
+              "file": "products.spec.ts",
+              "line": 61,
+              "column": 3
+            },
+            {
+              "title": "selection enables bulk delete; cancel deletes nothing",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3100,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:14:34.539Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-c6e71d2ff2126718a0f4",
+              "file": "products.spec.ts",
+              "line": 67,
+              "column": 3
+            },
+            {
+              "title": "CSV export downloads the whole filtered result",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4569,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:14:37.660Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-1e820ab6421c1af587ba",
+              "file": "products.spec.ts",
+              "line": 78,
+              "column": 3
+            },
+            {
+              "title": "API error shows an error with retry; network loss too",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7828,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:14:42.245Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-9e24daf223c4e17159a2",
+              "file": "products.spec.ts",
+              "line": 89,
+              "column": 3
+            },
+            {
+              "title": "no accessibility violations (WCAG A/AA)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2354,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:14:50.091Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-a07804eb8b28f07aea0f",
+              "file": "products.spec.ts",
+              "line": 99,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "상품 상세 (read only)",
+          "file": "products.spec.ts",
+          "line": 107,
+          "column": 6,
+          "specs": [
+            {
+              "title": "tabs: each loads on open, active tab in the URL",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5572,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:14:52.459Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-e00382007dea46683a9f",
+              "file": "products.spec.ts",
+              "line": 108,
+              "column": 3
+            },
+            {
+              "title": "related tab lists the other products of the 소분류",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3378,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:14:58.056Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-fbbea5dd9dc0ee63e012",
+              "file": "products.spec.ts",
+              "line": 135,
+              "column": 3
+            },
+            {
+              "title": "목록 returns to the same list page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2891,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:15:01.466Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-da7dc2414c514836ea24",
+              "file": "products.spec.ts",
+              "line": 141,
+              "column": 3
+            },
+            {
+              "title": "a tab that fails shows its own error; others still work",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5369,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:15:04.386Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-d1491ffd036935302ac9",
+              "file": "products.spec.ts",
+              "line": 148,
+              "column": 3
+            },
+            {
+              "title": "unknown or invalid product → not found",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3061,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:15:09.773Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-c6f1f7aa67cc0d351df7",
+              "file": "products.spec.ts",
+              "line": 156,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "상품 관리 목록 — more cases (read only)",
+          "file": "products.spec.ts",
+          "line": 164,
+          "column": 6,
+          "specs": [
+            {
+              "title": "selection stops at 100 across pages, with a message",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7415,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:15:12.852Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-5d50a8b0531d639cd86b",
+              "file": "products.spec.ts",
+              "line": 165,
+              "column": 3
+            },
+            {
+              "title": "page size 20: 20 rows, size in the URL, kept after reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5167,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:15:20.287Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-a08ac3f5f35f554a67ea",
+              "file": "products.spec.ts",
+              "line": 185,
+              "column": 3
+            },
+            {
+              "title": "clearing the search and searching again shows the whole list (q removed from the URL)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3395,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:15:25.474Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-edecc3ee6ca1643a1372",
+              "file": "products.spec.ts",
+              "line": 196,
+              "column": 3
+            },
+            {
+              "title": "노출여부 change refused by the API: the value goes back and an error toast shows",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2781,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:15:28.890Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-6519ef5116b35999e2a7",
+              "file": "products.spec.ts",
+              "line": 205,
+              "column": 3
+            },
+            {
+              "title": "CSV: a file with a BOM, the Korean header row and the rows; no results → the button is disabled",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5468,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:15:31.696Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-35f0bda5b04d7e18a6d4",
+              "file": "products.spec.ts",
+              "line": 218,
+              "column": 3
+            },
+            {
+              "title": "the API itself refuses a call without a token (401)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1072,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:15:37.185Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-2f165aca1c5ca2efcbbc",
+              "file": "products.spec.ts",
+              "line": 235,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "상품 상세 — more cases (read only)",
+          "file": "products.spec.ts",
+          "line": 245,
+          "column": 6,
+          "specs": [
+            {
+              "title": "기본 정보 shows the API values of the product",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2553,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:15:38.273Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-47581c85092b51dede22",
+              "file": "products.spec.ts",
+              "line": 248,
+              "column": 3
+            },
+            {
+              "title": "이미지 tab with no images shows its empty state",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2174,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:15:40.849Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-6c948f5ab89be91719d8",
+              "file": "products.spec.ts",
+              "line": 259,
+              "column": 3
+            },
+            {
+              "title": "같은 카테고리 상품 pages when there are more than 10",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4257,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:15:43.042Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "000c94276132c4f97581-e303dc0fea39067df906",
+              "file": "products.spec.ts",
+              "line": 270,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "quality.spec.ts",
+      "file": "quality.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "404 page: no console errors other than the expected 404 response",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "readonly",
+              "projectName": "readonly",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1179,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T12:18:59.671Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f46baca133b10bf87db1-849ca22e6e7021300b6b",
+          "file": "quality.spec.ts",
+          "line": 112,
+          "column": 1
+        },
+        {
+          "title": "dark mode: the header button switches it, it survives a reload, and switches back",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "readonly",
+              "projectName": "readonly",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1310,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T12:19:00.885Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f46baca133b10bf87db1-ddcf08a52299b523eb16",
+          "file": "quality.spec.ts",
+          "line": 120,
+          "column": 1
+        },
+        {
+          "title": "keyboard only: skip link, menu, dialog with Escape, visible focus ring",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "readonly",
+              "projectName": "readonly",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3653,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T12:19:02.218Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f46baca133b10bf87db1-c73d118d4904a749decb",
+          "file": "quality.spec.ts",
+          "line": 133,
+          "column": 1
+        }
+      ],
+      "suites": [
+        {
+          "title": "로그인",
+          "file": "quality.spec.ts",
+          "line": 83,
+          "column": 8,
+          "specs": [
+            {
+              "title": "light: no console errors/warnings and no WCAG A/AA violations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2021,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:15:47.360Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-14d5782a6753d628a942",
+              "file": "quality.spec.ts",
+              "line": 87,
+              "column": 7
+            },
+            {
+              "title": "dark: no console errors/warnings and no WCAG A/AA violations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1979,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:15:49.400Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-ab1ef3b9752ed21d52c0",
+              "file": "quality.spec.ts",
+              "line": 87,
+              "column": 7
+            },
+            {
+              "title": "no horizontal page scroll at 1920 / 1440 / 1366 / 768 / 375",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3972,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:15:51.403Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-2e109568126b9ca030de",
+              "file": "quality.spec.ts",
+              "line": 100,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "상품 관리",
+          "file": "quality.spec.ts",
+          "line": 83,
+          "column": 8,
+          "specs": [
+            {
+              "title": "light: no console errors/warnings and no WCAG A/AA violations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5579,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:15:55.398Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-d6e325494d75be8bcaff",
+              "file": "quality.spec.ts",
+              "line": 87,
+              "column": 7
+            },
+            {
+              "title": "dark: no console errors/warnings and no WCAG A/AA violations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5277,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:16:00.999Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-28c02de16404e656ab83",
+              "file": "quality.spec.ts",
+              "line": 87,
+              "column": 7
+            },
+            {
+              "title": "no horizontal page scroll at 1920 / 1440 / 1366 / 768 / 375",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10696,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:16:06.296Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-82b876737707062be16e",
+              "file": "quality.spec.ts",
+              "line": 100,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "상품 상세",
+          "file": "quality.spec.ts",
+          "line": 83,
+          "column": 8,
+          "specs": [
+            {
+              "title": "light: no console errors/warnings and no WCAG A/AA violations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5625,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:16:17.007Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-ff15ee900cb5981031b5",
+              "file": "quality.spec.ts",
+              "line": 87,
+              "column": 7
+            },
+            {
+              "title": "dark: no console errors/warnings and no WCAG A/AA violations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5690,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:16:22.653Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-a12d7598c3eec42e7357",
+              "file": "quality.spec.ts",
+              "line": 87,
+              "column": 7
+            },
+            {
+              "title": "no horizontal page scroll at 1920 / 1440 / 1366 / 768 / 375",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 18047,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('tabpanel')\nExpected substring: \u001b[32m\"상품코드\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('tabpanel') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('tabpanel')\u001b[22m\n\u001b[2m    3 × locator resolved to <div tabindex=\"0\" role=\"tabpanel\" id=\"panel-basic\" aria-labelledby=\"tab-basic\" class=\"url-tabs_panel__bUuBW\">…</div>\u001b[22m\n\u001b[2m      - unexpected value \"불러오는 중입니다.\"\u001b[22m\n\u001b[2m    - waiting for \"http://localhost:3100/login?returnTo=%2Fshopping%2Fproducts%2F20001&reason=expired\" navigation to finish...\u001b[22m\n\u001b[2m    - navigated to \"http://localhost:3100/login?returnTo=%2Fshopping%2Fproducts%2F20001&reason=expired\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('tabpanel')\nExpected substring: \u001b[32m\"상품코드\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('tabpanel') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('tabpanel')\u001b[22m\n\u001b[2m    3 × locator resolved to <div tabindex=\"0\" role=\"tabpanel\" id=\"panel-basic\" aria-labelledby=\"tab-basic\" class=\"url-tabs_panel__bUuBW\">…</div>\u001b[22m\n\u001b[2m      - unexpected value \"불러오는 중입니다.\"\u001b[22m\n\u001b[2m    - waiting for \"http://localhost:3100/login?returnTo=%2Fshopping%2Fproducts%2F20001&reason=expired\" navigation to finish...\u001b[22m\n\u001b[2m    - navigated to \"http://localhost:3100/login?returnTo=%2Fshopping%2Fproducts%2F20001&reason=expired\"\u001b[22m\n\n    at Object.open (C:\\Assignments\\Frontend-homework\\e2e\\quality.spec.ts:40:48)\n    at C:\\Assignments\\Frontend-homework\\e2e\\quality.spec.ts:103:9",
+                        "location": {
+                          "file": "C:\\Assignments\\Frontend-homework\\e2e\\quality.spec.ts",
+                          "column": 48,
+                          "line": 40
+                        },
+                        "snippet": " \u001b[90m 38 |\u001b[39m     open\u001b[33m:\u001b[39m \u001b[36masync\u001b[39m (page) \u001b[33m=>\u001b[39m {\n \u001b[90m 39 |\u001b[39m       \u001b[36mawait\u001b[39m openProbeDetails(page)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'tabpanel'\u001b[39m))\u001b[33m.\u001b[39mtoContainText(\u001b[32m'상품코드'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m     }\u001b[33m,\u001b[39m\n \u001b[90m 42 |\u001b[39m   }\u001b[33m,\u001b[39m\n \u001b[90m 43 |\u001b[39m   \u001b[33m...\u001b[39m([\u001b[32m'이미지'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'ERP 정보'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'같은 카테고리 상품'\u001b[39m] \u001b[36mas\u001b[39m \u001b[36mconst\u001b[39m)\u001b[33m.\u001b[39mmap((tab) \u001b[33m=>\u001b[39m ({"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Assignments\\Frontend-homework\\e2e\\quality.spec.ts",
+                            "column": 48,
+                            "line": 40
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('tabpanel')\nExpected substring: \u001b[32m\"상품코드\"\u001b[39m\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('tabpanel') with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('tabpanel')\u001b[22m\n\u001b[2m    3 × locator resolved to <div tabindex=\"0\" role=\"tabpanel\" id=\"panel-basic\" aria-labelledby=\"tab-basic\" class=\"url-tabs_panel__bUuBW\">…</div>\u001b[22m\n\u001b[2m      - unexpected value \"불러오는 중입니다.\"\u001b[22m\n\u001b[2m    - waiting for \"http://localhost:3100/login?returnTo=%2Fshopping%2Fproducts%2F20001&reason=expired\" navigation to finish...\u001b[22m\n\u001b[2m    - navigated to \"http://localhost:3100/login?returnTo=%2Fshopping%2Fproducts%2F20001&reason=expired\"\u001b[22m\n\n\n  38 |     open: async (page) => {\n  39 |       await openProbeDetails(page);\n> 40 |       await expect(page.getByRole('tabpanel')).toContainText('상품코드');\n     |                                                ^\n  41 |     },\n  42 |   },\n  43 |   ...(['이미지', 'ERP 정보', '같은 카테고리 상품'] as const).map((tab) => ({\n    at Object.open (C:\\Assignments\\Frontend-homework\\e2e\\quality.spec.ts:40:48)\n    at C:\\Assignments\\Frontend-homework\\e2e\\quality.spec.ts:103:9"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:16:28.370Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Assignments\\Frontend-homework\\test-results\\quality-상품-상세-no-horizonta-f073b-l-at-1920-1440-1366-768-375-readonly\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Assignments\\Frontend-homework\\test-results\\quality-상품-상세-no-horizonta-f073b-l-at-1920-1440-1366-768-375-readonly\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Assignments\\Frontend-homework\\test-results\\quality-상품-상세-no-horizonta-f073b-l-at-1920-1440-1366-768-375-readonly\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Assignments\\Frontend-homework\\e2e\\quality.spec.ts",
+                        "column": 48,
+                        "line": 40
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-579f8216aae0d0fa1ddc",
+              "file": "quality.spec.ts",
+              "line": 100,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "상품 상세 · 이미지",
+          "file": "quality.spec.ts",
+          "line": 83,
+          "column": 8,
+          "specs": [
+            {
+              "title": "light: no console errors/warnings and no WCAG A/AA violations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5739,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:16:49.606Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-d9286145566a0f1c87ff",
+              "file": "quality.spec.ts",
+              "line": 87,
+              "column": 7
+            },
+            {
+              "title": "dark: no console errors/warnings and no WCAG A/AA violations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5756,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:16:55.625Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-c6c2b5b0b24fc20016b1",
+              "file": "quality.spec.ts",
+              "line": 87,
+              "column": 7
+            },
+            {
+              "title": "no horizontal page scroll at 1920 / 1440 / 1366 / 768 / 375",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16628,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:17:01.409Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-8f070f86a96d53f0cbbb",
+              "file": "quality.spec.ts",
+              "line": 100,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "상품 상세 · ERP 정보",
+          "file": "quality.spec.ts",
+          "line": 83,
+          "column": 8,
+          "specs": [
+            {
+              "title": "light: no console errors/warnings and no WCAG A/AA violations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5581,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:17:18.062Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-91d9958841a9453c9d58",
+              "file": "quality.spec.ts",
+              "line": 87,
+              "column": 7
+            },
+            {
+              "title": "dark: no console errors/warnings and no WCAG A/AA violations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5134,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:17:23.665Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-e535549189d5be4f1200",
+              "file": "quality.spec.ts",
+              "line": 87,
+              "column": 7
+            },
+            {
+              "title": "no horizontal page scroll at 1920 / 1440 / 1366 / 768 / 375",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15455,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:17:28.815Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-72f961333357f9703cde",
+              "file": "quality.spec.ts",
+              "line": 100,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "상품 상세 · 같은 카테고리 상품",
+          "file": "quality.spec.ts",
+          "line": 83,
+          "column": 8,
+          "specs": [
+            {
+              "title": "light: no console errors/warnings and no WCAG A/AA violations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6814,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:17:44.282Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-41fb1a3b80fb53eeb552",
+              "file": "quality.spec.ts",
+              "line": 87,
+              "column": 7
+            },
+            {
+              "title": "dark: no console errors/warnings and no WCAG A/AA violations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6000,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:17:51.113Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-c6d1d04fa12b96cf3488",
+              "file": "quality.spec.ts",
+              "line": 87,
+              "column": 7
+            },
+            {
+              "title": "no horizontal page scroll at 1920 / 1440 / 1366 / 768 / 375",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19236,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:17:57.129Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-28e814fce3bdaa823ef6",
+              "file": "quality.spec.ts",
+              "line": 100,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "상품 등록",
+          "file": "quality.spec.ts",
+          "line": 83,
+          "column": 8,
+          "specs": [
+            {
+              "title": "light: no console errors/warnings and no WCAG A/AA violations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4630,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:18:16.379Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-65cf3bc2e25a1a59003a",
+              "file": "quality.spec.ts",
+              "line": 87,
+              "column": 7
+            },
+            {
+              "title": "dark: no console errors/warnings and no WCAG A/AA violations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4861,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:18:21.030Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-ac63d690078b034bbd5f",
+              "file": "quality.spec.ts",
+              "line": 87,
+              "column": 7
+            },
+            {
+              "title": "no horizontal page scroll at 1920 / 1440 / 1366 / 768 / 375",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11300,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:18:25.910Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-865d0fed8975a1ef9b5a",
+              "file": "quality.spec.ts",
+              "line": 100,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "상품 카테고리 관리",
+          "file": "quality.spec.ts",
+          "line": 83,
+          "column": 8,
+          "specs": [
+            {
+              "title": "light: no console errors/warnings and no WCAG A/AA violations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5430,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:18:37.229Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-940699318604fda024c1",
+              "file": "quality.spec.ts",
+              "line": 87,
+              "column": 7
+            },
+            {
+              "title": "dark: no console errors/warnings and no WCAG A/AA violations",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5064,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:18:42.678Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-42dfad656bd037964157",
+              "file": "quality.spec.ts",
+              "line": 87,
+              "column": 7
+            },
+            {
+              "title": "no horizontal page scroll at 1920 / 1440 / 1366 / 768 / 375",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "readonly",
+                  "projectName": "readonly",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11884,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-17T12:18:47.760Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f46baca133b10bf87db1-19eab46f735ce488457e",
+              "file": "quality.spec.ts",
+              "line": 100,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "roles.spec.ts",
+      "file": "roles.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "a role with only 상품 관리 sees only that menu, and 카테고리 URL shows 403",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "readonly",
+              "projectName": "readonly",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1568,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T12:19:05.918Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7a25b8aaa0fcc60dba5a-98594b3bfb0acea5c4c9",
+          "file": "roles.spec.ts",
+          "line": 7,
+          "column": 1
+        },
+        {
+          "title": "a role with only 카테고리 관리 is blocked from product URLs (incl. edit)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "readonly",
+              "projectName": "readonly",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1240,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T12:19:07.512Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7a25b8aaa0fcc60dba5a-8052831005423b2b36ba",
+          "file": "roles.spec.ts",
+          "line": 20,
+          "column": 1
+        },
+        {
+          "title": "an admin with no shopping permission gets the Figma no-permission popup",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "readonly",
+              "projectName": "readonly",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1693,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T12:19:08.773Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7a25b8aaa0fcc60dba5a-f43cab43f0ffed4e1ca7",
+          "file": "roles.spec.ts",
+          "line": 27,
+          "column": 1
+        },
+        {
+          "title": "returnTo cannot send the user to another site",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "readonly",
+              "projectName": "readonly",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 964,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T12:19:10.482Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7a25b8aaa0fcc60dba5a-4a2f32f6e930e4e9c54b",
+          "file": "roles.spec.ts",
+          "line": 34,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "categories.mutation.spec.ts",
+      "file": "categories.mutation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "add, rename and delete a 소분류 under our own 중분류",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [
+                {
+                  "type": "serial",
+                  "location": {
+                    "file": "C:\\Assignments\\Frontend-homework\\e2e\\categories.mutation.spec.ts",
+                    "line": 0,
+                    "column": 0
+                  }
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mutation",
+              "projectName": "mutation",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8103,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "TC-CAT-06 · add (spaces around the name are trimmed) → toast, tree updated",
+                      "duration": 3609
+                    },
+                    {
+                      "title": "TC-CAT-10 · rename: the dialog opens with the current name; save → toast",
+                      "duration": 1829
+                    },
+                    {
+                      "title": "TC-CAT-11 · delete asks first (\"되돌릴 수 없습니다\"); 취소 keeps it",
+                      "duration": 327
+                    },
+                    {
+                      "title": "TC-CAT-15 · 삭제 → toast, gone from the tree",
+                      "duration": 1871
+                    }
+                  ],
+                  "startTime": "2026-11-17T12:19:12.620Z",
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "C:\\Assignments\\Frontend-homework\\e2e\\categories.mutation.spec.ts",
+                        "line": 0,
+                        "column": 0
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "164ff8d77983e0c849e9-d2468cadabc61f65c4d8",
+          "file": "categories.mutation.spec.ts",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "title": "a duplicate name is refused with the API message (case does not matter); nothing is created",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [
+                {
+                  "type": "serial",
+                  "location": {
+                    "file": "C:\\Assignments\\Frontend-homework\\e2e\\categories.mutation.spec.ts",
+                    "line": 0,
+                    "column": 0
+                  }
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mutation",
+              "projectName": "mutation",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3724,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T12:19:20.989Z",
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "C:\\Assignments\\Frontend-homework\\e2e\\categories.mutation.spec.ts",
+                        "line": 0,
+                        "column": 0
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "164ff8d77983e0c849e9-d4f07363d73f9bb04533",
+          "file": "categories.mutation.spec.ts",
+          "line": 54,
+          "column": 1
+        },
+        {
+          "title": "add a 중분류 under a 대분류, then delete it",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [
+                {
+                  "type": "serial",
+                  "location": {
+                    "file": "C:\\Assignments\\Frontend-homework\\e2e\\categories.mutation.spec.ts",
+                    "line": 0,
+                    "column": 0
+                  }
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mutation",
+              "projectName": "mutation",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9295,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T12:19:24.737Z",
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "C:\\Assignments\\Frontend-homework\\e2e\\categories.mutation.spec.ts",
+                        "line": 0,
+                        "column": 0
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "164ff8d77983e0c849e9-0c47888e105048e96acc",
+          "file": "categories.mutation.spec.ts",
+          "line": 67,
+          "column": 1
+        },
+        {
+          "title": "reorder our own 소분류 with the drag handle (keyboard), rename to a duplicate is refused, then clean up",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [
+                {
+                  "type": "serial",
+                  "location": {
+                    "file": "C:\\Assignments\\Frontend-homework\\e2e\\categories.mutation.spec.ts",
+                    "line": 0,
+                    "column": 0
+                  }
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mutation",
+              "projectName": "mutation",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 18077,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "setup · two more 소분류 next to HW3-Pranesh-Child (every sibling is our own record)",
+                      "duration": 9628
+                    },
+                    {
+                      "title": "TC-CAT-14 · a group with other people's records has no handle; ours moves with ↓ and stays after reload",
+                      "duration": 3332
+                    },
+                    {
+                      "title": "TC-CAT-22 · rename to a sibling's name is refused by the API; 취소 keeps the old name",
+                      "duration": 1331
+                    },
+                    {
+                      "title": "cleanup · delete both test records",
+                      "duration": 3472
+                    }
+                  ],
+                  "startTime": "2026-11-17T12:19:34.048Z",
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "C:\\Assignments\\Frontend-homework\\e2e\\categories.mutation.spec.ts",
+                        "line": 0,
+                        "column": 0
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "164ff8d77983e0c849e9-b908682cf9e4913b01db",
+          "file": "categories.mutation.spec.ts",
+          "line": 87,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "products.mutation.spec.ts",
+      "file": "products.mutation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "create through the 4 steps (validation, image upload, values kept going back)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [
+                {
+                  "type": "serial",
+                  "location": {
+                    "file": "C:\\Assignments\\Frontend-homework\\e2e\\products.mutation.spec.ts",
+                    "line": 0,
+                    "column": 0
+                  }
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mutation",
+              "projectName": "mutation",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10474,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "TC-PRD-FORM-01 · 4 steps; the product code is generated and read-only",
+                      "duration": 2049
+                    },
+                    {
+                      "title": "TC-PRD-FORM-02 · step 1 empty → errors, does not move on",
+                      "duration": 109
+                    },
+                    {
+                      "title": "TC-PRD-FORM-03 · 단가 equal to 판매가 is refused",
+                      "duration": 1064
+                    },
+                    {
+                      "title": "TC-PRD-FORM-06 · no image → \"대표 이미지를 1장 이상 등록해 주세요.\"",
+                      "duration": 64
+                    },
+                    {
+                      "title": "TC-PRD-FORM-08 · a text file is refused",
+                      "duration": 61
+                    },
+                    {
+                      "title": "TC-PRD-FORM-07 · a real PNG uploads to S3 and previews as 대표",
+                      "duration": 2064
+                    },
+                    {
+                      "title": "TC-PRD-FORM-14 · categories chosen column by column",
+                      "duration": 1982
+                    },
+                    {
+                      "title": "TC-PRD-FORM-16 · 이전 ×3 then 다음 ×3 keeps every value",
+                      "duration": 775
+                    },
+                    {
+                      "title": "TC-PRD-FORM-17 · 등록 → toast, back to the list",
+                      "duration": 1984
+                    }
+                  ],
+                  "startTime": "2026-11-17T12:19:52.170Z",
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "C:\\Assignments\\Frontend-homework\\e2e\\products.mutation.spec.ts",
+                        "line": 0,
+                        "column": 0
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ebd32663dc3056c9105b-7645d9aab71a987503ff",
+          "file": "products.mutation.spec.ts",
+          "line": 31,
+          "column": 1
+        },
+        {
+          "title": "an API error keeps everything typed (server refused the save)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [
+                {
+                  "type": "serial",
+                  "location": {
+                    "file": "C:\\Assignments\\Frontend-homework\\e2e\\products.mutation.spec.ts",
+                    "line": 0,
+                    "column": 0
+                  }
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mutation",
+              "projectName": "mutation",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7000,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T12:20:02.661Z",
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "C:\\Assignments\\Frontend-homework\\e2e\\products.mutation.spec.ts",
+                        "line": 0,
+                        "column": 0
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ebd32663dc3056c9105b-b6d621a5bd9e9c70d824",
+          "file": "products.mutation.spec.ts",
+          "line": 101,
+          "column": 1
+        },
+        {
+          "title": "find it, toggle 노출 inline, edit it, then delete it",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [
+                {
+                  "type": "serial",
+                  "location": {
+                    "file": "C:\\Assignments\\Frontend-homework\\e2e\\products.mutation.spec.ts",
+                    "line": 0,
+                    "column": 0
+                  }
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mutation",
+              "projectName": "mutation",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11310,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "TC-PRD-FORM-17 · the new product is found by search",
+                      "duration": 2081
+                    },
+                    {
+                      "title": "TC-PRD-LIST-09 · inline 노출여부 change is saved with a toast",
+                      "duration": 1361
+                    },
+                    {
+                      "title": "TC-PRD-EDIT-01 · edit opens with the saved values; category read-only",
+                      "duration": 2430
+                    },
+                    {
+                      "title": "TC-PRD-EDIT-02 · 저장 → toast, details shows ₩3,000",
+                      "duration": 1728
+                    },
+                    {
+                      "title": "TC-PRD-DETAIL-08 · delete from details → toast, gone from search",
+                      "duration": 3305
+                    }
+                  ],
+                  "startTime": "2026-11-17T12:20:09.682Z",
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "C:\\Assignments\\Frontend-homework\\e2e\\products.mutation.spec.ts",
+                        "line": 0,
+                        "column": 0
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ebd32663dc3056c9105b-3a3f721fb40d1ec779fa",
+          "file": "products.mutation.spec.ts",
+          "line": 130,
+          "column": 1
+        },
+        {
+          "title": "bulk delete removes every selected product (ids sent as numbers to the real API)",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [
+                {
+                  "type": "serial",
+                  "location": {
+                    "file": "C:\\Assignments\\Frontend-homework\\e2e\\products.mutation.spec.ts",
+                    "line": 0,
+                    "column": 0
+                  }
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mutation",
+              "projectName": "mutation",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9131,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "setup · two products created through the API (our probe's category and image)",
+                      "duration": 2452
+                    },
+                    {
+                      "title": "TC-PRD-LIST-12 · select both, 삭제 (2), confirm → toast; the search is empty",
+                      "duration": 6263
+                    }
+                  ],
+                  "startTime": "2026-11-17T12:20:21.019Z",
+                  "annotations": [
+                    {
+                      "type": "serial",
+                      "location": {
+                        "file": "C:\\Assignments\\Frontend-homework\\e2e\\products.mutation.spec.ts",
+                        "line": 0,
+                        "column": 0
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "ebd32663dc3056c9105b-70bfb2921f99dc83253c",
+          "file": "products.mutation.spec.ts",
+          "line": 170,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-17T12:12:01.839Z",
+    "duration": 508805.67699999997,
+    "expected": 107,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}
