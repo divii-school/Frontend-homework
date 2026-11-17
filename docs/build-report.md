@@ -2,8 +2,8 @@
 
 For: Archana (QA). The checks below were run on 16 Nov 2026 on the production build (`npm run build` +
 `next start`) on my machine, against the Talking Club QA API.
-**The Vercel link is not filled in yet**; the same checks are run again on the deployed URL before hand-over
-(WM: evidence must come from the deployed URL, not localhost).
+On 17 Nov 2026 the read-only and the create / edit / delete tests were run again on the deployed build,
+https://talkingclub-hw3-sachin.vercel.app (WM: evidence must come from the deployed URL, not localhost).
 
 ## 1. Build
 
@@ -11,9 +11,9 @@ For: Archana (QA). The checks below were run on 16 Nov 2026 on the production bu
 |---|---|
 | Repo / branch | `divii-school/Frontend-homework`, branch `hw3/sachin` |
 | Commit | the latest commit of the branch (see the PR) |
-| Deployed link (Vercel) | _to be filled in after deploy_ |
+| Deployed link (Vercel) | https://talkingclub-hw3-sachin.vercel.app |
 | API | Talking Club QA API only |
-| Date | 16 Nov 2026 |
+| Date | 16 Nov 2026 (my machine), 17 Nov 2026 (Vercel) |
 
 ## 2. TL tasks covered
 
@@ -73,9 +73,9 @@ Two of my 중분류 stay on the server under 대분류 **학원 Shop**:
 5. **Not compared with Figma yet.** I had no access to the Figma file while building; colours and sizes were read from the live QA admin. (Design question Q1.)
 6. **White text on the brand pink is 3.98:1**, below the 4.5:1 of WCAG AA. The colour is used as designed. (Q9.)
 7. The description is plain text, not rich text. Category reordering by drag is not built. A new 대분류 cannot be added on the QA server (the API says `isCreatable: false`), so that button is not shown.
-8. Not run yet: the suite on the deployed URL, real Safari and a real phone. Safari's engine (WebKit) and the phone width (375) were run in Playwright.
+8. Not run yet: real Safari and a real phone. Safari's engine (WebKit) and the phone width (375) were run in Playwright.
 
-## 9. Results (16 Nov 2026, production build on my machine, QA API)
+## 9. Results (16 Nov 2026 on my machine, 17 Nov 2026 on the Vercel link, QA API)
 
 | Check | Command | Result |
 |---|---|---|
@@ -90,6 +90,12 @@ Two of my 중분류 stay on the server under 대분류 **학원 Shop**:
 | Write tests and screenshots without their scripts | `npx playwright test --project=mutation --project=screenshots` | all 16 skipped: nothing written |
 | Console | inside the tests, on every screen | 0 errors, 0 warnings |
 | Sideways scroll | inside the tests, 11 screens × 11 widths (1920 → 375) | none |
+| Playwright read-only on the Vercel link | `npm run test:e2e` with `PLAYWRIGHT_BASE_URL=https://talkingclub-hw3-sachin.vercel.app` | 42 passed, 0 failed (2 role-menu tests after one retry) |
+| Playwright create / edit / delete on the Vercel link | `npm run test:e2e:mutation` with the same `PLAYWRIGHT_BASE_URL` | 7 passed, 0 failed (image upload through the app's own route on Vercel) |
+
+The first run on the Vercel link had one failure: the backslash-redirect test expected a `localhost` address,
+while the app correctly stayed on its own Vercel address. The test now checks the app's own address and passes
+on both.
 
 The HTML report of the Chromium read-only run is `docs/playwright-report.zip`. Written test cases:
 `docs/test-cases.csv`.
