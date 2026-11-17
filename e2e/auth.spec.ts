@@ -80,15 +80,16 @@ test.describe("login and protected routes", () => {
     expect(expires).toBeGreaterThan(Date.now() / 1000 + 60 * 60);
   });
 
-  test("a redirect written as /\\host is ignored too (browsers read it as another site)", async ({ page }) => {
+  // Both land on /products of this app (local or deployed), never on example.com
+  test("a redirect written as /\\host is ignored too (browsers read it as another site)", async ({ page, baseURL }) => {
     await page.goto("/auth/login?redirect=%2F%5Cexample.com");
     await login(page);
-    await expect(page).toHaveURL(/localhost:\d+\/products$/);
+    await expect(page).toHaveURL(new URL("/products", baseURL).href);
   });
 
-  test("a redirect to another site is ignored", async ({ page }) => {
+  test("a redirect to another site is ignored", async ({ page, baseURL }) => {
     await page.goto("/auth/login?redirect=https%3A%2F%2Fexample.com");
     await login(page);
-    await expect(page).toHaveURL(/\/products$/);
+    await expect(page).toHaveURL(new URL("/products", baseURL).href);
   });
 });
