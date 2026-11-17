@@ -130,9 +130,19 @@ export function getBreadcrumb(routeKey: RouteKey, ...extra: string[]): Array<{ l
   ];
 }
 
-/** Which nav entry + action a URL path belongs to; null for paths outside the menu. */
+/**
+ * Which nav entry + action a URL path belongs to; null for paths outside the menu.
+ * The path is decoded first: the server also serves /shopping-mall/%63ategories as /shopping-mall/categories.
+ * A path that cannot be decoded (e.g. "%E0") is compared as it is, like the server does.
+ */
 export function matchRoute(pathname: string): { item: NavItem; action: PermissionAction } | null {
-  const path = pathname.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
+  let raw = pathname.split(/[?#]/)[0];
+  try {
+    raw = decodeURIComponent(raw);
+  } catch {
+    // malformed escape: keep the undecoded path
+  }
+  const path = raw.replace(/\/+$/, "") || "/";
   for (const { item } of ROUTE_ITEMS) {
     const href = item.href as string;
     if (path === href) return { item, action: "read" };

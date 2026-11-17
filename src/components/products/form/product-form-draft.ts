@@ -3,6 +3,7 @@ import type { FormMode, ProductFormValues, ProductImageValue, ProductOptionRow }
 // Draft of the product form in sessionStorage (this browser tab only):
 //  - key per mode: "hw3-product-draft-create" / "hw3-product-draft-edit-<id>"
 //  - saved (debounced) while the user types, restored on reload, removed after a successful save or Cancel
+//  - every draft of the tab is also removed on Log out (clearAllDrafts); a 401 / expiry keeps them for the same user
 //  - only plain values go in: images are { filePath, preview, name } of FINISHED uploads — a File that is
 //    still uploading lives in the upload widget, never in the form values, so it is never stored.
 
@@ -61,6 +62,19 @@ export function readDraft(key: string, base: ProductFormValues): StoredDraft | n
 export function clearDraft(key: string): void {
   try {
     window.sessionStorage.removeItem(key);
+  } catch {
+    // ignore
+  }
+}
+
+/** Removes every product form draft of this tab (Log out / "Log in with another account"). */
+export function clearAllDrafts(): void {
+  try {
+    const storage = window.sessionStorage;
+    for (let index = storage.length - 1; index >= 0; index -= 1) {
+      const key = storage.key(index);
+      if (key?.startsWith(DRAFT_PREFIX)) storage.removeItem(key);
+    }
   } catch {
     // ignore
   }

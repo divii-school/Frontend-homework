@@ -30,8 +30,9 @@ export default function StepBasicInfo({ mode }: { mode: FormMode }) {
   const codeQuery = useGetGeneratedProductCode(isCreate);
   const currentCode = useWatch({ control, name: "productCode" });
   useEffect(() => {
-    // resetField = set the value AND make it the default, so a generated code alone never makes the form "dirty"
-    if (isCreate && codeQuery.data && !currentCode) resetField("productCode", { defaultValue: codeQuery.data });
+    // resetField = set the value AND make it the default, so a generated code alone never makes the form "dirty".
+    // A newer code from the server also replaces an older one (e.g. the code inside a restored draft).
+    if (isCreate && codeQuery.data && codeQuery.data !== currentCode) resetField("productCode", { defaultValue: codeQuery.data });
   }, [isCreate, codeQuery.data, currentCode, resetField]);
 
   const regenerateCode = async () => {

@@ -20,12 +20,14 @@ import {
 //   1. submit → 400 unitPriceMustBeLessThanPrice → back on the selling price (step 1), values kept
 //   2. submit → 500 → still on step 4, error box + toast, values kept
 //   3. submit → network error → same, with the connection message
+//   3b. create: a restored draft gets the server's fresh code; Register fetches the code again right before the POST
 //   4. draft restored after reload (+ Discard)
 //   5. ?step=3 typed into the URL with an empty form → sent back to step 1
 //   6. image type / size rejected before any upload request
 //   7. edit: read-only code + category; image keys + other option sets go back unchanged in the PUT body
 //   8. 375 px: compact stepper, Enter = Next, no horizontal page scroll
 //   9. Cancel asks first (design #21): No stays, Yes clears the draft and opens the list
+//   9b. Log out in the top bar removes the draft of this tab
 //  10. edit of a missing product → not-found state
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -226,6 +228,36 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     await expect(field(page, "Selling price")).toHaveValue("₩17,000");
   });
 
+  test("create: a restored draft gets a fresh code, Register sends a code fetched right before the POST", async ({ page }) => {
+    await seedDraft(page); // its code is PRD-E2E-0001
+    let submitted: Record<string, unknown> | null = null;
+    await mockApi(page, async (route) => {
+      submitted = route.request().postDataJSON() as Record<string, unknown>;
+      await json(route, 200, ok(null));
+    });
+    let lastCode = "";
+    let codeCalls = 0;
+    await page.route(`${API_ORIGIN}/**/products/generate-code`, (route) => {
+      if (route.request().method() === "OPTIONS") return route.fallback();
+      codeCalls += 1;
+      lastCode = `PRD-E2E-${1000 + codeCalls}`;
+      return json(route, 200, ok(lastCode));
+    });
+
+    await page.goto(`${CREATE_URL}?step=4`);
+    await expectStep(page, 4);
+    await expect(page.getByText("Draft restored")).toBeVisible();
+    const review = page.locator(".product-review");
+    await expect(review).toContainText(/PRD-E2E-1\d{3}/);
+    await expect(review).not.toContainText("PRD-E2E-0001");
+    const shownCode = /PRD-E2E-1\d{3}/.exec((await review.textContent()) ?? "")?.[0];
+
+    await page.getByRole("button", { name: "Register", exact: true }).click();
+    await expect.poll(() => submitted).not.toBeNull();
+    expect(submitted).toMatchObject({ productCode: lastCode });
+    expect(lastCode).not.toBe(shownCode);
+  });
+
   test("draft is restored after a reload, Discard empties the form", async ({ page }) => {
     await mockApi(page, (route) => json(route, 200, ok(null)));
 
@@ -401,6 +433,21 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     await page.getByRole("button", { name: "Cancel", exact: true }).click();
     await confirm.getByRole("button", { name: "Yes" }).click();
     await expect(page).toHaveURL(/\/shopping-mall\/products$/);
+    expect(await page.evaluate((key) => window.sessionStorage.getItem(key), DRAFT_KEY)).toBeNull();
+  });
+
+  test("Log out in the top bar removes the draft of this tab", async ({ page }) => {
+    await mockApi(page, (route) => json(route, 200, ok(null)));
+
+    await page.goto(CREATE_URL);
+    await expect(field(page, "Product code")).toHaveValue("PRD-E2E-0001");
+    await field(page, "Product name").fill("HW3-Neeraj-logout-check");
+    await expect
+      .poll(() => page.evaluate((key) => window.sessionStorage.getItem(key), DRAFT_KEY))
+      .toContain("HW3-Neeraj-logout-check");
+
+    await page.getByRole("button", { name: "Log out" }).click();
+    await expect(page).toHaveURL(/\/login$/);
     expect(await page.evaluate((key) => window.sessionStorage.getItem(key), DRAFT_KEY)).toBeNull();
   });
 

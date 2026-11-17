@@ -1,6 +1,6 @@
 # PR — HW3 · Shopping Mall: Product Category + Product Management (Neeraj)
 
-`hw3/neeraj` → `main` · Commit: `<commit hash — fill at submission>` · Demo (Vercel): `<URL — fill at submission>` · **for review only, never merged** · TL task: https://app.notion.com/p/416326b2d5fb81c1beccdac6b9b7730d · Submission page: https://app.notion.com/p/416326b2d5fb814c8b75c984a7f3317e
+`hw3/neeraj` → `main` · Commits: `b2e2974` (first build) + the review-fix commit of 2026-11-17 (branch head) · PR: https://github.com/divii-school/Frontend-homework/pull/2 · Demo (Vercel): https://tc-admin-hw3-neeraj.vercel.app · **for review only, never merged** · TL task: https://app.notion.com/p/416326b2d5fb81c1beccdac6b9b7730d · Submission page: https://app.notion.com/p/416326b2d5fb814c8b75c984a7f3317e
 
 > Screenshot links below are relative to `docs/` (they open when this file is viewed in the repo). When pasting into the GitHub PR body, use the file links of the pushed commit instead.
 
@@ -27,11 +27,11 @@ HW3 — Advanced Frontend Homework: rebuild two real Talking Club admin screens 
 npm run type-check    → exit 0
 npm run lint          → exit 0 (0 errors, 0 warnings)
 npm run build         → exit 0, 10 routes + middleware
-npx next start -p 3100, then ONE Playwright command for all 81 tests:
+npx next start -p 3100, then ONE Playwright command for all 84 tests:
 E2E_ALLOW_MUTATIONS=1 E2E_MAP_3000_TO=3100 npx playwright test --output=test-results/pw-artifacts --trace=off
-  → exit 0 · 81 passed (3.6 min) · 0 failed · 0 flaky · first attempt
-  guest     13 passed (auth.spec 9 incl. 4 live login tests, roles.spec 4)
-  mocked    44 passed (categories-states 18, products-states 15, product-form-states 10, session-expiry-states 1)
+  → exit 0 · 84 passed (6.4 min) · 0 failed · 0 flaky · 0 skipped · 12:11 to 12:17 (second attempt, see below)
+  guest     14 passed (auth.spec 9 incl. 4 live login tests, roles.spec 5)
+  mocked    46 passed (categories-states 18, products-states 15, product-form-states 12, session-expiry-states 1)
   setup      1 passed (live UI login)
   chromium  23 passed, live: categories.spec 5 · products-list.spec 6 (incl. Export CSV) · products-details.spec 4
             · product-form.spec 4 · categories.mutation.spec 1 (add, rename, reorder, delete)
@@ -39,12 +39,25 @@ E2E_ALLOW_MUTATIONS=1 E2E_MAP_3000_TO=3100 npx playwright test --output=test-res
 clean-up check → 0 HW3-Neeraj- products or categories left
 ```
 
+- First attempt of the same command (12:06): the 2 live login-error tests did not see the error dialog within 5 s because the QA API had not answered yet, so the 24 tests that depend on `guest` did not run. Nothing was changed; the command was run again and passed in full.
 - Run order: `setup` depends on `guest` in `playwright.config.ts`, so one command runs guest, then setup, then the chromium specs (the QA API keeps one live session per account, so a login / logout in the guest tests invalidates the token saved by `setup`). When running single projects by hand: `--project=setup` (runs guest first), then each chromium spec file with `--no-deps`.
 - **Product register / edit / delete passed live** through the port-3000 mapping (`E2E_MAP_3000_TO`, opt-in in `playwright.config.ts`): the S3 bucket CORS refuses the preflight from `http://localhost:3100`, the QA admin origin and a `vercel.app` origin (403 `AccessForbidden`) and allows only `http://localhost:3000`, which is used by another app on the author's laptop. With the mapping, Chromium opens `http://localhost:3000` but connects to the app on port 3100. The same steps also pass against a mocked API (`product-form-states.spec.ts`, mocked S3).
 - Every category / product / form spec fails on any browser console error or warning.
 - HTML report: the zipped `playwright-report/` of this run is attached to the submission page; checked for the QA login ID, the password and the saved session token (0 each). The login fields are filled by a helper (`setInputValueQuietly` in `e2e/helpers.ts`) that does not write the value into the report.
 - Test cases: `docs/test-cases.md` — 112 cases, 59 positive / 53 negative, 81 mapped to a Playwright test, 31 manual. A case is marked live Pass only when a live spec covering it passed in this run.
-- Screenshots: `node scripts/screenshots/compare.mjs` (mocked API, Chromium, retaken 2026-11-17 against the production build) — 5 screens × 1440 / 768 / 375 × light / dark.
+- Screenshots: `node scripts/screenshots/compare.mjs` (mocked API, Chromium, retaken 2026-11-17 against the production build, the last time at 12:18 with no visual change) — 5 screens × 1440 / 768 / 375 × light / dark.
+
+## Fixed on 17 Nov (two internal reviews, before the hand-over)
+
+- A second tab without a saved session no longer logs the first tab out (it deleted the shared login cookie).
+- The list pager fits on one line at 375 px.
+- A percent-encoded URL (`/shopping-mall/%63ategories`) no longer gets past the route guards: `matchRoute()` decodes the path first (new test in `roles.spec.ts`).
+- Log out removes the unsaved product form drafts of the tab (new test in `product-form-states.spec.ts`).
+- Register fetches a fresh product code right before the POST; a restored draft also gets the fresh code (new test in `product-form-states.spec.ts`).
+- CSV export puts `'` before any text that starts with `-`, `=`, `+` or `@`.
+- An edit with "Required option for purchase" on and no option rows can be saved as it is.
+- Register / Save stays disabled after a successful save until the next page opens.
+- Tests: the HTML report no longer holds the typed QA login; the screenshot script waits for hydration; `E2E_MAP_3000_TO` for the real S3 upload.
 
 ## WM rules followed
 
@@ -83,6 +96,9 @@ The details page has no Figma frame (design question 4); its composite shows 8.1
 - Max 3 main categories in the API; QA already has 3, so main-category create can't be tried on QA (question 8).
 - Removing every option on edit is not saved by the API (old options stay); the form shows a note.
 - Drag reorder does not work on touch screens; Alt + ↑ / ↓ needs a keyboard (question 19).
+- API side: a search by category name (`GET /products?type=categoryName&search=…`) also returns deleted products whose medium or minor category name matches (the OR conditions are not in brackets); the list shows them as normal rows.
+- By design: the row selection is kept when the search or the filters change; the selection bar always shows how many rows are selected, with a Clear action.
+- Known limitation: in edit mode a saved draft is restored over the loaded product with a "Draft restored" notice, and the browser Back button leaves the form without the unsaved-changes dialog.
 - Only a SUPER_ADMIN account exists on QA; other roles are verified with injected sessions in `e2e/roles.spec.ts`.
 
 ## Logins

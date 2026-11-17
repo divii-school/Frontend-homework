@@ -7,13 +7,13 @@ Built from the Notion assignment page (416326b2…) and the submission page (416
 ## 1. Branch and PR link
 
 - Branch: `hw3/neeraj` (repo `divii-school/Frontend-homework`)
-- PR to `main` (never merged): `<PR link — fill at submission>`
-- Commit: `<commit hash — fill at submission>`
+- PR to `main` (never merged): https://github.com/divii-school/Frontend-homework/pull/2
+- Commits: `b2e2974` (first build) + the review-fix commit of 2026-11-17 (branch head)
 - PR description text: `docs/pr-description.md`
 
 ## 2. Vercel link (latest build)
 
-`<Vercel URL — fill at submission>` (own Vercel project, branch `hw3/neeraj`, `NEXT_PUBLIC_API_BASE_URL` set to the QA API, deployment protection off).
+https://tc-admin-hw3-neeraj.vercel.app (own Vercel project, branch `hw3/neeraj`, `NEXT_PUBLIC_API_BASE_URL` set to the QA API, deployment protection off).
 
 Note for the testers: the browser image upload to S3 is refused by the bucket CORS for every origin except `http://localhost:3000` (checked 2026-11-17: a `vercel.app` origin, the QA admin origin and `http://localhost:3100` get 403; details in section 7), so registering a product with an image will fail on the Vercel link until the backend adds the origin. The upload itself is proven by the automated run in section 5, which used the origin `http://localhost:3000`. Everything else works against the QA API.
 
@@ -33,7 +33,7 @@ npm run test:e2e            # guest + setup + mocked + read-only specs (see run 
 npm run test:e2e:mutations  # E2E_ALLOW_MUTATIONS=1, only HW3-Neeraj- records
 npm run test:e2e:report     # open the HTML report
 ```
-The full run of section 5 (all 81 tests, including the create / edit / delete specs), in PowerShell. Port 3000 was used by another app, and the S3 bucket accepts the image upload only from the origin `http://localhost:3000`, so the app runs on 3100 and `E2E_MAP_3000_TO=3100` makes Chromium open `http://localhost:3000` while it connects to port 3100 (the other app is never contacted):
+The full run of section 5 (all 84 tests, including the create / edit / delete specs), in PowerShell. Port 3000 was used by another app, and the S3 bucket accepts the image upload only from the origin `http://localhost:3000`, so the app runs on 3100 and `E2E_MAP_3000_TO=3100` makes Chromium open `http://localhost:3000` while it connects to port 3100 (the other app is never contacted):
 ```
 npm run build ; npx next start -p 3100                         # terminal 1
 $env:E2E_ALLOW_MUTATIONS="1"; $env:E2E_MAP_3000_TO="3100"       # terminal 2
@@ -71,13 +71,13 @@ Final gates, 2026-11-17, PowerShell. The gates ran first with no server running;
 npm run type-check    exit 0   tsc --noEmit, 0 errors
 npm run lint          exit 0   0 errors, 0 warnings
 npm run build         exit 0   Compiled successfully, 10 routes + middleware
-npx playwright test --list     81 tests in 13 files (same environment as the run below)
+npx playwright test --list     84 tests in 13 files (same environment as the run below)
 
 E2E_ALLOW_MUTATIONS=1  E2E_MAP_3000_TO=3100
 npx playwright test --output=test-results/pw-artifacts --trace=off
-                      exit 0   81 passed (3.6m) · 0 failed · 0 flaky · 0 skipped · first attempt, 10:43 to 10:47
-  guest      13 passed   auth.spec 9 (incl. 4 live login tests) · roles.spec 4
-  mocked     44 passed   categories-states 18 · products-states 15 · product-form-states 10 · session-expiry-states 1
+                      exit 0   84 passed (6.4m) · 0 failed · 0 flaky · 0 skipped · 12:11 to 12:17 (second attempt, see below)
+  guest      14 passed   auth.spec 9 (incl. 4 live login tests) · roles.spec 5
+  mocked     46 passed   categories-states 18 · products-states 15 · product-form-states 12 · session-expiry-states 1
   setup       1 passed   live UI login
   chromium   23 passed   live: categories.spec 5 · products-list.spec 6 (incl. Export CSV) · products-details.spec 4
                          · product-form.spec 4 · categories.mutation.spec 1 (add sub + 2 minor, rename, reorder, delete)
@@ -87,7 +87,9 @@ leftover check        0 products and 0 categories named HW3-Neeraj- remain (read
 
 Why `E2E_MAP_3000_TO=3100`: the S3 bucket CORS allows the browser upload only from the origin `http://localhost:3000`, and port 3000 on the author's laptop is used by another app. With the variable set, origin `http://localhost:3000` is mapped to the server on port 3100: Chromium opens `http://localhost:3000` (the origin S3 accepts) but connects to this app on port 3100, and the other app is never contacted (opt-in, in `playwright.config.ts`).
 
-Honest summary: every spec marked live above ran against the QA API, including product register / edit / delete with a real image upload to S3 (through the port-3000 mapping); the `mocked` project uses a mocked API. From the QA admin or Vercel origin the upload is still refused by the bucket CORS (section 7). Run notes: `docs/live-run-2026-11-16.md` (last section).
+Honest summary: every spec marked live above ran against the QA API, including product register / edit / delete with a real image upload to S3 (through the port-3000 mapping); the `mocked` project uses a mocked API. From the QA admin or Vercel origin the upload is still refused by the bucket CORS (section 7). The first attempt of this command (12:06) stopped early: the 2 live login-error tests did not see the error dialog within 5 s because the QA API had not answered yet, so the 24 tests that depend on `guest` did not run. No code or test was changed; the same command was run again and passed in full. Run notes: `docs/live-run-2026-11-16.md` (last section).
+
+Fixed on 17 Nov after two internal reviews (details: `docs/qa-build-report.md` part 4): a second tab no longer logs the first tab out; the pager fits on one line at 375 px; a percent-encoded URL no longer gets past the route guards; Log out removes unsaved product form drafts; Register sends a fresh product code; CSV export guards text that starts with `-`; an edit with "Required option" on and no option rows can be saved; Register stays disabled after a successful save. 3 new tests came with these fixes (81 → 84).
 
 Raw output (verbatim excerpts from the run logs, 2026-11-17; the full logs are kept outside the repo):
 ```
@@ -100,44 +102,46 @@ Raw output (verbatim excerpts from the run logs, 2026-11-17; the full logs are k
 > talking-club-admin-hw3@0.1.0 build
 > next build
    ▲ Next.js 15.5.27
- ✓ Compiled successfully in 6.4s
+ ✓ Compiled successfully in 3.8s
  ✓ Generating static pages (10/10)
 Route (app)                                  Size  First Load JS
 ┌ ○ /                                       127 B         103 kB
 ├ ○ /_not-found                             127 B         103 kB
 ├ ○ /403                                    899 B         209 kB
 ├ ○ /icon.svg                                 0 B            0 B
-├ ○ /login                                5.38 kB         228 kB
+├ ○ /login                                5.38 kB         229 kB
 ├ ○ /shopping-mall/categories             8.63 kB         255 kB
-├ ○ /shopping-mall/products               6.61 kB         245 kB
-├ ○ /shopping-mall/products/create          234 B         272 kB
+├ ○ /shopping-mall/products                6.6 kB         245 kB
+├ ○ /shopping-mall/products/create          233 B         272 kB
 ├ ƒ /shopping-mall/products/details/[id]  9.57 kB         226 kB
 └ ƒ /shopping-mall/products/edit/[id]       779 B         272 kB
 ƒ Middleware                              35.1 kB
 
-Running 81 tests using 1 worker
-  ok 59 [chromium] › e2e\categories.mutation.spec.ts:82:7 › Product categories — create / edit / reorder / delete (QA DB) › add subcategory + 2 minor categories, rename, reorder, delete — HW3-Neeraj-cat-<timestamp> @mutation (19.6s)
-  ok 79 [chromium] › e2e\products.mutation.spec.ts:86:7 › Product register → list → edit → delete (shared QA DB) › register through all 4 steps with a real image, then find it in the list @mutation (14.2s)
-  ok 80 [chromium] › e2e\products.mutation.spec.ts:117:7 › Product register → list → edit → delete (shared QA DB) › edit: change the name and selling price, save, check the API @mutation (8.8s)
-  ok 81 [chromium] › e2e\products.mutation.spec.ts:140:7 › Product register → list → edit → delete (shared QA DB) › delete it with the list's bulk delete @mutation (4.6s)
+Running 84 tests using 1 worker
+  ok 12 [guest] › e2e\roles.spec.ts:39:7 › Role-based access › GENERAL_ADMIN: a percent-encoded categories URL is 403 too (1.5s)
+  ok 62 [chromium] › e2e\categories.mutation.spec.ts:82:7 › Product categories — create / edit / reorder / delete (QA DB) › add subcategory + 2 minor categories, rename, reorder, delete — HW3-Neeraj-cat-<timestamp> @mutation (24.6s)
+  ok 82 [chromium] › e2e\products.mutation.spec.ts:86:7 › Product register → list → edit → delete (shared QA DB) › register through all 4 steps with a real image, then find it in the list @mutation (20.4s)
+  ok 83 [chromium] › e2e\products.mutation.spec.ts:117:7 › Product register → list → edit → delete (shared QA DB) › edit: change the name and selling price, save, check the API @mutation (25.1s)
+  ok 84 [chromium] › e2e\products.mutation.spec.ts:140:7 › Product register → list → edit → delete (shared QA DB) › delete it with the list's bulk delete @mutation (7.9s)
 
-  81 passed (3.6m)
+  84 passed (6.4m)
 
 leftover check   products: HTTP 200, 0 named HW3-Neeraj-*
                  categories: HTTP 200, 0 named HW3-Neeraj-*
 ```
 
-HTML report: zipped `playwright-report/` of the full run above (`HW3-Neeraj-playwright-report.zip`, 81 tests), attached to the page; checked that it contains no login data (the QA login ID, the password and the saved session token were counted in `index.html` and in its embedded report data: 0 each). The login fields are filled by a test helper that does not write the typed value into the report.
+HTML report: zipped `playwright-report/` of the full run above (`HW3-Neeraj-playwright-report.zip`, 84 tests, 84 passed), attached to the page; checked that it contains no login data (the QA login ID, the password and the saved session token were counted in `index.html` and in its embedded report data: 0 each). The login fields are filled by a test helper that does not write the typed value into the report.
 
 ## 6. Unit test case sheet link
 
 `<Google Sheet link — import docs/test-cases.csv (File → Import → Upload), then paste the link>`
-Content: `docs/test-cases.md` / `.csv` — 112 cases (59 positive, 53 negative) in the WM QA template columns; 81 are covered by a Playwright test, 31 are manual. Result column as of 2026-11-17: 6 Pass, 16 Pass (live), 18 Pass (mocked) + live Pass, 37 Pass (mocked) only, 4 mocked + screenshots, 4 screenshots only, 24 manual for QA, 2 no role account, 1 known issue. Every Pass comes from the one full run in section 5 (81 passed, including the product register / edit / delete cases PL-014, PF-008, PF-014, PF-015); the screenshot results come from the screenshots retaken on 2026-11-17 (section 8).
+Content: `docs/test-cases.md` / `.csv` — 112 cases (59 positive, 53 negative) in the WM QA template columns; 81 are covered by a Playwright test, 31 are manual. Result column as of 2026-11-17: 6 Pass, 16 Pass (live), 18 Pass (mocked) + live Pass, 37 Pass (mocked) only, 4 mocked + screenshots, 4 screenshots only, 24 manual for QA, 2 no role account, 1 known issue. Every Pass comes from the one full run in section 5 (84 passed, including the product register / edit / delete cases PL-014, PF-008, PF-014, PF-015); the screenshot results come from the screenshots retaken on 2026-11-17 (section 8).
 
 ## 7. Build report for QA
 
 Full text: `docs/qa-build-report.md` (10 parts, dated 2026-11-17) — post it as a comment on the TL task. Key points:
 
+- **Fixed on 17 Nov before the hand-over** (part 4 of the report): second tab no longer logs the first tab out; pager on one line at 375 px; percent-encoded URLs checked by the route guards; Log out removes form drafts; fresh product code at Register; CSV guard for text that starts with `-`; edit with "Required option" on and no option rows can be saved; Register stays disabled after a successful save.
 - **Verified live (QA API):** login, logout, wrong ID / password messages, returnTo; categories (read-only specs and the create / rename / reorder / delete flow under an existing main category); product list (search, filters, URL state, selection, CSV export); details tabs; form steps; product register (with the real image upload to S3) / edit / delete through the port-3000 mapping (section 5).
 - **Verified only with a mocked API / injected session:** roles other than SUPER_ADMIN (no such account on QA), loading / empty / 401 (mid-session expiry to /login?returnTo, session-expiry-states.spec.ts) / 403 / 404 / 500 / network states.
 - **Known issues, API side (request → observed):**
@@ -148,6 +152,9 @@ Full text: `docs/qa-build-report.md` (10 parts, dated 2026-11-17) — post it as
   - The category tree allows at most 3 main categories; QA already has 3 → main-category create cannot be tried on QA.
   - Removing every option on edit is not saved by the API (old options stay).
   - CORS `origin: *` → the refresh cookie cannot be used; after the 1-day token the user logs in again and returns to the same page.
+  - `GET /products?type=categoryName&search=<name>` (search by category name) → also returns deleted products whose medium or minor category name matches (the OR conditions are not in brackets after `isDeleted = false`; seen in the release/qa backend code). The list shows them as normal rows.
+- **By design:** the row selection is kept when the search or the filters change; the selection bar always shows how many rows are selected, with a Clear action, and bulk delete deletes every selected product.
+- **Known limitation:** in edit mode a saved draft is restored over the loaded product with a "Draft restored" notice (no check for newer server values), and the browser Back button leaves the form without the unsaved-changes dialog.
 - Not covered: Firefox / Safari, concurrent edits, drag reorder on touch screens (Alt + ↑ / ↓ alternative).
 
 ## 8. Side-by-side screenshots (design | your screen) at 1440 / 768 / 375, light and dark
@@ -168,26 +175,27 @@ Not in Figma (written as design questions, `docs/design-questions.md`, 19 questi
 
 Source: `docs/explain-notes.md` (open the files while explaining).
 
-- **Auth flow.** `POST /auth/login { loginId, password }` returns `data.token` (JWT, 1 day) and `data.user`. Non-HQ roles get the "no admin permission" popup and the session is dropped. Otherwise token + user go to localStorage ("Auto login" ticked) or sessionStorage, and a small cookie lets the server middleware see the login. Then the user goes to `returnTo` — relative paths only, so a link cannot send users to another site. Every call adds `Authorization: Bearer` and the three Talking Club headers (`CoreAPIService`). Expiry: `exp` is decoded from the JWT; if expired or the API answers 401, the session is cleared and the user goes to `/login?returnTo=<page>`. The refresh token is not used because the QA CORS is `origin: *`, so the cookie is never sent cross-site. Logout: `GET /auth/logout`, clear storage and cookie.
-- **Route guard.** One config, `src/config/navigation.ts`, lists each page with roles and permission module; the sidebar, both guards and the buttons (`useCan`) read it, so they cannot disagree. Layer 1: `middleware.ts` on the server (no / expired cookie → login with returnTo; role not allowed → `/403`). Layer 2: `RouteGuard` on the client (also GENERAL_ADMIN's `shopping_mall` permission). Layer 3: buttons via `useCan`. No role is checked by hand in a screen. Tested in `e2e/roles.spec.ts`.
+- **Auth flow.** `POST /auth/login { loginId, password }` returns `data.token` (JWT, 1 day) and `data.user`. Non-HQ roles get the "no admin permission" popup and the session is dropped. Otherwise token + user go to localStorage ("Auto login" ticked) or sessionStorage, and a small cookie lets the server middleware see the login. Then the user goes to `returnTo` — relative paths only, so a link cannot send users to another site. Every call adds `Authorization: Bearer` and the three Talking Club headers (`CoreAPIService`). Expiry: `exp` is decoded from the JWT; if expired or the API answers 401, the session is cleared and the user goes to `/login?returnTo=<page>`. The refresh token is not used because the QA CORS is `origin: *`, so the cookie is never sent cross-site. Logout: `GET /auth/logout`, clear storage, cookie and any unsaved product form draft of the tab (a 401 / expiry keeps the draft for the same user).
+- **Route guard.** One config, `src/config/navigation.ts`, lists each page with roles and permission module; the sidebar, both guards and the buttons (`useCan`) read it, so they cannot disagree. Layer 1: `middleware.ts` on the server (no / expired cookie → login with returnTo; role not allowed → `/403`; the path is decoded first, so `/shopping-mall/%63ategories` is checked as `/shopping-mall/categories`). Layer 2: `RouteGuard` on the client (also GENERAL_ADMIN's `shopping_mall` permission). Layer 3: buttons via `useCan`. No role is checked by hand in a screen. Tested in `e2e/roles.spec.ts`.
 - **Table state in the URL.** The list has no `useState` for page / search / filters / sort; the URL is the state (`?page=2&limit=10&q=…&categoryId=…&sort=…`). `parseListParams()` reads it into one typed object, `toSearchString()` writes it back, every control calls `update()` → `router.replace`, and a filter change resets `page` to 1. Refresh and shared links show the same list; filter clicks use replace, so they do not fill the browser history. `toApiQuery()` builds the API query that is also the TanStack Query cache key. Sort is current-page only because the API has no sort parameter.
-- **Multi-step form.** One react-hook-form `useForm` for all 4 steps, all sections inside one `<form>` and only the current one visible, so nothing unmounts and values survive Back / Next. The step is in the URL (`?step=`). "Next" runs `trigger()` on that step's fields only (`STEP_FIELDS`) and focuses the first error. Rules match the API (e.g. selling price < unit price). A draft is saved in sessionStorage after half a second and restored after a reload. On an API error nothing is cleared: field errors go back onto their field with `setError` and the stepper jumps to that step.
+- **Multi-step form.** One react-hook-form `useForm` for all 4 steps, all sections inside one `<form>` and only the current one visible, so nothing unmounts and values survive Back / Next. The step is in the URL (`?step=`). "Next" runs `trigger()` on that step's fields only (`STEP_FIELDS`) and focuses the first error. Rules match the API (e.g. selling price < unit price). A draft is saved in sessionStorage after half a second and restored after a reload. In create mode Register asks for a fresh product code right before the POST. On an API error nothing is cleared: field errors go back onto their field with `setError` and the stepper jumps to that step.
 - **Image upload.** The browser checks type (JPG / PNG / GIF / WEBP), size (≤ 10 MB) and count (≤ 4) first — a bad file sends no request. `POST /utils/upload-file-urls` returns `{ url, preview, filePath }`; the browser `PUT`s the file straight to S3 with the signed URL; only after S3 answers OK are `filePath` (stored by the product API) and `preview` (thumbnail) added to the form. Remove = trash icon with Undo; a failed upload shows Retry. Current limitation: the bucket CORS refuses the preflight from origins other than `http://localhost:3000` (section 7), so the upload works on that origin only; the live test (`products.mutation.spec.ts`) proves it there through the port-3000 mapping (`E2E_MAP_3000_TO`).
 
 ---
 
 ## Still to do at submission
 
-- [ ] Commit the work on `hw3/neeraj` (never commit `.env.local`; check `git status` first) and push the branch.
-- [ ] Open the PR to `main` (never merge it); body from `docs/pr-description.md`; fill the Commit and Demo fields in `docs/qa-build-report.md` and `docs/pr-description.md`.
-- [ ] Create your own Vercel project from the company repo, deploy `hw3/neeraj`, set `NEXT_PUBLIC_API_BASE_URL` (API URL only, no logins), turn deployment protection off, open the link once.
-- [x] HTML report of the full run (81 passed, 2026-11-17) zipped as `HW3-Neeraj-playwright-report.zip` (kept outside the repo); secret check done: login ID 0, password 0, session token 0.
-- [ ] Attach `HW3-Neeraj-playwright-report.zip` to section 5. If the tests are run again, check the new report the same way before attaching it.
-- [ ] Import `docs/test-cases.csv` into a Google Sheet and put the link in section 6.
+- [x] Work committed on `hw3/neeraj` and pushed (17 Nov: `b2e2974`, then the review-fix commit; `.env.local` never committed).
+- [x] PR to `main` opened (never merge it): https://github.com/divii-school/Frontend-homework/pull/2
+- [x] Own Vercel project `tc-admin-hw3-neeraj`: production deploy of `hw3/neeraj`, `NEXT_PUBLIC_API_BASE_URL` set (API URL only, no logins), deployment protection off.
+- [x] HTML report of the full run (84 passed, 2026-11-17, 12:11 to 12:17) zipped as `HW3-Neeraj-playwright-report.zip` (kept outside the repo); secret check done: login ID 0, password 0, session token 0.
+- [x] `HW3-Neeraj-playwright-report.zip` attached to section 5 of the Notion page. If the tests are run again, check the new report the same way before attaching it.
+- [ ] Import `docs/test-cases.csv` into a Google Sheet and put the link in section 6 (the CSV file itself is attached to the page).
 - [x] Screenshots retaken on 2026-11-17 (25 PNGs in `docs/screenshots/`).
-- [ ] Upload the 25 screenshots to section 8 (or link the pushed files).
+- [x] The 25 screenshots are uploaded to section 8 of the Notion page.
 - [ ] Tell the backend team about the S3 bucket CORS (add the QA admin and Vercel origins) and decide with Kakali how the S3 limitation is to be judged.
-- [ ] Fill the nine sections of the Notion page from this file, then the four properties: HW3 status → Submitted, Submitted on, Vercel link, Branch / PR link.
-- [ ] Post the build report (`docs/qa-build-report.md`) as a comment on the TL task.
+- [x] The nine sections of the Notion page are filled from this file; `Vercel link` and `Branch / PR link` are set.
+- [ ] Properties `HW3 status` → Submitted and `Submitted on`.
+- [x] The build report (`docs/qa-build-report.md`) is in section 7 of the Notion page.
 - [ ] Comment on the TL page "HW3 submitted" + link, tagging Kakali.
 - [ ] After the final result on 20 Nov: delete the Vercel project.

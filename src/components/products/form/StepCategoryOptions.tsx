@@ -33,6 +33,8 @@ interface StepCategoryOptionsProps {
   keptOptionCount: number;
   /** Edit: the product had single-item options when it was loaded. */
   hadOptions: boolean;
+  /** Edit: loaded with "Required option" on but no option rows (the API allows it) → can be saved as it is. */
+  allowEmptyOptions?: boolean;
 }
 
 function pickerHint(loading: boolean, error: ApiError | null, needsParent: string | null): string | undefined {
@@ -47,7 +49,13 @@ function pickerHint(loading: boolean, error: ApiError | null, needsParent: strin
 //  - optional single-item options: "Add single-item option" opens the product search popup;
 //    each row = code, title, option price (defaults to that product's selling price), remove (x)
 //  - "Required option for purchase" switch → isOptions yes / no (same mapping as the real admin)
-export default function StepCategoryOptions({ lockedCategory, productId, keptOptionCount, hadOptions }: StepCategoryOptionsProps) {
+export default function StepCategoryOptions({
+  lockedCategory,
+  productId,
+  keptOptionCount,
+  hadOptions,
+  allowEmptyOptions = false,
+}: StepCategoryOptionsProps) {
   const { control, setValue, clearErrors, getValues, formState: { errors } } = useFormContext<ProductFormValues>();
   const { fields, append, remove } = useFieldArray({ control, name: "options", keyName: "key" });
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -231,7 +239,8 @@ export default function StepCategoryOptions({ lockedCategory, productId, keptOpt
             control={control}
             name="optionsRequired"
             rules={{
-              validate: (required, values) => !required || values.options.length > 0 || keptOptionCount > 0 || FORM_MESSAGES.optionsRequired,
+              validate: (required, values) =>
+                !required || allowEmptyOptions || values.options.length > 0 || keptOptionCount > 0 || FORM_MESSAGES.optionsRequired,
             }}
             render={({ field, fieldState }) => (
               <div className="product-options-switch">

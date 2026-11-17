@@ -36,6 +36,20 @@ test.describe("Role-based access", () => {
     await expect(page.getByRole("heading", { name: "No permission" })).toBeVisible();
   });
 
+  test("GENERAL_ADMIN: a percent-encoded categories URL is 403 too", async ({ page, context, baseURL }) => {
+    await injectSession(context, baseURL ?? "http://localhost:3000", {
+      role: "GENERAL_ADMIN",
+      permissions: [{ module: SHOPPING, subModules: ["product_management"] }],
+    });
+    await mockApi(page);
+
+    // %63 = "c": the server serves this as /shopping-mall/categories, so the guard must decode it too
+    await page.goto("/shopping-mall/%63ategories");
+    await expect(page).toHaveURL(/\/403\?from=/);
+    await expect(page.getByRole("heading", { name: "No permission" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Product Category Management", level: 1 })).toHaveCount(0);
+  });
+
   test("GENERAL_ADMIN without the shopping permission: menu hidden, direct URL is 403", async ({ page, context, baseURL }) => {
     await injectSession(context, baseURL ?? "http://localhost:3000", {
       role: "GENERAL_ADMIN",

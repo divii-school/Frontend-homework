@@ -7,10 +7,10 @@ Format: WM | Report (the 10 parts of training Step 8 Part C). Written as the han
 | | |
 |---|---|
 | Repo / branch | https://github.com/divii-school/Frontend-homework · `hw3/neeraj` (PR to `main`, never merged) |
-| Commit | not committed yet — filled at submission |
-| Demo (Vercel) | to be added |
+| Commit | `b2e2974` (first build) + the review-fix commit of 2026-11-17; the branch head of `hw3/neeraj` is the build under test (PR https://github.com/divii-school/Frontend-homework/pull/2) |
+| Demo (Vercel) | https://tc-admin-hw3-neeraj.vercel.app |
 | API | QA server, talking-club-backend `release/qa` (`NEXT_PUBLIC_API_BASE_URL` → `…/api/v1`) |
-| Date | 2026-11-17 (lint, type-check, build and one full Playwright run of all 81 tests, see part 9; live parts against the QA API) |
+| Date | 2026-11-17 (lint, type-check, build and one full Playwright run of all 84 tests, 12:11 to 12:17, see part 9; live parts against the QA API) |
 
 ## 2. TL tasks covered
 
@@ -31,7 +31,17 @@ Two Talking Club admin screens from the Shopping Mall menu were rebuilt as a new
 
 ## 4. Fixed issues
 
-None — this is the first build handed to QA.
+None reported by QA — this is the first build handed to QA. Fixed on 2026-11-17 after two internal reviews, before the hand-over:
+
+1. A second browser tab without a saved session no longer logs the first tab out (it used to delete the shared login cookie).
+2. The list pager fits on one line at 375 px (5 page links on phones).
+3. A percent-encoded URL such as `/shopping-mall/%63ategories` no longer gets past the route guards: a GENERAL_ADMIN gets 403 there too (new test in `roles.spec.ts`).
+4. Log out removes the unsaved product form drafts of the tab, so the next account never sees them (new test in `product-form-states.spec.ts`).
+5. Register asks the API for a fresh product code right before it sends the product, so a code that someone else took in the meantime no longer makes every Register fail; a restored draft also gets the fresh code (new test in `product-form-states.spec.ts`).
+6. CSV export puts `'` before any text that starts with `-` (as before with `=`, `+`, `@`), so Excel shows it as text and never runs it as a formula.
+7. Editing a main product that has "Required option for purchase" on but no option rows can be saved as it is.
+8. Register / Save stays disabled after a successful save until the next page opens (no second request).
+9. Tests and tools: the HTML report no longer holds the typed QA login; the screenshot script waits until the login page is hydrated; `E2E_MAP_3000_TO` lets the live tests use the origin `http://localhost:3000` that S3 accepts.
 
 ## 5. Test accounts / roles
 
@@ -61,7 +71,7 @@ Full list with IDs: `docs/test-cases.md` / `docs/test-cases.csv` (112 cases: 59 
 5. Categories: under an existing main category add a subcategory `HW3-Neeraj-…`, add 2 minor categories under it, rename one, drag one above the other (and Alt + ↓ with the keyboard), reload → order kept. Delete the minors, then the subcategory.
 6. Categories: empty name, spaces only, 51 characters, a name that already exists at that level → message in the dialog, nothing saved. Delete on a category that has children → "Cannot delete".
 7. Product list: search by product name and by category, Major → Medium → Minor filters, product type, page 2, rows per page 20, sort by name; reload → everything kept. Filter changes replace the URL (no extra history entries); Back to list on the details page returns to the same filters.
-8. Product list: tick rows (also across pages), Export CSV (opens in Excel with Korean readable), change the exposure status of an `HW3-Neeraj-` product → toast.
+8. Product list: tick rows (also across pages), Export CSV (opens in Excel with Korean readable; a name that starts with `-`, `=`, `+` or `@` shows as plain text), change the exposure status of an `HW3-Neeraj-` product → toast.
 9. Register (note: the real image upload only works from the origin `http://localhost:3000`, so it fails on the Vercel link; see part 8): Next on an empty step 1 → 4 messages; selling price ≥ unit price → message; upload a `.txt` and a > 10 MB file → refused; upload a real small PNG; pick the category path; fill ERP; Register → list with toast "Product registered".
 10. Edit that product: product code and category are read-only; change name and selling price → Save → details page with toast "Product saved".
 11. Draft: fill half of step 1, reload → "Draft restored"; Discard empties it. Cancel → "All entered information will be deleted…" (No / Yes).
@@ -75,13 +85,16 @@ Full list with IDs: `docs/test-cases.md` / `docs/test-cases.csv` (112 cases: 59 
 
 - **Image upload from the browser is blocked by the S3 bucket CORS (observed 2026-11-17).** `POST /utils/upload-file-urls` returns a signed URL; the browser then sends `PUT` to `talking-club-dev.s3.ap-northeast-2.amazonaws.com` with the headers `content-type`, `x-amz-acl`, `x-amz-checksum-crc32`, `x-amz-sdk-checksum-algorithm`. The preflight (OPTIONS) answers 403 `AccessForbidden` without CORS headers for origins `http://localhost:3100`, `https://tkclub-admin-qa.dvconsulting.org` and a `vercel.app` origin, and 200 with `Access-Control-Allow-Origin: http://localhost:3000` for `http://localhost:3000`. So the browser upload works only from the origin `http://localhost:3000` and fails on the Vercel link until the bucket CORS is changed. The automated run proves the upload from that origin: `http://localhost:3000` mapped to the server on port 3100, because port 3000 was in use (part 9). Request to the backend team: add the QA admin origin (and the Vercel origin) to the bucket CORS.
 - **One live session per account (observed 2026-11-16).** After a login or a logout by the same user, the previously issued token answers 401 on the next authenticated request, although its `exp` is still 24 h ahead. The guest login / logout tests share the admin account with `setup`, so run order matters. Since the fix round, `setup` depends on `guest` in `playwright.config.ts`, so the order guest, setup, chromium is automatic (see part 9).
-- **Live run notes:** on 2026-11-16 the first `categories.spec.ts` run after `guest` failed 5 of 5 with 401 for the reason above; after a fresh `setup` it passed 5 of 5. No code was changed for it. Since `setup` depends on `guest`, the final run on 2026-11-17 (all 81 tests in one command) passed on the first attempt.
+- **Live run notes:** on 2026-11-16 the first `categories.spec.ts` run after `guest` failed 5 of 5 with 401 for the reason above; after a fresh `setup` it passed 5 of 5. No code was changed for it. Since `setup` depends on `guest`, the run order is now automatic. The final run on 2026-11-17 (all 84 tests in one command, 12:11 to 12:17) passed on the second attempt. In the first attempt (12:06) the 2 live login-error tests ("an unknown ID …", "a wrong password …") did not see the error dialog within 5 s: the QA API had not answered yet (the Login button was still busy). Because `guest` failed, the 24 tests that depend on it did not run. A probe right after that got the same API answer in 0.8 to 2.6 s. No code or test was changed; the whole command was run again and passed.
 - **No sort parameter in the API** — `GET /products` always returns newest first (`id DESC`). Sort on the list header sorts the current page only; the screen says "Sorted within this page". Backend question raised (design question 6).
 - **Category list has no paging or sort parameter** — `GET /product-category/list` (release/qa `filterCategoriesDto`) accepts only `search` and returns the whole 3-level tree. Search is server-side (`?q=`); order is the saved order, changed by drag-and-drop or Alt + ↑ / ↓ and saved through the reorder API; paging does not apply to a tree (design question 7).
 - **No refresh token** — the QA API answers CORS `origin: *` without credentials, so its httpOnly refresh-token cookie can't be used from this site. When the 1-day token expires the user logs in again (and returns to the same page).
 - **Top-level category limit of 3** — the API refuses a 4th main category; QA already has 3, so main-category create can't be tested on QA (design question 8).
 - **Removing all options on edit is not saved** — when every single-item option is removed and saved, the API keeps the old options (backend behaviour). The form shows a note about it (test case PF-026).
 - **Drag reorder on touch screens** — native drag-and-drop does not work reliably on phones / tablets; the keyboard alternative (Alt + ↑ / ↓) needs a keyboard (design question 19).
+- **Search by category name also returns deleted products (API side).** Request: `GET /products?type=categoryName&search=<name>` (search type "Category" on the list). Observed: products that were deleted (soft delete, `isDeleted` true) also come back when their medium or minor category name matches. In the release/qa backend code the three `name LIKE :search` conditions are joined with OR and added after `product.isDeleted = false` without brackets, so the AND is applied first. The list shows such rows like any other row and counts them in Total; opening one shows "Product not found", and deleting it fails. The screen does not hide them. Found by reading the backend code, not reproduced on QA. Request to the backend team: put the OR conditions in brackets (`new Brackets(...)`).
+- **Row selection is kept when the search or the filters change (by design).** The selection is a set of product ids that stays across pages, searches and filter changes (up to 100), so products from different pages can be deleted together. The selection bar always shows how many rows are selected ("N selected") with a **Clear** action. Bulk delete deletes every selected product, also the ones that are no longer on screen; the confirm says "Delete N products?". Press Clear before a new search when only the visible rows should be deleted.
+- **Edit draft and the browser Back button (known limitation).** In edit mode a draft saved earlier in the same tab is restored over the product that was just loaded, with the notice "Draft restored" and a Discard button. There is no check whether the product changed on the server after the draft was saved, so saving can put older values back. The browser Back button leaves the form (on step 1) without the unsaved-changes dialog: the leave guard covers Cancel, links and reload / close only. The draft then stays in the tab and comes back the next time that form is opened; Log out removes it.
 - No design for the details page, dark mode or tablet / phone layouts — built from the same tokens; all listed in `docs/design-questions.md` (19 questions).
 - Not covered: concurrent edits by two admins, real MASTER_ADMIN / GENERAL_ADMIN / non-admin accounts (none on QA), Firefox and Safari.
 
@@ -95,12 +108,13 @@ npm run lint          → exit 0 · 0 errors, 0 warnings
 npm run build         → exit 0 · ✓ Compiled successfully, 10 routes + middleware
                         / · /403 · /login · /shopping-mall/categories · /shopping-mall/products
                         /shopping-mall/products/create · /details/[id] · /edit/[id] · /_not-found · /icon.svg
-npx playwright test --list → 81 tests in 13 files
+npx playwright test --list → 84 tests in 13 files
 
 E2E_ALLOW_MUTATIONS=1 E2E_MAP_3000_TO=3100 npx playwright test --output=test-results/pw-artifacts --trace=off
-  → exit 0 · 81 passed (3.6 min) · 0 failed · 0 flaky · 0 skipped · first attempt (10:43 to 10:47)
-  guest      13 passed  (auth.spec.ts 9 incl. 4 live "Login with the QA API" tests · roles.spec.ts 4)
-  mocked     44 passed  (categories-states 18 · products-states 15 · product-form-states 10 · session-expiry-states 1; mocked API)
+  → exit 0 · 84 passed (6.4 min) · 0 failed · 0 flaky · 0 skipped · 12:11 to 12:17
+    (second attempt; the first attempt at 12:06 stopped after 2 live login tests timed out waiting for the QA API, part 8)
+  guest      14 passed  (auth.spec.ts 9 incl. 4 live "Login with the QA API" tests · roles.spec.ts 5)
+  mocked     46 passed  (categories-states 18 · products-states 15 · product-form-states 12 · session-expiry-states 1; mocked API)
   setup       1 passed  (live UI login, writes e2e/.auth)
   chromium   23 passed  (live) categories.spec 5 · products-list.spec 6 (incl. Export CSV) · products-details.spec 4
                         · product-form.spec 4 (no save) · categories.mutation.spec 1 (add sub + 2 minor, rename,
@@ -124,4 +138,4 @@ The category, product and product-form specs also fail on any browser console er
   - `categories-states.spec.ts` › "375px: no horizontal page scroll and ≥ 40px action buttons" and "768px: …"
   - `products-states.spec.ts` › "rows become cards and the page never scrolls sideways" (375 px, list + details)
   - `product-form-states.spec.ts` › "375 px: compact stepper, one column, no horizontal page scroll"
-- **Screenshots, 1440 / 768 / 375, light and dark** (`node scripts/screenshots/compare.mjs` against the production build on port 3100, mocked API, Chromium; retaken 2026-11-17): login, product list, product form step 1, product details, categories → `docs/screenshots/` (25 PNGs, list in `docs/screenshots/README.md`). At 1440 each screen is shown next to its Figma frame (design | build light | build dark).
+- **Screenshots, 1440 / 768 / 375, light and dark** (`node scripts/screenshots/compare.mjs` against the production build on port 3100, mocked API, Chromium; retaken 2026-11-17, the last time at 12:18 after the final run, with no visual change): login, product list, product form step 1, product details, categories → `docs/screenshots/` (25 PNGs, list in `docs/screenshots/README.md`). At 1440 each screen is shown next to its Figma frame (design | build light | build dark).

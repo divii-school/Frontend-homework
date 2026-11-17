@@ -35,12 +35,12 @@ type CsvValue = string | number | null | undefined;
 
 /**
  * One CSV cell: quoted when it contains a comma, quote or line break (quotes doubled).
- * Text starting with = + @ (or - followed by a letter) gets a leading ' so Excel never runs it as a formula.
+ * Text starting with = + - @ (or a tab / CR) gets a leading ' so Excel never runs it as a formula.
  */
 export function toCsvCell(value: CsvValue): string {
   if (value === null || value === undefined) return "";
   let text = String(value);
-  if (typeof value === "string" && /^([=+@\t\r]|-[^\d\s])/.test(text)) text = `'${text}`;
+  if (typeof value === "string" && /^[=+\-@\t\r]/.test(text)) text = `'${text}`;
   return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 }
 

@@ -1,6 +1,7 @@
 # Screenshots — design | build (HW3)
 
-Made by `scripts/screenshots/compare.mjs` on 2026-11-17 (retaken; first taken 2026-11-13): Chromium (Playwright 1.64.1),
+Made by `scripts/screenshots/compare.mjs` on 2026-11-17 (retaken; first taken 2026-11-13; taken again at 12:18 after the
+final test run, and all 25 files came out byte-identical, so nothing visible changed): Chromium (Playwright 1.64.1),
 full-page, device scale 1, against the production build (`npx next start -p 3100`, `BASE=http://localhost:3100`;
 port 3000 was used by another app). The 375 px login shots wait until the page is hydrated, and the 375 px product
 list shows the 5-link pager that fits on one line. The API is **mocked** (fixture data in `scripts/screenshots/fixtures.mjs`:

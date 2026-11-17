@@ -7,6 +7,7 @@ import { Button } from "primereact/button";
 import { toApiError } from "@/api-services/CoreAPIService";
 import type { ProductDetails } from "@/api-services/ProductService.types";
 import { ROUTE_KEYS } from "@/config/navigation";
+import { useGetGeneratedProductCode } from "@/hooks/API/products/useGetGeneratedProductCode";
 import { useAddProduct, useEditProduct } from "@/hooks/API/products/useProductMutations";
 import { useCan } from "@/hooks/useCan";
 import { useToast } from "@/providers/ToastProvider";
@@ -85,6 +86,8 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
   const canSave = useCan(ROUTE_KEYS.PRODUCTS, mode === "create" ? "create" : "update");
   const addProduct = useAddProduct();
   const editProduct = useEditProduct();
+  // Create: the same code query step 1 shows (one request); fetched again right before the POST
+  const codeQuery = useGetGeneratedProductCode(mode === "create");
 
   // ---- The one form ----
   const initialValues = useMemo(() => (product ? valuesFromDetails(product) : EMPTY_PRODUCT_VALUES), [product]);
@@ -264,6 +267,7 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
   };
 
   const onValid = async (values: ProductFormValues) => {
+    if (done) return; // already saved: the next page is loading, never send a second request
     if (uploading) {
       setSubmitError(FORM_MESSAGES.imagesUploading);
       showStep(LAST_STEP, "alert");
@@ -273,7 +277,12 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
     try {
       const payload = toPayload(values, product);
       if (mode === "edit" && product) await editProduct.mutateAsync({ id: product.id, payload });
-      else await addProduct.mutateAsync({ ...payload, productCode: values.productCode.trim() });
+      else {
+        // A fresh code right before the POST: the one on screen may have been taken by another product meanwhile
+        const productCode = (await codeQuery.refetch({ throwOnError: true })).data ?? values.productCode.trim();
+        setValue("productCode", productCode);
+        await addProduct.mutateAsync({ ...payload, productCode });
+      }
       leave();
       toast.success(mode === "create" ? "Product registered" : "Product saved", payload.productName);
       router.push(mode === "create" ? LIST_HREF : exitHref);
@@ -348,6 +357,7 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
               productId={product?.id}
               keptOptionCount={keptOptionCount}
               hadOptions={hadSingleOptions}
+              allowEmptyOptions={mode === "edit" && Boolean(product?.isOptions) && initialValues.options.length === 0}
             />
           </section>
 
@@ -396,7 +406,7 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
                   label={submitLabel}
                   icon="pi pi-check"
                   loading={isSubmitting}
-                  disabled={!canSave || uploading || isSubmitting}
+                  disabled={!canSave || uploading || isSubmitting || done}
                 />
               )}
             </div>
