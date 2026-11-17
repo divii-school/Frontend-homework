@@ -31,18 +31,26 @@ newer downloads are blocked by Windows Smart App Control ("spawn UNKNOWN").
 src/app/(full-page)/login, /403        no admin chrome
 src/app/(main)/shopping-mall/...        products, products/create, products/edit/[id], products/details/[id], categories
 src/middleware.ts                       server guard: no/expired cookie → /login?returnTo=…; role not allowed → /403
+                                        (/api/upload is NOT in its matcher — the route checks the session itself)
+src/app/api/upload/route.ts             POST /api/upload: the server puts the image on S3 (session 401, https S3 host 400,
+                                        type 415, size 413, S3 refusal 502); the browser never calls S3
 src/config/navigation.ts                ONE config: sidebar menu + route guard + canDo() for buttons
 src/api-services/                       CoreAPIService (axios, headers, ApiError, 401 → login), AuthService,
                                         ProductCategoryService, ProductService, UploadService, endpoints.ts, *.types.ts
 src/hooks/API/{categories,products,upload}/   TanStack Query hooks — the only way a screen gets server data
 src/hooks/                              useSession, useCan, useLogout, useDebounce
-src/providers/                          AppProviders, ThemeProvider, ToastProvider (+ global ConfirmDialog), AuthGate, RouteGuard
+src/providers/                          AppProviders, ThemeProvider, ToastProvider (+ global ConfirmDialog), AuthGate, RouteGuard,
+                                        primereact-locale.ts (Korean texts for PrimeReact's built-in strings)
 src/components/                         PageHeader, StateWrapper, EmptyState, ErrorState, TableSkeleton, PageLoader,
                                         ListPagination, AlertDialog, ComingSoon, BrandLogo, ThemeToggle, layout/*, auth/*
-src/utils/                              session, jwt, api-messages, query-keys, format, confirm, constants, theme
+src/utils/                              session, jwt, api-messages, query-keys, format, confirm, constants, theme,
+                                        image-file.ts (image rules used by browser AND upload route; safeFileName removes commas),
+                                        query-client.ts (QueryClient + default error toast, SHOWS_OWN_ERROR)
 src/styles/                             _tokens.scss (ALL values), _mixins.scss, globals.scss, components/, pages/
-e2e/                                    helpers.ts, auth.setup.ts, auth.spec.ts, roles.spec.ts, <feature>.spec.ts, <feature>.mutation.spec.ts
-docs/                                   hw3-plan.md (spec), design/ (Figma PNGs), design-questions.md
+e2e/                                    helpers.ts, auth.setup.ts, auth.spec.ts, roles.spec.ts, <feature>.spec.ts, <feature>-states.spec.ts
+                                        (mocked), <feature>.mutation.spec.ts, upload-route-states.spec.ts, default-error-toast-states.spec.ts
+docs/                                   hw3-plan.md (spec), design/ (Korean Figma PNGs), design-questions.md,
+                                        ko-glossary.md (every Korean UI string), test-cases.md/.csv, qa-build-report.md
 ```
 
 ## Rules
@@ -66,9 +74,22 @@ docs/                                   hw3-plan.md (spec), design/ (Figma PNGs)
   New page = one entry in `src/config/navigation.ts` (href, roles, permission, subRoutes).
 - **Every data block** shows loading / empty / error / filled — wrap it in `StateWrapper` (`error={query.error}`
   picks the 403 / 404 / 500 / network variant).
+- **UI text is Korean.** Take every label, message and placeholder from `docs/ko-glossary.md` (one Korean term for one
+  idea, copied from the Korean Figma frames). A new string that is not in the glossary: write it in the tone of the
+  frames and add a row to the glossary. In docs for non-Korean readers write the Korean text followed by the English
+  meaning in brackets, e.g. `등록 (Register)`. The `accept-language` header stays `en` on purpose: the API answers with
+  message keys and `api-messages.ts` maps them to Korean text.
 - **API errors** are `ApiError { status, kind, messageKey, message, fieldErrors? }`. Show `message`
-  (already readable English via `src/utils/api-messages.ts`); add new keys there. Field errors → `setError`.
-  Toast success with `getApiMessage(res.message)`.
+  (already readable Korean via `src/utils/api-messages.ts`; an unknown key falls back to the Korean server-error text);
+  add new keys there. Field errors → `setError`. Toast success with `getApiMessage(res.message)`.
+- **Default error toast.** `QueryCache` / `MutationCache` in `src/utils/query-client.ts` show one toast for every failed
+  query / mutation. A hook whose screen already shows its own error (inline `StateWrapper`, under a field, or its own
+  toast) must set `meta: SHOWS_OWN_ERROR`, or the user sees the error twice. A 401 and a cancelled request never toast.
+- **Image upload** goes browser → `POST /api/upload` (own route) → S3. Never `PUT` to S3 from the browser. Limits:
+  JPG / PNG / GIF / WEBP, 1–4 images, `NEXT_PUBLIC_MAX_IMAGE_MB` (default 10; 4 on Vercel). Use `safeFileName` and
+  `checkImageFile` from `src/utils/image-file.ts` on both sides.
+- **Edit drafts** are restored only if the product is unchanged on the server (`updatedAt` + option rows); create
+  drafts have no such check.
 - **URL state:** list filters / page / sort, form step and details tab live in the query string.
 - **Formats (WM):** dates `formatDateTime` → `YYYY/MM/DD HH:mm`; money `formatWon` → `₩1,000`; `-` when empty.
 - **Where data lives:** server data only in TanStack Query hooks; keys only from `src/utils/query-keys.ts`;

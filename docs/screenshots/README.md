@@ -1,12 +1,18 @@
 # Screenshots — design | build (HW3)
 
-Made by `scripts/screenshots/compare.mjs` on 2026-11-17 (retaken; first taken 2026-11-13; taken again at 12:18 after the
-final test run, and all 25 files came out byte-identical, so nothing visible changed): Chromium (Playwright 1.64.1),
-full-page, device scale 1, against the production build (`npx next start -p 3100`, `BASE=http://localhost:3100`;
-port 3000 was used by another app). The 375 px login shots wait until the page is hydrated, and the 375 px product
-list shows the 5-link pager that fits on one line. The API is **mocked** (fixture data in `scripts/screenshots/fixtures.mjs`:
-128 products, the category tree of the e2e specs, book-cover SVGs from a fake CDN) and a SUPER_ADMIN session is
-injected — no real account and no QA server are used. Product names, ids and the user name "홍길동" are made up.
+Made by `scripts/screenshots/compare.mjs` on 2026-11-17, retaken at 17:40 for the Korean UI (the first set was taken on
+2026-11-13): Chromium (Playwright 1.64.1), full-page, device scale 1, against the production build (`npx next start -p 3100`,
+`BASE=http://localhost:3100`). The UI text in the screenshots is Korean (code review, 17 Nov) and the design side shows the
+**Korean** Figma frames: new exports in `docs/design/` for 8.1.0, 8.1.1, 8.1.2, 8.1.3 and 8.2.0 (the login frame was already
+Korean). On the retaken 768 and 375 px shots the step label is no longer cut at 768 px, the breadcrumb line no longer starts
+with "/" at 375 px, and the registration time no longer wraps. The 375 px login shots wait until the page is hydrated, and the
+375 px product list shows the 5-link pager that fits on one line. The API is **mocked** (fixture data in
+`scripts/screenshots/fixtures.mjs`: 128 products, the category tree of the e2e specs, book-cover SVGs from a fake CDN) and a
+SUPER_ADMIN session is injected — no real account and no QA server are used. Category and product names are sample data and
+stay English; the user name "홍길동" is made up.
+
+Three small visual items are unchanged: the rows-per-page select is not the same height as the buttons next to it, the disabled
+delete button (`삭제`, Delete) keeps its red border, and the `필터 초기화` (Reset filters) button is indented a little at 768 / 375 px.
 
 Re-create (the app must already be running):
 
@@ -15,7 +21,7 @@ npm run dev                                  # terminal 1 (or: npm run build, th
 node scripts/screenshots/compare.mjs         # terminal 2 (BASE=http://localhost:3100 for another port)
 ```
 
-## Design | build at 1440 px (left: Figma PNG from `docs/design/`, middle: build light, right: build dark)
+## Design | build at 1440 px (left: Korean Figma PNG from `docs/design/`, middle: build light, right: build dark)
 
 | File | Screen | Design frame |
 |---|---|---|

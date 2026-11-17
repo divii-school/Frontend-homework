@@ -10,11 +10,13 @@ import { ADMIN_STORAGE_STATE } from "./e2e/helpers";
 //  - *.mutation.spec.ts (create / edit / delete on the shared QA DB) only run with E2E_ALLOW_MUTATIONS=1
 loadEnv({ path: ".env.local", quiet: true });
 
-// Opt-in E2E_MAP_3000_TO=<port>: the S3 bucket CORS allows only the origin http://localhost:3000, so the real
-// image upload fails from any other port. Use this when port 3000 is busy: start the app yourself on <port>;
-// the browser opens http://localhost:3000 (same origin for S3) but Chromium connects to 127.0.0.1:<port>, so the
-// app on the real port 3000 is never contacted. No webServer is started. Only browser traffic is mapped: never
-// call `request` / `page.request` with a relative URL in this mode (that runs in Node and would reach port 3000).
+// Opt-in E2E_MAP_3000_TO=<port>. It is NOT needed for the image upload any more: the browser posts the file to the
+// app's own route /api/upload and the server sends it to S3, so the S3 bucket CORS (which allows only the origin
+// http://localhost:3000) does not matter. The option is kept for the case that a test needs the origin
+// http://localhost:3000 while port 3000 is busy: start the app yourself on <port>; the browser opens
+// http://localhost:3000 but Chromium connects to 127.0.0.1:<port>, so the app on the real port 3000 is never
+// contacted. No webServer is started. Only browser traffic is mapped: never call `request` / `page.request` with
+// a relative URL in this mode (that runs in Node and would reach port 3000).
 const MAP_3000_TO = (process.env.E2E_MAP_3000_TO ?? "").trim();
 if (MAP_3000_TO && !/^\d{2,5}$/.test(MAP_3000_TO)) {
   throw new Error("E2E_MAP_3000_TO must be a port number, for example 3100.");
