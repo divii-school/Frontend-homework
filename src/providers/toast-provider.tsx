@@ -15,7 +15,8 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 export function ToastProvider({ children }: { children: ReactNode }) {
   const ref = useRef<Toast>(null);
   const show = useCallback((kind: ToastKind, message: string) => {
-    ref.current?.show({ severity: kind, detail: message, life: kind === 'error' ? 5000 : 3000 });
+    // 5 s for every kind: long enough to read (and for QA to capture), still out of the way.
+    ref.current?.show({ severity: kind, detail: message, life: 5000 });
   }, []);
   const value = useMemo(() => ({ show }), [show]);
   return (

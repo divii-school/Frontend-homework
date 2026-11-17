@@ -190,6 +190,25 @@
   color: var(--color-text-placeholder);
 }
 
+// A row the API still returns although it is deleted (API question A14): plain text, clearly tagged.
+.deleted-name {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+  overflow-wrap: anywhere;
+}
+
+.deleted-tag {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 0 6px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-bg-subtle);
+  color: var(--color-text-muted);
+  font-size: 12px;
+  text-decoration: none;
+}
+
 .name-link {
   color: var(--color-text-strong);
   font-weight: 600;

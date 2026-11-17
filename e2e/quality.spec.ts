@@ -5,7 +5,7 @@ import { expect, test, type Page } from '@playwright/test';
  * Brief section D (production quality), read-only, on every screen:
  * - zero console errors or warnings,
  * - WCAG 2 A/AA accessibility scan (axe) in light AND dark,
- * - no page wider than the screen at 1440 / 768 / 375.
+ * - no page wider than the screen at 1920 / 1440 / 1366 / 768 / 375.
  */
 type Screen = { name: string; open: (page: Page) => Promise<void>; loggedOut?: boolean };
 
@@ -97,8 +97,8 @@ for (const screen of SCREENS) {
       });
     }
 
-    test('no horizontal page scroll at 1440 / 768 / 375', async ({ page }) => {
-      for (const width of [1440, 768, 375]) {
+    test('no horizontal page scroll at 1920 / 1440 / 1366 / 768 / 375', async ({ page }) => {
+      for (const width of [1920, 1440, 1366, 768, 375]) {
         await page.setViewportSize({ width, height: 900 });
         await screen.open(page);
         await settle(page);
@@ -115,4 +115,47 @@ test('404 page: no console errors other than the expected 404 response', async (
   await expect(page.getByText('404 · 페이지를 찾을 수 없습니다.')).toBeVisible();
   // The browser itself logs the 404 status of this navigation; that line is the point of the page.
   expect(problems.filter((p) => !/status of 404/.test(p))).toEqual([]);
+});
+
+test('dark mode: the header button switches it, it survives a reload, and switches back', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/shopping/products');
+  const html = page.locator('html');
+  await expect(html).toHaveAttribute('data-theme', 'light');
+  await page.getByRole('button', { name: '다크 모드로 전환' }).click();
+  await expect(html).toHaveAttribute('data-theme', 'dark');
+  await page.reload();
+  await expect(html).toHaveAttribute('data-theme', 'dark'); // saved choice wins over the OS setting
+  await page.getByRole('button', { name: '라이트 모드로 전환' }).click();
+  await expect(html).toHaveAttribute('data-theme', 'light');
+});
+
+test('keyboard only: skip link, menu, dialog with Escape, visible focus ring', async ({ page }) => {
+  await page.goto('/shopping/products');
+  await expect(page.locator('tbody tr').first()).toBeVisible();
+
+  // 1. The first Tab lands on "본문으로 바로가기"; Enter moves focus into the main content.
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('link', { name: '본문으로 바로가기' })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/#main-content$/);
+
+  // 2. Tab reaches the side menu; Enter opens 상품 카테고리 관리.
+  const menuLink = page.getByRole('link', { name: '상품 카테고리 관리' });
+  await menuLink.focus();
+  const ring = await menuLink.evaluate((el) => {
+    const style = getComputedStyle(el);
+    return style.outlineStyle !== 'none' || style.boxShadow !== 'none';
+  });
+  expect(ring, 'a focused element shows a focus ring').toBe(true);
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/\/shopping\/categories/);
+
+  // 3. A dialog opens from the keyboard and Escape closes it.
+  await page.getByRole('button', { name: '학원 Shop 삭제' }).focus();
+  await page.keyboard.press('Enter');
+  const dialog = page.getByRole('dialog', { name: '삭제할 수 없습니다' });
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
 });

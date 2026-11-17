@@ -35,6 +35,9 @@ export function CategoryTreeNode({ node: rawNode, level, parentId, presetChildre
   const fetchChildren = childLevel !== null && presetChildren === undefined && (level === 'category' || expanded);
   const childrenQuery = useChildCategories(childLevel ?? 'childCategory', node.id, fetchChildren);
   const children = presetChildren ?? childrenQuery.data;
+  // In search mode `presetChildren` holds only the MATCHING children, not all of them: never use it
+  // as the real count (row label) or to decide whether the node may be deleted.
+  const inSearch = presetChildren !== undefined;
   const canEdit = can('categoryManagement');
 
   const onHandleKey = (event: KeyboardEvent<HTMLButtonElement>) => {
@@ -93,7 +96,7 @@ export function CategoryTreeNode({ node: rawNode, level, parentId, presetChildre
         <span className={`${styles['level-badge']} ${styles[`badge-${depth(level)}`]}`}>{LEVEL_LABEL[level]}</span>
         <span className={styles['node-code']}>[{node.id}]</span>
         <span className={styles['node-name']}>{node.name}</span>
-        {childLevel && children && (
+        {childLevel && children && !inSearch && (
           <span className={styles['node-count']}>
             ({children.length}개 {LEVEL_LABEL[childLevel]})
           </span>
@@ -122,7 +125,8 @@ export function CategoryTreeNode({ node: rawNode, level, parentId, presetChildre
             <button
               type="button"
               className={styles['icon-action']}
-              onClick={() => tree.requestDelete({ level, node, childCount: children?.length })}
+              // No count from a search result: the delete check then asks the API for the real children.
+              onClick={() => tree.requestDelete({ level, node, childCount: inSearch ? undefined : children?.length })}
               aria-label={`${node.name} 삭제`}
               title="삭제"
             >

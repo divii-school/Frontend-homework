@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { ProductService } from '@/services/product-service';
+import { ProductService, isLiveProduct } from '@/services/product-service';
 import { downloadCsv, toCsv } from '@/lib/csv';
 import { decodeEntities } from '@/lib/text';
 import { formatCategoryPath, formatDateTimeSlash } from '@/lib/format';
@@ -41,7 +41,7 @@ export function useExportProducts() {
       let totalPage = 1;
       do {
         const result = await ProductService.list({ ...filter, page, limit: EXPORT_PAGE_SIZE });
-        rows.push(...result.items);
+        rows.push(...result.items.filter(isLiveProduct)); // deleted rows (API question A14) are not products
         totalPage = result.totalPage;
         setProgress({ done: rows.length, total: result.totalRecords });
         page += 1;

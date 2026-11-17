@@ -92,20 +92,26 @@ export function CategoryManagement() {
       const childLevel = CHILD_LEVEL[request.level];
       let childCount = request.childCount;
       if (childLevel && childCount === undefined) {
-        // Not loaded yet: ask the API before deciding (never delete a node that has children).
-        const children = await queryClient.fetchQuery({
-          queryKey: queryKeys.categories.children(childLevel, request.node.id),
-          queryFn: () =>
-            childLevel === 'subCategory'
-              ? ProductCategoryService.subCategories(request.node.id)
-              : ProductCategoryService.childCategories(request.node.id),
-        });
-        childCount = children.length;
+        // Not loaded yet, or a search result (which holds only the matching children): ask the API
+        // before deciding, so a node with children is never offered for deletion.
+        try {
+          const children = await queryClient.fetchQuery({
+            queryKey: queryKeys.categories.children(childLevel, request.node.id),
+            queryFn: () =>
+              childLevel === 'subCategory'
+                ? ProductCategoryService.subCategories(request.node.id)
+                : ProductCategoryService.childCategories(request.node.id),
+          });
+          childCount = children.length;
+        } catch (error) {
+          toast.show('error', errorMessage(error));
+          return;
+        }
       }
       if (childLevel && (childCount ?? 0) > 0) setBlockedDelete({ ...request, childCount });
       else setPendingDelete(request);
     },
-    [queryClient],
+    [queryClient, toast],
   );
 
   const move = useCallback(

@@ -22,6 +22,7 @@ import { formatCategoryPath, formatDateTimeSlash, formatNumber, formatPriceSymbo
 import { rememberListQuery } from '@/lib/list-memory';
 import { useAuth } from '@/providers/auth-provider';
 import { useToast } from '@/providers/toast-provider';
+import { isLiveProduct } from '@/services/product-service';
 import type { ProductListItem, ProductSearchType } from '@/types/product';
 import styles from './product.module.scss';
 
@@ -100,8 +101,10 @@ export function ProductList() {
   const toggleRow = (row: ProductListItem, checked: boolean) =>
     checked ? addToSelection([row]) : setSelected(selected.filter((p) => p.id !== row.id));
 
+  // Deleted rows (API question A14) can never be selected.
+  const liveRows = useMemo(() => rows.filter(isLiveProduct), [rows]);
   const togglePage = (checked: boolean) =>
-    checked ? addToSelection(rows) : setSelected(selected.filter((p) => !rows.some((r) => r.id === p.id)));
+    checked ? addToSelection(liveRows) : setSelected(selected.filter((p) => !liveRows.some((r) => r.id === p.id)));
 
   const changeVisibility = (product: ProductListItem, visible: boolean) => {
     visibility.mutate(
@@ -229,7 +232,7 @@ export function ProductList() {
                     <label className={styles['check']}>
                       <input
                         type="checkbox"
-                        checked={rows.length > 0 && rows.every((r) => selectedIds.has(r.id))}
+                        checked={liveRows.length > 0 && liveRows.every((r) => selectedIds.has(r.id))}
                         onChange={(e) => togglePage(e.target.checked)}
                         aria-label="현재 페이지 전체 선택"
                       />
@@ -241,6 +244,7 @@ export function ProductList() {
                       type="checkbox"
                       className={styles['row-check']}
                       checked={selectedIds.has(p.id)}
+                      disabled={!isLiveProduct(p)}
                       onChange={(e) => toggleRow(p, e.target.checked)}
                       aria-label={`${decodeEntities(p.productName)} 선택`}
                     />
@@ -250,11 +254,18 @@ export function ProductList() {
               <Column header="썸네일" body={thumbnail} headerClassName={styles['col-thumb']} />
               <Column
                 header="상품명"
-                body={(p: ProductListItem) => (
-                  <Link href={ROUTES.productDetails(p.id)} className={styles['name-link']}>
-                    {decodeEntities(p.productName)}
-                  </Link>
-                )}
+                body={(p: ProductListItem) =>
+                  isLiveProduct(p) ? (
+                    <Link href={ROUTES.productDetails(p.id)} className={styles['name-link']}>
+                      {decodeEntities(p.productName)}
+                    </Link>
+                  ) : (
+                    // The API still returns it in a 카테고리 search (A14); opening it would answer 404.
+                    <span className={styles['deleted-name']}>
+                      {decodeEntities(p.productName)} <span className={styles['deleted-tag']}>삭제된 상품</span>
+                    </span>
+                  )
+                }
               />
               <Column header="판매금액" body={(p: ProductListItem) => formatPriceSymbol(p.price)} className={styles['col-price']} />
               <Column
@@ -266,7 +277,9 @@ export function ProductList() {
               <Column
                 header="노출여부"
                 body={(p: ProductListItem) =>
-                  canEdit ? (
+                  !isLiveProduct(p) ? (
+                    '-'
+                  ) : canEdit ? (
                     <AppDropdown
                       label={`${decodeEntities(p.productName)} 노출여부`}
                       value={p.isVisible}

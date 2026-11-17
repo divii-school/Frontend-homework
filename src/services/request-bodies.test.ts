@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { httpClient } from '@/lib/api/http-client';
-import { ProductService } from './product-service';
+import { ProductService, isLiveProduct } from './product-service';
 import { ProductCategoryService } from './product-category-service';
 
 /**
@@ -20,5 +20,13 @@ describe('id lists go to the API as numbers', () => {
     const put = vi.spyOn(httpClient, 'put').mockResolvedValue({ data: {} });
     await ProductCategoryService.reorder('childCategory', [573, 12]);
     expect(put.mock.calls[0][1]).toEqual({ ids: [573, 12] });
+  });
+});
+
+describe('deleted products the API still returns (API question A14)', () => {
+  it('isLiveProduct is false only for a row marked isDeleted', () => {
+    expect(isLiveProduct({ isDeleted: true })).toBe(false);
+    expect(isLiveProduct({ isDeleted: false })).toBe(true);
+    expect(isLiveProduct({})).toBe(true); // older rows without the flag are real products
   });
 });

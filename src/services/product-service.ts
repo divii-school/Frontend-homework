@@ -15,6 +15,15 @@ export interface ProductPage {
   page: number;
 }
 
+/**
+ * False for a row the API marks `isDeleted`. The QA API returns deleted products in a 카테고리 search
+ * (API question A14). The list keeps the API's paging and total but shows such a row as 삭제된 상품
+ * (no link, not selectable); the CSV leaves it out.
+ */
+export function isLiveProduct(item: Pick<ProductListItem, 'isDeleted'>): boolean {
+  return item.isDeleted !== true;
+}
+
 /** Product Management API (tag "Product Management" in Swagger). */
 export const ProductService = {
   /** GET /products?page&limit&type&search → one page. */

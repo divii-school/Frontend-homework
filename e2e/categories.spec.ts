@@ -68,6 +68,102 @@ test.describe('상품 카테고리 관리 (read only)', () => {
     expect(posted).toBe(false);
   });
 
+  test('a 51-character name is refused in the add dialog (nothing is sent)', async ({ page }) => {
+    let posted = false;
+    page.on('request', (r) => {
+      if (r.method() === 'POST' && r.url().includes('/product-category/')) posted = true;
+    });
+    await page.goto('/shopping/categories?q=HW3-Pranesh');
+    await page.getByRole('button', { name: /소분류/ }).filter({ hasText: '소분류' }).first().click();
+    await page.getByLabel('카테고리명').fill('가'.repeat(51));
+    await page.getByRole('button', { name: '등록', exact: true }).click();
+    await expect(page.getByText('카테고리명은 50자 이하로 입력해 주세요.')).toBeVisible();
+    expect(posted).toBe(false);
+  });
+
+  test('edit dialog: opens with the current name; empty and 51-character names refused; 취소 changes nothing', async ({ page }) => {
+    let saved = false;
+    page.on('request', (r) => {
+      if (r.method() === 'PUT' && r.url().includes('/product-category/')) saved = true;
+    });
+    await page.goto('/shopping/categories?q=HW3-Pranesh-Child');
+    await page.getByRole('button', { name: 'HW3-Pranesh-Child 수정' }).click();
+    const name = page.getByLabel('카테고리명');
+    await expect(name).toHaveValue('HW3-Pranesh-Child');
+    await name.fill('');
+    await page.getByRole('button', { name: '저장', exact: true }).click();
+    await expect(page.getByText('카테고리명을 입력해 주세요.')).toBeVisible();
+    await name.fill('나'.repeat(51));
+    await page.getByRole('button', { name: '저장', exact: true }).click();
+    await expect(page.getByText('카테고리명은 50자 이하로 입력해 주세요.')).toBeVisible();
+    await page.getByRole('button', { name: '취소', exact: true }).click();
+    await expect(name).toBeHidden();
+    await expect(page.getByText('HW3-Pranesh-Child', { exact: true })).toBeVisible();
+    expect(saved).toBe(false);
+  });
+
+  test('with a search active, delete checks the REAL children, not the filtered ones', async ({ page }) => {
+    // QA spot check 2026-11-17: the search result holds only matching children (1), the category has 10+.
+    const realChildren = page.waitForResponse((r) => /\/products\/subcategories\/\d+$/.test(r.url()) && r.request().method() === 'GET');
+    await page.goto('/shopping/categories?q=HW3-Pranesh');
+    const row = page.locator('li').filter({ has: page.getByRole('button', { name: '학원 Shop 삭제' }) }).first();
+    await expect(row).not.toContainText(/\(\d+개 중분류\)/); // no count from a filtered tree
+    await page.getByRole('button', { name: '학원 Shop 삭제' }).click();
+    const body = (await (await realChildren).json()) as { data: unknown[] };
+    const dialog = page.getByRole('dialog', { name: '삭제할 수 없습니다' });
+    await expect(dialog).toContainText(`하위 카테고리 ${body.data.length}개가 있어 삭제할 수 없습니다`);
+    expect(body.data.length).toBeGreaterThan(1);
+  });
+
+  test('disabled 대분류 등록 looks disabled (grey), not like the brand-red 검색 button', async ({ page }) => {
+    await page.goto('/shopping/categories');
+    const disabled = page.getByRole('button', { name: '대분류 등록' });
+    await expect(disabled).toBeDisabled();
+    const colours = await page.evaluate(() => {
+      const css = getComputedStyle(document.documentElement);
+      const probe = document.createElement('div');
+      probe.style.background = css.getPropertyValue('--color-bg-disabled');
+      document.body.append(probe);
+      const disabledBg = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      const button = [...document.querySelectorAll('button')].find((b) => b.textContent?.includes('대분류 등록'));
+      const search = [...document.querySelectorAll('button')].find((b) => b.textContent?.trim() === '검색');
+      return {
+        disabledBg,
+        button: button ? getComputedStyle(button).backgroundColor : '',
+        search: search ? getComputedStyle(search).backgroundColor : '',
+      };
+    });
+    expect(colours.button).toBe(colours.disabledBg);
+    expect(colours.button).not.toBe(colours.search);
+  });
+
+  test('a category name with HTML is shown as text, never run', async ({ page }) => {
+    const hostile = '<img src=x onerror="window.__hw3Xss=1">';
+    await page.route(`${API_GLOB}/products/categories`, (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          success: true,
+          message: 'Success',
+          data: [
+            { id: 900001, name: hostile, sortOrder: 1, isDeleted: false, createdAt: '', updatedAt: '' },
+            { id: 900002, name: '&lt;b&gt;escaped&lt;/b&gt;', sortOrder: 2, isDeleted: false, createdAt: '', updatedAt: '' },
+          ],
+        }),
+      }),
+    );
+    await page.route(`${API_GLOB}/products/subcategories/**`, (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: '{"success":true,"message":"Success","data":[]}' }),
+    );
+    await page.goto('/shopping/categories');
+    await expect(page.getByText(hostile, { exact: true })).toBeVisible();
+    await expect(page.getByText('<b>escaped</b>', { exact: true })).toBeVisible(); // API-escaped name decoded as text
+    await expect(page.locator('[aria-label="상품 카테고리"] img')).toHaveCount(0);
+    expect(await page.evaluate(() => (window as unknown as { __hw3Xss?: number }).__hw3Xss)).toBeUndefined();
+  });
+
   test('API failure shows an error with retry', async ({ page }) => {
     await page.route(`${API_GLOB}/products/categories`, (route) => route.fulfill({ status: 500, body: '{}' }));
     await page.goto('/shopping/categories');

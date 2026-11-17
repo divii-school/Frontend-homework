@@ -38,6 +38,46 @@ test.describe('로그인 (logged out)', () => {
     await expect(page.locator('#loginId-error')).toHaveText('등록되지 않은 계정입니다.');
   });
 
+  test('spaces only in the ID keep the login button disabled', async ({ page }) => {
+    await page.goto('/login');
+    await page.getByPlaceholder('아이디').fill('   ');
+    await page.getByPlaceholder('비밀번호').fill('something');
+    // The ID is trimmed before the check, so "   " counts as empty.
+    await expect(page.getByRole('button', { name: '로그인', exact: true })).toBeDisabled();
+  });
+
+  /** Logs in for real (the shared account; logging in does not sign anyone out) and returns our cookies. */
+  async function loginWith(page: import('@playwright/test').Page, remember: boolean) {
+    await page.goto('/login');
+    await fillSecret(page.getByPlaceholder('아이디'), qaLogin().id);
+    await fillSecret(page.getByPlaceholder('비밀번호'), qaLogin().password);
+    if (remember) await page.getByText('자동 로그인').click();
+    await page.getByRole('button', { name: '로그인', exact: true }).click();
+    await expect(page).toHaveURL(/\/shopping\/products/);
+    const cookies = await page.context().cookies();
+    return (name: string) => cookies.find((c) => c.name === name);
+  }
+
+  test('자동 로그인 checked: the session cookies outlive the browser (persistent, up to 7 days)', async ({ page }) => {
+    const cookie = await loginWith(page, true);
+    const now = Date.now() / 1000;
+    for (const name of ['hw3_at', 'hw3_rt', 'hw3_session']) {
+      const c = cookie(name);
+      expect(c, name).toBeDefined();
+      expect(c?.expires, `${name} has an expiry date`).toBeGreaterThan(now); // -1 would mean "ends with the browser"
+    }
+    expect(cookie('hw3_rt')?.expires ?? 0).toBeLessThanOrEqual(now + 7 * 24 * 3600 + 60);
+    expect(cookie('hw3_rt')?.httpOnly).toBe(true);
+  });
+
+  test('자동 로그인 unchecked: every session cookie ends when the browser closes', async ({ page }) => {
+    const cookie = await loginWith(page, false);
+    for (const name of ['hw3_at', 'hw3_rt', 'hw3_session']) {
+      expect(cookie(name), name).toBeDefined();
+      expect(cookie(name)?.expires, `${name} is a browser-session cookie`).toBe(-1);
+    }
+  });
+
   test('show/hide password toggle', async ({ page }) => {
     await page.goto('/login');
     const password = page.getByPlaceholder('비밀번호');

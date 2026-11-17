@@ -22,6 +22,8 @@ export interface ProductListItem {
   isVisible: boolean;
   onSale: boolean;
   isOptions: boolean;
+  /** Soft-delete flag. A 카테고리 search returns deleted rows too (API question A14). */
+  isDeleted?: boolean;
   erpCode: string;
   erpName: string;
   erpUnitPrice: number;
