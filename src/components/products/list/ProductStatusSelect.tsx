@@ -23,8 +23,8 @@ export default function ProductStatusSelect({ productId, productName, isVisible,
     updateStatus.mutate(
       { id: productId, isVisible: next },
       {
-        onSuccess: () => toast.success("Exposure status saved", `${productName}: ${next ? "Yes" : "No"}`),
-        onError: (error) => toast.error("Exposure status not saved", error.message),
+        onSuccess: () => toast.success("저장 완료", `${productName}: ${next ? "예" : "아니오"}`),
+        onError: (error) => toast.error("저장에 실패했습니다.", error.message),
       },
     );
   };
@@ -32,13 +32,13 @@ export default function ProductStatusSelect({ productId, productName, isVisible,
   return (
     <span className="product-select product-select-compact" aria-busy={updateStatus.isPending || undefined}>
       <select
-        aria-label={`Exposure status of ${productName}`}
+        aria-label={`${productName} 노출여부`}
         value={isVisible ? "yes" : "no"}
         onChange={handleChange}
         disabled={disabled}
       >
-        <option value="yes">Yes</option>
-        <option value="no">No</option>
+        <option value="yes">예</option>
+        <option value="no">아니오</option>
       </select>
       <i className="pi pi-chevron-down product-select-icon" aria-hidden="true" />
     </span>

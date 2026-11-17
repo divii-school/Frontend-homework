@@ -46,10 +46,10 @@ export default function ProductDetailsScreen({ idParam }: { idParam: string }) {
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
-  const breadcrumb = getBreadcrumb(ROUTE_KEYS.PRODUCTS, "Details");
+  const breadcrumb = getBreadcrumb(ROUTE_KEYS.PRODUCTS, "상품 상세");
   const backLink = (
     <Link href={backHref} className="p-button p-component p-button-outlined">
-      Back to list
+      목록으로
     </Link>
   );
 
@@ -57,12 +57,12 @@ export default function ProductDetailsScreen({ idParam }: { idParam: string }) {
   if (productId === null || details.error?.kind === "not-found") {
     return (
       <div className="product-details-page">
-        <PageHeader title="Product details" breadcrumb={breadcrumb} />
+        <PageHeader title="상품 상세" breadcrumb={breadcrumb} />
         <section className="content-card">
           <ErrorState
             variant="not-found"
-            title="Product not found"
-            message="This product does not exist or has been deleted."
+            title="상품을 찾을 수 없습니다"
+            message="존재하지 않거나 삭제된 상품입니다."
             actions={backLink}
           />
         </section>
@@ -73,21 +73,21 @@ export default function ProductDetailsScreen({ idParam }: { idParam: string }) {
   return (
     <div className="product-details-page">
       <PageHeader
-        title={details.data?.productName ?? "Product details"}
+        title={details.data?.productName ?? "상품 상세"}
         breadcrumb={breadcrumb}
         actions={
           <>
             {backLink}
             {canUpdate && (
               <Link href={PRODUCT_ROUTES.edit(productId)} className="p-button p-component">
-                Edit
+                수정
               </Link>
             )}
           </>
         }
       />
 
-      <section className="content-card product-details" aria-label="Product details">
+      <section className="content-card product-details" aria-label="상품 상세">
         <DetailsTabs active={tab} onChange={selectTab} />
         {/* Only the open tab is mounted → its data loads when it is first opened */}
         <div className="details-tabpanel" role="tabpanel" id={tabPanelId(tab)} aria-labelledby={tabId(tab)} tabIndex={0}>

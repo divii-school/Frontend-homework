@@ -9,7 +9,7 @@ const BAR_WIDTH: Record<1 | 2 | 3, string> = { 1: "36%", 2: "28%", 3: "22%" };
 export default function CategoryTreeSkeleton() {
   return (
     <div className="category-tree-skeleton" role="status" aria-busy="true">
-      <span className="sr-only">Loading categories…</span>
+      <span className="sr-only">카테고리를 불러오는 중…</span>
       {ROWS.map((depth, index) => (
         <div key={index} className={`category-skeleton-row category-row-depth-${depth}`} aria-hidden="true">
           <Skeleton width={BAR_WIDTH[depth]} />

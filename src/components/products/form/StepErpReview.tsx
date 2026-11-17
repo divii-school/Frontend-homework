@@ -59,35 +59,35 @@ export default function StepErpReview({ mode, erpCode, lockedCategory, keptOptio
 
   const summary: Record<StepNumber, Array<[string, string]>> = {
     1: [
-      ["Product name", values.productName?.trim() || EMPTY_VALUE],
-      ["Product code", values.productCode || EMPTY_VALUE],
-      ["Unit price", formatWon(values.price)],
-      ["Selling price", formatWon(values.unitPrice)],
-      ["Detailed description", values.description?.trim() || EMPTY_VALUE],
+      ["상품명", values.productName?.trim() || EMPTY_VALUE],
+      ["상품코드", values.productCode || EMPTY_VALUE],
+      ["단가", formatWon(values.price)],
+      ["판매가", formatWon(values.unitPrice)],
+      ["상세설명", values.description?.trim() || EMPTY_VALUE],
     ],
     2: [
-      ["Images", `${values.images?.length ?? 0} image${values.images?.length === 1 ? "" : "s"}`],
-      ["Exposure status", yesNoLabel(values.isVisible)],
-      ["Sales status", yesNoLabel(values.onSale)],
+      ["이미지", `${values.images?.length ?? 0}장`],
+      ["노출상태", yesNoLabel(values.isVisible)],
+      ["판매상태", yesNoLabel(values.onSale)],
     ],
     3: [
-      ["Category", categoryPath],
+      ["등록 카테고리", categoryPath],
       [
-        "Options",
+        "옵션",
         values.options?.length
           ? values.options.map((row) => `${row.optionName} (${formatWon(row.price)})`).join(", ")
           : keptOptionCount > 0
-            ? `${keptOptionCount} category option(s) kept`
-            : "None",
+            ? `카테고리 옵션 ${keptOptionCount}건 유지`
+            : "없음",
       ],
-      ["Required option for purchase", values.optionsRequired ? "Yes" : "No"],
+      ["상품 구매 필수 옵션 선택", values.optionsRequired ? "예" : "아니오"],
     ],
     4: [
-      ["ERP code", mode === "create" ? "Assigned automatically" : erpCode || EMPTY_VALUE],
-      ["ERP product name", values.erpName?.trim() || EMPTY_VALUE],
-      ["Quantity", values.quantity === null ? EMPTY_VALUE : `${formatNumber(values.quantity)} pcs`],
-      ["Tax type", TAX_TYPE_OPTIONS.find((option) => option.value === values.taxType)?.label ?? EMPTY_VALUE],
-      ["ERP unit price", formatWon(values.erpUnitPrice)],
+      ["ERP 코드", mode === "create" ? "등록 시 자동 부여" : erpCode || EMPTY_VALUE],
+      ["상품ERP명", values.erpName?.trim() || EMPTY_VALUE],
+      ["갯수", values.quantity === null ? EMPTY_VALUE : `${formatNumber(values.quantity)}개`],
+      ["비과세", TAX_TYPE_OPTIONS.find((option) => option.value === values.taxType)?.label ?? EMPTY_VALUE],
+      ["ERP 단가", formatWon(values.erpUnitPrice)],
     ],
   };
 
@@ -97,17 +97,17 @@ export default function StepErpReview({ mode, erpCode, lockedCategory, keptOptio
       <div className="product-form-grid">
         <FormField
           id="product-erp-code"
-          label="ERP code"
-          hint={mode === "create" ? "The server assigns the next free ERP code when the product is registered." : "The ERP code cannot be changed."}
+          label="ERP 코드"
+          hint={mode === "create" ? "ERP 코드는 상품 등록 시 서버에서 자동으로 부여됩니다." : "ERP 코드는 변경할 수 없습니다."}
         >
-          {(field) => <InputText {...field} readOnly value={mode === "create" ? "Assigned automatically" : erpCode || EMPTY_VALUE} />}
+          {(field) => <InputText {...field} readOnly value={mode === "create" ? "등록 시 자동 부여" : erpCode || EMPTY_VALUE} />}
         </FormField>
 
-        <FormField id="product-erp-name" label="ERP product name" required error={errors.erpName?.message}>
+        <FormField id="product-erp-name" label="상품ERP명" required error={errors.erpName?.message}>
           {(field) => (
             <InputText
               {...field}
-              placeholder="ERP product name"
+              placeholder="상품명 입력해 주세요."
               autoComplete="off"
               {...register("erpName", {
                 validate: (value) => {
@@ -133,7 +133,7 @@ export default function StepErpReview({ mode, erpCode, lockedCategory, keptOptio
             },
           }}
           render={({ field, fieldState }) => (
-            <FormField id="product-quantity" label="Quantity" required error={fieldState.error?.message} hint="Number of pieces in one ERP unit.">
+            <FormField id="product-quantity" label="갯수" required error={fieldState.error?.message} hint="ERP 1단위에 포함된 수량입니다.">
               {(a11y) => (
                 <div className="product-form-inline">
                   <MoneyInput
@@ -146,7 +146,7 @@ export default function StepErpReview({ mode, erpCode, lockedCategory, keptOptio
                     onBlur={field.onBlur}
                     placeholder="1"
                   />
-                  <span className="product-form-unit">pcs</span>
+                  <span className="product-form-unit">개</span>
                 </div>
               )}
             </FormField>
@@ -158,7 +158,7 @@ export default function StepErpReview({ mode, erpCode, lockedCategory, keptOptio
           name="taxType"
           rules={{ validate: (value) => value !== null || FORM_MESSAGES.taxTypeRequired }}
           render={({ field, fieldState }) => (
-            <FormField id="product-tax-type" label="Tax type" required error={fieldState.error?.message}>
+            <FormField id="product-tax-type" label="비과세" required error={fieldState.error?.message}>
               {({ id, className, ...aria }) => (
                 <Dropdown
                   {...aria}
@@ -167,7 +167,7 @@ export default function StepErpReview({ mode, erpCode, lockedCategory, keptOptio
                   focusInputRef={field.ref}
                   value={field.value}
                   options={[...TAX_TYPE_OPTIONS]}
-                  placeholder="Select taxable or tax-exempt"
+                  placeholder="비과세를 선택해 주세요."
                   onChange={(event) => field.onChange(event.value)}
                   onBlur={field.onBlur}
                 />
@@ -187,7 +187,7 @@ export default function StepErpReview({ mode, erpCode, lockedCategory, keptOptio
             },
           }}
           render={({ field, fieldState }) => (
-            <FormField id="product-erp-unit-price" label="ERP unit price" required error={fieldState.error?.message}>
+            <FormField id="product-erp-unit-price" label="단가" required error={fieldState.error?.message}>
               {(a11y) => (
                 <MoneyInput {...a11y} ref={field.ref} name={field.name} value={field.value} onChange={field.onChange} onBlur={field.onBlur} placeholder="₩0" />
               )}
@@ -199,17 +199,17 @@ export default function StepErpReview({ mode, erpCode, lockedCategory, keptOptio
       {/* Review: everything entered so far, with a way back to each step */}
       <section className="product-review" aria-labelledby="product-review-title">
         <h3 id="product-review-title" className="product-review-title">
-          Review before {mode === "create" ? "registering" : "saving"}
+          {mode === "create" ? "등록" : "저장"} 전 입력 내용 확인
         </h3>
         {STEPS.map(({ step, label }) => (
           <div key={step} className={errorSteps.includes(step) ? "product-review-block product-review-block-error" : "product-review-block"}>
             <div className="product-review-head">
               <h4>
                 {step}. {label}
-                {errorSteps.includes(step) && <span className="product-review-fix"> — needs a fix</span>}
+                {errorSteps.includes(step) && <span className="product-review-fix"> — 수정 필요</span>}
               </h4>
               {step !== 4 && (
-                <Button type="button" label="Edit" icon="pi pi-pencil" text size="small" aria-label={`Edit step ${step}: ${label}`} onClick={() => onEditStep(step)} />
+                <Button type="button" label="수정" icon="pi pi-pencil" text size="small" aria-label={`${step}단계 ${label} 수정`} onClick={() => onEditStep(step)} />
               )}
             </div>
             <dl className="product-review-list">

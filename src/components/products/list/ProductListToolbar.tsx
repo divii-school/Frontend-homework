@@ -24,13 +24,13 @@ interface SelectOption {
 }
 
 const SEARCH_TYPE_OPTIONS: Array<{ value: ProductSearchType; label: string }> = [
-  { value: "productName", label: "Product name" },
-  { value: "categoryName", label: "Category" },
+  { value: "productName", label: "상품명" },
+  { value: "categoryName", label: "카테고리" },
 ];
 
 const PRODUCT_TYPE_OPTIONS: SelectOption[] = [
-  { value: "MAIN", label: "Main" },
-  { value: "SUPPLEMENTARY", label: "Supplementary" },
+  { value: "MAIN", label: "메인 상품" },
+  { value: "SUPPLEMENTARY", label: "단권 상품" },
 ];
 
 const toOptions = (items: CategoryOption[] | undefined): SelectOption[] =>
@@ -59,7 +59,7 @@ function FilterSelect({
   loading?: boolean;
   failed?: boolean;
 }) {
-  const allLabel = loading ? "Loading…" : failed ? "Could not load" : "All";
+  const allLabel = loading ? "불러오는 중…" : failed ? "불러오기 실패" : "전체";
   return (
     <div className="product-filter">
       <label htmlFor={id} className="product-filter-label">
@@ -104,14 +104,14 @@ export default function ProductListToolbar({ state, onChange, onReset, canReset 
       <form
         className="product-search"
         role="search"
-        aria-label="Product search"
+        aria-label="상품 검색"
         onSubmit={(event) => {
           event.preventDefault();
           onChange({ q: draft.trim() });
         }}
       >
         <label htmlFor="product-search-type" className="sr-only">
-          Search by
+          검색 조건
         </label>
         <span className="product-select product-search-type">
           <select
@@ -137,25 +137,25 @@ export default function ProductListToolbar({ state, onChange, onReset, canReset 
         </span>
         <span className="product-search-field">
           <label htmlFor="product-search-input" className="sr-only">
-            Search term
+            검색어
           </label>
           <InputText
             id="product-search-input"
             type="search"
             value={draft}
             maxLength={MAX_SEARCH_LENGTH}
-            placeholder={state.searchType === "categoryName" ? "Enter a category name" : "Enter a product name"}
+            placeholder="검색어 입력"
             onChange={(event) => setDraft(event.target.value)}
           />
-          <Button type="submit" icon="pi pi-search" text aria-label="Search" className="product-search-button" />
+          <Button type="submit" icon="pi pi-search" text aria-label="검색" className="product-search-button" />
         </span>
       </form>
 
       {/* Filters: Major → Medium → Minor category (each needs the one before) + product type */}
-      <div className="product-filters" role="group" aria-label="Filters">
+      <div className="product-filters" role="group" aria-label="필터">
         <FilterSelect
           id="product-filter-category"
-          label="Major category"
+          label="대분류"
           value={state.categoryId ? String(state.categoryId) : ""}
           options={toOptions(categories.data)}
           loading={categories.isPending}
@@ -165,7 +165,7 @@ export default function ProductListToolbar({ state, onChange, onReset, canReset 
         />
         <FilterSelect
           id="product-filter-subcategory"
-          label="Medium category"
+          label="중분류"
           value={state.subCategoryId ? String(state.subCategoryId) : ""}
           options={toOptions(subCategories.data)}
           loading={state.categoryId !== null && subCategories.isPending}
@@ -175,7 +175,7 @@ export default function ProductListToolbar({ state, onChange, onReset, canReset 
         />
         <FilterSelect
           id="product-filter-childcategory"
-          label="Minor category"
+          label="소분류"
           value={state.childCategoryId ? String(state.childCategoryId) : ""}
           options={toOptions(childCategories.data)}
           loading={state.subCategoryId !== null && childCategories.isPending}
@@ -185,7 +185,7 @@ export default function ProductListToolbar({ state, onChange, onReset, canReset 
         />
         <FilterSelect
           id="product-filter-type"
-          label="Product type"
+          label="상품 유형"
           value={state.productType ?? ""}
           options={PRODUCT_TYPE_OPTIONS}
           disabled={filtersOff}
@@ -193,7 +193,7 @@ export default function ProductListToolbar({ state, onChange, onReset, canReset 
         />
         <Button
           type="button"
-          label="Reset filters"
+          label="필터 초기화"
           icon="pi pi-filter-slash"
           text
           className="product-filters-reset"
@@ -202,7 +202,7 @@ export default function ProductListToolbar({ state, onChange, onReset, canReset 
         />
       </div>
       {filtersOff && (
-        <p className="field-hint product-filters-hint">A category search looks at every category level, so the filters are off.</p>
+        <p className="field-hint product-filters-hint">카테고리 검색은 대분류·중분류·소분류 전체를 대상으로 하므로 필터를 사용할 수 없습니다.</p>
       )}
     </div>
   );

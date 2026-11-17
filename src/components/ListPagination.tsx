@@ -34,7 +34,7 @@ export default function ListPagination({ page, limit, totalRecords, onChange, sh
   if (totalRecords <= 0) return null;
 
   return (
-    <nav className="list-pagination" aria-label="Pagination">
+    <nav className="list-pagination" aria-label="페이지네이션">
       <Paginator
         first={(page - 1) * limit}
         rows={limit}

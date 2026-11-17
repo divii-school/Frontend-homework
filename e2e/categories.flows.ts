@@ -36,14 +36,14 @@ function mainWithChildren(page: Page): Locator {
 /** Opens the page and waits until the tree is drawn. */
 export async function openCategories(page: Page): Promise<void> {
   await page.goto(CATEGORIES_URL);
-  await expect(page.getByRole("heading", { name: "Product Category Management", level: 1 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "상품 카테고리 관리", level: 1 })).toBeVisible();
   await expect(page.locator('li[data-level="category"]').first()).toBeVisible({ timeout: 30_000 });
 }
 
 /** Fills the open add / edit dialog, saves with Enter and checks the API call + toast. */
 async function saveInDialog(page: Page, dialogName: string, name: string, apiPath: string, toast: string): Promise<void> {
   const dialog = page.getByRole("dialog", { name: dialogName });
-  const input = dialog.getByRole("textbox", { name: "Category name" });
+  const input = dialog.getByRole("textbox", { name: "명칭" });
   await expect(input).toBeFocused();
   await input.fill(name);
   const response = page.waitForResponse((res) => res.url().includes(apiPath) && res.request().method() !== "GET");
@@ -56,11 +56,11 @@ async function saveInDialog(page: Page, dialogName: string, name: string, apiPat
 
 /** Clicks the trash icon of a leaf, confirms, and checks the DELETE call + toast + row gone. */
 async function deleteLeaf(page: Page, level: string, id: number, label: string, apiPath: string, toast: string): Promise<void> {
-  await nodeRow(page, level, id).getByRole("button", { name: `Delete ${label}` }).click();
-  const confirm = page.getByRole("dialog", { name: /^Delete / });
+  await nodeRow(page, level, id).getByRole("button", { name: `${label} 삭제` }).click();
+  const confirm = page.getByRole("dialog", { name: /^(대분류|중분류|소분류) 삭제$/ });
   await expect(confirm).toContainText(label);
   const response = page.waitForResponse((res) => res.url().includes(apiPath) && res.request().method() === "DELETE");
-  await confirm.getByRole("button", { name: "Delete", exact: true }).click();
+  await confirm.getByRole("button", { name: "삭제", exact: true }).click();
   expect((await response).ok(), `${apiPath} failed`).toBe(true);
   await expect(page.getByText(toast).first()).toBeVisible();
   await expect(nodeItem(page, level, id)).toHaveCount(0);
@@ -71,12 +71,12 @@ async function deleteLeaf(page: Page, level: string, id: number, label: string, 
 /** Title, breadcrumb, first main row with "[id]" and its "(N subcategories)" count. */
 export async function checkTreeRenders(page: Page): Promise<void> {
   await openCategories(page);
-  await expect(page.getByRole("navigation", { name: "Breadcrumb" })).toContainText("Product Category Management");
+  await expect(page.getByRole("navigation", { name: "현재 위치" })).toContainText("상품 카테고리 관리");
   const node = await describeNode(page.locator('li[data-level="category"]').first());
   const row = nodeRow(page, "category", node.id);
   await expect(row).toContainText(`[${node.id}]`);
-  await expect(row).toContainText(/\(\d+ subcategor(y|ies)\)/);
-  await expect(page.getByRole("button", { name: "Register main category" })).toBeVisible();
+  await expect(row).toContainText(/\(\d+개 중분류\)/);
+  await expect(page.getByRole("button", { name: "대분류 등록" })).toBeVisible();
 }
 
 /** Searching an existing name finds it (term in the URL); gibberish shows the empty state. */
@@ -87,15 +87,15 @@ export async function checkSearch(page: Page): Promise<void> {
   const level = (await target.getAttribute("data-level")) ?? "category";
   const node = await describeNode(target);
 
-  const box = page.getByRole("textbox", { name: "Search categories" });
+  const box = page.getByRole("textbox", { name: "카테고리 검색" });
   await box.fill(node.name);
   await box.press("Enter");
   await expect.poll(() => new URL(page.url()).searchParams.get("q")).toBe(node.name);
   await expect(nodeRow(page, level, node.id)).toBeVisible();
 
   await box.fill(`zz-no-such-category-${Date.now()}`);
-  await page.getByRole("button", { name: "Search", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "No search results found" })).toBeVisible();
+  await page.getByRole("button", { name: "검색", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "검색 결과가 없습니다" })).toBeVisible();
 }
 
 /** Collapse all hides every child row, Expand all shows them; one chevron toggles one row. */
@@ -106,11 +106,11 @@ export async function checkExpandCollapse(page: Page): Promise<void> {
   const node = await describeNode(parent);
   const firstChild = parent.locator('li[data-level="subCategory"]').first();
 
-  await page.getByRole("button", { name: "Collapse all" }).click();
+  await page.getByRole("button", { name: "모두 접기" }).click();
   await expect(firstChild).toBeHidden();
   await expect(page.locator('.category-toggle[aria-expanded="true"]')).toHaveCount(0);
 
-  await page.getByRole("button", { name: "Expand all" }).click();
+  await page.getByRole("button", { name: "모두 펼치기" }).click();
   await expect(firstChild).toBeVisible();
   await expect(page.locator('.category-toggle[aria-expanded="false"]')).toHaveCount(0);
 
@@ -126,20 +126,20 @@ export async function checkExpandCollapse(page: Page): Promise<void> {
 export async function checkFormValidation(page: Page): Promise<void> {
   await openCategories(page);
   const node = await describeNode(page.locator('li[data-level="category"]').first());
-  await nodeRow(page, "category", node.id).getByRole("button", { name: /^Add subcategory to / }).click();
+  await nodeRow(page, "category", node.id).getByRole("button", { name: /에 중분류 추가$/ }).click();
 
-  const dialog = page.getByRole("dialog", { name: "Add subcategory" });
-  const input = dialog.getByRole("textbox", { name: "Category name" });
+  const dialog = page.getByRole("dialog", { name: "중분류 추가" });
+  const input = dialog.getByRole("textbox", { name: "명칭" });
   await expect(input).toBeFocused();
 
   await input.press("Enter");
-  await expect(dialog.getByRole("alert")).toHaveText("Please enter a category name.");
+  await expect(dialog.getByRole("alert")).toHaveText("명칭을 입력해 주세요.");
   await input.fill("     ");
   await input.press("Enter");
-  await expect(dialog.getByRole("alert")).toHaveText("Please enter a category name.");
+  await expect(dialog.getByRole("alert")).toHaveText("명칭을 입력해 주세요.");
   await input.fill("x".repeat(51));
   await input.press("Enter");
-  await expect(dialog.getByRole("alert")).toHaveText("Use 50 characters or fewer.");
+  await expect(dialog.getByRole("alert")).toHaveText("명칭은 50자 이내로 입력해 주세요.");
   await expect(input).toHaveAttribute("aria-invalid", "true");
 
   await page.keyboard.press("Escape");
@@ -153,10 +153,10 @@ export async function checkDeleteBlocked(page: Page): Promise<void> {
   await expect(parent, "the tree needs a main category with subcategories").toBeVisible();
   const node = await describeNode(parent);
 
-  await nodeRow(page, "category", node.id).getByRole("button", { name: /^Delete / }).click();
-  const blocked = page.getByRole("dialog", { name: "Cannot delete" });
-  await expect(blocked).toContainText("it has subcategories. Delete them first.");
-  await blocked.getByRole("button", { name: "OK" }).click();
+  await nodeRow(page, "category", node.id).getByRole("button", { name: / 삭제$/ }).click();
+  const blocked = page.getByRole("dialog", { name: "삭제 불가" });
+  await expect(blocked).toContainText("하위 항목을 먼저 삭제해 주세요.");
+  await blocked.getByRole("button", { name: "확인" }).click();
   await expect(blocked).toBeHidden();
 }
 
@@ -176,8 +176,8 @@ export async function runCrudFlow(page: Page, runPrefix: string): Promise<void> 
   const main = await describeNode(page.locator('li[data-level="category"]').first());
 
   // 1. Subcategory under an existing main category
-  await nodeRow(page, "category", main.id).getByRole("button", { name: /^Add subcategory to / }).click();
-  await saveInDialog(page, "Add subcategory", subName, "/product-category/subcategory/add", "Middle category added.");
+  await nodeRow(page, "category", main.id).getByRole("button", { name: /에 중분류 추가$/ }).click();
+  await saveInDialog(page, "중분류 추가", subName, "/product-category/subcategory/add", "중분류가 등록되었습니다.");
   const sub = nodeByName(page, "subCategory", subName);
   await expect(sub).toBeVisible();
   const subId = Number(await sub.getAttribute("data-id"));
@@ -185,42 +185,42 @@ export async function runCrudFlow(page: Page, runPrefix: string): Promise<void> 
 
   // 2. Two minor categories under it
   for (const name of [minorA, minorB]) {
-    await nodeRow(page, "subCategory", subId).getByRole("button", { name: `Add minor category to ${subLabel}` }).click();
-    await saveInDialog(page, "Add minor category", name, "/product-category/subcategory-child/add", "Minor category added.");
+    await nodeRow(page, "subCategory", subId).getByRole("button", { name: `${subLabel}에 소분류 추가` }).click();
+    await saveInDialog(page, "소분류 추가", name, "/product-category/subcategory-child/add", "소분류가 등록되었습니다.");
     await expect(nodeByName(page, "childCategory", name)).toBeVisible();
   }
   const aId = Number(await nodeByName(page, "childCategory", minorA).getAttribute("data-id"));
   const bId = Number(await nodeByName(page, "childCategory", minorB).getAttribute("data-id"));
 
   // 3. Edit: rename minor A
-  await nodeRow(page, "childCategory", aId).getByRole("button", { name: `Edit [${aId}] ${minorA}` }).click();
-  await expect(page.getByRole("dialog", { name: "Edit minor category" }).getByRole("textbox", { name: "Category name" })).toHaveValue(minorA);
-  await saveInDialog(page, "Edit minor category", minorAEdited, `/product-category/subcategory-child/edit/${aId}`, "Minor category updated.");
+  await nodeRow(page, "childCategory", aId).getByRole("button", { name: `[${aId}] ${minorA} 수정` }).click();
+  await expect(page.getByRole("dialog", { name: "소분류 수정" }).getByRole("textbox", { name: "명칭" })).toHaveValue(minorA);
+  await saveInDialog(page, "소분류 수정", minorAEdited, `/product-category/subcategory-child/edit/${aId}`, "소분류가 수정되었습니다.");
   await expect(nodeRow(page, "childCategory", aId)).toContainText(minorAEdited);
 
   // 4. Reorder — only because the group holds exactly our two records
   const group = `li[data-level="subCategory"][data-id="${subId}"] > ul`;
   expect(await visibleOrder(page, group, "childCategory")).toEqual([aId, bId]);
   const reorderCall = page.waitForRequest((req) => req.url().includes("/product-category/reorder-subsubcategories") && req.method() === "PUT");
-  await page.getByRole("button", { name: `Reorder [${bId}] ${minorB}` }).focus();
+  await page.getByRole("button", { name: `[${bId}] ${minorB} 순서 변경` }).focus();
   await page.keyboard.press("Alt+ArrowUp");
   const request = await reorderCall;
   expect(request.postDataJSON()).toEqual({ ids: [bId, aId] });
   expect((await request.response())?.ok(), "reorder failed").toBe(true);
-  await expect(page.getByText("Order saved.").first()).toBeVisible();
+  await expect(page.getByText("카테고리 순서가 변경되었습니다.").first()).toBeVisible();
   await page.reload();
   await expect.poll(() => visibleOrder(page, group, "childCategory")).toEqual([bId, aId]);
 
   // 5. Delete: the subcategory is blocked while it has children (no request) …
   const writes = countWrites(page);
-  await nodeRow(page, "subCategory", subId).getByRole("button", { name: `Delete ${subLabel}` }).click();
-  const blocked = page.getByRole("dialog", { name: "Cannot delete" });
-  await expect(blocked).toContainText("it has minor categories. Delete them first.");
-  await blocked.getByRole("button", { name: "OK" }).click();
+  await nodeRow(page, "subCategory", subId).getByRole("button", { name: `${subLabel} 삭제` }).click();
+  const blocked = page.getByRole("dialog", { name: "삭제 불가" });
+  await expect(blocked).toContainText("하위 항목을 먼저 삭제해 주세요.");
+  await blocked.getByRole("button", { name: "확인" }).click();
   expect(writes.count).toBe(0);
 
   // … so children first, then the subcategory
-  await deleteLeaf(page, "childCategory", bId, `[${bId}] ${minorB}`, `/subcategory-child/delete/${bId}`, "Minor category deleted.");
-  await deleteLeaf(page, "childCategory", aId, `[${aId}] ${minorAEdited}`, `/subcategory-child/delete/${aId}`, "Minor category deleted.");
-  await deleteLeaf(page, "subCategory", subId, subLabel, `/subcategory/delete/${subId}`, "Middle category deleted.");
+  await deleteLeaf(page, "childCategory", bId, `[${bId}] ${minorB}`, `/subcategory-child/delete/${bId}`, "소분류가 삭제되었습니다.");
+  await deleteLeaf(page, "childCategory", aId, `[${aId}] ${minorAEdited}`, `/subcategory-child/delete/${aId}`, "소분류가 삭제되었습니다.");
+  await deleteLeaf(page, "subCategory", subId, subLabel, `/subcategory/delete/${subId}`, "중분류가 삭제되었습니다.");
 }

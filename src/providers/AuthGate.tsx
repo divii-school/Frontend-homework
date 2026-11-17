@@ -39,6 +39,6 @@ export default function AuthGate({ children }: { children: ReactNode }) {
     return () => window.clearTimeout(timer);
   }, [session]);
 
-  if (!hydrated || !session) return <PageLoader label="Checking your session…" />;
+  if (!hydrated || !session) return <PageLoader label="로그인 정보를 확인하는 중…" />;
   return <>{children}</>;
 }

@@ -118,11 +118,11 @@ export default function CategoryNode({ node, siblings, index, tree }: CategoryNo
             tabIndex={0}
             className="category-handle"
             draggable={tree.canMove}
-            aria-roledescription="drag handle"
-            aria-label={`Reorder ${label}`}
+            aria-roledescription="드래그 핸들"
+            aria-label={`${label} 순서 변경`}
             aria-describedby={tree.helpId}
             aria-disabled={tree.canMove ? undefined : true}
-            title="Drag to reorder (or Alt + ↑ / Alt + ↓)"
+            title="드래그하여 순서 변경 (또는 Alt + ↑ / Alt + ↓)"
             onDragStart={onDragStart}
             onDragEnd={tree.onDragEnd}
           >
@@ -138,7 +138,7 @@ export default function CategoryNode({ node, siblings, index, tree }: CategoryNo
             className="category-toggle"
             aria-expanded={expanded}
             aria-controls={childrenId}
-            aria-label={`${info.childPlural.charAt(0).toUpperCase()}${info.childPlural.slice(1)} of ${label}`}
+            aria-label={`${label} 하위 ${info.childPlural}`}
             onClick={() => tree.onToggle(node.key)}
           >
             <i className={`pi ${expanded ? "pi-chevron-down" : "pi-chevron-right"}`} aria-hidden="true" />
@@ -164,7 +164,7 @@ export default function CategoryNode({ node, siblings, index, tree }: CategoryNo
               label={info.addLabel}
               severity="help"
               className="category-add"
-              aria-label={`Add ${LEVEL_INFO[info.childLevel].noun} to ${label}`}
+              aria-label={`${label}에 ${LEVEL_INFO[info.childLevel].noun} 추가`}
               onClick={() => tree.onAdd(node)}
             />
           )}
@@ -176,7 +176,7 @@ export default function CategoryNode({ node, siblings, index, tree }: CategoryNo
               rounded
               severity="secondary"
               className="category-icon-button"
-              aria-label={`Edit ${label}`}
+              aria-label={`${label} 수정`}
               onClick={() => tree.onEdit(node, siblings)}
             />
           )}
@@ -188,7 +188,7 @@ export default function CategoryNode({ node, siblings, index, tree }: CategoryNo
               rounded
               severity="danger"
               className="category-icon-button"
-              aria-label={`Delete ${label}`}
+              aria-label={`${label} 삭제`}
               disabled={busy}
               onClick={() => tree.onDelete(node)}
             />

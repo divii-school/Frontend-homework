@@ -17,21 +17,21 @@ export default function ProductEditScreen({ id }: { id: number }) {
 
   const backToList = (
     <Link href={LIST_HREF} className="p-button p-button-outlined">
-      Back to list
+      목록으로
     </Link>
   );
 
   if (!validId) {
     return (
       <section className="content-card">
-        <ErrorState variant="not-found" message="This product address is not valid." actions={backToList} />
+        <ErrorState variant="not-found" message="올바르지 않은 상품 주소입니다." actions={backToList} />
       </section>
     );
   }
   if (query.isPending || !query.isFetchedAfterMount) {
     return (
       <section className="content-card">
-        <PageLoader label="Loading the product…" />
+        <PageLoader label="상품 정보를 불러오는 중…" />
       </section>
     );
   }

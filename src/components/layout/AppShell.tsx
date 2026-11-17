@@ -71,7 +71,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className={classes}>
       <a href="#main-content" className="skip-link">
-        Skip to content
+        본문 바로가기
       </a>
       <AppSidebar
         collapsed={collapsed}
@@ -80,7 +80,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
         onCloseDrawer={() => setDrawerOpen(false)}
       />
       {/* Dimmed backdrop behind the drawer; clicking it closes the menu */}
-      <button type="button" className="app-nav-overlay" aria-label="Close menu" tabIndex={-1} onClick={() => setDrawerOpen(false)} />
+      <button type="button" className="app-nav-overlay" aria-label="메뉴 닫기" tabIndex={-1} onClick={() => setDrawerOpen(false)} />
       <div className="app-main">
         <AppTopbar drawerOpen={drawerOpen} onOpenDrawer={() => setDrawerOpen(true)} />
         <main className="page-container" id="main-content" tabIndex={-1}>

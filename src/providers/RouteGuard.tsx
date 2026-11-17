@@ -19,6 +19,6 @@ export default function RouteGuard({ children }: { children: ReactNode }) {
     if (session && !allowed) router.replace(`/403?from=${encodeURIComponent(pathname)}`);
   }, [session, allowed, pathname, router]);
 
-  if (!allowed) return <PageLoader label="Checking permissions…" />;
+  if (!allowed) return <PageLoader label="권한을 확인하는 중…" />;
   return <>{children}</>;
 }

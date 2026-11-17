@@ -13,8 +13,8 @@ const STALE_TIME_MS = 30_000;
 
 /** Titles of the default error toast. The second line of the toast is the error's own message. */
 export const DEFAULT_ERROR_TITLES = {
-  query: "The data could not be loaded",
-  mutation: "The action was not completed",
+  query: "데이터를 불러오지 못했습니다",
+  mutation: "요청을 처리하지 못했습니다",
 } as const;
 
 /** Put this in a hook's options (`meta: SHOWS_OWN_ERROR`) when its screens show the error themselves. */

@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { confirmAction } from "@/utils/confirm";
 
 /** Design 8.1.1 #21: the same question for Cancel and for leaving through a link. */
-export const LEAVE_CONFIRM_MESSAGE = "All entered information will be deleted. Do you want to cancel?";
+export const LEAVE_CONFIRM_MESSAGE = "입력한 정보가 모두 삭제됩니다. 취소하시겠습니까?";
 
 export function confirmLeave(): Promise<boolean> {
-  return confirmAction({ header: "Cancel", message: LEAVE_CONFIRM_MESSAGE, acceptLabel: "Yes", rejectLabel: "No", danger: true });
+  return confirmAction({ header: "취소", message: LEAVE_CONFIRM_MESSAGE, acceptLabel: "예", rejectLabel: "아니오", danger: true });
 }
 
 /**

@@ -267,7 +267,7 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
     const fields = fieldErrorsFromApi(error);
     fields.forEach(({ field, message }) => setError(field, { type: "server", message }));
     setSubmitError(error.message);
-    toast.error(mode === "create" ? "The product was not registered" : "The changes were not saved", error.message);
+    toast.error(mode === "create" ? "상품 등록에 실패했습니다." : "상품 수정에 실패했습니다.", error.message);
     if (fields.length > 0) {
       // Back to the field the API complained about (its step gets the red marker)
       const first = Math.min(...fields.map(({ field }) => stepOfField(field))) as StepNumber;
@@ -295,7 +295,7 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
         await addProduct.mutateAsync({ ...payload, productCode });
       }
       leave();
-      toast.success(mode === "create" ? "Product registered" : "Product saved", payload.productName);
+      toast.success(mode === "create" ? "상품이 성공적으로 등록되었습니다." : "상품 정보가 성공적으로 수정되었습니다.", payload.productName);
       router.push(mode === "create" ? LIST_HREF : exitHref);
     } catch (error) {
       showApiError(toApiError(error));
@@ -318,20 +318,20 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
     void handleSubmit(onValid, onInvalid)();
   };
 
-  const submitLabel = mode === "create" ? "Register" : "Save";
+  const submitLabel = mode === "create" ? "등록" : "저장";
 
   return (
     <FormProvider {...form}>
       <DraftAutosave storageKey={storageKey} baseVersion={baseVersion} disabled={done} />
-      <section className="content-card product-form-card" aria-label={mode === "create" ? "Product registration form" : "Product edit form"}>
+      <section className="content-card product-form-card" aria-label={mode === "create" ? "상품 등록 입력 양식" : "상품 수정 입력 양식"}>
         <ProductFormStepper current={step} unlocked={unlocked} errorSteps={errorSteps} onSelect={(target) => void goToStep(target)} />
 
         {/* Draft notice */}
         {draftSavedAt !== null && (
           <div className="product-form-notice" role="status">
             <i className="pi pi-history" aria-hidden="true" />
-            <span>Draft restored (saved {formatDateTime(draftSavedAt)}).</span>
-            <Button type="button" label="Discard" text size="small" className="product-form-notice-action" onClick={discardDraft} />
+            <span>임시 저장된 내용을 불러왔습니다. (저장 시각: {formatDateTime(draftSavedAt)})</span>
+            <Button type="button" label="임시 저장 삭제" text size="small" className="product-form-notice-action" onClick={discardDraft} />
           </div>
         )}
 
@@ -345,7 +345,7 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
 
         {!canSave && (
           <p className="product-form-alert" role="alert">
-            Your account cannot {mode === "create" ? "register" : "edit"} products.
+            상품 {mode === "create" ? "등록" : "수정"} 권한이 없습니다.
           </p>
         )}
 
@@ -353,7 +353,7 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
           {/* Step 1 — Basic info */}
           <section data-step={1} hidden={step !== 1} className="product-form-step" aria-labelledby="product-step-1-title">
             <h2 id="product-step-1-title" className="product-form-step-title" tabIndex={-1}>
-              1. Basic info
+              1. 기본 정보
             </h2>
             <StepBasicInfo mode={mode} />
           </section>
@@ -361,7 +361,7 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
           {/* Step 2 — Images & status */}
           <section data-step={2} hidden={step !== 2} className="product-form-step" aria-labelledby="product-step-2-title">
             <h2 id="product-step-2-title" className="product-form-step-title" tabIndex={-1}>
-              2. Images &amp; status
+              2. 이미지 및 상태
             </h2>
             <StepImagesStatus onUploadingChange={setUploading} />
           </section>
@@ -369,7 +369,7 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
           {/* Step 3 — Category & options */}
           <section data-step={3} hidden={step !== 3} className="product-form-step" aria-labelledby="product-step-3-title">
             <h2 id="product-step-3-title" className="product-form-step-title" tabIndex={-1}>
-              3. Category &amp; options
+              3. 카테고리 및 옵션
             </h2>
             <StepCategoryOptions
               lockedCategory={lockedCategory}
@@ -383,14 +383,14 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
           {/* Step 4 — ERP & review (+ the API error box) */}
           <section data-step={4} hidden={step !== 4} className="product-form-step" aria-labelledby="product-step-4-title">
             <h2 id="product-step-4-title" className="product-form-step-title" tabIndex={-1}>
-              4. ERP &amp; review
+              4. ERP 정보 및 확인
             </h2>
             {submitError && (
               <div className="product-form-alert" role="alert" tabIndex={-1} data-submit-error>
                 <i className="pi pi-exclamation-circle" aria-hidden="true" />
                 <div>
-                  <strong>{mode === "create" ? "The product was not registered." : "The changes were not saved."}</strong>{" "}
-                  {submitError} Everything you entered is kept — fix it and press {submitLabel} again.
+                  <strong>{mode === "create" ? "상품 등록에 실패했습니다." : "상품 수정에 실패했습니다."}</strong>{" "}
+                  {submitError} 입력한 내용은 그대로 유지됩니다. 수정한 후 [{submitLabel}] 버튼을 다시 눌러 주세요.
                 </div>
               </div>
             )}
@@ -406,19 +406,19 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
 
           {/* Footer: Cancel on the left, Back / Next / Register on the right */}
           <div className="product-form-footer">
-            <Button type="button" label="Cancel" outlined className="product-form-cancel" onClick={() => void cancel()} />
+            <Button type="button" label="취소" outlined className="product-form-cancel" onClick={() => void cancel()} />
             <div className="product-form-footer-nav">
               {step > 1 && (
                 <Button
                   type="button"
-                  label="Back"
+                  label="이전"
                   icon="pi pi-arrow-left"
                   outlined
                   onClick={() => void goToStep((step - 1) as StepNumber)}
                 />
               )}
               {step < LAST_STEP ? (
-                <Button type="submit" label="Next" icon="pi pi-arrow-right" iconPos="right" />
+                <Button type="submit" label="다음" icon="pi pi-arrow-right" iconPos="right" />
               ) : (
                 <Button
                   type="submit"

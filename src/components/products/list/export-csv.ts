@@ -18,14 +18,14 @@ export const EXPORT_MAX_PAGES = 100;
 
 export const CSV_HEADER = [
   "ID",
-  "Product code",
-  "Product name",
-  "List price",
-  "Selling price",
-  "Category path",
-  "Visible",
-  "On sale",
-  "Registered at",
+  "상품코드",
+  "상품명",
+  "단가",
+  "판매금액",
+  "카테고리(과정)",
+  "노출여부",
+  "판매상태",
+  "등록일자",
 ] as const;
 
 const UTF8_BOM = "﻿";
@@ -44,7 +44,7 @@ export function toCsvCell(value: CsvValue): string {
   return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 }
 
-const yesNo = (flag: boolean) => (flag ? "Yes" : "No");
+const yesNo = (flag: boolean) => (flag ? "예" : "아니오");
 
 /** Prices stay plain numbers so Excel can add them up. */
 function toCsvRow(product: Product): CsvValue[] {

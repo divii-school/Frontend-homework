@@ -7,7 +7,7 @@ interface TableSkeletonProps {
 }
 
 // Loading placeholder shaped like the table it replaces. role="status" + hidden text for screen readers.
-export default function TableSkeleton({ rows = 6, columns = 6, label = "Loading…" }: TableSkeletonProps) {
+export default function TableSkeleton({ rows = 6, columns = 6, label = "불러오는 중…" }: TableSkeletonProps) {
   return (
     <div className="table-skeleton" role="status" aria-busy="true">
       <span className="sr-only">{label}</span>

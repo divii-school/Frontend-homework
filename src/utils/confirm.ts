@@ -16,9 +16,9 @@ export interface ConfirmOptions {
 /** Opens the confirm dialog; resolves true on accept, false on cancel / Escape / close. */
 export function confirmAction({
   message,
-  header = "Confirm",
-  acceptLabel = "OK",
-  rejectLabel = "Cancel",
+  header = "확인",
+  acceptLabel = "확인",
+  rejectLabel = "취소",
   danger = false,
   icon = "pi pi-exclamation-triangle",
 }: ConfirmOptions): Promise<boolean> {
@@ -45,6 +45,6 @@ export function confirmAction({
 }
 
 /** Delete confirmation with a red "Delete" button. */
-export function confirmDelete(message: string, header = "Delete"): Promise<boolean> {
-  return confirmAction({ message, header, acceptLabel: "Delete", danger: true, icon: "pi pi-trash" });
+export function confirmDelete(message: string, header = "삭제"): Promise<boolean> {
+  return confirmAction({ message, header, acceptLabel: "삭제", danger: true, icon: "pi pi-trash" });
 }

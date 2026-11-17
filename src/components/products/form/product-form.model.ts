@@ -57,10 +57,10 @@ export interface ProductFormValues {
 export type ProductFormField = keyof ProductFormValues;
 
 export const STEPS: ReadonlyArray<{ step: StepNumber; label: string }> = [
-  { step: 1, label: "Basic info" },
-  { step: 2, label: "Images & status" },
-  { step: 3, label: "Category & options" },
-  { step: 4, label: "ERP & review" },
+  { step: 1, label: "기본 정보" },
+  { step: 2, label: "이미지 및 상태" },
+  { step: 3, label: "카테고리 및 옵션" },
+  { step: 4, label: "ERP 정보 및 확인" },
 ];
 
 export const LAST_STEP: StepNumber = 4;
@@ -94,45 +94,45 @@ export const FORM_LIMITS = {
 } as const;
 
 export const TAX_TYPE_OPTIONS: ReadonlyArray<{ label: string; value: TaxType }> = [
-  { label: "Taxable", value: "tax" },
-  { label: "Tax-exempt", value: "tax_free" },
+  { label: "과세", value: "tax" },
+  { label: "비과세", value: "tax_free" },
 ];
 
 export const YES_NO_OPTIONS: ReadonlyArray<{ label: string; value: YesNo }> = [
-  { label: "Yes", value: "yes" },
-  { label: "No", value: "no" },
+  { label: "예", value: "yes" },
+  { label: "아니오", value: "no" },
 ];
 
 export const FORM_MESSAGES = {
-  productNameRequired: "Enter the product name.",
-  productNameTooLong: `The product name can be up to ${FORM_LIMITS.productNameMax} characters.`,
-  productCodeMissing: "The product code could not be generated. Press Regenerate.",
-  priceRequired: "Enter the unit price.",
-  pricePositive: "The unit price must be greater than ₩0.",
-  unitPriceRequired: "Enter the selling price.",
-  unitPricePositive: "The selling price must be greater than ₩0.",
-  unitPriceNotLower: "The selling price must be lower than the unit price.",
-  moneyTooLarge: "The amount can be up to ₩2,147,483,647.",
-  descriptionRequired: "Enter the detailed description.",
-  imagesRequired: "Add at least one image.",
-  imagesTooMany: `Up to ${PRODUCT_RULES.images.max} images can be registered. Remove the extra images.`,
-  imagesUploading: "Wait until the images finish uploading.",
-  isVisibleRequired: "Select the exposure status.",
-  onSaleRequired: "Select the sales status.",
-  categoryRequired: "Select a major category.",
-  subCategoryRequired: "Select a medium category.",
-  childCategoryRequired: "Select a minor category.",
-  optionPriceRequired: "Enter the option price (₩0 or more).",
-  optionsRequired: "Add at least one option, or turn off “Required option for purchase”.",
-  erpNameRequired: "Enter the ERP product name.",
-  erpNameTooLong: `The ERP product name can be up to ${FORM_LIMITS.erpNameMax} characters.`,
-  quantityRequired: "Enter the quantity.",
-  quantityPositive: "The quantity must be greater than 0.",
-  quantityTooLarge: "The quantity is too large.",
-  taxTypeRequired: "Select the tax type.",
-  erpUnitPriceRequired: "Enter the ERP unit price (₩0 or more).",
+  productNameRequired: "상품명을 입력해 주세요.",
+  productNameTooLong: `상품명은 최대 ${FORM_LIMITS.productNameMax}자까지 입력할 수 있습니다.`,
+  productCodeMissing: "상품코드를 생성하지 못했습니다. [다시 생성] 버튼을 눌러 주세요.",
+  priceRequired: "단가를 입력해 주세요.",
+  pricePositive: "단가는 0보다 큰 값을 입력해 주세요.",
+  unitPriceRequired: "판매가를 입력해 주세요.",
+  unitPricePositive: "판매가는 0보다 큰 값을 입력해 주세요.",
+  unitPriceNotLower: "판매가는 단가보다 낮아야 합니다.",
+  moneyTooLarge: "금액은 최대 ₩2,147,483,647까지 입력할 수 있습니다.",
+  descriptionRequired: "상세설명을 입력해 주세요.",
+  imagesRequired: "이미지를 1장 이상 등록해 주세요.",
+  imagesTooMany: `이미지는 최대 ${PRODUCT_RULES.images.max}장까지 등록 가능합니다. 초과한 이미지를 삭제해 주세요.`,
+  imagesUploading: "이미지 업로드가 완료될 때까지 기다려 주세요.",
+  isVisibleRequired: "노출상태를 선택해 주세요.",
+  onSaleRequired: "판매상태를 선택해 주세요.",
+  categoryRequired: "대분류를 선택해 주세요.",
+  subCategoryRequired: "중분류를 선택해 주세요.",
+  childCategoryRequired: "소분류를 선택해 주세요.",
+  optionPriceRequired: "옵션 판매가를 입력해 주세요. (₩0 이상)",
+  optionsRequired: "옵션을 1개 이상 추가하거나 “상품 구매 필수 옵션 선택”을 해제해 주세요.",
+  erpNameRequired: "상품ERP명을 입력해 주세요.",
+  erpNameTooLong: `상품ERP명은 최대 ${FORM_LIMITS.erpNameMax}자까지 입력할 수 있습니다.`,
+  quantityRequired: "갯수를 입력해 주세요.",
+  quantityPositive: "갯수는 1 이상의 숫자여야 합니다.",
+  quantityTooLarge: "입력할 수 있는 갯수를 초과했습니다.",
+  taxTypeRequired: "비과세를 선택해 주세요.",
+  erpUnitPriceRequired: "ERP 단가를 입력해 주세요. (₩0 이상)",
   // Notice above the edit form when a saved draft is thrown away (see the draft restore in ProductForm)
-  draftOutdated: "Your saved draft was not restored: this product was changed after the draft was saved. The form shows the current data.",
+  draftOutdated: "임시 저장된 내용을 불러오지 않았습니다. 임시 저장 이후 이 상품의 정보가 변경되어 현재 저장된 정보를 표시합니다.",
 } as const;
 
 export const EMPTY_PRODUCT_VALUES: ProductFormValues = {

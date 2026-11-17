@@ -55,7 +55,7 @@ test.describe("Category screen states (mocked API)", () => {
     });
 
     await page.goto(PAGE_URL);
-    await expect(page.getByRole("heading", { name: "Product Category Management", level: 1 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "상품 카테고리 관리", level: 1 })).toBeVisible();
     const skeleton = page.locator(".category-tree-skeleton");
     await expect(skeleton).toBeVisible();
     await expect(skeleton).toHaveAttribute("role", "status");
@@ -69,13 +69,13 @@ test.describe("Category screen states (mocked API)", () => {
     await mockCategoryApi(page, []);
     await page.goto(PAGE_URL);
 
-    await expect(page.getByRole("heading", { name: "No categories yet" })).toBeVisible();
-    const register = page.getByRole("button", { name: "Register main category" });
+    await expect(page.getByRole("heading", { name: "등록된 카테고리가 없습니다" })).toBeVisible();
+    const register = page.getByRole("button", { name: "대분류 등록" });
     await expect(register).toBeEnabled();
     await register.click();
-    const dialog = page.getByRole("dialog", { name: "Register main category" });
+    const dialog = page.getByRole("dialog", { name: "대분류 등록" });
     await expect(dialog).toBeVisible();
-    await expect(dialog.getByLabel("Category name")).toBeFocused();
+    await expect(dialog.getByLabel("명칭")).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
   });
@@ -84,11 +84,11 @@ test.describe("Category screen states (mocked API)", () => {
     const mock = await mockCategoryApi(page);
     await page.goto(`${PAGE_URL}?q=zzzz-nothing`);
 
-    await expect(page.getByRole("heading", { name: "No search results found" })).toBeVisible();
-    await expect(page.getByLabel("Search categories")).toHaveValue("zzzz-nothing");
+    await expect(page.getByRole("heading", { name: "검색 결과가 없습니다" })).toBeVisible();
+    await expect(page.getByLabel("카테고리 검색")).toHaveValue("zzzz-nothing");
     expect(mock.searches).toContain("zzzz-nothing");
 
-    await page.getByRole("button", { name: "Clear search" }).first().click();
+    await page.getByRole("button", { name: "검색 초기화" }).first().click();
     await expect(page).toHaveURL(/\/shopping-mall\/categories$/);
     await expect(nodeRow(page, "category", 67)).toBeVisible();
   });
@@ -101,13 +101,13 @@ test.describe("Category screen states (mocked API)", () => {
     );
 
     await page.goto(PAGE_URL);
-    const error = page.getByRole("alert").filter({ hasText: "Server error" });
+    const error = page.getByRole("alert").filter({ hasText: "서버 오류" });
     await expect(error).toBeVisible({ timeout: 15_000 });
-    await expect(error).toContainText("Error code 500");
-    await expect(page.getByRole("button", { name: "Register main category" })).toBeDisabled();
+    await expect(error).toContainText("오류 코드 500");
+    await expect(page.getByRole("button", { name: "대분류 등록" })).toBeDisabled();
 
     fail = false;
-    await error.getByRole("button", { name: "Try again" }).click();
+    await error.getByRole("button", { name: "다시 시도" }).click();
     await expect(nodeRow(page, "category", 67)).toBeVisible();
   });
 
@@ -117,11 +117,11 @@ test.describe("Category screen states (mocked API)", () => {
     await page.route(/\/product-category\/list/, (route) => (offline ? route.abort("failed") : route.fallback()));
 
     await page.goto(PAGE_URL);
-    const error = page.getByRole("alert").filter({ hasText: "Connection problem" });
+    const error = page.getByRole("alert").filter({ hasText: "연결 오류" });
     await expect(error).toBeVisible({ timeout: 15_000 });
 
     offline = false;
-    await error.getByRole("button", { name: "Try again" }).click();
+    await error.getByRole("button", { name: "다시 시도" }).click();
     await expect(nodeRow(page, "category", 67)).toBeVisible();
   });
 
@@ -131,9 +131,9 @@ test.describe("Category screen states (mocked API)", () => {
     await page.goto(PAGE_URL);
 
     await expect(nodeRow(page, "category", 67)).toBeVisible();
-    const register = page.getByRole("button", { name: "Register main category" });
+    const register = page.getByRole("button", { name: "대분류 등록" });
     await expect(register).toBeDisabled();
-    await expect(page.getByText("Up to 3 main categories can be registered. Delete one to add another.")).toBeVisible();
+    await expect(page.getByText("대분류는 최대 3개까지 등록할 수 있습니다. 새로 등록하려면 기존 대분류를 삭제해 주세요.")).toBeVisible();
     await expect(register).toHaveAttribute("aria-describedby", "category-register-reason");
   });
 });
@@ -144,32 +144,32 @@ test.describe("Category tree interactions (mocked API)", () => {
     await page.goto(PAGE_URL);
 
     const main = nodeRow(page, "category", 67);
-    await expect(main).toContainText("Main");
+    await expect(main).toContainText("대분류");
     await expect(main).toContainText("[67]");
-    await expect(main).toContainText("(2 subcategories)");
-    await expect(main.getByRole("button", { name: "Add subcategory to [67] Main" })).toBeVisible();
+    await expect(main).toContainText("(2개 중분류)");
+    await expect(main.getByRole("button", { name: "[67] Main에 중분류 추가" })).toBeVisible();
 
     const sub = nodeRow(page, "subCategory", 72);
     await expect(sub).toContainText("[72]Phonics & Alphabet");
-    await expect(sub).toContainText("(2 minor categories)");
-    await expect(sub.getByRole("button", { name: "Add minor category to [72] Phonics & Alphabet" })).toBeVisible();
+    await expect(sub).toContainText("(2개 소분류)");
+    await expect(sub.getByRole("button", { name: "[72] Phonics & Alphabet에 소분류 추가" })).toBeVisible();
 
     // Depth limit: nothing can be added under a minor category
     const minor = nodeRow(page, "childCategory", 536);
-    await expect(minor.getByRole("button", { name: /^Add / })).toHaveCount(0);
-    await expect(minor.getByRole("button", { name: "Edit [536] ACE Alphabet" })).toBeVisible();
-    await expect(minor.getByRole("button", { name: "Delete [536] ACE Alphabet" })).toBeVisible();
+    await expect(minor.getByRole("button", { name: / 추가$/ })).toHaveCount(0);
+    await expect(minor.getByRole("button", { name: "[536] ACE Alphabet 수정" })).toBeVisible();
+    await expect(minor.getByRole("button", { name: "[536] ACE Alphabet 삭제" })).toBeVisible();
 
     // A main category without children: count 0, no chevron
-    await expect(nodeRow(page, "category", 80)).toContainText("(0 subcategories)");
-    await expect(nodeRow(page, "category", 80).getByRole("button", { name: /^Subcategories of/ })).toHaveCount(0);
+    await expect(nodeRow(page, "category", 80)).toContainText("(0개 중분류)");
+    await expect(nodeRow(page, "category", 80).getByRole("button", { name: / 하위 중분류$/ })).toHaveCount(0);
   });
 
   test("chevron toggles one row; Expand all / Collapse all toggle every row", async ({ page }) => {
     await mockCategoryApi(page);
     await page.goto(PAGE_URL);
 
-    const toggle = page.getByRole("button", { name: "Subcategories of [67] Main" });
+    const toggle = page.getByRole("button", { name: "[67] Main 하위 중분류" });
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
     await toggle.click();
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
@@ -177,12 +177,12 @@ test.describe("Category tree interactions (mocked API)", () => {
     await toggle.click();
     await expect(nodeItem(page, "subCategory", 72)).toBeVisible();
 
-    await page.getByRole("button", { name: "Collapse all" }).click();
+    await page.getByRole("button", { name: "모두 접기" }).click();
     await expect(nodeItem(page, "subCategory", 72)).toBeHidden();
     await expect(nodeItem(page, "subCategory", 166)).toBeHidden();
     await expect(page.locator('.category-toggle[aria-expanded="true"]')).toHaveCount(0);
 
-    await page.getByRole("button", { name: "Expand all" }).click();
+    await page.getByRole("button", { name: "모두 펼치기" }).click();
     await expect(nodeItem(page, "childCategory", 536)).toBeVisible();
     await expect(nodeItem(page, "subCategory", 166)).toBeVisible();
   });
@@ -192,7 +192,7 @@ test.describe("Category tree interactions (mocked API)", () => {
     await page.goto(PAGE_URL);
     await expect(nodeRow(page, "category", 67)).toBeVisible();
 
-    const box = page.getByLabel("Search categories");
+    const box = page.getByLabel("카테고리 검색");
     await box.fill("Phonics");
     await box.press("Enter");
     await expect(page).toHaveURL(/\?q=Phonics$/);
@@ -201,18 +201,18 @@ test.describe("Category tree interactions (mocked API)", () => {
     expect(mock.searches).toContain("Phonics");
 
     await box.fill("Booster");
-    await page.getByRole("button", { name: "Search", exact: true }).click();
+    await page.getByRole("button", { name: "검색", exact: true }).click();
     await expect(page).toHaveURL(/\?q=Booster$/);
     await expect(nodeRow(page, "subCategory", 166)).toBeVisible();
     await expect(nodeItem(page, "category", 67)).toHaveCount(0);
 
     // Only part of the siblings is shown during a search → no reordering
-    await expect(page.getByText("Clear the search to change the order.")).toBeVisible();
-    await expect(page.getByRole("button", { name: /^Reorder / })).toHaveCount(0);
+    await expect(page.getByText("순서를 변경하려면 검색을 초기화해 주세요.")).toBeVisible();
+    await expect(page.getByRole("button", { name: / 순서 변경$/ })).toHaveCount(0);
 
     // The term survives a reload (URL state)
     await page.reload();
-    await expect(page.getByLabel("Search categories")).toHaveValue("Booster");
+    await expect(page.getByLabel("카테고리 검색")).toHaveValue("Booster");
     await expect(nodeRow(page, "subCategory", 166)).toBeVisible();
   });
 
@@ -220,14 +220,14 @@ test.describe("Category tree interactions (mocked API)", () => {
     const mock = await mockCategoryApi(page);
     await page.goto(PAGE_URL);
 
-    const handle = page.getByRole("button", { name: "Reorder [166] Booster" });
+    const handle = page.getByRole("button", { name: "[166] Booster 순서 변경" });
     await handle.focus();
     await page.keyboard.press("Alt+ArrowDown");
 
     await expect
       .poll(() => mock.writes)
       .toContainEqual({ method: "PUT", path: "/reorder-subcategories", body: { ids: [168, 166, 169] } });
-    await expect(page.getByText("Order saved.")).toBeVisible();
+    await expect(page.getByText("카테고리 순서가 변경되었습니다.")).toBeVisible();
     expect(await visibleOrder(page, 'li[data-level="category"][data-id="74"] > ul', "subCategory")).toEqual([168, 166, 169]);
     await expect(handle).toBeFocused();
   });
@@ -237,7 +237,7 @@ test.describe("Category tree interactions (mocked API)", () => {
     await page.goto(PAGE_URL);
 
     await page
-      .getByRole("button", { name: "Reorder [536] ACE Alphabet" })
+      .getByRole("button", { name: "[536] ACE Alphabet 순서 변경" })
       .dragTo(nodeRow(page, "childCategory", 645));
 
     await expect
@@ -255,24 +255,24 @@ test.describe("Category tree interactions (mocked API)", () => {
     const mock = await mockCategoryApi(page);
     await page.goto(PAGE_URL);
 
-    const addButton = page.getByRole("button", { name: "Add subcategory to [74] Books" });
+    const addButton = page.getByRole("button", { name: "[74] Books에 중분류 추가" });
     await addButton.click();
-    const dialog = page.getByRole("dialog", { name: "Add subcategory" });
-    const input = dialog.getByLabel("Category name");
+    const dialog = page.getByRole("dialog", { name: "중분류 추가" });
+    const input = dialog.getByLabel("명칭");
     await expect(input).toBeFocused();
     await expect(dialog).toContainText("[74] Books");
 
     await input.press("Enter");
-    await expect(dialog.getByRole("alert")).toHaveText("Please enter a category name.");
+    await expect(dialog.getByRole("alert")).toHaveText("명칭을 입력해 주세요.");
     await input.fill("    ");
     await input.press("Enter");
-    await expect(dialog.getByRole("alert")).toHaveText("Please enter a category name.");
+    await expect(dialog.getByRole("alert")).toHaveText("명칭을 입력해 주세요.");
     await input.fill("x".repeat(51));
     await input.press("Enter");
-    await expect(dialog.getByRole("alert")).toHaveText("Use 50 characters or fewer.");
+    await expect(dialog.getByRole("alert")).toHaveText("명칭은 50자 이내로 입력해 주세요.");
     await input.fill("  booster ");
     await input.press("Enter");
-    await expect(dialog.getByRole("alert")).toHaveText("This name is already used at this level.");
+    await expect(dialog.getByRole("alert")).toHaveText("동일 레벨에 이미 사용 중인 명칭입니다.");
     expect(mock.writes).toEqual([]);
 
     // The API's duplicate answer goes under the field, the dialog stays open
@@ -281,7 +281,7 @@ test.describe("Category tree interactions (mocked API)", () => {
     );
     await input.fill("Something new");
     await input.press("Enter");
-    await expect(dialog.getByRole("alert")).toHaveText("A middle category with this name already exists in this category.");
+    await expect(dialog.getByRole("alert")).toHaveText("이미 존재하는 중분류 카테고리입니다.");
     await expect(input).toHaveAttribute("aria-invalid", "true");
 
     await page.keyboard.press("Escape");
@@ -294,13 +294,13 @@ test.describe("Category tree interactions (mocked API)", () => {
     const mock = await mockCategoryApi(page);
     await page.goto(PAGE_URL);
 
-    await page.getByRole("button", { name: "Subcategories of [74] Books" }).click();
-    await page.getByRole("button", { name: "Add subcategory to [74] Books" }).click();
-    const dialog = page.getByRole("dialog", { name: "Add subcategory" });
-    await dialog.getByLabel("Category name").fill("  HW3-Neeraj-mock  ");
-    await dialog.getByRole("button", { name: "Register" }).click();
+    await page.getByRole("button", { name: "[74] Books 하위 중분류" }).click();
+    await page.getByRole("button", { name: "[74] Books에 중분류 추가" }).click();
+    const dialog = page.getByRole("dialog", { name: "중분류 추가" });
+    await dialog.getByLabel("명칭").fill("  HW3-Neeraj-mock  ");
+    await dialog.getByRole("button", { name: "등록" }).click();
 
-    await expect(page.getByText("Middle category added.")).toBeVisible();
+    await expect(page.getByText("중분류가 등록되었습니다.")).toBeVisible();
     await expect(dialog).toBeHidden();
     expect(mock.writes).toContainEqual({ method: "POST", path: "/subcategory/add", body: { name: "HW3-Neeraj-mock", categoryId: 74 } });
     await expect(nodeItem(page, "category", 74).getByText("HW3-Neeraj-mock")).toBeVisible();
@@ -310,23 +310,23 @@ test.describe("Category tree interactions (mocked API)", () => {
     const mock = await mockCategoryApi(page);
     await page.goto(PAGE_URL);
 
-    await page.getByRole("button", { name: "Delete [67] Main" }).click();
-    const blocked = page.getByRole("dialog", { name: "Cannot delete" });
-    await expect(blocked).toContainText('Cannot delete "[67] Main": it has subcategories. Delete them first.');
-    await blocked.getByRole("button", { name: "OK" }).click();
+    await page.getByRole("button", { name: "[67] Main 삭제" }).click();
+    const blocked = page.getByRole("dialog", { name: "삭제 불가" });
+    await expect(blocked).toContainText('"[67] Main" 카테고리에 하위 항목이 있습니다. 하위 항목을 먼저 삭제해 주세요.');
+    await blocked.getByRole("button", { name: "확인" }).click();
     await expect(blocked).toBeHidden();
     expect(mock.writes).toEqual([]);
 
-    const deleteLeaf = page.getByRole("button", { name: "Delete [166] Booster" });
+    const deleteLeaf = page.getByRole("button", { name: "[166] Booster 삭제" });
     await deleteLeaf.click();
-    const confirm = page.getByRole("dialog", { name: "Delete subcategory" });
-    await expect(confirm).toContainText('Delete the subcategory "[166] Booster"? This cannot be undone.');
-    await confirm.getByRole("button", { name: "Cancel" }).click();
+    const confirm = page.getByRole("dialog", { name: "중분류 삭제" });
+    await expect(confirm).toContainText('"[166] Booster" 중분류를 삭제하시겠습니까? 삭제 후에는 되돌릴 수 없습니다.');
+    await confirm.getByRole("button", { name: "취소" }).click();
     expect(mock.writes).toEqual([]);
 
     await deleteLeaf.click();
-    await confirm.getByRole("button", { name: "Delete", exact: true }).click();
-    await expect(page.getByText("Middle category deleted.")).toBeVisible();
+    await confirm.getByRole("button", { name: "삭제", exact: true }).click();
+    await expect(page.getByText("중분류가 삭제되었습니다.")).toBeVisible();
     expect(mock.writes).toEqual([{ method: "DELETE", path: "/subcategory/delete/166", body: null }]);
     await expect(nodeItem(page, "subCategory", 166)).toHaveCount(0);
   });
@@ -344,7 +344,7 @@ test.describe("Category tree interactions (mocked API)", () => {
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       expect(overflow).toBeLessThanOrEqual(0);
 
-      for (const name of ["Edit [536] ACE Alphabet", "Delete [536] ACE Alphabet", "Add minor category to [72] Phonics & Alphabet"]) {
+      for (const name of ["[536] ACE Alphabet 수정", "[536] ACE Alphabet 삭제", "[72] Phonics & Alphabet에 소분류 추가"]) {
         const box = await page.getByRole("button", { name }).boundingBox();
         expect(box, name).not.toBeNull();
         expect(box?.height ?? 0, name).toBeGreaterThanOrEqual(40);

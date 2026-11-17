@@ -37,14 +37,14 @@ export default function NoPermissionDialog({ visible, onClose }: NoPermissionDia
       <div className="no-permission-body">
         <BrandLogo suffix="Admin" />
         <p className="no-permission-message" id="no-permission-title" role="alert">
-          You do not have admin permission.
+          관리자 권한이 없습니다.
           <br />
-          Please contact the customer center.
+          고객센터로 문의해주세요.
         </p>
         <p className="no-permission-phone">
           <a href={`tel:${CUSTOMER_CENTER_PHONE.replace(/-/g, "")}`}>{CUSTOMER_CENTER_PHONE}</a>
         </p>
-        <Button type="button" className="no-permission-button" label="Go to Talking Club home" onClick={goHome} autoFocus />
+        <Button type="button" className="no-permission-button" label="토킹클럽 홈으로" onClick={goHome} autoFocus />
       </div>
     </Dialog>
   );

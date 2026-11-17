@@ -19,9 +19,9 @@ export default function ProductFormStepper({ current, unlocked, errorSteps, onSe
   const currentLabel = STEPS.find(({ step }) => step === current)?.label ?? "";
 
   return (
-    <nav className="product-stepper" aria-label="Form steps">
+    <nav className="product-stepper" aria-label="입력 단계">
       <p className="product-stepper-compact" aria-live="polite">
-        Step {current} of {STEPS.length} · {currentLabel}
+        {STEPS.length}단계 중 {current}단계 · {currentLabel}
       </p>
       <ol className="product-stepper-list">
         {STEPS.map(({ step, label }) => {
@@ -51,10 +51,10 @@ export default function ProductFormStepper({ current, unlocked, errorSteps, onSe
                   {hasError ? <i className="pi pi-exclamation-triangle" /> : isDone ? <i className="pi pi-check" /> : step}
                 </span>
                 <span className="product-stepper-label">
-                  <span className="sr-only">Step {step}: </span>
+                  <span className="sr-only">{step}단계: </span>
                   {label}
-                  {hasError && <span className="sr-only"> (has errors)</span>}
-                  {isDone && <span className="sr-only"> (completed)</span>}
+                  {hasError && <span className="sr-only"> (오류 있음)</span>}
+                  {isDone && <span className="sr-only"> (완료)</span>}
                 </span>
               </button>
             </li>

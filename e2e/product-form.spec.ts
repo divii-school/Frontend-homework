@@ -35,54 +35,54 @@ test.afterEach(() => {
 test.describe("Product form (live QA API, read-only)", () => {
   test("step 1: required messages, selling ≥ unit price, Next blocked until valid", async ({ page }) => {
     await page.goto(CREATE_URL);
-    await expect(field(page, "Product code")).not.toHaveValue("", { timeout: 30_000 });
+    await expect(field(page, "상품코드")).not.toHaveValue("", { timeout: 30_000 });
 
     // Empty step → four messages, focus on the first invalid field, still step 1
     await clickNext(page);
-    await expect(page.locator("#product-name-error")).toHaveText("Enter the product name.");
-    await expect(page.locator("#product-price-error")).toHaveText("Enter the unit price.");
-    await expect(page.locator("#product-unit-price-error")).toHaveText("Enter the selling price.");
-    await expect(page.locator("#product-description-error")).toHaveText("Enter the detailed description.");
-    await expect(field(page, "Product name")).toBeFocused();
+    await expect(page.locator("#product-name-error")).toHaveText("상품명을 입력해 주세요.");
+    await expect(page.locator("#product-price-error")).toHaveText("단가를 입력해 주세요.");
+    await expect(page.locator("#product-unit-price-error")).toHaveText("판매가를 입력해 주세요.");
+    await expect(page.locator("#product-description-error")).toHaveText("상세설명을 입력해 주세요.");
+    await expect(field(page, "상품명")).toBeFocused();
     await expect(page).not.toHaveURL(/step=2/);
 
     // Selling price not lower than the unit price
     await fillStep1(page, { name: "HW3-Neeraj-live-check", price: "10000", selling: "10000" });
-    await expect(field(page, "Unit price")).toHaveValue("₩10,000");
+    await expect(field(page, "단가")).toHaveValue("₩10,000");
     await clickNext(page);
-    await expect(page.locator("#product-unit-price-error")).toHaveText("The selling price must be lower than the unit price.");
-    await expect(field(page, "Selling price")).toBeFocused();
+    await expect(page.locator("#product-unit-price-error")).toHaveText("판매가는 단가보다 낮아야 합니다.");
+    await expect(field(page, "판매가")).toBeFocused();
     await expect(page).not.toHaveURL(/step=2/);
 
     // Fixed → Next works
-    await field(page, "Selling price").fill("9000");
+    await field(page, "판매가").fill("9000");
     await clickNext(page);
     await expectStep(page, 2);
   });
 
   test("going back keeps every value and the step is in the URL", async ({ page }) => {
     await page.goto(CREATE_URL);
-    await expect(field(page, "Product code")).not.toHaveValue("", { timeout: 30_000 });
+    await expect(field(page, "상품코드")).not.toHaveValue("", { timeout: 30_000 });
     await fillStep1(page, { name: "HW3-Neeraj-live-back", price: "25000", selling: "20000", description: "Line one\nLine two" });
     await clickNext(page);
     await expectStep(page, 2);
-    await chooseOption(page, "product-is-visible", "No");
+    await chooseOption(page, "product-is-visible", "아니오");
 
-    await page.getByRole("button", { name: "Back", exact: true }).click();
+    await page.getByRole("button", { name: "이전", exact: true }).click();
     await expectStep(page, 1);
-    await expect(field(page, "Product name")).toHaveValue("HW3-Neeraj-live-back");
-    await expect(field(page, "Unit price")).toHaveValue("₩25,000");
-    await expect(field(page, "Selling price")).toHaveValue("₩20,000");
-    await expect(field(page, "Detailed description")).toHaveValue("Line one\nLine two");
+    await expect(field(page, "상품명")).toHaveValue("HW3-Neeraj-live-back");
+    await expect(field(page, "단가")).toHaveValue("₩25,000");
+    await expect(field(page, "판매가")).toHaveValue("₩20,000");
+    await expect(field(page, "상세설명")).toHaveValue("Line one\nLine two");
 
     await clickNext(page);
     await expectStep(page, 2);
-    await expect(page.locator(".p-dropdown").filter({ has: page.locator("#product-is-visible") })).toContainText("No");
+    await expect(page.locator(".p-dropdown").filter({ has: page.locator("#product-is-visible") })).toContainText("아니오");
 
     // Browser Back = previous step (the step is a real history entry)
     await page.goBack();
     await expectStep(page, 1);
-    await expect(field(page, "Product name")).toHaveValue("HW3-Neeraj-live-back");
+    await expect(field(page, "상품명")).toHaveValue("HW3-Neeraj-live-back");
   });
 
   test("image type and size are checked before any upload request", async ({ page }) => {
@@ -92,7 +92,7 @@ test.describe("Product form (live QA API, read-only)", () => {
     });
 
     await page.goto(CREATE_URL);
-    await expect(field(page, "Product code")).not.toHaveValue("", { timeout: 30_000 });
+    await expect(field(page, "상품코드")).not.toHaveValue("", { timeout: 30_000 });
     await fillStep1(page, { name: "HW3-Neeraj-live-files", price: "20000", selling: "10000" });
     await clickNext(page);
     await expectStep(page, 2);
@@ -101,14 +101,14 @@ test.describe("Product form (live QA API, read-only)", () => {
       { name: "notes.txt", mimeType: "text/plain", buffer: Buffer.from("not an image") },
       { name: "huge.png", mimeType: "image/png", buffer: Buffer.alloc((MAX_IMAGE_MB + 1) * 1024 * 1024, 1) },
     ]);
-    const rejected = page.getByRole("alert", { name: "Files not added" });
-    await expect(rejected).toContainText('"notes.txt" is not a supported image.');
-    await expect(rejected).toContainText(`"huge.png" is larger than ${MAX_IMAGE_MB} MB.`);
-    await expect(page.getByText("0 / 4 images")).toBeVisible();
+    const rejected = page.getByRole("alert", { name: "추가되지 않은 파일" });
+    await expect(rejected).toContainText('"notes.txt" 파일은 지원하지 않는 이미지 형식입니다.');
+    await expect(rejected).toContainText(`"huge.png" 파일의 용량이 ${MAX_IMAGE_MB}MB를 초과합니다.`);
+    await expect(page.getByText("0 / 4장")).toBeVisible();
 
     await clickNext(page);
     await expectStep(page, 2);
-    await expect(page.locator("#product-images-error")).toHaveText("Add at least one image.");
+    await expect(page.locator("#product-images-error")).toHaveText("이미지를 1장 이상 등록해 주세요.");
     expect(uploadCalls, "no upload request for rejected files").toEqual([]);
   });
 
@@ -134,18 +134,18 @@ test.describe("Product form (live QA API, read-only)", () => {
     }).data;
 
     await page.goto(`/shopping-mall/products/edit/${row.id}`);
-    const code = field(page, "Product code");
+    const code = field(page, "상품코드");
     await expect(code).toHaveValue(details.productCode, { timeout: 30_000 });
     await expect(code).toHaveAttribute("readonly", "");
-    await expect(field(page, "Product name")).toHaveValue(details.productName);
+    await expect(field(page, "상품명")).toHaveValue(details.productName);
 
-    await page.getByRole("button", { name: /Step 3: Category & options/ }).click();
+    await page.getByRole("button", { name: /3단계: 카테고리 및 옵션/ }).click();
     await expectStep(page, 3);
     if (details.category && details.subCategory && details.childCategory) {
-      await expect(field(page, "Major category")).toHaveValue(details.category.name);
-      await expect(field(page, "Major category")).toHaveAttribute("readonly", "");
-      await expect(field(page, "Medium category")).toHaveValue(details.subCategory.name);
-      await expect(field(page, "Minor category")).toHaveValue(details.childCategory.name);
+      await expect(field(page, "대분류")).toHaveValue(details.category.name);
+      await expect(field(page, "대분류")).toHaveAttribute("readonly", "");
+      await expect(field(page, "중분류")).toHaveValue(details.subCategory.name);
+      await expect(field(page, "소분류")).toHaveValue(details.childCategory.name);
     } else {
       test.info().annotations.push({ type: "note", description: "This product has no full category, so the pickers are editable." });
     }

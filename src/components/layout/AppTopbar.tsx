@@ -28,7 +28,7 @@ export default function AppTopbar({ drawerOpen, onOpenDrawer }: AppTopbarProps) 
           text
           severity="secondary"
           className="app-topbar-menu"
-          aria-label="Open menu"
+          aria-label="메뉴 열기"
           aria-expanded={drawerOpen}
           aria-controls="app-sidebar"
           onClick={onOpenDrawer}
@@ -42,14 +42,14 @@ export default function AppTopbar({ drawerOpen, onOpenDrawer }: AppTopbarProps) 
           icon="pi pi-sign-out"
           text
           severity="secondary"
-          aria-label="Log out"
-          title="Log out"
+          aria-label="로그아웃"
+          title="로그아웃"
           loading={isLoggingOut}
           onClick={logout}
         />
         <span className="app-topbar-divider" aria-hidden="true" />
         <span className="app-topbar-user" title={name}>
-          <span className="sr-only">Signed in as </span>
+          <span className="sr-only">로그인 계정: </span>
           {name}
         </span>
       </div>

@@ -40,7 +40,7 @@ export default function AppSidebar({ collapsed, onToggleCollapsed, onExpand, onC
   };
 
   return (
-    <aside className="app-sidebar" id="app-sidebar" aria-label="Sidebar">
+    <aside className="app-sidebar" id="app-sidebar" aria-label="사이드바">
       <div className="app-sidebar-head">
         <BrandLogo href={DEFAULT_HOME} />
         <Button
@@ -49,7 +49,7 @@ export default function AppSidebar({ collapsed, onToggleCollapsed, onExpand, onC
           text
           severity="secondary"
           className="app-sidebar-toggle"
-          aria-label={collapsed ? "Expand menu" : "Collapse menu"}
+          aria-label={collapsed ? "메뉴 펼치기" : "메뉴 접기"}
           aria-expanded={!collapsed}
           aria-controls="app-sidebar-nav"
           onClick={onToggleCollapsed}
@@ -60,22 +60,22 @@ export default function AppSidebar({ collapsed, onToggleCollapsed, onExpand, onC
           text
           severity="secondary"
           className="app-sidebar-close"
-          aria-label="Close menu"
+          aria-label="메뉴 닫기"
           onClick={onCloseDrawer}
         />
       </div>
 
-      <nav className="app-nav" id="app-sidebar-nav" aria-label="Main menu">
+      <nav className="app-nav" id="app-sidebar-nav" aria-label="주 메뉴">
         <ul className="app-nav-list">
           {menu.map((item) => {
             // Not part of HW3: greyed, not focusable, explained for screen readers
             if (item.disabled) {
               return (
                 <li key={item.key}>
-                  <span className="app-nav-group-button app-nav-disabled" aria-disabled="true" title="Not part of this homework">
+                  <span className="app-nav-group-button app-nav-disabled" aria-disabled="true" title="이번 과제 범위에 포함되지 않은 메뉴입니다">
                     {item.icon && <i className={`app-nav-icon ${item.icon}`} aria-hidden="true" />}
                     <span className="app-nav-label">{item.label}</span>
-                    <span className="sr-only">(not available in this app)</span>
+                    <span className="sr-only">(이 앱에서는 사용할 수 없음)</span>
                   </span>
                 </li>
               );
@@ -104,9 +104,9 @@ export default function AppSidebar({ collapsed, onToggleCollapsed, onExpand, onC
                       {item.children.map((child) =>
                         child.disabled || !child.href ? (
                           <li key={child.key}>
-                            <span className="app-nav-sublink app-nav-disabled" aria-disabled="true" title="Not part of this homework">
+                            <span className="app-nav-sublink app-nav-disabled" aria-disabled="true" title="이번 과제 범위에 포함되지 않은 메뉴입니다">
                               {child.label}
-                              <span className="sr-only">(not available in this app)</span>
+                              <span className="sr-only">(이 앱에서는 사용할 수 없음)</span>
                             </span>
                           </li>
                         ) : (

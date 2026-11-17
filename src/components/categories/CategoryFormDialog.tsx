@@ -49,8 +49,8 @@ const MAX = CATEGORY_RULES.nameMaxLength;
 function dialogTitle(target: CategoryFormTarget | null): string {
   if (!target) return "";
   const noun = LEVEL_INFO[target.level].noun;
-  if (target.mode === "edit") return `Edit ${noun}`;
-  return target.level === "category" ? "Register main category" : `Add ${noun}`;
+  if (target.mode === "edit") return `${noun} 수정`;
+  return target.level === "category" ? "대분류 등록" : `${noun} 추가`;
 }
 
 // Add / edit modal for all three levels (design ⑤ ⑦ ⑧ ⑨ ⑫).
@@ -92,7 +92,7 @@ export default function CategoryFormDialog({ visible, target, onClose, onSaved }
       { level: target.level, id: target.id, name: trimmed, parentId: target.parentId },
       {
         onSuccess: (res) => {
-          toast.success(getApiMessage(res.message, "Saved."));
+          toast.success(getApiMessage(res.message, "저장되었습니다."));
           onSaved(target);
         },
         onError: (error) => {
@@ -101,7 +101,7 @@ export default function CategoryFormDialog({ visible, target, onClose, onSaved }
             setError("name", { type: "server", message: fieldMessage }, { shouldFocus: true });
             return;
           }
-          toast.error("Could not save the category", error.message);
+          toast.error("카테고리 저장 실패", error.message);
           // Someone else deleted it meanwhile: close and reload the tree
           if (error.kind === "not-found") {
             void queryClient.invalidateQueries({ queryKey: queryKeys.categories.all });
@@ -123,11 +123,11 @@ export default function CategoryFormDialog({ visible, target, onClose, onSaved }
       resizable={false}
       footer={
         <div className="category-form-actions">
-          <Button type="button" label="Cancel" outlined onClick={onClose} />
+          <Button type="button" label="취소" outlined onClick={onClose} />
           <Button
             type="submit"
             form={formId}
-            label={target?.mode === "edit" ? "Save" : "Register"}
+            label={target?.mode === "edit" ? "저장" : "등록"}
             icon={save.isPending ? "pi pi-spin pi-spinner" : undefined}
             disabled={save.isPending}
           />
@@ -138,13 +138,13 @@ export default function CategoryFormDialog({ visible, target, onClose, onSaved }
         {/* Where the new item goes (add under a parent only) */}
         {target?.parentLabel && target.mode === "add" && (
           <p className="category-form-parent">
-            Parent: <strong>{target.parentLabel}</strong>
+            상위 카테고리: <strong>{target.parentLabel}</strong>
           </p>
         )}
 
         {/* Name field + counter + error */}
         <label htmlFor={inputId} className="category-form-label">
-          Category name <span aria-hidden="true">*</span>
+          명칭 <span aria-hidden="true">*</span>
         </label>
         <InputText
           id={inputId}
@@ -153,20 +153,20 @@ export default function CategoryFormDialog({ visible, target, onClose, onSaved }
           aria-required="true"
           aria-invalid={nameError ? true : undefined}
           aria-describedby={`${inputId}-hint${nameError ? ` ${inputId}-error` : ""}`}
-          placeholder="Please enter the category name."
+          placeholder="명칭을 입력해 주세요."
           {...register("name", {
             validate: {
-              required: (value) => value.trim().length > 0 || "Please enter a category name.",
-              maxLength: (value) => value.trim().length <= MAX || `Use ${MAX} characters or fewer.`,
+              required: (value) => value.trim().length > 0 || "명칭을 입력해 주세요.",
+              maxLength: (value) => value.trim().length <= MAX || `명칭은 ${MAX}자 이내로 입력해 주세요.`,
               unique: (value) =>
                 !(target?.siblingNames ?? []).some((other) => other.trim().toLowerCase() === value.trim().toLowerCase()) ||
-                "This name is already used at this level.",
+                "동일 레벨에 이미 사용 중인 명칭입니다.",
             },
           })}
         />
         <div className="category-form-meta">
           <p id={`${inputId}-hint`} className="field-hint">
-            Up to {MAX} characters. Spaces at the start and end are removed.
+            최대 {MAX}자까지 입력할 수 있습니다. 앞뒤 공백은 자동으로 제거됩니다.
           </p>
           <span className={length > MAX ? "category-form-counter category-form-counter-over" : "category-form-counter"}>
             {length}/{MAX}

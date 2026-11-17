@@ -9,7 +9,7 @@ test.describe("Login page (no API)", () => {
   test("shows the design fields; Login stays disabled until ID and password are filled", async ({ page }) => {
     await page.goto("/login");
     const form = loginForm(page);
-    await expect(page.getByRole("heading", { name: "TalkingClub Admin login" })).toBeAttached();
+    await expect(page.getByRole("heading", { name: "TalkingClub Admin 로그인" })).toBeAttached();
     await expect(form.id).toBeVisible();
     await expect(form.password).toHaveAttribute("type", "password");
     await expect(form.remember).toBeChecked();
@@ -30,23 +30,23 @@ test.describe("Login page (no API)", () => {
     const form = loginForm(page);
     await form.id.click();
     await form.password.click();
-    await expect(page.getByText("Please enter your ID.")).toBeVisible();
+    await expect(page.getByText("아이디를 입력해 주세요.")).toBeVisible();
     await expect(form.id).toHaveAttribute("aria-invalid", "true");
 
     await form.id.click();
-    await expect(page.getByText("Please enter your password.")).toBeVisible();
+    await expect(page.getByText("비밀번호를 입력해 주세요.")).toBeVisible();
 
     await form.id.fill("someone");
-    await expect(page.getByText("Please enter your ID.")).toHaveCount(0);
+    await expect(page.getByText("아이디를 입력해 주세요.")).toHaveCount(0);
   });
 
   test("the eye button shows and hides the password", async ({ page }) => {
     await page.goto("/login");
     const form = loginForm(page);
     await form.password.fill("secret");
-    await page.getByRole("button", { name: "Show password" }).click();
+    await page.getByRole("button", { name: "비밀번호 표시" }).click();
     await expect(form.password).toHaveAttribute("type", "text");
-    await page.getByRole("button", { name: "Hide password" }).click();
+    await page.getByRole("button", { name: "비밀번호 숨기기" }).click();
     await expect(form.password).toHaveAttribute("type", "password");
   });
 
@@ -74,9 +74,9 @@ test.describe("Login with the QA API", () => {
     await page.goto("/login");
     await loginThroughUi(page, { id: "HW3-Neeraj-no-such-user", password: "not-a-real-password" });
     const dialog = page.getByRole("dialog");
-    await expect(dialog).toContainText("This account is not registered.");
-    await dialog.getByRole("button", { name: "OK" }).click();
-    await expect(page.getByText("This ID is not registered.")).toBeVisible();
+    await expect(dialog).toContainText("등록되지 않은 계정입니다.");
+    await dialog.getByRole("button", { name: "확인" }).click();
+    await expect(page.getByText("등록된 아이디가 아닙니다")).toBeVisible();
   });
 
   test("a wrong password shows the API message", async ({ page }) => {
@@ -84,9 +84,9 @@ test.describe("Login with the QA API", () => {
     await page.goto("/login");
     await loginThroughUi(page, { id, password: "HW3-Neeraj-wrong-password" });
     const dialog = page.getByRole("dialog");
-    await expect(dialog).toContainText("The ID and password do not match");
-    await dialog.getByRole("button", { name: "OK" }).click();
-    await expect(page.getByText("The password does not match.")).toBeVisible();
+    await expect(dialog).toContainText("아이디와 비밀번호가 일치하지 않습니다");
+    await dialog.getByRole("button", { name: "확인" }).click();
+    await expect(page.getByText("비밀번호가 일치하지 않습니다")).toBeVisible();
     await expect(loginForm(page).password).toBeFocused();
   });
 
@@ -96,7 +96,7 @@ test.describe("Login with the QA API", () => {
     await expect(page).toHaveURL(/\/login\?returnTo=/);
     await loginThroughUi(page, credentials);
     await expect(page).toHaveURL(/\/shopping-mall\/products\?page=2$/, { timeout: 60_000 });
-    await expect(page.getByRole("heading", { name: "Product Management", level: 1 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "상품 관리", level: 1 })).toBeVisible();
   });
 
   test("logout clears the session and protects routes again", async ({ page }) => {
@@ -105,7 +105,7 @@ test.describe("Login with the QA API", () => {
     await loginThroughUi(page, credentials);
     await expect(page).toHaveURL(/\/shopping-mall\//, { timeout: 60_000 });
 
-    await page.getByRole("button", { name: "Log out" }).click();
+    await page.getByRole("button", { name: "로그아웃" }).click();
     await expect(page).toHaveURL(/\/login$/);
 
     await page.goto("/shopping-mall/products");

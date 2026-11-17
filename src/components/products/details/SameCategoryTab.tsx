@@ -40,14 +40,14 @@ function RelatedProducts({ product }: { product: ProductDetails & { childCategor
       error={related.error}
       onRetry={() => void related.refetch()}
       isEmpty={others.length === 0}
-      loadingFallback={<TableSkeleton rows={4} columns={3} label="Loading products of this category…" />}
-      emptyTitle="No other products"
-      emptyDescription={`No other product is registered in ${path}.`}
+      loadingFallback={<TableSkeleton rows={4} columns={3} label="동일 카테고리의 상품을 불러오는 중…" />}
+      emptyTitle="다른 상품이 없습니다"
+      emptyDescription={`${path} 카테고리에 등록된 다른 상품이 없습니다.`}
     >
       <p className="related-summary">
-        {formatNumber(othersTotal)} other product{othersTotal === 1 ? "" : "s"} in <strong>{path}</strong>
-        {othersTotal > others.length && ` — the newest ${others.length} are shown`}.{" "}
-        <Link href={`${PRODUCT_ROUTES.list}${search ? `?${search}` : ""}`}>Open in product list</Link>
+        <strong>{path}</strong> 카테고리의 다른 상품 {formatNumber(othersTotal)}건
+        {othersTotal > others.length && ` (최신 ${others.length}건만 표시)`}.{" "}
+        <Link href={`${PRODUCT_ROUTES.list}${search ? `?${search}` : ""}`}>상품 목록에서 보기</Link>
       </p>
       <ul className="related-products">
         {others.map((row) => (
@@ -61,7 +61,7 @@ function RelatedProducts({ product }: { product: ProductDetails & { childCategor
                 {row.productCode || "-"} · {formatWon(row.unitPrice)}
               </span>
             </div>
-            <span className={`product-badge${row.isVisible ? " is-on" : ""}`}>{row.isVisible ? "Visible" : "Hidden"}</span>
+            <span className={`product-badge${row.isVisible ? " is-on" : ""}`}>{row.isVisible ? "노출" : "미노출"}</span>
           </li>
         ))}
       </ul>
@@ -83,9 +83,9 @@ export default function SameCategoryTab({ productId }: { productId: number }) {
       error={details.error}
       onRetry={() => void details.refetch()}
       isEmpty={!!product && !childCategory?.id}
-      loadingFallback={<TableSkeleton rows={4} columns={3} label="Loading product…" />}
-      emptyTitle="No minor category"
-      emptyDescription="This product has no minor category, so there are no related products to show."
+      loadingFallback={<TableSkeleton rows={4} columns={3} label="상품 정보를 불러오는 중…" />}
+      emptyTitle="소분류가 지정되지 않았습니다"
+      emptyDescription="이 상품에는 소분류가 지정되어 있지 않아 동일 카테고리의 상품을 표시할 수 없습니다."
     >
       {product && childCategory?.id ? <RelatedProducts product={{ ...product, childCategory }} /> : null}
     </StateWrapper>

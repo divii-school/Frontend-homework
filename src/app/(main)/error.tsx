@@ -11,7 +11,7 @@ export default function MainError({ error, reset }: { error: Error & { digest?: 
 
   return (
     <section className="content-card">
-      <ErrorState error={error} variant="server" title="Something went wrong" onRetry={reset} />
+      <ErrorState error={error} variant="server" title="오류가 발생했습니다" onRetry={reset} />
     </section>
   );
 }

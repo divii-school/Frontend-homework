@@ -64,20 +64,20 @@ export type RouteKey = (typeof ROUTE_KEYS)[keyof typeof ROUTE_KEYS];
 export const DEFAULT_HOME = "/shopping-mall/products";
 
 export const NAVIGATION: readonly NavItem[] = [
-  { key: "dashboard", label: "Dashboard", icon: "pi pi-th-large", roles: HQ_ADMIN_ROLES, disabled: true },
-  { key: "user-management", label: "User Management", icon: "pi pi-users", roles: HQ_ADMIN_ROLES, disabled: true },
-  { key: "academy-management", label: "Academy Management", icon: "pi pi-building", roles: HQ_ADMIN_ROLES, disabled: true },
-  { key: "academic-management", label: "Academic Management", icon: "pi pi-book", roles: HQ_ADMIN_ROLES, disabled: true },
-  { key: "curriculum-management", label: "Curriculum Management", icon: "pi pi-folder", roles: HQ_ADMIN_ROLES, disabled: true },
+  { key: "dashboard", label: "대시보드", icon: "pi pi-th-large", roles: HQ_ADMIN_ROLES, disabled: true },
+  { key: "user-management", label: "유저관리", icon: "pi pi-users", roles: HQ_ADMIN_ROLES, disabled: true },
+  { key: "academy-management", label: "학원 관리", icon: "pi pi-building", roles: HQ_ADMIN_ROLES, disabled: true },
+  { key: "academic-management", label: "학사관리", icon: "pi pi-book", roles: HQ_ADMIN_ROLES, disabled: true },
+  { key: "curriculum-management", label: "교육과정 관리", icon: "pi pi-folder", roles: HQ_ADMIN_ROLES, disabled: true },
   {
     key: "shopping-mall",
-    label: "Shopping Mall Management",
+    label: "쇼핑몰 관리",
     icon: "pi pi-shopping-bag",
     roles: HQ_ADMIN_ROLES,
     children: [
       {
         key: ROUTE_KEYS.PRODUCTS,
-        label: "Product Management",
+        label: "상품 관리",
         href: "/shopping-mall/products",
         roles: HQ_ADMIN_ROLES,
         permission: { module: PERMISSION_KEYS.SHOPPING_MALL, subModule: PERMISSION_KEYS.PRODUCT_MANAGEMENT },
@@ -89,19 +89,19 @@ export const NAVIGATION: readonly NavItem[] = [
       },
       {
         key: ROUTE_KEYS.CATEGORIES,
-        label: "Product Category Management",
+        label: "상품 카테고리 관리",
         href: "/shopping-mall/categories",
         roles: SUPER_ROLES,
         permission: { module: PERMISSION_KEYS.SHOPPING_MALL, subModule: PERMISSION_KEYS.CATEGORY_MANAGEMENT },
       },
-      { key: "order-delivery", label: "Order Delivery Management", roles: HQ_ADMIN_ROLES, disabled: true },
-      { key: "reward-points", label: "Reward Points Management", roles: HQ_ADMIN_ROLES, disabled: true },
+      { key: "order-delivery", label: "주문 배송 관리", roles: HQ_ADMIN_ROLES, disabled: true },
+      { key: "reward-points", label: "적립금 관리", roles: HQ_ADMIN_ROLES, disabled: true },
     ],
   },
-  { key: "notice-management", label: "Notice Management", icon: "pi pi-megaphone", roles: HQ_ADMIN_ROLES, disabled: true },
-  { key: "payment-management", label: "Payment Management", icon: "pi pi-credit-card", roles: HQ_ADMIN_ROLES, disabled: true },
-  { key: "branch-manager-menu", label: "Branch Manager Menu", icon: "pi pi-id-card", roles: HQ_ADMIN_ROLES, disabled: true },
-  { key: "permission-management", label: "Permission Management", icon: "pi pi-key", roles: HQ_ADMIN_ROLES, disabled: true },
+  { key: "notice-management", label: "공지사항 관리", icon: "pi pi-megaphone", roles: HQ_ADMIN_ROLES, disabled: true },
+  { key: "payment-management", label: "결제 관리", icon: "pi pi-credit-card", roles: HQ_ADMIN_ROLES, disabled: true },
+  { key: "branch-manager-menu", label: "지사장 메뉴", icon: "pi pi-id-card", roles: HQ_ADMIN_ROLES, disabled: true },
+  { key: "permission-management", label: "권한 관리", icon: "pi pi-key", roles: HQ_ADMIN_ROLES, disabled: true },
 ];
 
 // ---- Lookups ---------------------------------------------------------------------------------

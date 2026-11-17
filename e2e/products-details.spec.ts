@@ -29,43 +29,43 @@ test.describe("Product details (live QA API, read-only)", () => {
     await firstRowLink(page).click();
     await expect(page).toHaveURL(/\/details\/\d+$/);
     await expect(page.getByRole("heading", { name, level: 1 })).toBeVisible({ timeout: 30_000 });
-    await expect(page.getByRole("tab", { name: "Overview" })).toHaveAttribute("aria-selected", "true");
-    await expect(panel(page).getByRole("heading", { name: "Basic information" })).toBeVisible();
+    await expect(page.getByRole("tab", { name: "상품 정보" })).toHaveAttribute("aria-selected", "true");
+    await expect(panel(page).getByRole("heading", { name: "기본 정보" })).toBeVisible();
     await expect(panel(page).getByText(name).first()).toBeVisible();
   });
 
   test("tabs switch, update ?tab= and survive a reload; arrow keys move between tabs", async ({ page }) => {
     const { href } = await firstProduct(page);
     await page.goto(href);
-    await expect(panel(page).getByRole("heading", { name: "Basic information" })).toBeVisible({ timeout: 30_000 });
+    await expect(panel(page).getByRole("heading", { name: "기본 정보" })).toBeVisible({ timeout: 30_000 });
 
-    await page.getByRole("tab", { name: "Options" }).click();
+    await page.getByRole("tab", { name: "옵션" }).click();
     await expect(page).toHaveURL(/\?tab=options$/);
-    await expect(page.getByRole("tab", { name: "Options" })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("tab", { name: "옵션" })).toHaveAttribute("aria-selected", "true");
     await expect(
-      panel(page).getByRole("heading", { name: /Option group|No options/ }).first(),
+      panel(page).getByRole("heading", { name: /옵션 \d+번|옵션 없음/ }).first(),
     ).toBeVisible({ timeout: 30_000 });
 
-    await page.getByRole("tab", { name: "Same category" }).click();
+    await page.getByRole("tab", { name: "동일 카테고리 상품" }).click();
     await expect(page).toHaveURL(/\?tab=related$/);
     await expect(
-      panel(page).locator(".related-products").or(panel(page).getByRole("heading", { name: /No other products|No minor category/ })),
+      panel(page).locator(".related-products").or(panel(page).getByRole("heading", { name: /다른 상품이 없습니다|소분류가 지정되지 않았습니다/ })),
     ).toBeVisible({ timeout: 30_000 });
 
     await page.reload();
-    await expect(page.getByRole("tab", { name: "Same category" })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("tab", { name: "동일 카테고리 상품" })).toHaveAttribute("aria-selected", "true");
 
-    await page.getByRole("tab", { name: "Same category" }).focus();
+    await page.getByRole("tab", { name: "동일 카테고리 상품" }).focus();
     await page.keyboard.press("ArrowLeft");
     await expect(page).toHaveURL(/\?tab=options$/);
-    await expect(page.getByRole("tab", { name: "Options" })).toBeFocused();
+    await expect(page.getByRole("tab", { name: "옵션" })).toBeFocused();
   });
 
   test("Back to list returns to the list the user came from", async ({ page }) => {
     await firstProduct(page, "?limit=20");
     await firstRowLink(page).click();
     await expect(page).toHaveURL(/\/details\/\d+$/);
-    await page.getByRole("link", { name: "Back to list" }).first().click();
+    await page.getByRole("link", { name: "목록으로" }).first().click();
     await expect(page).toHaveURL(/\/shopping-mall\/products\?limit=20$/);
   });
 });
@@ -80,11 +80,11 @@ test.describe("Product details — not found (live QA API)", () => {
 
   test("an unknown id and a non-numeric id show the not-found state", async ({ page }) => {
     await page.goto("/shopping-mall/products/details/999999999");
-    await expect(page.getByRole("heading", { name: "Product not found" })).toBeVisible({ timeout: 30_000 });
-    await expect(page.getByRole("link", { name: "Back to list" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "상품을 찾을 수 없습니다" })).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole("link", { name: "목록으로" })).toBeVisible();
 
     await page.goto("/shopping-mall/products/details/abc");
-    await expect(page.getByRole("heading", { name: "Product not found" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Edit" })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "상품을 찾을 수 없습니다" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "수정", exact: true })).toHaveCount(0);
   });
 });

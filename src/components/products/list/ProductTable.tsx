@@ -90,24 +90,24 @@ export default function ProductTable({
                 ref={headerCheckbox}
                 type="checkbox"
                 className="product-checkbox"
-                aria-label="Select all products on this page"
+                aria-label="현재 페이지의 상품 전체 선택"
                 checked={allOnPage}
                 disabled={rows.length === 0}
                 onChange={onTogglePage}
               />
             </th>
             <th scope="col" className="col-thumb">
-              Thumbnail
+              썸네일
             </th>
-            <SortableHeader field="name" label="Product Name" sort={sort} order={order} onSort={onSort} className="col-name" />
-            <SortableHeader field="price" label="Selling Price" sort={sort} order={order} onSort={onSort} className="col-price" />
+            <SortableHeader field="name" label="상품명" sort={sort} order={order} onSort={onSort} className="col-name" />
+            <SortableHeader field="price" label="판매금액" sort={sort} order={order} onSort={onSort} className="col-price" />
             <th scope="col" className="col-category">
-              Category (Course)
+              카테고리(과정)
             </th>
             <th scope="col" className="col-status">
-              Exposure Status
+              노출여부
             </th>
-            <SortableHeader field="date" label="Registration Date" sort={sort} order={order} onSort={onSort} className="col-date" />
+            <SortableHeader field="date" label="등록일자" sort={sort} order={order} onSort={onSort} className="col-date" />
           </tr>
         </thead>
         <tbody>
@@ -120,7 +120,7 @@ export default function ProductTable({
                   <input
                     type="checkbox"
                     className="product-checkbox"
-                    aria-label={`Select ${row.productName}`}
+                    aria-label={`${row.productName} 선택`}
                     checked={isSelected}
                     disabled={!isSelected && selectionFull}
                     onChange={() => onToggleRow(row.id)}
@@ -139,15 +139,15 @@ export default function ProductTable({
                   <span className="product-price">{formatWon(row.unitPrice)}</span>
                   {hasDiscount && (
                     <s className="product-list-price">
-                      <span className="sr-only">List price </span>
+                      <span className="sr-only">단가 </span>
                       {formatWon(row.price)}
                     </s>
                   )}
                 </td>
-                <td className="col-category" data-label="Category">
+                <td className="col-category" data-label="카테고리(과정)">
                   {formatCategoryPath(row.category, row.subCategory, row.childCategory)}
                 </td>
-                <td className="col-status" data-label="Exposure">
+                <td className="col-status" data-label="노출여부">
                   <ProductStatusSelect
                     productId={row.id}
                     productName={row.productName}
@@ -155,7 +155,7 @@ export default function ProductTable({
                     disabled={!canUpdate}
                   />
                 </td>
-                <td className="col-date" data-label="Registered">
+                <td className="col-date" data-label="등록일자">
                   {formatDateTime(row.createdAt)}
                 </td>
               </tr>

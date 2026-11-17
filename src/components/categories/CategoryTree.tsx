@@ -55,7 +55,7 @@ export default function CategoryTree({
     const from = siblings.findIndex((sibling) => sibling.key === node.key);
     if (isSavingOrder || from < 0 || toIndex < 0 || toIndex >= siblings.length || toIndex === from) return;
     setFocusKey(by === "keyboard" ? node.key : null);
-    setAnnouncement(`Moved ${nodeLabel(node)} to position ${toIndex + 1} of ${siblings.length}.`);
+    setAnnouncement(`${nodeLabel(node)} 항목을 ${siblings.length}개 중 ${toIndex + 1}번째 위치로 이동했습니다.`);
     onReorder(
       node.level,
       moveItem(siblings, from, toIndex).map((sibling) => sibling.id),
@@ -95,13 +95,12 @@ export default function CategoryTree({
       {/* How to reorder (also read out on every drag handle) */}
       {showHandles && (
         <p id={helpId} className="category-tree-help">
-          <i className="pi pi-bars" aria-hidden="true" /> Drag a row by its handle to change the order within the same level,
-          or focus a row and press Alt + ↑ / Alt + ↓.
+          <i className="pi pi-bars" aria-hidden="true" /> 핸들을 드래그하여 동일 레벨 내에서 순서를 변경하거나, 행에 포커스를 두고 Alt + ↑ / Alt + ↓ 키를 눌러 주세요.
         </p>
       )}
-      {isSearch && canUpdate && <p className="category-tree-help">Clear the search to change the order.</p>}
+      {isSearch && canUpdate && <p className="category-tree-help">순서를 변경하려면 검색을 초기화해 주세요.</p>}
 
-      <ul className="category-tree" aria-label="Product categories">
+      <ul className="category-tree" aria-label="상품 카테고리">
         {nodes.map((node, index) => (
           <CategoryNode key={node.key} node={node} siblings={nodes} index={index} tree={controls} />
         ))}

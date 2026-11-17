@@ -12,10 +12,10 @@ interface InfoItem {
   value: ReactNode;
 }
 
-const TAX_LABELS: Record<string, string> = { tax: "Taxable", tax_free: "Tax-exempt" };
+const TAX_LABELS: Record<string, string> = { tax: "과세", tax_free: "비과세" };
 
 function YesNoBadge({ value }: { value: boolean }) {
-  return <span className={`product-badge${value ? " is-on" : ""}`}>{value ? "Yes" : "No"}</span>;
+  return <span className={`product-badge${value ? " is-on" : ""}`}>{value ? "예" : "아니오"}</span>;
 }
 
 /** Descriptions may come from the legacy system as HTML: show the text only, never run the markup. */
@@ -50,37 +50,37 @@ function Overview({ product }: { product: ProductDetails }) {
       <ProductGallery images={product.images} productName={product.productName} />
       <div className="product-overview-info">
         <InfoSection
-          title="Basic information"
+          title="기본 정보"
           items={[
-            { label: "Product name", value: product.productName },
-            { label: "Product code", value: product.productCode },
-            { label: "Product type", value: product.isOptions ? "Main (with options)" : "Supplementary" },
-            { label: "Category", value: formatCategoryPath(product.category, product.subCategory, product.childCategory) },
-            { label: "Registered", value: formatDateTime(product.createdAt) },
-            { label: "Last updated", value: formatDateTime(product.updatedAt) },
+            { label: "상품명", value: product.productName },
+            { label: "상품코드", value: product.productCode },
+            { label: "상품 유형", value: product.isOptions ? "메인 상품 (옵션 있음)" : "단권 상품" },
+            { label: "카테고리", value: formatCategoryPath(product.category, product.subCategory, product.childCategory) },
+            { label: "등록일자", value: formatDateTime(product.createdAt) },
+            { label: "수정일자", value: formatDateTime(product.updatedAt) },
           ]}
         />
         <InfoSection
-          title="Price and status"
+          title="가격 및 상태"
           items={[
-            { label: "List price", value: formatWon(product.price) },
-            { label: "Selling price", value: formatWon(product.unitPrice) },
-            { label: "Exposure status", value: <YesNoBadge value={product.isVisible} /> },
-            { label: "Sales status", value: <YesNoBadge value={product.onSale} /> },
+            { label: "단가", value: formatWon(product.price) },
+            { label: "판매가", value: formatWon(product.unitPrice) },
+            { label: "노출상태", value: <YesNoBadge value={product.isVisible} /> },
+            { label: "판매상태", value: <YesNoBadge value={product.onSale} /> },
           ]}
         />
         <InfoSection
           title="ERP"
           items={[
-            { label: "ERP code", value: product.erpCode },
-            { label: "ERP name", value: product.erpName },
-            { label: "Quantity", value: formatNumber(product.quantity) },
-            { label: "Tax type", value: TAX_LABELS[product.taxType] ?? product.taxType },
-            { label: "ERP unit price", value: formatWon(product.erpUnitPrice) },
+            { label: "ERP 코드", value: product.erpCode },
+            { label: "상품ERP명", value: product.erpName },
+            { label: "갯수", value: formatNumber(product.quantity) },
+            { label: "비과세", value: TAX_LABELS[product.taxType] ?? product.taxType },
+            { label: "ERP 단가", value: formatWon(product.erpUnitPrice) },
           ]}
         />
         <section className="product-info-section">
-          <h2 className="product-section-title">Description</h2>
+          <h2 className="product-section-title">상세설명</h2>
           <p className="product-description">{description || EMPTY_VALUE}</p>
         </section>
       </div>
@@ -98,7 +98,7 @@ export default function OverviewTab({ productId }: { productId: number }) {
       isError={details.isError}
       error={details.error}
       onRetry={() => void details.refetch()}
-      loadingFallback={<TableSkeleton rows={5} columns={2} label="Loading product…" />}
+      loadingFallback={<TableSkeleton rows={5} columns={2} label="상품 정보를 불러오는 중…" />}
     >
       {details.data && <Overview product={details.data} />}
     </StateWrapper>

@@ -35,24 +35,24 @@ interface LevelInfo {
 
 export const LEVEL_INFO: Record<CategoryLevel, LevelInfo> = {
   category: {
-    badge: "Main",
-    noun: "main category",
+    badge: "대분류",
+    noun: "대분류",
     childLevel: "subCategory",
-    addLabel: "Subcategory",
-    childSingular: "subcategory",
-    childPlural: "subcategories",
+    addLabel: "중분류",
+    childSingular: "중분류",
+    childPlural: "중분류",
   },
   subCategory: {
-    badge: "Sub",
-    noun: "subcategory",
+    badge: "중분류",
+    noun: "중분류",
     childLevel: "childCategory",
-    addLabel: "Minor category",
-    childSingular: "minor category",
-    childPlural: "minor categories",
+    addLabel: "소분류",
+    childSingular: "소분류",
+    childPlural: "소분류",
   },
   childCategory: {
-    badge: "Minor",
-    noun: "minor category",
+    badge: "소분류",
+    noun: "소분류",
     childLevel: null,
     addLabel: null,
     childSingular: "",
@@ -106,7 +106,7 @@ export function countLabel(node: CategoryNodeData): string | null {
   const info = LEVEL_INFO[node.level];
   if (!info.childLevel) return null;
   const count = node.children.length;
-  return `(${count} ${count === 1 ? info.childSingular : info.childPlural})`;
+  return `(${count}개 ${info.childSingular})`;
 }
 
 /** Keys of every node that has children — "Collapse all" collapses exactly these. */

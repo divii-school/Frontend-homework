@@ -13,7 +13,7 @@ interface AlertDialogProps {
 
 // System alert with one OK button (design 1.1.0 ④: "[OK] closes the popup").
 // The message has role="alert" so it is read out as soon as the dialog opens.
-export default function AlertDialog({ visible, message, title = "Notice", confirmLabel = "OK", onClose }: AlertDialogProps) {
+export default function AlertDialog({ visible, message, title = "알림", confirmLabel = "확인", onClose }: AlertDialogProps) {
   return (
     <Dialog
       visible={visible}

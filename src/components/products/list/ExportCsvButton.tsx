@@ -64,15 +64,15 @@ export default function ExportCsvButton({ query, sort, order, totalRecords }: Ex
       if (cancelled.current) return;
       // Same order as the screen: the chosen sort now applies to every exported row
       downloadTextFile(buildProductsCsv(sortProducts(products, sort, order)), csvFileName());
-      toast.success("CSV exported", `${formatNumber(products.length)} products`);
+      toast.success("CSV 다운로드 완료", `상품 ${formatNumber(products.length)}건`);
     } catch (error) {
-      if (!cancelled.current) toast.error("Export failed", toApiError(error).message);
+      if (!cancelled.current) toast.error("CSV 다운로드에 실패했습니다.", toApiError(error).message);
     } finally {
       if (!cancelled.current) setProgress(null);
     }
   };
 
-  const label = progress ? `Exporting ${progress.done}/${progress.total}…` : "Export CSV";
+  const label = progress ? `다운로드 중 ${progress.done}/${progress.total}…` : "CSV 다운로드";
 
   return (
     <>
@@ -86,7 +86,7 @@ export default function ExportCsvButton({ query, sort, order, totalRecords }: Ex
         onClick={exportCsv}
       />
       <span className="sr-only" role="status">
-        {progress ? `Exporting page ${progress.done} of ${progress.total}` : ""}
+        {progress ? `전체 ${progress.total}페이지 중 ${progress.done}페이지 다운로드 중` : ""}
       </span>
     </>
   );

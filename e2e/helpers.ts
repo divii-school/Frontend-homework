@@ -29,10 +29,10 @@ export function requireAdminCredentials(): AdminCredentials {
 /** Login form locators (labels are visually hidden but real <label>s). */
 export function loginForm(page: Page) {
   return {
-    id: page.getByLabel("ID", { exact: true }),
-    password: page.getByLabel("Password", { exact: true }),
-    remember: page.getByLabel("Auto login"),
-    submit: page.getByRole("button", { name: "Login", exact: true }),
+    id: page.getByLabel("아이디", { exact: true }),
+    password: page.getByLabel("비밀번호", { exact: true }),
+    remember: page.getByLabel("자동 로그인"),
+    submit: page.getByRole("button", { name: "로그인", exact: true }),
   };
 }
 

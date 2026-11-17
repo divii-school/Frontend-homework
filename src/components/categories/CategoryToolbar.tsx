@@ -47,9 +47,9 @@ export default function CategoryToolbar({
       {/* Search (design ②): grey box, magnifier on the left = search button */}
       <form role="search" className="category-search" onSubmit={submit}>
         <label htmlFor="category-search-input" className="sr-only">
-          Search categories
+          카테고리 검색
         </label>
-        <button type="submit" className="category-search-submit" aria-label="Search">
+        <button type="submit" className="category-search-submit" aria-label="검색">
           <i className="pi pi-search" aria-hidden="true" />
         </button>
         <InputText
@@ -57,7 +57,7 @@ export default function CategoryToolbar({
           className="category-search-input"
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
-          placeholder="Category search..."
+          placeholder="카테고리 검색..."
           enterKeyHint="search"
           autoComplete="off"
         />
@@ -65,7 +65,7 @@ export default function CategoryToolbar({
           <button
             type="button"
             className="category-search-clear"
-            aria-label="Clear search"
+            aria-label="검색 초기화"
             onClick={() => {
               setDraft("");
               onSearch("");
@@ -78,15 +78,15 @@ export default function CategoryToolbar({
 
       {/* Expand all / Collapse all (design ③ ④) */}
       <div className="category-toolbar-toggles">
-        <Button type="button" label="Expand all" outlined disabled={!canToggleAll} onClick={onExpandAll} />
-        <Button type="button" label="Collapse all" outlined disabled={!canToggleAll} onClick={onCollapseAll} />
+        <Button type="button" label="모두 펼치기" outlined disabled={!canToggleAll} onClick={onExpandAll} />
+        <Button type="button" label="모두 접기" outlined disabled={!canToggleAll} onClick={onCollapseAll} />
       </div>
 
       {/* Register main category (design ⑤) + the reason when it is not allowed */}
       <div className="category-toolbar-register">
         <Button
           type="button"
-          label="Register main category"
+          label="대분류 등록"
           icon="pi pi-plus"
           disabled={registerDisabled}
           aria-describedby={registerReason ? "category-register-reason" : undefined}

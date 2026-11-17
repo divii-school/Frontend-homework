@@ -35,10 +35,10 @@ interface LoginValues {
 type AlertState = { message: string; focus: "loginId" | "password" | null } | null;
 
 const FIELD_MESSAGES = {
-  loginIdRequired: "Please enter your ID.",
-  passwordRequired: "Please enter your password.",
-  loginIdUnknown: "This ID is not registered.",
-  passwordMismatch: "The password does not match.",
+  loginIdRequired: "아이디를 입력해 주세요.",
+  passwordRequired: "비밀번호를 입력해 주세요.",
+  loginIdUnknown: "등록된 아이디가 아닙니다",
+  passwordMismatch: "비밀번호가 일치하지 않습니다",
 } as const;
 
 export default function LoginForm() {
@@ -120,7 +120,7 @@ export default function LoginForm() {
   return (
     <section className="login-card" aria-labelledby="login-title">
       <h1 id="login-title" className="sr-only">
-        TalkingClub Admin login
+        TalkingClub Admin 로그인
       </h1>
       <div className="login-brand">
         <BrandLogo suffix="Admin" />
@@ -130,14 +130,14 @@ export default function LoginForm() {
         {/* 1. ID */}
         <div className={idError ? "login-field login-field-invalid" : "login-field"}>
           <label htmlFor="login-id" className="sr-only">
-            ID
+            아이디
           </label>
           <div className="login-input-row">
             <i className="login-input-icon pi pi-user" aria-hidden="true" />
             <InputText
               id="login-id"
               className="login-input"
-              placeholder="ID"
+              placeholder="아이디"
               autoComplete="username"
               autoCapitalize="none"
               spellCheck={false}
@@ -158,7 +158,7 @@ export default function LoginForm() {
         {/* 2. Password */}
         <div className={passwordError ? "login-field login-field-invalid" : "login-field"}>
           <label htmlFor="login-password" className="sr-only">
-            Password
+            비밀번호
           </label>
           <div className="login-input-row">
             <i className="login-input-icon pi pi-lock" aria-hidden="true" />
@@ -166,7 +166,7 @@ export default function LoginForm() {
               id="login-password"
               className="login-input"
               type={showPassword ? "text" : "password"}
-              placeholder="Password"
+              placeholder="비밀번호"
               autoComplete="current-password"
               aria-invalid={passwordError ? true : undefined}
               aria-describedby={passwordError ? "login-password-error" : undefined}
@@ -175,7 +175,7 @@ export default function LoginForm() {
             <button
               type="button"
               className="login-eye-button"
-              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 표시"}
               aria-pressed={showPassword}
               aria-controls="login-password"
               onClick={() => setShowPassword((current) => !current)}
@@ -201,13 +201,13 @@ export default function LoginForm() {
                 checked={field.value}
                 onChange={(event) => field.onChange(event.checked === true)}
               />
-              Auto login
+              자동 로그인
             </label>
           )}
         />
 
         {/* 4. Login */}
-        <Button type="submit" className="login-submit" label="Login" loading={isSubmitting} disabled={!canSubmit} />
+        <Button type="submit" className="login-submit" label="로그인" loading={isSubmitting} disabled={!canSubmit} />
       </form>
 
       <AlertDialog visible={alert !== null} message={alert?.message ?? ""} onClose={closeAlert} />

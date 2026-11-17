@@ -8,7 +8,7 @@ import { PRIME_THEME_HREF, THEME_INIT_SCRIPT, THEME_LINK_IDS } from "@/utils/the
 
 export const metadata: Metadata = {
   title: { default: "TalkingClub Admin", template: "%s | TalkingClub Admin" },
-  description: "Talking Club admin — Shopping Mall: product and product category management (HW3).",
+  description: "토킹클럽 관리자 — 쇼핑몰 관리: 상품 관리 및 상품 카테고리 관리 (HW3).",
 };
 
 export const viewport: Viewport = {
@@ -21,7 +21,7 @@ export const viewport: Viewport = {
 // hence suppressHydrationWarning on <html> and the two links (see src/utils/theme.ts).
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" data-theme="light" suppressHydrationWarning>
+    <html lang="ko" data-theme="light" suppressHydrationWarning>
       <head>
         <link id={THEME_LINK_IDS.light} rel="stylesheet" href={PRIME_THEME_HREF.light} suppressHydrationWarning />
         <link id={THEME_LINK_IDS.dark} rel="stylesheet" href={PRIME_THEME_HREF.dark} suppressHydrationWarning />

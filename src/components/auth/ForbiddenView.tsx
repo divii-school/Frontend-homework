@@ -22,31 +22,31 @@ export default function ForbiddenView() {
   const homeLabel = homeHref ? (matchRoute(homeHref)?.item.label ?? findNavItem("products")?.label) : undefined;
 
   return (
-    <section className="error-page-card" aria-label="No permission">
+    <section className="error-page-card" aria-label="권한 없음">
       <div className="error-page-brand">
         <BrandLogo suffix="Admin" />
       </div>
       <ErrorState
         variant="forbidden"
         titleAs="h1"
-        title="No permission"
+        title="권한 없음"
         message={
           refusedLabel
-            ? `Your account cannot open “${refusedLabel}”. Ask a super admin if you need access.`
-            : "Your account cannot open this page. Ask a super admin if you need access."
+            ? `“${refusedLabel}” 화면을 열 수 있는 권한이 없습니다. 권한이 필요하면 최고관리자에게 문의해 주세요.`
+            : "이 페이지를 열 수 있는 권한이 없습니다. 권한이 필요하면 최고관리자에게 문의해 주세요."
         }
         actions={
           <>
             {homeHref && (
               <Link href={homeHref} className="p-button p-component">
-                <span className="p-button-label">Go to {homeLabel}</span>
+                <span className="p-button-label">{homeLabel}로 이동</span>
               </Link>
             )}
             {session ? (
-              <Button type="button" label="Log in with another account" outlined loading={isLoggingOut} onClick={logout} />
+              <Button type="button" label="다른 계정으로 로그인" outlined loading={isLoggingOut} onClick={logout} />
             ) : (
               <Link href="/login" className="p-button p-component p-button-outlined">
-                <span className="p-button-label">Go to login</span>
+                <span className="p-button-label">로그인 화면으로 이동</span>
               </Link>
             )}
           </>

@@ -60,7 +60,7 @@ const SCREENS = [
     session: false,
     design: "1.1.0-login.png",
     ready: async (page, theme) => {
-      await page.getByLabel("ID", { exact: true }).waitFor({ state: "visible" });
+      await page.getByLabel("아이디", { exact: true }).waitFor({ state: "visible" });
       // The ID field is already in the server HTML, so also wait until the page is hydrated:
       // PrimeReact has hidden the native "Auto login" checkbox (1 px wrapper) and the theme toggle
       // shows the icon of the applied theme. Otherwise the shot can show two checkboxes or the wrong icon.
@@ -69,7 +69,7 @@ const SCREENS = [
         return !!input && input.getBoundingClientRect().width <= 1;
       });
       await page
-        .getByRole("button", { name: theme === "dark" ? "Switch to light mode" : "Switch to dark mode" })
+        .getByRole("button", { name: theme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환" })
         .waitFor({ state: "visible" });
     },
   },
@@ -105,7 +105,7 @@ const SCREENS = [
     designNote:
       "There is no product-details frame in Figma (design question 4). Shown for reference: 8.1.2 Product edit, the closest frame.",
     ready: async (page) => {
-      await page.getByRole("heading", { name: "Basic information" }).waitFor({ state: "visible" });
+      await page.getByRole("heading", { name: "기본 정보" }).waitFor({ state: "visible" });
     },
   },
   {

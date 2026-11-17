@@ -114,7 +114,7 @@ const EDIT_PRODUCT = {
   ],
 };
 /** The notice the edit form shows when it throws a saved draft away (FORM_MESSAGES.draftOutdated). */
-const DRAFT_OUTDATED_NOTICE = "Your saved draft was not restored: this product was changed after the draft was saved.";
+const DRAFT_OUTDATED_NOTICE = "임시 저장된 내용을 불러오지 않았습니다. 임시 저장 이후 이 상품의 정보가 변경되어";
 
 type SubmitHandler = (route: Route) => Promise<void>;
 
@@ -219,9 +219,9 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     });
 
     await page.goto(CREATE_URL);
-    await expect(field(page, "Product code")).toHaveValue("PRD-E2E-0001");
+    await expect(field(page, "상품코드")).toHaveValue("PRD-E2E-0001");
     await fillStep1(page, { name: "HW3-Neeraj-mock-400", price: "27000", selling: "17000" });
-    await expect(field(page, "Unit price")).toHaveValue("₩27,000");
+    await expect(field(page, "단가")).toHaveValue("₩27,000");
     await clickNext(page);
     await expectStep(page, 2);
     await completeStep2(page);
@@ -231,7 +231,7 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     await clickNext(page);
     await expectStep(page, 4);
     await fillStep4(page, "HW3 mock ERP 400");
-    await page.getByRole("button", { name: "Register", exact: true }).click();
+    await page.getByRole("button", { name: "등록", exact: true }).click();
 
     // The body that went out
     await expect.poll(() => submitted).not.toBeNull();
@@ -255,21 +255,21 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
 
     // Back on step 1, selling price focused with the API message, nothing lost
     await expectStep(page, 1);
-    const selling = field(page, "Selling price");
+    const selling = field(page, "판매가");
     await expect(selling).toBeFocused();
     await expect(selling).toHaveAttribute("aria-invalid", "true");
-    await expect(page.locator("#product-unit-price-error")).toHaveText("The selling price must be lower than the unit price.");
-    await expect(page.getByRole("button", { name: /Step 1: Basic info \(has errors\)/ })).toBeVisible();
-    await expect(field(page, "Product name")).toHaveValue("HW3-Neeraj-mock-400");
-    await expect(field(page, "Unit price")).toHaveValue("₩27,000");
+    await expect(page.locator("#product-unit-price-error")).toHaveText("판매가는 단가보다 낮아야 합니다.");
+    await expect(page.getByRole("button", { name: /1단계: 기본 정보 \(오류 있음\)/ })).toBeVisible();
+    await expect(field(page, "상품명")).toHaveValue("HW3-Neeraj-mock-400");
+    await expect(field(page, "단가")).toHaveValue("₩27,000");
     await expect(selling).toHaveValue("₩17,000");
-    await expect(page.locator(".p-toast-message")).toContainText("The product was not registered");
+    await expect(page.locator(".p-toast-message")).toContainText("상품 등록에 실패했습니다.");
 
     // The other steps still hold their values
-    await page.getByRole("button", { name: /Step 4: ERP & review/ }).click();
+    await page.getByRole("button", { name: /4단계: ERP 정보 및 확인/ }).click();
     await expectStep(page, 4);
-    await expect(field(page, "ERP product name")).toHaveValue("HW3 mock ERP 400");
-    await expect(page.locator("[data-submit-error]")).toContainText("The selling price must be lower than the unit price.");
+    await expect(field(page, "상품ERP명")).toHaveValue("HW3 mock ERP 400");
+    await expect(page.locator("[data-submit-error]")).toContainText("판매가는 단가보다 낮아야 합니다.");
   });
 
   test("500 on submit → stays on review with the error box + toast, values kept", async ({ page }) => {
@@ -279,17 +279,17 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
 
     await page.goto(`${CREATE_URL}?step=4`);
     await expectStep(page, 4);
-    await expect(page.getByText("Draft restored")).toBeVisible();
-    await page.getByRole("button", { name: "Register", exact: true }).click();
+    await expect(page.getByText("임시 저장된 내용을 불러왔습니다")).toBeVisible();
+    await page.getByRole("button", { name: "등록", exact: true }).click();
 
     const alert = page.locator("[data-submit-error]");
-    await expect(alert).toContainText("Something went wrong on the server. Please try again.");
+    await expect(alert).toContainText("서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
     await expect(alert).toBeFocused();
-    await expect(page.locator(".p-toast-message")).toContainText("The product was not registered");
+    await expect(page.locator(".p-toast-message")).toContainText("상품 등록에 실패했습니다.");
     await expectStep(page, 4);
-    await expect(field(page, "ERP product name")).toHaveValue("HW3 mock ERP");
+    await expect(field(page, "상품ERP명")).toHaveValue("HW3 mock ERP");
     await expect(page.locator(".product-review")).toContainText("HW3-Neeraj-mock-product");
-    await expect(page.getByRole("button", { name: "Register", exact: true })).toBeEnabled();
+    await expect(page.getByRole("button", { name: "등록", exact: true })).toBeEnabled();
   });
 
   test("network error on submit → connection message, values kept", async ({ page }) => {
@@ -299,14 +299,14 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
 
     await page.goto(`${CREATE_URL}?step=4`);
     await expectStep(page, 4);
-    await page.getByRole("button", { name: "Register", exact: true }).click();
+    await page.getByRole("button", { name: "등록", exact: true }).click();
 
-    await expect(page.locator("[data-submit-error]")).toContainText("Cannot reach the server. Check your connection and try again.");
-    await expect(page.locator(".p-toast-message")).toContainText("The product was not registered");
-    await page.getByRole("button", { name: /Step 1: Basic info/ }).click();
+    await expect(page.locator("[data-submit-error]")).toContainText("서버에 연결할 수 없습니다. 네트워크 연결을 확인한 후 다시 시도해 주세요.");
+    await expect(page.locator(".p-toast-message")).toContainText("상품 등록에 실패했습니다.");
+    await page.getByRole("button", { name: /1단계: 기본 정보/ }).click();
     await expectStep(page, 1);
-    await expect(field(page, "Product name")).toHaveValue("HW3-Neeraj-mock-product");
-    await expect(field(page, "Selling price")).toHaveValue("₩17,000");
+    await expect(field(page, "상품명")).toHaveValue("HW3-Neeraj-mock-product");
+    await expect(field(page, "판매가")).toHaveValue("₩17,000");
   });
 
   test("create: a restored draft gets a fresh code, Register sends a code fetched right before the POST", async ({ page }) => {
@@ -327,13 +327,13 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
 
     await page.goto(`${CREATE_URL}?step=4`);
     await expectStep(page, 4);
-    await expect(page.getByText("Draft restored")).toBeVisible();
+    await expect(page.getByText("임시 저장된 내용을 불러왔습니다")).toBeVisible();
     const review = page.locator(".product-review");
     await expect(review).toContainText(/PRD-E2E-1\d{3}/);
     await expect(review).not.toContainText("PRD-E2E-0001");
     const shownCode = /PRD-E2E-1\d{3}/.exec((await review.textContent()) ?? "")?.[0];
 
-    await page.getByRole("button", { name: "Register", exact: true }).click();
+    await page.getByRole("button", { name: "등록", exact: true }).click();
     await expect.poll(() => submitted).not.toBeNull();
     expect(submitted).toMatchObject({ productCode: lastCode });
     expect(lastCode).not.toBe(shownCode);
@@ -343,21 +343,21 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     await mockApi(page, (route) => json(route, 200, ok(null)));
 
     await page.goto(CREATE_URL);
-    await expect(field(page, "Product code")).toHaveValue("PRD-E2E-0001");
-    await field(page, "Product name").fill("HW3-Neeraj-draft-check");
-    await field(page, "Unit price").fill("15000");
+    await expect(field(page, "상품코드")).toHaveValue("PRD-E2E-0001");
+    await field(page, "상품명").fill("HW3-Neeraj-draft-check");
+    await field(page, "단가").fill("15000");
     await expect
       .poll(() => page.evaluate((key) => window.sessionStorage.getItem(key), DRAFT_KEY))
       .toContain("HW3-Neeraj-draft-check");
 
     await page.reload();
-    await expect(page.getByText("Draft restored")).toBeVisible();
-    await expect(field(page, "Product name")).toHaveValue("HW3-Neeraj-draft-check");
-    await expect(field(page, "Unit price")).toHaveValue("₩15,000");
+    await expect(page.getByText("임시 저장된 내용을 불러왔습니다")).toBeVisible();
+    await expect(field(page, "상품명")).toHaveValue("HW3-Neeraj-draft-check");
+    await expect(field(page, "단가")).toHaveValue("₩15,000");
 
-    await page.getByRole("button", { name: "Discard" }).click();
-    await expect(page.getByText("Draft restored")).toHaveCount(0);
-    await expect(field(page, "Product name")).toHaveValue("");
+    await page.getByRole("button", { name: "임시 저장 삭제" }).click();
+    await expect(page.getByText("임시 저장된 내용을 불러왔습니다")).toHaveCount(0);
+    await expect(field(page, "상품명")).toHaveValue("");
     expect(await page.evaluate((key) => window.sessionStorage.getItem(key), DRAFT_KEY)).toBeNull();
   });
 
@@ -366,8 +366,8 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
 
     await page.goto(`${CREATE_URL}?step=3`);
     await expectStep(page, 1);
-    await expect(page.locator("#product-name-error")).toHaveText("Enter the product name.");
-    await expect(page.getByRole("button", { name: /Step 3: Category & options/ })).toBeDisabled();
+    await expect(page.locator("#product-name-error")).toHaveText("상품명을 입력해 주세요.");
+    await expect(page.getByRole("button", { name: /3단계: 카테고리 및 옵션/ })).toBeDisabled();
   });
 
   test("image type / size rejected before upload (.txt and 1 MB above the limit) — no upload request", async ({ page }) => {
@@ -378,7 +378,7 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     });
 
     await page.goto(CREATE_URL);
-    await expect(field(page, "Product code")).toHaveValue("PRD-E2E-0001");
+    await expect(field(page, "상품코드")).toHaveValue("PRD-E2E-0001");
     await fillStep1(page, { name: "HW3-Neeraj-mock-files", price: "20000", selling: "10000" });
     await clickNext(page);
     await expectStep(page, 2);
@@ -387,15 +387,15 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
       { name: "huge.png", mimeType: "image/png", buffer: Buffer.alloc((MAX_IMAGE_MB + 1) * 1024 * 1024, 1) },
     ]);
 
-    const rejected = page.getByRole("alert", { name: "Files not added" });
-    await expect(rejected).toContainText('"notes.txt" is not a supported image.');
-    await expect(rejected).toContainText(`"huge.png" is larger than ${MAX_IMAGE_MB} MB.`);
+    const rejected = page.getByRole("alert", { name: "추가되지 않은 파일" });
+    await expect(rejected).toContainText('"notes.txt" 파일은 지원하지 않는 이미지 형식입니다.');
+    await expect(rejected).toContainText(`"huge.png" 파일의 용량이 ${MAX_IMAGE_MB}MB를 초과합니다.`);
     // The hint under the field names the same limit
-    await expect(page.locator(".product-form-step:not([hidden])")).toContainText(`up to ${MAX_IMAGE_MB} MB each`);
-    await expect(page.getByText("0 / 4 images")).toBeVisible();
+    await expect(page.locator(".product-form-step:not([hidden])")).toContainText(`파일당 최대 ${MAX_IMAGE_MB}MB`);
+    await expect(page.getByText("0 / 4장")).toBeVisible();
     await clickNext(page);
     await expectStep(page, 2);
-    await expect(page.locator("#product-images-error")).toHaveText("Add at least one image.");
+    await expect(page.locator("#product-images-error")).toHaveText("이미지를 1장 이상 등록해 주세요.");
     expect(uploadUrlCalls).toEqual([]);
     expect(uploadCalls).toEqual([]);
   });
@@ -405,15 +405,15 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     const signedUrl = `${S3_ORIGIN}/upload/${IMAGE.filePath}?X-Amz-Signature=e2e`;
 
     await page.goto(CREATE_URL);
-    await expect(field(page, "Product code")).toHaveValue("PRD-E2E-0001");
+    await expect(field(page, "상품코드")).toHaveValue("PRD-E2E-0001");
     await fillStep1(page, { name: "HW3-Neeraj-mock-upload", price: "20000", selling: "10000" });
     await clickNext(page);
     await expectStep(page, 2);
     await page.locator("#product-images-input").setInputFiles(PNG_FIXTURE);
 
     // The image joins the form only after the upload route answered { ok: true }
-    await expect(page.getByRole("button", { name: /^Remove image 1:/ })).toBeVisible();
-    await expect(page.getByText("1 / 4 images")).toBeVisible();
+    await expect(page.getByRole("button", { name: /^이미지 1 삭제:/ })).toBeVisible();
+    await expect(page.getByText("1 / 4장")).toBeVisible();
     expect(uploadCalls).toEqual([{ url: signedUrl, fileName: IMAGE.name }]);
     // (afterEach also checks that no PUT went to S3 from the browser)
   });
@@ -428,7 +428,7 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     });
 
     await page.goto(CREATE_URL);
-    await expect(field(page, "Product code")).toHaveValue("PRD-E2E-0001");
+    await expect(field(page, "상품코드")).toHaveValue("PRD-E2E-0001");
     await fillStep1(page, { name: "HW3-Neeraj-mock-comma", price: "20000", selling: "10000" });
     await clickNext(page);
     await expectStep(page, 2);
@@ -438,7 +438,7 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
       buffer: Buffer.from("small fake png"),
     });
 
-    await expect(page.getByText("1 / 4 images")).toBeVisible();
+    await expect(page.getByText("1 / 4장")).toBeVisible();
     // The API builds the S3 key from this name → no comma may reach it; the extension stays
     expect(uploadUrlBody).toMatchObject({ fileName: "redblue final.PNG", extension: "png", count: 1 });
     expect(uploadCalls.map((call) => call.fileName)).toEqual(["redblue final.PNG"]);
@@ -457,20 +457,20 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     });
 
     await page.goto(CREATE_URL);
-    await expect(field(page, "Product code")).toHaveValue("PRD-E2E-0001");
+    await expect(field(page, "상품코드")).toHaveValue("PRD-E2E-0001");
     await fillStep1(page, { name: "HW3-Neeraj-mock-retry", price: "20000", selling: "10000" });
     await clickNext(page);
     await expectStep(page, 2);
     await page.locator("#product-images-input").setInputFiles(PNG_FIXTURE);
 
     const failed = page.locator(".image-upload-item-failed");
-    await expect(failed).toContainText("The image could not be uploaded. Please try again.");
-    await expect(page.getByText("0 / 4 images")).toBeVisible(); // a failed upload never joins the form
-    await failed.getByRole("button", { name: "Retry" }).click();
-    await expect(failed).toContainText("The image is too large to upload. Please choose a smaller file.");
-    await failed.getByRole("button", { name: "Retry" }).click();
-    await expect(page.getByRole("button", { name: /^Remove image 1:/ })).toBeVisible();
-    await expect(page.getByText("1 / 4 images")).toBeVisible();
+    await expect(failed).toContainText("이미지 업로드에 실패했습니다. 다시 시도해 주세요.");
+    await expect(page.getByText("0 / 4장")).toBeVisible(); // a failed upload never joins the form
+    await failed.getByRole("button", { name: "다시 시도" }).click();
+    await expect(failed).toContainText("이미지 용량이 너무 커서 업로드할 수 없습니다. 더 작은 파일을 선택해 주세요.");
+    await failed.getByRole("button", { name: "다시 시도" }).click();
+    await expect(page.getByRole("button", { name: /^이미지 1 삭제:/ })).toBeVisible();
+    await expect(page.getByText("1 / 4장")).toBeVisible();
     await expect(failed).toHaveCount(0);
     // An upload error is shown on the image itself — no toast on top of it
     await expect(page.locator(".p-toast-message")).toHaveCount(0);
@@ -496,33 +496,33 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     const failed = page.locator(".image-upload-item-failed");
 
     await page.goto(CREATE_URL);
-    await expect(field(page, "Product code")).toHaveValue("PRD-E2E-0001");
+    await expect(field(page, "상품코드")).toHaveValue("PRD-E2E-0001");
     await fillStep1(page, { name: "HW3-Neeraj-mock-max-images", price: "20000", selling: "10000" });
     await clickNext(page);
     await expectStep(page, 2);
 
     // 3 images + 1 failed upload
     await input.setInputFiles([png("a.png"), png("b.png"), png("c.png"), png("fail.png")]);
-    await expect(page.getByText("3 / 4 images")).toBeVisible();
-    await expect(failed).toContainText("The image could not be uploaded. Please try again.");
+    await expect(page.getByText("3 / 4장")).toBeVisible();
+    await expect(failed).toContainText("이미지 업로드에 실패했습니다. 다시 시도해 주세요.");
 
     // Remove one, add a new file, then bring the removed one back
-    await page.getByRole("button", { name: "Remove image 1: a.png" }).click();
-    await expect(page.getByText("2 / 4 images")).toBeVisible();
+    await page.getByRole("button", { name: "이미지 1 삭제: a.png" }).click();
+    await expect(page.getByText("2 / 4장")).toBeVisible();
     await input.setInputFiles(png("d.png"));
-    await expect(page.getByText("3 / 4 images")).toBeVisible();
-    await page.getByRole("button", { name: "Undo" }).click();
-    await expect(page.getByText("4 / 4 images")).toBeVisible();
+    await expect(page.getByText("3 / 4장")).toBeVisible();
+    await page.getByRole("button", { name: "되돌리기" }).click();
+    await expect(page.getByText("4 / 4장")).toBeVisible();
 
     // Retry on the failed upload: no place left → not uploaded again, not added, and it says why
     const callsBeforeRetry = uploadCalls.length;
-    await failed.getByRole("button", { name: "Retry" }).click();
-    await expect(failed).toContainText('"fail.png" was not added: up to 4 images can be registered.');
-    await expect(page.getByText("4 / 4 images")).toBeVisible();
-    await expect(page.getByText("5 / 4 images")).toHaveCount(0);
+    await failed.getByRole("button", { name: "다시 시도" }).click();
+    await expect(failed).toContainText('"fail.png" 파일은 추가되지 않았습니다. 이미지는 최대 4장까지 등록 가능합니다.');
+    await expect(page.getByText("4 / 4장")).toBeVisible();
+    await expect(page.getByText("5 / 4장")).toHaveCount(0);
     await expect(page.locator(".image-upload-item")).toHaveCount(5); // 4 images + the failed one
     expect(uploadCalls.length, "no upload request for a file that has no place").toBe(callsBeforeRetry);
-    await expect(page.getByRole("button", { name: "Add file" })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "파일추가" })).toBeDisabled();
   });
 
   test("edit of a product that already has 5 images: Save is stopped by the form rule, no request", async ({ page }) => {
@@ -541,21 +541,21 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
 
     await page.goto(`${EDIT_URL}?step=4`);
     await expectStep(page, 4);
-    await page.getByRole("button", { name: "Save", exact: true }).click();
+    await page.getByRole("button", { name: "저장", exact: true }).click();
 
     // Sent back to step 2 with the rule's message; nothing was saved
     await expectStep(page, 2);
-    await expect(page.locator("#product-images-error")).toHaveText("Up to 4 images can be registered. Remove the extra images.");
-    await expect(page.getByText("5 / 4 images")).toBeVisible();
+    await expect(page.locator("#product-images-error")).toHaveText("이미지는 최대 4장까지 등록 가능합니다. 초과한 이미지를 삭제해 주세요.");
+    await expect(page.getByText("5 / 4장")).toBeVisible();
     expect(saveCalls).toBe(0);
 
     // One image less → the message goes away and Save works with 4 images
-    await page.getByRole("button", { name: /^Remove image 5:/ }).click();
-    await expect(page.getByText("4 / 4 images")).toBeVisible();
+    await page.getByRole("button", { name: /^이미지 5 삭제:/ }).click();
+    await expect(page.getByText("4 / 4장")).toBeVisible();
     await expect(page.locator("#product-images-error")).toHaveCount(0);
-    await page.getByRole("button", { name: /Step 4: ERP & review/ }).click();
+    await page.getByRole("button", { name: /4단계: ERP 정보 및 확인/ }).click();
     await expectStep(page, 4);
-    await page.getByRole("button", { name: "Save", exact: true }).click();
+    await page.getByRole("button", { name: "저장", exact: true }).click();
     await expect.poll(() => saveCalls).toBe(1);
     expect(body).toMatchObject({ images: fiveImages.slice(0, 4).map((url) => url.replace(`${S3_ORIGIN}/`, "")) });
   });
@@ -570,23 +570,23 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     });
 
     await page.goto(EDIT_URL);
-    const code = field(page, "Product code");
+    const code = field(page, "상품코드");
     await expect(code).toHaveValue("PRD-000501");
     await expect(code).toHaveAttribute("readonly", "");
-    await field(page, "Product name").fill("HW3-Neeraj-mock-edit-2");
-    await field(page, "Selling price").fill("19000");
+    await field(page, "상품명").fill("HW3-Neeraj-mock-edit-2");
+    await field(page, "판매가").fill("19000");
 
-    await page.getByRole("button", { name: /Step 3: Category & options/ }).click();
+    await page.getByRole("button", { name: /3단계: 카테고리 및 옵션/ }).click();
     await expectStep(page, 3);
-    await expect(field(page, "Major category")).toHaveValue(CATEGORY_PATH.category);
-    await expect(field(page, "Major category")).toHaveAttribute("readonly", "");
-    await expect(page.getByText("Cannot be changed after registration")).toBeVisible();
+    await expect(field(page, "대분류")).toHaveValue(CATEGORY_PATH.category);
+    await expect(field(page, "대분류")).toHaveAttribute("readonly", "");
+    await expect(page.getByText("등록 후 변경 불가")).toBeVisible();
     await expect(page.getByRole("cell", { name: "Workbook", exact: true })).toBeVisible();
 
-    await page.getByRole("button", { name: /Step 4: ERP & review/ }).click();
+    await page.getByRole("button", { name: /4단계: ERP 정보 및 확인/ }).click();
     await expectStep(page, 4);
-    await expect(field(page, "ERP code")).toHaveValue("77");
-    await page.getByRole("button", { name: "Save", exact: true }).click();
+    await expect(field(page, "ERP 코드")).toHaveValue("77");
+    await page.getByRole("button", { name: "저장", exact: true }).click();
 
     await expect.poll(() => body).not.toBeNull();
     expect(body).not.toHaveProperty("productCode");
@@ -609,7 +609,7 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
       ],
     });
     await expect(page).toHaveURL(/\/shopping-mall\/products\/details\/501/);
-    await expect(page.locator(".p-toast-message")).toContainText("Product saved");
+    await expect(page.locator(".p-toast-message")).toContainText("상품 정보가 성공적으로 수정되었습니다.");
   });
 
   test("edit draft: restored after a reload while the product on the server is unchanged", async ({ page }) => {
@@ -617,16 +617,16 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     await page.route(`${API_ORIGIN}/**/products/details/501`, (route) => json(route, 200, ok(EDIT_PRODUCT)));
 
     await page.goto(EDIT_URL);
-    await expect(field(page, "Product name")).toHaveValue(EDIT_PRODUCT.productName);
-    await field(page, "Product name").fill("HW3-Neeraj-edit-draft");
+    await expect(field(page, "상품명")).toHaveValue(EDIT_PRODUCT.productName);
+    await field(page, "상품명").fill("HW3-Neeraj-edit-draft");
     await expect.poll(() => readEditDraft(page)).toContain("HW3-Neeraj-edit-draft");
     // The draft remembers which server copy it was started from
     const stored = JSON.parse((await readEditDraft(page)) ?? "{}") as { baseVersion?: string };
     expect(stored.baseVersion).toContain(EDIT_PRODUCT.updatedAt);
 
     await page.reload();
-    await expect(page.getByText("Draft restored")).toBeVisible();
-    await expect(field(page, "Product name")).toHaveValue("HW3-Neeraj-edit-draft");
+    await expect(page.getByText("임시 저장된 내용을 불러왔습니다")).toBeVisible();
+    await expect(field(page, "상품명")).toHaveValue("HW3-Neeraj-edit-draft");
     await expect(page.getByText(DRAFT_OUTDATED_NOTICE)).toHaveCount(0);
   });
 
@@ -654,16 +654,16 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
       await test.step(title, async () => {
         serverProduct = EDIT_PRODUCT;
         await page.goto(EDIT_URL);
-        await expect(field(page, "Product name")).toHaveValue(EDIT_PRODUCT.productName);
-        await field(page, "Product name").fill("HW3-Neeraj-old-draft");
+        await expect(field(page, "상품명")).toHaveValue(EDIT_PRODUCT.productName);
+        await field(page, "상품명").fill("HW3-Neeraj-old-draft");
         await expect.poll(() => readEditDraft(page)).toContain("HW3-Neeraj-old-draft");
 
         serverProduct = changed;
         await page.reload();
         // The form shows the server's data, says why the draft is gone, and the draft is removed
         await expect(page.getByText(DRAFT_OUTDATED_NOTICE)).toBeVisible();
-        await expect(page.getByText("Draft restored")).toHaveCount(0);
-        await expect(field(page, "Product name")).toHaveValue(changed.productName);
+        await expect(page.getByText("임시 저장된 내용을 불러왔습니다")).toHaveCount(0);
+        await expect(field(page, "상품명")).toHaveValue(changed.productName);
         expect(await readEditDraft(page)).toBeNull();
       });
     }
@@ -671,14 +671,14 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     await test.step("a draft saved before this rule (no server copy stored with it) is not trusted either", async () => {
       serverProduct = EDIT_PRODUCT;
       await page.goto(EDIT_URL);
-      await expect(field(page, "Product name")).toHaveValue(EDIT_PRODUCT.productName);
+      await expect(field(page, "상품명")).toHaveValue(EDIT_PRODUCT.productName);
       await page.evaluate(
         ([key, value]) => window.sessionStorage.setItem(key, value),
         [EDIT_DRAFT_KEY, JSON.stringify({ savedAt: Date.now(), values: { productName: "HW3-Neeraj-very-old-draft" } })] as const,
       );
       await page.reload();
       await expect(page.getByText(DRAFT_OUTDATED_NOTICE)).toBeVisible();
-      await expect(field(page, "Product name")).toHaveValue(EDIT_PRODUCT.productName);
+      await expect(field(page, "상품명")).toHaveValue(EDIT_PRODUCT.productName);
     });
   });
 
@@ -689,9 +689,9 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
 
     // Details page → Edit is a client-side navigation, so the loaded product stays in the query cache
     await page.goto("/shopping-mall/products/details/501");
-    await page.getByRole("link", { name: "Edit", exact: true }).click();
-    await expect(field(page, "Product name")).toHaveValue(EDIT_PRODUCT.productName);
-    await field(page, "Product name").fill("HW3-Neeraj-back-draft");
+    await page.getByRole("link", { name: "수정", exact: true }).click();
+    await expect(field(page, "상품명")).toHaveValue(EDIT_PRODUCT.productName);
+    await field(page, "상품명").fill("HW3-Neeraj-back-draft");
     await expect.poll(() => readEditDraft(page)).toContain("HW3-Neeraj-back-draft");
 
     // Browser Back leaves the form without Cancel, so the draft stays
@@ -701,9 +701,9 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
 
     // Meanwhile another admin saves the product. The cache still holds the old copy.
     serverProduct = { ...EDIT_PRODUCT, productName: "HW3-Neeraj-saved-by-someone-else", updatedAt: "2026-11-14T09:30:00.000Z" };
-    await page.getByRole("link", { name: "Edit", exact: true }).click();
+    await page.getByRole("link", { name: "수정", exact: true }).click();
     await expect(page.getByText(DRAFT_OUTDATED_NOTICE)).toBeVisible();
-    await expect(field(page, "Product name")).toHaveValue("HW3-Neeraj-saved-by-someone-else");
+    await expect(field(page, "상품명")).toHaveValue("HW3-Neeraj-saved-by-someone-else");
     expect(await readEditDraft(page)).toBeNull();
   });
 
@@ -712,12 +712,12 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     await mockApi(page, (route) => json(route, 200, ok(null)));
 
     await page.goto(CREATE_URL);
-    await expect(page.getByText("Step 1 of 4 · Basic info")).toBeVisible();
+    await expect(page.getByText("4단계 중 1단계 · 기본 정보")).toBeVisible();
     await fillStep1(page, { name: "HW3-Neeraj-mobile", price: "20000", selling: "10000" });
     // Enter in a field = Next
-    await field(page, "Selling price").press("Enter");
+    await field(page, "판매가").press("Enter");
     await expectStep(page, 2);
-    await expect(page.getByText("Step 2 of 4 · Images & status")).toBeVisible();
+    await expect(page.getByText("4단계 중 2단계 · 이미지 및 상태")).toBeVisible();
     const scroll = await page.evaluate(() => ({ width: document.documentElement.scrollWidth, viewport: window.innerWidth }));
     expect(scroll.width).toBeLessThanOrEqual(scroll.viewport);
   });
@@ -726,21 +726,21 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     await mockApi(page, (route) => json(route, 200, ok(null)));
 
     await page.goto(CREATE_URL);
-    await expect(field(page, "Product code")).toHaveValue("PRD-E2E-0001");
-    await field(page, "Product name").fill("HW3-Neeraj-cancel-check");
+    await expect(field(page, "상품코드")).toHaveValue("PRD-E2E-0001");
+    await field(page, "상품명").fill("HW3-Neeraj-cancel-check");
     await expect
       .poll(() => page.evaluate((key) => window.sessionStorage.getItem(key), DRAFT_KEY))
       .toContain("HW3-Neeraj-cancel-check");
 
     const confirm = page.locator(".p-confirm-dialog");
-    await page.getByRole("button", { name: "Cancel", exact: true }).click();
-    await expect(confirm).toContainText("All entered information will be deleted. Do you want to cancel?");
-    await confirm.getByRole("button", { name: "No" }).click();
+    await page.getByRole("button", { name: "취소", exact: true }).click();
+    await expect(confirm).toContainText("입력한 정보가 모두 삭제됩니다. 취소하시겠습니까?");
+    await confirm.getByRole("button", { name: "아니오" }).click();
     await expect(page).toHaveURL(/\/products\/create/);
-    await expect(field(page, "Product name")).toHaveValue("HW3-Neeraj-cancel-check");
+    await expect(field(page, "상품명")).toHaveValue("HW3-Neeraj-cancel-check");
 
-    await page.getByRole("button", { name: "Cancel", exact: true }).click();
-    await confirm.getByRole("button", { name: "Yes" }).click();
+    await page.getByRole("button", { name: "취소", exact: true }).click();
+    await confirm.getByRole("button", { name: "예" }).click();
     await expect(page).toHaveURL(/\/shopping-mall\/products$/);
     expect(await page.evaluate((key) => window.sessionStorage.getItem(key), DRAFT_KEY)).toBeNull();
   });
@@ -749,13 +749,13 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     await mockApi(page, (route) => json(route, 200, ok(null)));
 
     await page.goto(CREATE_URL);
-    await expect(field(page, "Product code")).toHaveValue("PRD-E2E-0001");
-    await field(page, "Product name").fill("HW3-Neeraj-logout-check");
+    await expect(field(page, "상품코드")).toHaveValue("PRD-E2E-0001");
+    await field(page, "상품명").fill("HW3-Neeraj-logout-check");
     await expect
       .poll(() => page.evaluate((key) => window.sessionStorage.getItem(key), DRAFT_KEY))
       .toContain("HW3-Neeraj-logout-check");
 
-    await page.getByRole("button", { name: "Log out" }).click();
+    await page.getByRole("button", { name: "로그아웃" }).click();
     await expect(page).toHaveURL(/\/login$/);
     expect(await page.evaluate((key) => window.sessionStorage.getItem(key), DRAFT_KEY)).toBeNull();
   });
@@ -768,8 +768,8 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     );
 
     await page.goto("/shopping-mall/products/edit/999999");
-    await expect(page.getByRole("heading", { name: "Not found" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Back to list" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Try again" })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "찾을 수 없음" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "목록으로" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "다시 시도" })).toHaveCount(0);
   });
 });

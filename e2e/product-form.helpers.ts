@@ -63,7 +63,7 @@ export async function expectStep(page: Page, step: number) {
 }
 
 export async function clickNext(page: Page) {
-  await page.getByRole("button", { name: "Next", exact: true }).click();
+  await page.getByRole("button", { name: "다음", exact: true }).click();
 }
 
 export interface Step1Values {
@@ -74,18 +74,18 @@ export interface Step1Values {
 }
 
 export async function fillStep1(page: Page, values: Step1Values) {
-  await field(page, "Product name").fill(values.name);
-  await field(page, "Unit price").fill(values.price);
-  await field(page, "Selling price").fill(values.selling);
-  await field(page, "Detailed description").fill(values.description ?? "HW3 e2e product — created by Playwright.");
+  await field(page, "상품명").fill(values.name);
+  await field(page, "단가").fill(values.price);
+  await field(page, "판매가").fill(values.selling);
+  await field(page, "상세설명").fill(values.description ?? "HW3 e2e product — created by Playwright.");
 }
 
 /** Step 2: upload the PNG fixture, Exposure = Yes, Sales = Yes. */
 export async function completeStep2(page: Page) {
   await page.locator("#product-images-input").setInputFiles(PNG_FIXTURE);
-  await expect(page.getByRole("button", { name: /^Remove image 1:/ })).toBeVisible({ timeout: 30_000 });
-  await chooseOption(page, "product-is-visible", "Yes");
-  await chooseOption(page, "product-on-sale", "Yes");
+  await expect(page.getByRole("button", { name: /^이미지 1 삭제:/ })).toBeVisible({ timeout: 30_000 });
+  await chooseOption(page, "product-is-visible", "예");
+  await chooseOption(page, "product-on-sale", "예");
 }
 
 export async function completeStep3(page: Page, path: { category: string; subCategory: string; childCategory: string }) {
@@ -95,10 +95,10 @@ export async function completeStep3(page: Page, path: { category: string; subCat
 }
 
 export async function fillStep4(page: Page, erpName: string) {
-  await field(page, "ERP product name").fill(erpName);
-  await field(page, "Quantity").fill("1");
-  await chooseOption(page, "product-tax-type", "Taxable");
-  await field(page, "ERP unit price").fill("9000");
+  await field(page, "상품ERP명").fill(erpName);
+  await field(page, "갯수").fill("1");
+  await chooseOption(page, "product-tax-type", "과세");
+  await field(page, "단가").fill("9000");
 }
 
 // ---- Real API access for setup / cleanup (live specs only) -----------------------------------------

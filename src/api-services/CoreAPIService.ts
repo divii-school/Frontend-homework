@@ -89,7 +89,7 @@ class CoreAPIService {
         status: 0,
         kind: "network",
         messageKey: "missingApiBaseUrl",
-        message: "NEXT_PUBLIC_API_BASE_URL is not set. Copy .env.example to .env.local and fill it in.",
+        message: "NEXT_PUBLIC_API_BASE_URL이 설정되지 않았습니다. .env.example 파일을 .env.local로 복사한 후 값을 입력해 주세요.",
       });
     }
 
@@ -137,7 +137,7 @@ export function toApiError(error: unknown): ApiError {
 
   if (axios.isAxiosError(error)) {
     if (axios.isCancel(error)) {
-      return new ApiError({ status: 0, kind: "network", messageKey: "requestCancelled", message: "The request was cancelled." });
+      return new ApiError({ status: 0, kind: "network", messageKey: "requestCancelled", message: "요청이 취소되었습니다." });
     }
     if (!error.response) {
       const timedOut = error.code === "ECONNABORTED" || error.code === "ETIMEDOUT";

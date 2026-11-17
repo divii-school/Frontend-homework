@@ -17,7 +17,7 @@ export default function AppError({ error, reset }: { error: Error & { digest?: s
         <div className="error-page-brand">
           <BrandLogo suffix="Admin" />
         </div>
-        <ErrorState variant="server" titleAs="h1" title="Something went wrong" onRetry={reset} />
+        <ErrorState variant="server" titleAs="h1" title="오류가 발생했습니다" onRetry={reset} />
       </section>
     </main>
   );

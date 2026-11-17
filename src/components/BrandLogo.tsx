@@ -25,7 +25,7 @@ export default function BrandLogo({ suffix, href, className }: BrandLogoProps) {
   const classes = className ? `brand-logo ${className}` : "brand-logo";
   if (href) {
     return (
-      <Link href={href} className={classes} aria-label="TalkingClub home">
+      <Link href={href} className={classes} aria-label="TalkingClub 홈">
         {content}
       </Link>
     );

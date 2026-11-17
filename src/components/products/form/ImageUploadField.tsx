@@ -34,7 +34,7 @@ const { max: MAX_IMAGES, accept, acceptExtensions } = PRODUCT_RULES.images;
 const ACCEPT_ATTR = [...accept, ...acceptExtensions.map((extension) => `.${extension}`)].join(",");
 
 /** Message for a file that finds no free place (the form holds at most MAX_IMAGES images). */
-const notAddedMessage = (fileName: string) => `"${fileName}" was not added: up to ${MAX_IMAGES} images can be registered.`;
+const notAddedMessage = (fileName: string) => `"${fileName}" 파일은 추가되지 않았습니다. 이미지는 최대 ${MAX_IMAGES}장까지 등록 가능합니다.`;
 
 // One thumbnail; a broken preview URL shows the grey placeholder instead of a broken image.
 function Thumb({ src, alt }: { src: string; alt: string }) {
@@ -150,7 +150,7 @@ export default function ImageUploadField({ id, value, onChange, onBlur, onBusyCh
   const undoRemove = () => {
     if (!removed) return;
     if (value.length + uploadingCount >= MAX_IMAGES) {
-      setRejected([`"${removed.image.name}" cannot come back: ${MAX_IMAGES} images are already registered.`]);
+      setRejected([`"${removed.image.name}" 파일은 되돌릴 수 없습니다. 이미 이미지 ${MAX_IMAGES}장이 등록되어 있습니다.`]);
       setRemoved(null);
       return;
     }
@@ -171,12 +171,12 @@ export default function ImageUploadField({ id, value, onChange, onBlur, onBusyCh
     <div className="image-upload">
       {/* Thumbnails: uploaded images (first = main image), then the ones still uploading / failed */}
       {(value.length > 0 || pending.length > 0) && (
-        <ul className="image-upload-list" aria-label="Product images">
+        <ul className="image-upload-list" aria-label="상품 이미지">
           {value.map((image, index) => (
             <li key={`${image.filePath}-${index}`} className="image-upload-item">
               <div className="image-upload-thumb">
-                <Thumb src={image.preview} alt={`Image ${index + 1}: ${image.name}`} />
-                {index === 0 && <span className="image-upload-badge">Main</span>}
+                <Thumb src={image.preview} alt={`이미지 ${index + 1}: ${image.name}`} />
+                {index === 0 && <span className="image-upload-badge">대표</span>}
               </div>
               <div className="image-upload-meta">
                 <span className="image-upload-name" title={image.name}>
@@ -188,7 +188,7 @@ export default function ImageUploadField({ id, value, onChange, onBlur, onBusyCh
                   text
                   severity="danger"
                   className="image-upload-remove"
-                  aria-label={`Remove image ${index + 1}: ${image.name}`}
+                  aria-label={`이미지 ${index + 1} 삭제: ${image.name}`}
                   onClick={() => removeImage(index)}
                 />
               </div>
@@ -197,7 +197,7 @@ export default function ImageUploadField({ id, value, onChange, onBlur, onBusyCh
           {pending.map((item) => (
             <li key={item.key} className={`image-upload-item image-upload-item-${item.status}`}>
               <div className="image-upload-thumb">
-                <Thumb src={item.localUrl} alt={`${item.file.name} (${item.status === "failed" ? "upload failed" : "uploading"})`} />
+                <Thumb src={item.localUrl} alt={`${item.file.name} (${item.status === "failed" ? "업로드 실패" : "업로드 중"})`} />
               </div>
               {item.status === "failed" ? (
                 <div className="image-upload-meta image-upload-meta-failed">
@@ -205,14 +205,14 @@ export default function ImageUploadField({ id, value, onChange, onBlur, onBusyCh
                     {item.message}
                   </span>
                   <div className="image-upload-actions">
-                    <Button type="button" label="Retry" text size="small" onClick={() => void uploadOne(item)} />
-                    <Button type="button" label="Remove" text size="small" severity="secondary" onClick={() => discardPending(item)} />
+                    <Button type="button" label="다시 시도" text size="small" onClick={() => void uploadOne(item)} />
+                    <Button type="button" label="삭제" text size="small" severity="secondary" onClick={() => discardPending(item)} />
                   </div>
                 </div>
               ) : (
                 <div className="image-upload-meta image-upload-meta-progress">
-                  <ProgressBar mode="indeterminate" className="image-upload-progress" aria-label={`Uploading ${item.file.name}`} />
-                  <span className="image-upload-status">{item.status === "queued" ? "Waiting…" : "Uploading…"}</span>
+                  <ProgressBar mode="indeterminate" className="image-upload-progress" aria-label={`${item.file.name} 업로드 중`} />
+                  <span className="image-upload-status">{item.status === "queued" ? "대기 중…" : "업로드 중…"}</span>
                 </div>
               )}
             </li>
@@ -235,7 +235,7 @@ export default function ImageUploadField({ id, value, onChange, onBlur, onBusyCh
         <Button
           id={id}
           type="button"
-          label="Add file"
+          label="파일추가"
           icon="pi pi-upload"
           outlined
           disabled={full}
@@ -244,16 +244,16 @@ export default function ImageUploadField({ id, value, onChange, onBlur, onBusyCh
           onClick={() => fileInput.current?.click()}
         />
         <span className="image-upload-count">
-          {value.length} / {MAX_IMAGES} images
+          {value.length} / {MAX_IMAGES}장
         </span>
       </div>
 
       {/* Live status for screen readers + the per-file rejection messages */}
       <p className="sr-only" role="status" aria-live="polite">
-        {uploadingCount > 0 ? `${uploadingCount} image${uploadingCount > 1 ? "s" : ""} uploading` : ""}
+        {uploadingCount > 0 ? `이미지 ${uploadingCount}장 업로드 중` : ""}
       </p>
       {rejected.length > 0 && (
-        <div className="image-upload-rejected" role="alert" aria-label="Files not added">
+        <div className="image-upload-rejected" role="alert" aria-label="추가되지 않은 파일">
           <ul>
             {rejected.map((message) => (
               <li key={message}>{message}</li>
@@ -264,16 +264,16 @@ export default function ImageUploadField({ id, value, onChange, onBlur, onBusyCh
       {removed && (
         <div className="image-upload-undo" role="status">
           <span>
-            Removed &quot;{removed.image.name}&quot;.
+            &quot;{removed.image.name}&quot; 이미지를 삭제했습니다.
           </span>
-          <Button id={`${id}-undo`} type="button" label="Undo" text size="small" onClick={undoRemove} />
+          <Button id={`${id}-undo`} type="button" label="되돌리기" text size="small" onClick={undoRemove} />
           <Button
             type="button"
             icon="pi pi-times"
             text
             size="small"
             severity="secondary"
-            aria-label="Dismiss"
+            aria-label="닫기"
             onClick={() => setRemoved(null)}
           />
         </div>

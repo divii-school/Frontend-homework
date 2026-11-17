@@ -121,18 +121,18 @@ export default function CategoryManager() {
     const info = LEVEL_INFO[node.level];
     if (node.children.length > 0) {
       setBlocked({
-        message: `Cannot delete "${nodeLabel(node)}": it has ${info.childPlural}. Delete them first.`,
+        message: `"${nodeLabel(node)}" 카테고리에 하위 항목이 있습니다. 하위 항목을 먼저 삭제해 주세요.`,
         open: true,
       });
       return;
     }
-    const ok = await confirmDelete(`Delete the ${info.noun} "${nodeLabel(node)}"? This cannot be undone.`, `Delete ${info.noun}`);
+    const ok = await confirmDelete(`"${nodeLabel(node)}" ${info.noun}를 삭제하시겠습니까? 삭제 후에는 되돌릴 수 없습니다.`, `${info.noun} 삭제`);
     if (!ok) return;
     remove.mutate(
       { level: node.level, id: node.id },
       {
-        onSuccess: (res) => toast.success(getApiMessage(res.message, "Deleted.")),
-        onError: (error) => toast.error("Could not delete the category", error.message),
+        onSuccess: (res) => toast.success(getApiMessage(res.message, "삭제되었습니다.")),
+        onError: (error) => toast.error("카테고리 삭제 실패", error.message),
       },
     );
   };
@@ -142,23 +142,23 @@ export default function CategoryManager() {
     reorder.mutate(
       { level, ids },
       {
-        onSuccess: (res) => toast.success(getApiMessage(res.message, "Order saved.")),
-        onError: (error) => toast.error("Could not save the new order", error.message),
+        onSuccess: (res) => toast.success(getApiMessage(res.message, "카테고리 순서가 변경되었습니다.")),
+        onError: (error) => toast.error("순서 변경 실패", error.message),
       },
     );
 
   // ---- "Register main category": allowed only with permission and below the 3-category limit
   const registerReason = !canCreate
-    ? "Your account cannot register categories."
+    ? "카테고리 등록 권한이 없습니다."
     : tree.data && !tree.data.isCreatable
-      ? `Up to ${CATEGORY_RULES.maxTopLevel} main categories can be registered. Delete one to add another.`
+      ? `대분류는 최대 ${CATEGORY_RULES.maxTopLevel}개까지 등록할 수 있습니다. 새로 등록하려면 기존 대분류를 삭제해 주세요.`
       : null;
   const registerDisabled = !canCreate || !tree.data?.isCreatable;
 
   const busyKey = remove.isPending && remove.variables ? `${remove.variables.level}-${remove.variables.id}` : null;
 
   return (
-    <section className="content-card category-page" aria-label="Product categories">
+    <section className="content-card category-page" aria-label="상품 카테고리">
       <CategoryToolbar
         searchTerm={searchTerm}
         onSearch={handleSearch}
@@ -173,7 +173,7 @@ export default function CategoryManager() {
       {/* A new search keeps the old tree on screen; this line says the new one is loading */}
       {isSearching && (
         <p className="category-searching" role="status">
-          <i className="pi pi-spin pi-spinner" aria-hidden="true" /> Searching…
+          <i className="pi pi-spin pi-spinner" aria-hidden="true" /> 검색 중…
         </p>
       )}
 
@@ -186,12 +186,12 @@ export default function CategoryManager() {
         loadingFallback={<CategoryTreeSkeleton />}
         isEmpty={nodes.length === 0}
         emptyIcon={searchTerm ? "pi pi-search" : "pi pi-sitemap"}
-        emptyTitle={searchTerm ? "No search results found" : "No categories yet"}
+        emptyTitle={searchTerm ? "검색 결과가 없습니다" : "등록된 카테고리가 없습니다"}
         emptyDescription={
-          searchTerm ? `No category matches "${searchTerm}". Try another name.` : "Register a main category to start the tree."
+          searchTerm ? `"${searchTerm}" 검색어에 해당하는 카테고리가 없습니다. 다른 명칭으로 검색해 주세요.` : "대분류를 등록하여 카테고리를 구성해 주세요."
         }
         emptyAction={
-          searchTerm ? <Button type="button" label="Clear search" outlined onClick={() => handleSearch("")} /> : undefined
+          searchTerm ? <Button type="button" label="검색 초기화" outlined onClick={() => handleSearch("")} /> : undefined
         }
       >
         <CategoryTree
@@ -215,7 +215,7 @@ export default function CategoryManager() {
 
       <AlertDialog
         visible={blocked?.open ?? false}
-        title="Cannot delete"
+        title="삭제 불가"
         message={blocked?.message ?? ""}
         onClose={() => setBlocked((current) => (current ? { ...current, open: false } : current))}
       />

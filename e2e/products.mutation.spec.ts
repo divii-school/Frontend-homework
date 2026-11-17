@@ -86,7 +86,7 @@ test.describe("Product register → list → edit → delete (shared QA DB)", { 
   test("register through all 4 steps with a real image, then find it in the list", async ({ page }) => {
     test.setTimeout(120_000);
     await page.goto(CREATE_URL);
-    await expect(field(page, "Product code")).not.toHaveValue("", { timeout: 30_000 });
+    await expect(field(page, "상품코드")).not.toHaveValue("", { timeout: 30_000 });
 
     await fillStep1(page, { name: RUN_NAME, price: "20000", selling: "15000" });
     await clickNext(page);
@@ -98,15 +98,15 @@ test.describe("Product register → list → edit → delete (shared QA DB)", { 
     await clickNext(page);
     await expectStep(page, 4);
     await fillStep4(page, `${RUN_NAME} ERP`);
-    await page.getByRole("button", { name: "Register", exact: true }).click();
+    await page.getByRole("button", { name: "등록", exact: true }).click();
 
     await expect(page).toHaveURL(/\/shopping-mall\/products(\?|$)/, { timeout: 30_000 });
-    await expect(page.locator(".p-toast-message")).toContainText("Product registered");
+    await expect(page.locator(".p-toast-message")).toContainText("상품이 성공적으로 등록되었습니다.");
     expect(await page.evaluate(() => window.sessionStorage.getItem("hw3-product-draft-create")), "draft cleared after save").toBeNull();
 
     // List search by name
     await page.goto(`/shopping-mall/products?q=${encodeURIComponent(RUN_NAME)}`);
-    await expect(page.getByRole("checkbox", { name: `Select ${RUN_NAME}`, exact: true })).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole("checkbox", { name: `${RUN_NAME} 선택`, exact: true })).toBeVisible({ timeout: 30_000 });
 
     const rows = await findOwnProducts(page.request, RUN_NAME);
     expect(rows.map((row) => row.productName)).toContain(RUN_NAME);
@@ -117,17 +117,17 @@ test.describe("Product register → list → edit → delete (shared QA DB)", { 
   test("edit: change the name and selling price, save, check the API", async ({ page }) => {
     test.skip(productId === null, "Nothing was created");
     await page.goto(`/shopping-mall/products/edit/${productId}`);
-    await expect(field(page, "Product name")).toHaveValue(RUN_NAME, { timeout: 30_000 });
-    await expect(field(page, "Product code")).toHaveAttribute("readonly", "");
+    await expect(field(page, "상품명")).toHaveValue(RUN_NAME, { timeout: 30_000 });
+    await expect(field(page, "상품코드")).toHaveAttribute("readonly", "");
 
-    await field(page, "Product name").fill(EDITED_NAME);
-    await field(page, "Selling price").fill("14000");
-    await page.getByRole("button", { name: /Step 4: ERP & review/ }).click();
+    await field(page, "상품명").fill(EDITED_NAME);
+    await field(page, "판매가").fill("14000");
+    await page.getByRole("button", { name: /4단계: ERP 정보 및 확인/ }).click();
     await expectStep(page, 4);
-    await page.getByRole("button", { name: "Save", exact: true }).click();
+    await page.getByRole("button", { name: "저장", exact: true }).click();
 
     await expect(page).toHaveURL(new RegExp(`/shopping-mall/products/details/${productId}`), { timeout: 30_000 });
-    await expect(page.locator(".p-toast-message")).toContainText("Product saved");
+    await expect(page.locator(".p-toast-message")).toContainText("상품 정보가 성공적으로 수정되었습니다.");
 
     const response = await page.request.get(`${API_BASE}/products/details/${productId}`, { headers: apiHeaders(token) });
     const details = ((await response.json()) as { data: { productName: string; unitPrice: number; price: number; images: string[] } }).data;
@@ -140,11 +140,11 @@ test.describe("Product register → list → edit → delete (shared QA DB)", { 
   test("delete it with the list's bulk delete", async ({ page }) => {
     test.skip(productId === null, "Nothing was created");
     await page.goto(`/shopping-mall/products?q=${encodeURIComponent(EDITED_NAME)}`);
-    const rowCheckbox = page.getByRole("checkbox", { name: `Select ${EDITED_NAME}`, exact: true });
+    const rowCheckbox = page.getByRole("checkbox", { name: `${EDITED_NAME} 선택`, exact: true });
     await expect(rowCheckbox).toBeVisible({ timeout: 30_000 });
     await rowCheckbox.check();
-    await page.getByRole("button", { name: "Delete", exact: true }).click();
-    await page.locator(".p-confirm-dialog").getByRole("button", { name: "Delete" }).click();
+    await page.getByRole("button", { name: "삭제", exact: true }).click();
+    await page.locator(".p-confirm-dialog").getByRole("button", { name: "삭제" }).click();
 
     await expect(rowCheckbox).toHaveCount(0, { timeout: 30_000 });
     await expect.poll(async () => (await findOwnProducts(page.request, RUN_NAME)).length).toBe(0);

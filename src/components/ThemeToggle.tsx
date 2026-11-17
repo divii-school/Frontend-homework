@@ -16,8 +16,8 @@ export default function ThemeToggle({ className }: { className?: string }) {
       text
       severity="secondary"
       className={className}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      aria-label={isDark ? "라이트 모드로 전환" : "다크 모드로 전환"}
+      title={isDark ? "라이트 모드로 전환" : "다크 모드로 전환"}
       onClick={toggleTheme}
     />
   );

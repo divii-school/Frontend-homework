@@ -49,25 +49,25 @@ export default function StepBasicInfo({ mode }: { mode: FormMode }) {
 
   const codeHint = isCreate
     ? codeQuery.isFetching
-      ? "Generating a product code…"
+      ? "상품코드를 생성하는 중…"
       : codeQuery.isError
-        ? `Could not generate a code: ${codeQuery.error.message}`
-        : "Assigned automatically when the product is registered."
-    : "The product code cannot be changed.";
+        ? `상품코드를 생성하지 못했습니다: ${codeQuery.error.message}`
+        : "상품코드는 상품 등록 시 자동 생성됩니다."
+    : "상품코드는 변경할 수 없습니다.";
 
   return (
     <div className="product-form-grid">
       <FormField
         id="product-name"
-        label="Product name"
+        label="상품명"
         required
         error={errors.productName?.message}
-        hint={isCreate ? `Shared QA data: start the name with ${HW3_RECORD_PREFIX}` : undefined}
+        hint={isCreate ? `공용 QA 데이터입니다. 상품명은 반드시 ${HW3_RECORD_PREFIX} 접두어로 시작해 주세요.` : undefined}
       >
         {(field) => (
           <InputText
             {...field}
-            placeholder="Product name"
+            placeholder="상품명"
             autoComplete="off"
             {...register("productName", {
               validate: (value) => {
@@ -81,13 +81,13 @@ export default function StepBasicInfo({ mode }: { mode: FormMode }) {
         )}
       </FormField>
 
-      <FormField id="product-code" label="Product code" required={isCreate} error={errors.productCode?.message} hint={codeHint}>
+      <FormField id="product-code" label="상품코드" required={isCreate} error={errors.productCode?.message} hint={codeHint}>
         {(field) => (
           <div className="product-form-inline">
             <InputText
               {...field}
               readOnly
-              placeholder={isCreate && codeQuery.isFetching ? "Generating…" : "Product code"}
+              placeholder={isCreate && codeQuery.isFetching ? "생성 중…" : "상품코드"}
               {...register("productCode", {
                 validate: (value) => !isCreate || value.trim().length > 0 || FORM_MESSAGES.productCodeMissing,
               })}
@@ -95,7 +95,7 @@ export default function StepBasicInfo({ mode }: { mode: FormMode }) {
             {isCreate && (
               <Button
                 type="button"
-                label="Regenerate"
+                label="다시 생성"
                 icon="pi pi-refresh"
                 outlined
                 loading={codeQuery.isFetching}
@@ -118,7 +118,7 @@ export default function StepBasicInfo({ mode }: { mode: FormMode }) {
           },
         }}
         render={({ field, fieldState }) => (
-          <FormField id="product-price" label="Unit price" required error={fieldState.error?.message} hint="List price before discount.">
+          <FormField id="product-price" label="단가" required error={fieldState.error?.message} hint="할인 전 정가입니다.">
             {(a11y) => (
               <MoneyInput {...a11y} ref={field.ref} name={field.name} value={field.value} onChange={field.onChange} onBlur={field.onBlur} placeholder="₩0" />
             )}
@@ -141,10 +141,10 @@ export default function StepBasicInfo({ mode }: { mode: FormMode }) {
         render={({ field, fieldState }) => (
           <FormField
             id="product-unit-price"
-            label="Selling price"
+            label="판매가"
             required
             error={fieldState.error?.message}
-            hint="The price the customer pays — lower than the unit price."
+            hint="고객이 결제하는 실제 판매가입니다. 단가보다 낮아야 합니다."
           >
             {(a11y) => (
               <MoneyInput {...a11y} ref={field.ref} name={field.name} value={field.value} onChange={field.onChange} onBlur={field.onBlur} placeholder="₩0" />
@@ -153,13 +153,13 @@ export default function StepBasicInfo({ mode }: { mode: FormMode }) {
         )}
       />
 
-      <FormField id="product-description" label="Detailed description" required error={errors.description?.message} className="product-form-field-wide">
+      <FormField id="product-description" label="상세설명" required error={errors.description?.message} className="product-form-field-wide">
         {(field) => (
           <InputTextarea
             {...field}
             rows={6}
             autoResize={false}
-            placeholder="Describe the product"
+            placeholder="상품 상세설명을 입력해 주세요."
             {...register("description", {
               validate: (value) => value.trim().length > 0 || FORM_MESSAGES.descriptionRequired,
             })}

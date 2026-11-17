@@ -27,17 +27,17 @@ function setup() {
 }
 
 const notFound = () =>
-  new ApiError({ status: 400, kind: "not-found", messageKey: "productNotFound", message: "This product no longer exists." });
+  new ApiError({ status: 400, kind: "not-found", messageKey: "productNotFound", message: "존재하지 않는 상품입니다." });
 const unauthorized = () =>
-  new ApiError({ status: 401, kind: "unauthorized", messageKey: "Unauthorized", message: "Your session has expired. Please log in again." });
+  new ApiError({ status: 401, kind: "unauthorized", messageKey: "Unauthorized", message: "세션이 만료되었습니다. 다시 로그인해 주세요." });
 
 test.describe("Default error toast (QueryCache / MutationCache)", () => {
   test("a mutation that does not handle its error → one default toast with the error's message", async () => {
     const { client, toasts } = setup();
     const mutation = new MutationObserver(client, { mutationFn: () => Promise.reject(notFound()) });
 
-    await expect(mutation.mutate()).rejects.toThrow("This product no longer exists.");
-    expect(toasts).toEqual([{ summary: DEFAULT_ERROR_TITLES.mutation, detail: "This product no longer exists." }]);
+    await expect(mutation.mutate()).rejects.toThrow("존재하지 않는 상품입니다.");
+    expect(toasts).toEqual([{ summary: DEFAULT_ERROR_TITLES.mutation, detail: "존재하지 않는 상품입니다." }]);
   });
 
   test("a mutation marked SHOWS_OWN_ERROR → no default toast (its screen shows the error)", async () => {
@@ -66,7 +66,7 @@ test.describe("Default error toast (QueryCache / MutationCache)", () => {
     expect(toasts).toEqual([]);
 
     await expect(client.fetchQuery({ queryKey: ["e2e", "forgotten"], queryFn: () => Promise.reject(notFound()) })).rejects.toThrow();
-    expect(toasts).toEqual([{ summary: DEFAULT_ERROR_TITLES.query, detail: "This product no longer exists." }]);
+    expect(toasts).toEqual([{ summary: DEFAULT_ERROR_TITLES.query, detail: "존재하지 않는 상품입니다." }]);
   });
 
   test("an error that is not an ApiError (a bug in a hook) → the general server message, not the raw error text", async () => {
@@ -75,7 +75,7 @@ test.describe("Default error toast (QueryCache / MutationCache)", () => {
 
     await expect(mutation.mutate()).rejects.toThrow();
     expect(toasts).toEqual([
-      { summary: DEFAULT_ERROR_TITLES.mutation, detail: "Something went wrong on the server. Please try again." },
+      { summary: DEFAULT_ERROR_TITLES.mutation, detail: "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요." },
     ]);
   });
 });

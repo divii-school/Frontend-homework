@@ -21,7 +21,7 @@ export default function PageHeader({ title, breadcrumb, actions }: PageHeaderPro
       <div className="page-header-text">
         <h1 className="page-header-title">{title}</h1>
         {breadcrumb && breadcrumb.length > 0 && (
-          <nav className="page-header-breadcrumb" aria-label="Breadcrumb">
+          <nav className="page-header-breadcrumb" aria-label="현재 위치">
             <ol>
               {breadcrumb.map((item, index) => {
                 const isLast = index === breadcrumb.length - 1;

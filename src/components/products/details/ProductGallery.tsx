@@ -20,18 +20,18 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
     <div className="product-gallery">
       <ProductThumbnail
         src={current}
-        alt={current ? `${productName} — image ${index + 1} of ${list.length}` : ""}
+        alt={current ? `${productName} 이미지 ${index + 1}/${list.length}` : ""}
         className="product-gallery-main"
       />
-      {list.length === 0 && <p className="product-gallery-empty">No image registered</p>}
+      {list.length === 0 && <p className="product-gallery-empty">등록된 이미지가 없습니다</p>}
       {list.length > 1 && (
-        <ul className="product-gallery-thumbs" aria-label="Product images">
+        <ul className="product-gallery-thumbs" aria-label="상품 이미지">
           {list.map((src, position) => (
             <li key={`${src}-${position}`}>
               <button
                 type="button"
                 className="product-gallery-thumb"
-                aria-label={`Show image ${position + 1}`}
+                aria-label={`이미지 ${position + 1} 보기`}
                 aria-pressed={position === index}
                 onClick={() => setActiveIndex(position)}
               >

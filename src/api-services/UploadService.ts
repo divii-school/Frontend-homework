@@ -41,10 +41,10 @@ export function validateImageFile(file: File): string | null {
   const { acceptExtensions, maxSizeMB } = PRODUCT_RULES.images;
   const problem = checkImageFile(file);
   if (problem === "type") {
-    return `"${file.name}" is not a supported image. Use ${acceptExtensions.join(", ").toUpperCase()}.`;
+    return `"${file.name}" 파일은 지원하지 않는 이미지 형식입니다. ${acceptExtensions.join(", ").toUpperCase()} 형식의 파일을 사용해 주세요.`;
   }
   if (problem === "size") {
-    return `"${file.name}" is larger than ${maxSizeMB} MB.`;
+    return `"${file.name}" 파일의 용량이 ${maxSizeMB}MB를 초과합니다.`;
   }
   return null;
 }

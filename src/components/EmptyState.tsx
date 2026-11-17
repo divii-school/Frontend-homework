@@ -10,8 +10,8 @@ interface EmptyStateProps {
 
 // Shown when a list has no rows (first use, or the search matched nothing — design: "No search results found").
 export default function EmptyState({
-  title = "No search results found",
-  description = "Try a different search term or clear the filters.",
+  title = "검색 결과가 없습니다",
+  description = "다른 검색어를 입력하거나 필터를 초기화해 주세요.",
   action,
   icon = "pi pi-inbox",
 }: EmptyStateProps) {

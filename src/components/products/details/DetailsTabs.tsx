@@ -4,9 +4,9 @@ import { useRef, type KeyboardEvent } from "react";
 import type { ProductDetailsTab } from "../list/product-routes";
 
 export const DETAIL_TABS: ReadonlyArray<{ key: ProductDetailsTab; label: string }> = [
-  { key: "overview", label: "Overview" },
-  { key: "options", label: "Options" },
-  { key: "related", label: "Same category" },
+  { key: "overview", label: "상품 정보" },
+  { key: "options", label: "옵션" },
+  { key: "related", label: "동일 카테고리 상품" },
 ];
 
 /** ?tab=… → a known tab; missing or unknown → overview. */
@@ -43,7 +43,7 @@ export default function DetailsTabs({ active, onChange }: DetailsTabsProps) {
   };
 
   return (
-    <div className="details-tabs" role="tablist" aria-label="Product details sections">
+    <div className="details-tabs" role="tablist" aria-label="상품 상세 탭">
       {DETAIL_TABS.map((tab, index) => {
         const selected = tab.key === active;
         return (

@@ -30,14 +30,14 @@ export default function StepImagesStatus({ onUploadingChange }: { onUploadingCha
         render={({ field, fieldState }) => (
           <FormField
             id="product-images"
-            label="Images"
+            label="이미지"
             required
             error={fieldState.error?.message}
             className="product-form-field-wide"
-            hint={`Recommended 800×800 px (square). ${acceptExtensions
+            hint={`권장 사이즈 : 800x800px ( 정사각형 ) / 최대 ${MAX_IMAGES}장까지 등록 가능합니다. ${acceptExtensions
               .filter((extension) => extension !== "jpeg")
               .join(", ")
-              .toUpperCase()} up to ${maxSizeMB} MB each, ${MIN_IMAGES}–${MAX_IMAGES} images. The first image is the main image.`}
+              .toUpperCase()} 형식, 파일당 최대 ${maxSizeMB}MB. 첫 번째 이미지가 대표 이미지입니다.`}
           >
             {(a11y) => (
               <ImageUploadField
@@ -59,7 +59,7 @@ export default function StepImagesStatus({ onUploadingChange }: { onUploadingCha
         name="isVisible"
         rules={{ validate: (value) => value !== null || FORM_MESSAGES.isVisibleRequired }}
         render={({ field, fieldState }) => (
-          <FormField id="product-is-visible" label="Exposure status" required error={fieldState.error?.message} hint="Yes = customers can see the product.">
+          <FormField id="product-is-visible" label="노출상태" required error={fieldState.error?.message} hint="예: 고객에게 상품이 노출됩니다.">
             {({ id, className, ...aria }) => (
               <Dropdown
                 {...aria}
@@ -68,7 +68,7 @@ export default function StepImagesStatus({ onUploadingChange }: { onUploadingCha
                 focusInputRef={field.ref}
                 value={field.value}
                 options={[...YES_NO_OPTIONS]}
-                placeholder="Select"
+                placeholder="선택"
                 onChange={(event) => field.onChange(event.value)}
                 onBlur={field.onBlur}
               />
@@ -82,7 +82,7 @@ export default function StepImagesStatus({ onUploadingChange }: { onUploadingCha
         name="onSale"
         rules={{ validate: (value) => value !== null || FORM_MESSAGES.onSaleRequired }}
         render={({ field, fieldState }) => (
-          <FormField id="product-on-sale" label="Sales status" required error={fieldState.error?.message} hint="No = the product cannot be ordered.">
+          <FormField id="product-on-sale" label="판매상태" required error={fieldState.error?.message} hint="아니오: 상품을 주문할 수 없습니다.">
             {({ id, className, ...aria }) => (
               <Dropdown
                 {...aria}
@@ -91,7 +91,7 @@ export default function StepImagesStatus({ onUploadingChange }: { onUploadingCha
                 focusInputRef={field.ref}
                 value={field.value}
                 options={[...YES_NO_OPTIONS]}
-                placeholder="Select"
+                placeholder="선택"
                 onChange={(event) => field.onChange(event.value)}
                 onBlur={field.onBlur}
               />
