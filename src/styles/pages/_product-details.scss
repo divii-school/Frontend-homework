@@ -1,0 +1,279 @@
+@use 'tokens' as *;
+@use 'mixins' as *;
+
+// ---- Product details (/shopping-mall/products/details/[id]) — tabs overview / options / related
+// Tokens only (var(--color-*), $space-*, $font-size-*), class names lowercase-with-hyphens,
+// breakpoints via @include upto(…). Thumbnail, badge and name-link styles come from _product-list.scss.
+
+// Sizes of this screen, derived from tokens (change request: move them into _tokens.scss).
+$product-gallery-size: $space-16 * 4;   // 256px main image
+$product-thumb-small: $space-12;        // 48px gallery / related thumbnails
+$product-related-min-width: $space-16 * 4; // 256px card in the related grid
+
+// Wrapper of the whole screen: no box of its own (the page container's gap still applies);
+// it only keeps "Back to list" + "Edit" on one line next to a long product name.
+.product-details-page {
+  display: contents;
+
+  .page-header-actions {
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+  }
+}
+
+.product-details {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+}
+
+// ---- Tabs ------------------------------------------------------------------------------------
+.details-tabs {
+  display: flex;
+  gap: $space-1;
+  overflow-x: auto;
+  border-bottom: $border-width solid var(--color-border);
+}
+
+.details-tab {
+  margin-bottom: -$border-width;
+  padding: $space-3 $space-4;
+  font-family: inherit;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 0;
+  border-bottom: $focus-ring-width solid transparent;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-text);
+  }
+
+  &.is-active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+  }
+
+  &:focus-visible {
+    outline-offset: -$focus-ring-width;
+  }
+
+  @include upto('sm') {
+    min-height: $touch-target;
+  }
+}
+
+.details-tabpanel {
+  min-width: 0;
+  border-radius: $radius-sm;
+}
+
+.product-section-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2;
+  margin-bottom: $space-3;
+  font-size: $font-size-md;
+  font-weight: $font-weight-bold;
+  color: var(--color-text);
+}
+
+// ---- Overview --------------------------------------------------------------------------------
+.product-overview {
+  display: grid;
+  grid-template-columns: $product-gallery-size minmax(0, 1fr);
+  align-items: start;
+  gap: $space-8;
+
+  @include upto('md') {
+    grid-template-columns: minmax(0, 1fr);
+    gap: $space-6;
+  }
+}
+
+.product-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.product-thumb.product-gallery-main {
+  width: $product-gallery-size;
+  max-width: 100%;
+  height: $product-gallery-size;
+
+  img {
+    object-fit: contain;
+  }
+
+  .product-thumb-placeholder {
+    font-size: $icon-size-lg;
+  }
+}
+
+.product-gallery-empty {
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+}
+
+.product-gallery-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.product-gallery-thumb {
+  padding: 0;
+  line-height: 0;
+  background: transparent;
+  border: $focus-ring-width solid transparent;
+  border-radius: $radius-sm;
+  cursor: pointer;
+
+  .product-thumb {
+    width: $product-thumb-small;
+    height: $product-thumb-small;
+  }
+
+  &[aria-pressed='true'] {
+    border-color: var(--color-primary);
+  }
+}
+
+.product-overview-info {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+  min-width: 0;
+}
+
+.product-info-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $space-3 $space-6;
+  margin: 0;
+
+  @include upto('sm') {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.product-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  min-width: 0;
+  padding-bottom: $space-2;
+  border-bottom: $border-width solid var(--color-border);
+
+  dt {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-muted);
+  }
+
+  dd {
+    margin: 0;
+    font-size: $font-size-sm;
+    color: var(--color-text);
+    overflow-wrap: anywhere;
+  }
+}
+
+.product-description {
+  padding: $space-3;
+  font-size: $font-size-sm;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--color-text);
+  background: var(--color-surface-alt);
+  border-radius: $radius-md;
+}
+
+// ---- Options ---------------------------------------------------------------------------------
+.details-option-groups {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+}
+
+.details-option-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: $font-size-sm;
+  color: var(--color-text);
+
+  th,
+  td {
+    padding: $space-2 $space-3;
+    text-align: left;
+    border-bottom: $border-width solid var(--color-border);
+  }
+
+  thead th {
+    font-weight: $font-weight-semibold;
+    white-space: nowrap;
+    background: var(--color-table-head);
+  }
+
+  th:last-child,
+  td:last-child {
+    text-align: right;
+    white-space: nowrap;
+  }
+}
+
+// ---- Same category ---------------------------------------------------------------------------
+.related-summary {
+  margin-bottom: $space-4;
+  font-size: $font-size-sm;
+  color: var(--color-text-secondary);
+}
+
+.related-products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min($product-related-min-width, 100%), 1fr));
+  gap: $space-3;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.related-product {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  min-width: 0;
+  padding: $space-3;
+  border: $border-width solid var(--color-border);
+  border-radius: $radius-md;
+
+  .product-thumb {
+    width: $product-thumb-small;
+    height: $product-thumb-small;
+  }
+}
+
+.related-product-text {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: $space-1;
+  min-width: 0;
+
+  .product-name-link {
+    @include truncate;
+  }
+}
+
+.related-product-meta {
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+}

@@ -1,0 +1,32 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# next.js
+/.next/
+/out/
+/build
+next-env.d.ts
+*.tsbuildinfo
+
+# env — never commit
+.env
+.env.local
+.env.*.local
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/e2e/.auth/
+
+# generated at install (scripts/copy-primereact-themes.mjs)
+/public/themes/
+
+# misc
+.DS_Store
+*.pem
+npm-debug.log*
+.vercel

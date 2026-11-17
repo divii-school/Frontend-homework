@@ -1,0 +1,186 @@
+@use 'sass:map';
+
+// =====================================================================================
+// Design tokens — the ONLY file where a colour, size or breakpoint value is written down.
+//
+// Source: Talking Club admin Figma (file 4wQgaju5jbb5BNRCeNmGZ0) — login 1.1.0, product list
+// 8.1.0, category 8.2.0. The design has no dark frames, so every dark colour below is ours.
+//
+// 1. Palette — raw colours, named colour + code (WM rule): `$red-b1`, `$gray-b3` …
+//    "b" codes are the light (day) palette, "n" codes the dark (night) palette.
+//    A palette variable is never used directly for colour in a component.
+// 2. Theme map — one semantic name per role (surface, text, primary …) with exactly ONE light
+//    and ONE dark palette colour. globals.scss turns it into CSS custom properties
+//    (`--color-surface`, `--color-primary` …) under [data-theme='light'] / [data-theme='dark'].
+//    Components only use `var(--color-*)`.
+// =====================================================================================
+
+// ---- 1a. Palette — light (day) ---------------------------------------------------------
+$red-b1: #ee2e5d;    // brand pink-red (design Register button / active menu) — decorative use only
+$red-b2: #d41f4e;    // primary action: #ee2e5d is 4.05:1 on white, this is 5.1:1 (WCAG AA)
+$red-b3: #b3173f;    // primary hover / pressed
+$red-b4: #fdeef2;    // table header row, active menu background (light pink)
+$red-b5: #c81e1e;    // danger text / invalid field
+$red-b6: #fdecec;    // danger background
+$purple-b1: #7b3ff2; // "+ subcategory" pill (5.5:1 with white)
+$purple-b2: #f1eafe; // purple soft background
+$gray-b1: #1f2024;   // text
+$gray-b2: #4f535b;   // secondary text
+$gray-b3: #6b7079;   // muted text / placeholder (4.9:1 on white)
+$gray-b4: #e4e5e8;   // border
+$gray-b5: #c4c6cc;   // strong border / input underline
+$gray-b6: #f6f6f8;   // page background, hover row
+$gray-b7: #ffffff;   // surface (cards, sidebar, topbar)
+$gray-b8: #eeeff2;   // thumbnail placeholder, skeleton, sunken fill
+$gray-b9: #d9d9dc;   // disabled button background (login "Login" before input)
+$green-b1: #15803d;  // success text
+$green-b2: #e6f6ec;  // success background
+$yellow-b1: #a15c07; // warning text
+$yellow-b2: #fdf3dc; // warning background
+$blue-b1: #1d5fd0;   // info text / focus ring
+$blue-b2: #e8f0fd;   // info background
+$navy-b1: #2b2d7c;   // logo ring (navy)
+$shade-b1: rgba(17, 18, 24, 0.45);  // modal / drawer backdrop
+$shade-b2: rgba(17, 18, 24, 0.08);  // card shadow
+
+// ---- 1b. Palette — dark (night), 1:1 with the light roles below --------------------------
+$red-n1: #ff6b8e;
+$red-n2: #ff5c85;    // primary on dark (6.1:1 on $gray-n7, dark label 6.6:1)
+$red-n3: #ff8aa7;
+$red-n4: #3a1f29;
+$red-n5: #ff8a8a;
+$red-n6: #3d1d1f;
+$purple-n1: #b794ff;
+$purple-n2: #2b2140;
+$gray-n1: #ececf1;
+$gray-n2: #c2c5ce;
+$gray-n3: #9aa0ab;
+$gray-n4: #2e3039;
+$gray-n5: #4a4d58;
+$gray-n6: #121318;
+$gray-n7: #1b1c22;
+$gray-n8: #25262e;
+$gray-n9: #3a3b45;
+$green-n1: #7ee2a1;
+$green-n2: #16321f;
+$yellow-n1: #f4c66a;
+$yellow-n2: #3a2d12;
+$blue-n1: #8db7ff;
+$blue-n2: #1a2740;
+$navy-n1: #a9abff;
+$shade-n1: rgba(0, 0, 0, 0.6);
+$shade-n2: rgba(0, 0, 0, 0.4);
+
+// ---- 2. Theme map: semantic role → (light, dark) ------------------------------------------
+// Adding a colour = one new line here with BOTH values. Nothing else.
+$theme-colors: (
+  'bg': ($gray-b6, $gray-n6),                         // page background
+  'surface': ($gray-b7, $gray-n7),                    // cards, sidebar, topbar, dialogs
+  'surface-alt': ($gray-b6, $gray-n8),                // hover rows, subtle fills
+  'surface-sunken': ($gray-b8, $gray-n8),             // thumbnail placeholder, skeleton
+  'border': ($gray-b4, $gray-n4),
+  'border-strong': ($gray-b5, $gray-n5),              // input underline, outlined buttons
+  'text': ($gray-b1, $gray-n1),
+  'text-secondary': ($gray-b2, $gray-n2),
+  'text-muted': ($gray-b3, $gray-n3),                 // placeholder, captions
+  'text-inverse': ($gray-b7, $gray-n6),               // label on a primary / purple fill
+  'brand': ($red-b1, $red-n1),                        // logo, decorative dots
+  'primary': ($red-b2, $red-n2),                      // primary buttons, active menu, links
+  'primary-hover': ($red-b3, $red-n3),
+  'primary-soft': ($red-b4, $red-n4),                 // active menu background
+  'table-head': ($red-b4, $red-n4),                   // table header row (design: light pink)
+  'accent-purple': ($purple-b1, $purple-n1),          // "+ subcategory" pill
+  'accent-purple-soft': ($purple-b2, $purple-n2),
+  'danger': ($red-b5, $red-n5),
+  'danger-soft': ($red-b6, $red-n6),
+  'success': ($green-b1, $green-n1),
+  'success-soft': ($green-b2, $green-n2),
+  'warning': ($yellow-b1, $yellow-n1),
+  'warning-soft': ($yellow-b2, $yellow-n2),
+  'info': ($blue-b1, $blue-n1),
+  'info-soft': ($blue-b2, $blue-n2),
+  'focus-ring': ($blue-b1, $blue-n1),                 // keyboard focus outline (3:1+ on both surfaces)
+  'disabled-bg': ($gray-b9, $gray-n9),
+  'disabled-text': ($gray-b7, $gray-n3),
+  'logo-ring': ($navy-b1, $navy-n1),
+  'overlay': ($shade-b1, $shade-n1),                  // drawer / dialog backdrop
+  'shadow': ($shade-b2, $shade-n2),
+);
+
+// ---- Spacing (4px base) ----------------------------------------------------------------
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 20px;
+$space-6: 24px;
+$space-8: 32px;
+$space-10: 40px;
+$space-12: 48px;
+$space-16: 64px;
+
+// ---- Typography ------------------------------------------------------------------------
+// 'Inter var' ships with the PrimeReact Lara theme (public/themes/*/fonts) — no network font.
+$font-family-base: 'Inter var', 'Inter', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+  'Apple SD Gothic Neo', 'Malgun Gothic', Roboto, 'Helvetica Neue', Arial, sans-serif;
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-md: 15px;
+$font-size-base: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 20px;
+$font-size-2xl: 24px;
+$font-size-3xl: 32px;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$line-height-tight: 1.25;
+$line-height-base: 1.5;
+
+// ---- Radius / borders / motion -----------------------------------------------------------
+$radius-xs: 2px;
+$radius-sm: 4px;
+$radius-md: 6px;
+$radius-lg: 10px;
+$radius-pill: 999px;
+$border-width: 1px;
+$focus-ring-width: 2px;
+$focus-ring-offset: 2px;
+$transition-fast: 150ms ease;
+
+// ---- Layout sizes (design: sidebar 230px, topbar 54px) ----------------------------------
+$sidebar-width: 230px;
+$sidebar-width-collapsed: 72px;
+$topbar-height: 54px;
+$container-max-width: 1600px;
+$control-height: 40px;      // inputs, dropdowns, buttons
+$control-height-lg: 44px;   // login inputs + button
+$touch-target: 44px;        // minimum tap size on phones
+$icon-size-sm: 16px;
+$icon-size-md: 20px;
+$icon-size-lg: 40px;        // empty / error state icon
+$logo-mark-size: 32px;
+$topbar-user-max-width: 200px;
+$topbar-user-max-width-xs: 96px;
+$login-card-width: 460px;
+$dialog-width-sm: 440px;
+$skeleton-row-height: 20px;
+$z-topbar: 10;
+$z-overlay: 30;
+$z-sidebar: 40;
+
+// ---- Breakpoints (WM): 1920 → 1600 → 1366 → 1280 → 1024 → 991 → 768 → 640 → 480 → 375 ------
+// Use only through the mixins in _mixins.scss: @include upto('sm-md') { … } = max-width: 991px
+$breakpoints: (
+  'xxl': 1920px,
+  'xl': 1600px,
+  'lg': 1366px,
+  'ml': 1280px,
+  'md': 1024px,
+  'sm-md': 991px,
+  'sm': 768px,
+  'xs-sm': 640px,
+  'xs': 480px,
+  'xxs': 375px,
+);

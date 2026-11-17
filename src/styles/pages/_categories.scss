@@ -1,0 +1,420 @@
+@use 'tokens' as *;
+@use 'mixins' as *;
+
+// ---- 8.2.0 Product Category Management (/shopping-mall/categories) — tree, search, add/edit modals, drag reorder
+// Tokens only (var(--color-*), $space-*, $font-size-*), class names lowercase-with-hyphens,
+// breakpoints via @include upto(…). 1440 = design; ≤ 991 search gets its own line; ≤ 640 row actions wrap.
+
+// Card content: toolbar, status line, tree
+.category-page {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+
+  @include upto('sm') {
+    gap: $space-4;
+  }
+}
+
+// ---- Toolbar (design ② ③ ④ ⑤) ------------------------------------------------------------
+.category-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: $space-3;
+}
+
+// Grey search box with the magnifier (= search button) on the left
+.category-search {
+  position: relative;
+  flex: 1 1 auto;
+  max-width: 40%;
+
+  @include upto('sm-md') {
+    flex-basis: 100%;
+    max-width: none;
+  }
+
+  .p-inputtext.category-search-input {
+    width: 100%;
+    padding: 0 $control-height;
+    background: var(--color-surface-alt);
+    border-color: var(--color-border);
+    border-radius: $radius-md;
+  }
+}
+
+.category-search-submit,
+.category-search-clear {
+  position: absolute;
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $control-height;
+  height: $control-height;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: $radius-md;
+  color: var(--color-text-muted);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-text);
+  }
+}
+
+.category-search-submit {
+  left: 0;
+}
+
+.category-search-clear {
+  right: 0;
+}
+
+.category-toolbar-toggles {
+  display: flex;
+  gap: $space-2;
+
+  @include upto('xs-sm') {
+    flex: 1 1 100%;
+
+    .p-button {
+      flex: 1 1 0;
+      justify-content: center;
+    }
+  }
+}
+
+// Register button pushed to the right; the reason sits under it when it is disabled
+.category-toolbar-register {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: $space-1;
+  margin-left: auto;
+
+  @include upto('xs-sm') {
+    flex: 1 1 100%;
+    align-items: stretch;
+    margin-left: 0;
+
+    .p-button {
+      justify-content: center;
+    }
+  }
+}
+
+.category-register-reason {
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+  text-align: right;
+
+  @include upto('xs-sm') {
+    text-align: left;
+  }
+}
+
+.category-searching {
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+}
+
+// ---- Tree (design ⑥) ------------------------------------------------------------------------
+.category-tree-help {
+  margin-bottom: $space-2;
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+}
+
+.category-tree,
+.category-children {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.category-tree {
+  border: $border-width solid var(--color-border);
+  border-radius: $radius-lg;
+  overflow: hidden;
+
+  > .category-node + .category-node {
+    border-top: $border-width solid var(--color-border);
+  }
+}
+
+// One row: handle · chevron · [badge] [id] name (count) · actions
+.category-row {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  min-height: $control-height-lg + $space-3;
+  padding: $space-1 $space-4;
+  background: var(--color-surface);
+
+  @include upto('sm') {
+    gap: $space-1;
+    padding: $space-1 $space-2;
+  }
+
+  // Phones: actions move to a second line (right-aligned) only when they don't fit next to the name
+  @include upto('xs-sm') {
+    flex-wrap: wrap;
+  }
+}
+
+// Level look: main rows are grey bands (design), lower levels step in
+.category-row-depth-1 {
+  background: var(--color-surface-alt);
+}
+
+.category-row-depth-2 {
+  padding-left: $space-4 + $space-6;
+
+  @include upto('sm') {
+    padding-left: $space-2 + $space-4;
+  }
+}
+
+.category-row-depth-3 {
+  padding-left: $space-4 + $space-12;
+
+  @include upto('sm') {
+    padding-left: $space-2 + $space-8;
+  }
+
+  // Phones: no chevron spacer on this level (below), so step in further to stay under the parent's name
+  @include upto('xs-sm') {
+    padding-left: $space-16;
+  }
+}
+
+// Drag-and-drop feedback: dragged row tinted, a line where it will land
+.category-row-dragging {
+  background: var(--color-primary-soft);
+}
+
+.category-row-drop-before {
+  box-shadow: inset 0 $focus-ring-width 0 var(--color-primary);
+}
+
+.category-row-drop-after {
+  box-shadow: inset 0 (-$focus-ring-width) 0 var(--color-primary);
+}
+
+// Handle and chevron: 40px tap targets; empty spacers keep names aligned
+.category-handle,
+.category-toggle,
+.category-handle-space,
+.category-toggle-space {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $control-height;
+  height: $control-height;
+
+  @include upto('xs-sm') {
+    width: $space-8;
+  }
+}
+
+// Phones: minor rows never have a chevron, so their spacer goes (more room for the name)
+.category-row-depth-3 .category-toggle-space {
+  @include upto('xs-sm') {
+    display: none;
+  }
+}
+
+.category-handle,
+.category-toggle {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: $radius-sm;
+  color: var(--color-text-muted);
+
+  &:hover {
+    background: var(--color-surface-sunken);
+    color: var(--color-text);
+  }
+}
+
+.category-handle {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &[aria-disabled='true'] {
+    cursor: progress;
+  }
+}
+
+.category-toggle {
+  cursor: pointer;
+}
+
+// Name block wraps inside itself (long names, counts) instead of widening the page
+.category-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: $space-2;
+  row-gap: $space-1;
+
+  // Phones: grow from 0 but keep at least 40% of the row, so the actions wrap instead of the name
+  @include upto('xs-sm') {
+    flex-basis: 0;
+    min-width: 40%;
+  }
+}
+
+.category-badge {
+  padding: 0 $space-2;
+  border-radius: $radius-pill;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-base;
+}
+
+.category-badge-depth-1 {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.category-badge-depth-2 {
+  background: var(--color-accent-purple-soft);
+  color: var(--color-accent-purple);
+}
+
+.category-badge-depth-3 {
+  background: var(--color-surface-sunken);
+  color: var(--color-text-secondary);
+}
+
+.category-id {
+  color: var(--color-text-muted);
+}
+
+.category-name {
+  min-width: 0;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+.category-row-depth-1 .category-name {
+  font-weight: $font-weight-semibold;
+}
+
+.category-count {
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+}
+
+// Actions: purple add pill, pencil, trash
+.category-actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: $space-1;
+  margin-left: auto;
+}
+
+// Specificity above the global [data-theme] .p-button rules
+.category-actions .p-button.category-add {
+  min-height: $space-8;
+  padding: 0 $space-3;
+  font-size: $font-size-xs;
+
+  @include upto('sm') {
+    min-height: $control-height;
+  }
+
+  .p-button-icon {
+    font-size: $font-size-xs;
+  }
+}
+
+.category-actions .p-button.category-icon-button {
+  width: $control-height;
+  height: $control-height;
+}
+
+// ---- Loading skeleton ------------------------------------------------------------------------
+.category-tree-skeleton {
+  display: flex;
+  flex-direction: column;
+  border: $border-width solid var(--color-border);
+  border-radius: $radius-lg;
+  overflow: hidden;
+}
+
+.category-skeleton-row {
+  display: flex;
+  align-items: center;
+  min-height: $control-height-lg + $space-3;
+  padding: $space-1 $space-4;
+}
+
+// ---- Add / edit dialog (design ⑤ ⑦ ⑧ ⑨) -------------------------------------------------------
+.category-form-dialog {
+  width: $dialog-width-sm;
+  max-width: calc(100vw - #{$space-8});
+}
+
+.category-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+
+  .p-inputtext {
+    width: 100%;
+  }
+}
+
+.category-form-parent {
+  margin-bottom: $space-2;
+  font-size: $font-size-sm;
+  color: var(--color-text-secondary);
+
+  strong {
+    color: var(--color-text);
+    overflow-wrap: anywhere;
+  }
+}
+
+.category-form-label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: var(--color-text);
+}
+
+.category-form-meta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-3;
+}
+
+.category-form-counter {
+  flex: none;
+  margin-top: $space-1;
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+}
+
+.category-form-counter-over {
+  color: var(--color-danger);
+}
+
+.category-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-2;
+}

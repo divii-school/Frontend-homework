@@ -1,0 +1,73 @@
+@use 'tokens' as *;
+@use 'mixins' as *;
+
+// ---- Alert dialog (login errors) + no-admin-permission popup (design 17108:76615) ------------
+.alert-dialog {
+  width: $dialog-width-sm;
+  max-width: calc(100vw - #{$space-8});
+
+  .p-dialog-content {
+    padding: $space-6;
+  }
+
+  .p-dialog-footer {
+    padding: 0 $space-6 $space-6;
+  }
+}
+
+.alert-dialog-message {
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: var(--color-text);
+  white-space: pre-line;
+}
+
+.alert-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-2;
+}
+
+.no-permission-dialog {
+  width: $dialog-width-sm;
+  max-width: calc(100vw - #{$space-8});
+
+  .p-dialog-content {
+    padding: $space-10 $space-8 $space-8;
+    border-radius: $radius-lg;
+
+    @include upto('xs') {
+      padding: $space-8 $space-5 $space-6;
+    }
+  }
+}
+
+.no-permission-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-5;
+  text-align: center;
+}
+
+.no-permission-message {
+  font-size: $font-size-sm;
+  line-height: $line-height-base;
+  color: var(--color-text);
+}
+
+.no-permission-phone {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: var(--color-text);
+
+  a {
+    color: inherit;
+  }
+}
+
+.no-permission-button {
+  width: 100%;
+  justify-content: center;
+  min-height: $control-height-lg;
+}

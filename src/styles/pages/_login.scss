@@ -1,0 +1,133 @@
+@use 'tokens' as *;
+@use 'mixins' as *;
+
+// ---- Full-page screens (login, 403): centred card, no admin chrome ---------------------------
+.full-page {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: $space-4;
+  background: var(--color-bg);
+}
+
+// Theme toggle in the corner so login / 403 also switch light-dark
+.full-page-theme {
+  position: absolute;
+  top: $space-3;
+  right: $space-3;
+}
+
+// ---- Login card (design 1.1.0) --------------------------------------------------------------
+.login-card {
+  @include surface;
+  width: 100%;
+  max-width: $login-card-width;
+  padding: $space-16 $space-12 $space-12;
+
+  @include upto('xs') {
+    padding: $space-10 $space-5 $space-8;
+  }
+}
+
+.login-brand {
+  display: flex;
+  justify-content: center;
+  margin-bottom: $space-12;
+
+  @include upto('xs') {
+    margin-bottom: $space-8;
+  }
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+}
+
+// Underline input with a leading icon and (password) a trailing eye button
+.login-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-input-row {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  min-height: $control-height-lg;
+  border-bottom: $border-width solid var(--color-border-strong);
+  transition: border-color $transition-fast;
+
+  &:focus-within {
+    border-bottom-color: var(--color-text);
+  }
+
+  .login-field-invalid & {
+    border-bottom-color: var(--color-danger);
+  }
+}
+
+.login-input-icon {
+  flex: 0 0 auto;
+  font-size: $icon-size-sm;
+  color: var(--color-text-muted);
+
+  .login-field-invalid & {
+    color: var(--color-danger);
+  }
+}
+
+// Plain input inside the underline row (PrimeReact InputText, borders removed)
+[data-theme] .login-input-row .login-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: $control-height-lg;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: $font-size-md;
+  box-shadow: none;
+
+  &:enabled:focus {
+    box-shadow: none;
+    border: 0;
+  }
+}
+
+.login-eye-button {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $touch-target;
+  height: $touch-target;
+  margin-right: -$space-3;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-text);
+  }
+}
+
+.login-remember {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: $font-size-sm;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+[data-theme] .login-submit {
+  width: 100%;
+  min-height: $control-height-lg;
+  justify-content: center;
+  margin-top: $space-6;
+}

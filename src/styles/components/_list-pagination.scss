@@ -1,0 +1,26 @@
+@use 'tokens' as *;
+@use 'mixins' as *;
+
+// ---- Pagination under a table: page links centred (design 8.1.0) ----------------------------
+.list-pagination {
+  display: flex;
+  justify-content: center;
+  padding-top: $space-4;
+
+  .p-paginator {
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0;
+  }
+
+  // Phones: fewer page links, still tappable
+  @include upto('xs') {
+    .p-paginator .p-paginator-pages .p-paginator-page,
+    .p-paginator .p-paginator-prev,
+    .p-paginator .p-paginator-next {
+      min-width: $touch-target;
+      height: $touch-target;
+      margin: 0;
+    }
+  }
+}

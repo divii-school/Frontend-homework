@@ -1,0 +1,59 @@
+@use 'sass:map';
+@use 'tokens' as *;
+
+// Max-width media query for a WM breakpoint key (inclusive).
+// @include upto('sm-md') { … }  →  @media (max-width: 991px) { … }
+@mixin upto($key) {
+  $bp: map.get($breakpoints, $key);
+  @if $bp == null {
+    @error "Unknown breakpoint `#{$key}`. Use one of: #{map.keys($breakpoints)}";
+  }
+  @media (max-width: $bp) {
+    @content;
+  }
+}
+
+// Min-width counterpart (exclusive of the key itself).
+// @include above('sm-md') { … }  →  @media (min-width: 992px) { … }
+@mixin above($key) {
+  $bp: map.get($breakpoints, $key);
+  @if $bp == null {
+    @error "Unknown breakpoint `#{$key}`. Use one of: #{map.keys($breakpoints)}";
+  }
+  @media (min-width: ($bp + 1px)) {
+    @content;
+  }
+}
+
+// Card surface used by every content block.
+@mixin surface {
+  background: var(--color-surface);
+  border: $border-width solid var(--color-border);
+  border-radius: $radius-lg;
+  box-shadow: 0 1px 3px var(--color-shadow);
+}
+
+// Visible keyboard focus ring (mouse clicks don't show it).
+@mixin focus-ring {
+  outline: $focus-ring-width solid var(--color-focus-ring);
+  outline-offset: $focus-ring-offset;
+}
+
+// Keeps text on one line and cuts it with an ellipsis.
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Hides an element visually but keeps it for screen readers.
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

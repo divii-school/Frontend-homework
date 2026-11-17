@@ -1,0 +1,394 @@
+@use 'tokens' as *;
+@use 'mixins' as *;
+
+// ---- App shell: sidebar + (topbar + page) ------------------------------------------------
+// > 991px : sidebar is a column on the left; the hamburger in its head collapses it to icons.
+// ≤ 991px : sidebar becomes an overlay drawer opened from the topbar hamburger.
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+}
+
+// ---- Sidebar -----------------------------------------------------------------------------
+.app-sidebar {
+  flex: 0 0 $sidebar-width;
+  width: $sidebar-width;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border-right: $border-width solid var(--color-border);
+  transition: width $transition-fast, flex-basis $transition-fast, transform $transition-fast;
+
+  @include upto('sm-md') {
+    position: fixed;
+    inset: 0 auto 0 0;
+    height: 100dvh;
+    z-index: $z-sidebar;
+    transform: translateX(-100%);
+    box-shadow: 0 0 24px var(--color-shadow);
+  }
+}
+
+// Desktop: icon rail
+.app-shell-collapsed .app-sidebar {
+  @include above('sm-md') {
+    flex-basis: $sidebar-width-collapsed;
+    width: $sidebar-width-collapsed;
+
+    .app-nav-label,
+    .app-nav-chevron,
+    .app-nav-sublist,
+    .brand-logo-text {
+      display: none;
+    }
+
+    .app-sidebar-head {
+      justify-content: center;
+      padding-inline: 0;
+    }
+
+    .brand-logo {
+      display: none;
+    }
+
+    .app-nav-group-button {
+      justify-content: center;
+      padding-inline: 0;
+    }
+  }
+}
+
+// Mobile / tablet: drawer slides in
+.app-shell-nav-open .app-sidebar {
+  @include upto('sm-md') {
+    transform: none;
+  }
+}
+
+.app-sidebar-head {
+  height: $topbar-height;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2;
+  padding: 0 $space-3 0 $space-4;
+}
+
+// Collapse toggle lives in the sidebar head on desktop only; the drawer has a close button instead
+.app-sidebar-toggle {
+  @include upto('sm-md') {
+    display: none;
+  }
+}
+
+.app-sidebar-close {
+  display: none;
+
+  @include upto('sm-md') {
+    display: inline-flex;
+  }
+}
+
+// ---- Brand logo ("TalkingClub") ----------------------------------------------------------------
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  color: var(--color-text);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.brand-logo-mark {
+  width: $logo-mark-size;
+  height: $logo-mark-size;
+  flex: 0 0 auto;
+}
+
+.brand-logo-ring-a {
+  stroke: var(--color-logo-ring);
+}
+
+.brand-logo-ring-b {
+  stroke: var(--color-brand);
+}
+
+.brand-logo-text {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  letter-spacing: -0.01em;
+  color: var(--color-text-secondary);
+}
+
+.brand-logo-suffix {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: var(--color-text);
+
+  &::before {
+    content: '';
+    width: $border-width;
+    height: $space-3;
+    background: var(--color-border-strong);
+  }
+}
+
+// ---- Navigation --------------------------------------------------------------------------------
+.app-nav {
+  flex: 1 1 auto;
+  padding: $space-2 0 $space-6;
+}
+
+.app-nav-list,
+.app-nav-sublist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.app-nav-group-button {
+  width: 100%;
+  min-height: $touch-target;
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-2 $space-4;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-surface-alt);
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline-offset: -$focus-ring-width;
+  }
+
+  .app-nav-icon {
+    flex: 0 0 auto;
+    font-size: $icon-size-md;
+    color: var(--color-text-secondary);
+  }
+
+  .app-nav-label {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .app-nav-chevron {
+    flex: 0 0 auto;
+    font-size: $font-size-xs;
+    color: var(--color-text-secondary);
+  }
+}
+
+// Group that contains the current page (design: pink icon + label)
+.app-nav-group-active {
+  color: var(--color-primary);
+
+  .app-nav-icon,
+  .app-nav-chevron {
+    color: var(--color-primary);
+  }
+}
+
+// Menus that exist in the real admin but are not part of HW3 — shown greyed, not clickable
+.app-nav-disabled {
+  cursor: not-allowed;
+  color: var(--color-text-muted);
+  font-weight: $font-weight-normal;
+
+  .app-nav-icon {
+    color: var(--color-text-muted);
+  }
+
+  &:hover {
+    background: transparent;
+  }
+}
+
+.app-nav-sublist {
+  padding: $space-1 0 $space-2;
+}
+
+.app-nav-sublink {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: $touch-target;
+  padding: $space-2 $space-4 $space-2 $space-10;
+  color: var(--color-text-secondary);
+  font-size: $font-size-sm;
+  line-height: $line-height-tight;
+  text-decoration: none;
+
+  // Bullet before every sub item (design)
+  &::before {
+    content: '';
+    position: absolute;
+    left: $space-6;
+    width: $space-1;
+    height: $space-1;
+    border-radius: $radius-pill;
+    background: currentColor;
+  }
+
+  &:hover {
+    background: var(--color-surface-alt);
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline-offset: -$focus-ring-width;
+  }
+}
+
+.app-nav-sublink-active {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-weight: $font-weight-semibold;
+
+  &:hover {
+    background: var(--color-primary-soft);
+  }
+}
+
+// Backdrop behind the drawer (≤ 991px only)
+.app-nav-overlay {
+  display: none;
+  border: 0;
+  padding: 0;
+
+  @include upto('sm-md') {
+    .app-shell-nav-open & {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: $z-overlay;
+      background: var(--color-overlay);
+    }
+  }
+}
+
+// ---- Main column ---------------------------------------------------------------------------
+// min-width: 0 lets wide tables shrink into their scroll box instead of pushing the page wider
+.app-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-topbar {
+  position: sticky;
+  top: 0;
+  z-index: $z-topbar;
+  height: $topbar-height;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  padding: 0 $space-6;
+  background: var(--color-surface);
+  border-bottom: $border-width solid var(--color-border);
+
+  @include upto('sm') {
+    padding: 0 $space-3;
+  }
+}
+
+.app-topbar-start,
+.app-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  min-width: 0;
+}
+
+// Hamburger in the topbar only when the sidebar is a drawer
+.app-topbar-menu {
+  display: none;
+
+  @include upto('sm-md') {
+    display: inline-flex;
+  }
+}
+
+// Brand next to the hamburger when the sidebar is hidden
+.app-topbar-brand {
+  display: none;
+
+  @include upto('sm-md') {
+    display: inline-flex;
+  }
+
+  @include upto('xs') {
+    .brand-logo-text {
+      display: none;
+    }
+  }
+}
+
+.app-topbar-divider {
+  width: $border-width;
+  height: $space-4;
+  background: var(--color-border-strong);
+}
+
+.app-topbar-user {
+  max-width: $topbar-user-max-width;
+  font-size: $font-size-sm;
+  color: var(--color-text-secondary);
+  @include truncate;
+
+  @include upto('xs') {
+    max-width: $topbar-user-max-width-xs;
+  }
+}
+
+// Page content: capped width, side gutters shrink on small screens
+.page-container {
+  width: 100%;
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: $space-6;
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+
+  @include upto('sm') {
+    padding: $space-4;
+    gap: $space-4;
+  }
+}
+
+// White card that holds a screen's main content (design: list area)
+.content-card {
+  @include surface;
+  padding: $space-6;
+  min-width: 0;
+
+  @include upto('sm') {
+    padding: $space-4;
+  }
+}
