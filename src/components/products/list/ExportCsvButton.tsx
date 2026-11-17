@@ -8,6 +8,7 @@ import { toApiError } from "@/api-services/CoreAPIService";
 import type { ProductListQuery } from "@/api-services/ProductService.types";
 import { useToast } from "@/providers/ToastProvider";
 import { formatNumber } from "@/utils/format";
+import { SHOWS_OWN_ERROR } from "@/utils/query-client";
 import { queryKeys } from "@/utils/query-keys";
 import {
   buildProductsCsv,
@@ -52,6 +53,7 @@ export default function ExportCsvButton({ query, sort, order, totalRecords }: Ex
           return queryClient.fetchQuery({
             queryKey: queryKeys.products.list(pageQuery),
             queryFn: ({ signal }) => ProductService.getProductList(pageQuery, signal),
+            meta: SHOWS_OWN_ERROR, // the catch below shows the "Export failed" toast
           });
         },
         (done, total) => {

@@ -18,7 +18,7 @@ import {
 
 // Full product lifecycle on the SHARED QA DB — runs only with E2E_ALLOW_MUTATIONS=1 (see playwright.config.ts).
 // Every record is named HW3-Neeraj-e2e-<timestamp>; only those are edited / deleted.
-//   1. register through all 4 steps with a real small PNG (signed URL → S3 PUT from the browser)
+//   1. register through all 4 steps with a real small PNG (signed URL → this app's /api/upload route → S3)
 //   2. it shows up in the list search
 //   3. edit: change name + selling price, save, check the API
 //   4. delete it with the list's bulk delete
@@ -66,7 +66,7 @@ test.describe("Product register → list → edit → delete (shared QA DB)", { 
   });
 
   test.afterEach(() => {
-    expect(consoleWatch.problems, "console errors / warnings (an S3 CORS failure shows up here)").toEqual([]);
+    expect(consoleWatch.problems, "console errors / warnings").toEqual([]);
   });
 
   // Cleanup through the API — runs even if a test above failed
@@ -91,7 +91,7 @@ test.describe("Product register → list → edit → delete (shared QA DB)", { 
     await fillStep1(page, { name: RUN_NAME, price: "20000", selling: "15000" });
     await clickNext(page);
     await expectStep(page, 2);
-    await completeStep2(page); // real upload: POST /utils/upload-file-urls → PUT to S3
+    await completeStep2(page); // real upload: POST /utils/upload-file-urls → POST /api/upload → the server PUTs to S3
     await clickNext(page);
     await expectStep(page, 3);
     await completeStep3(page, categoryPath);

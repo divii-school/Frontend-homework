@@ -4,6 +4,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import ProductService from "@/api-services/ProductService";
 import type { Product, ProductListQuery } from "@/api-services/ProductService.types";
 import type { ApiError, PaginatedResult } from "@/types/api";
+import { SHOWS_OWN_ERROR } from "@/utils/query-client";
 import { queryKeys } from "@/utils/query-keys";
 
 /**
@@ -18,5 +19,6 @@ export function useGetProductList(query: ProductListQuery, options: { enabled?: 
     placeholderData: keepPreviousData,
     // e.g. the details "Same category" tab waits until the product's minor category is known
     enabled: options.enabled ?? true,
+    meta: SHOWS_OWN_ERROR, // every screen shows this error inline (StateWrapper)
   });
 }

@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import {
   API_BASE,
   CREATE_URL,
+  MAX_IMAGE_MB,
   apiHeaders,
   chooseOption,
   clickNext,
@@ -17,7 +18,7 @@ import {
 // registered or saved here (create / edit / delete live in products.mutation.spec.ts).
 //   1. step 1 rules: required messages, selling ≥ unit price, Next blocked until valid, focus on the field
 //   2. going back keeps every value; the step lives in the URL (also browser Back)
-//   3. image type / size checked before any upload request (.txt + fake 11 MB PNG)
+//   3. image type / size checked before any upload request (.txt + a fake PNG 1 MB above the limit)
 //   4. edit page of an existing product: code + category read-only (no save)
 
 let consoleWatch: ReturnType<typeof watchConsole>;
@@ -98,11 +99,11 @@ test.describe("Product form (live QA API, read-only)", () => {
 
     await page.locator("#product-images-input").setInputFiles([
       { name: "notes.txt", mimeType: "text/plain", buffer: Buffer.from("not an image") },
-      { name: "huge.png", mimeType: "image/png", buffer: Buffer.alloc(11 * 1024 * 1024, 1) },
+      { name: "huge.png", mimeType: "image/png", buffer: Buffer.alloc((MAX_IMAGE_MB + 1) * 1024 * 1024, 1) },
     ]);
     const rejected = page.getByRole("alert", { name: "Files not added" });
     await expect(rejected).toContainText('"notes.txt" is not a supported image.');
-    await expect(rejected).toContainText('"huge.png" is larger than 10 MB.');
+    await expect(rejected).toContainText(`"huge.png" is larger than ${MAX_IMAGE_MB} MB.`);
     await expect(page.getByText("0 / 4 images")).toBeVisible();
 
     await clickNext(page);

@@ -67,6 +67,9 @@ export const API_MESSAGES: Record<string, string> = {
   fileFormatNotAllowed: "This file type is not allowed.",
   FileSizeExceeded: "The file is too large.",
   uploadFailed: "The image could not be uploaded. Please try again.",
+  // ---- Upload, this app's own server route (src/app/api/upload/route.ts) --------------------------
+  uploadTooLarge: "The image is too large to upload. Please choose a smaller file.",
+  uploadUrlNotAllowed: "The image could not be uploaded: the upload address was not accepted.",
 };
 
 /** "categoryAlreadyExists" / "category_already_exists" → "Category already exists". */

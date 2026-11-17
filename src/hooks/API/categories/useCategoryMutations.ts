@@ -11,11 +11,14 @@ import type {
   SaveCategoryInput,
 } from "@/api-services/ProductCategoryService.types";
 import type { ApiEnvelope, ApiError } from "@/types/api";
+import { SHOWS_OWN_ERROR } from "@/utils/query-client";
 import { queryKeys } from "@/utils/query-keys";
 
 // Category writes. Each mutation returns the API envelope; show `getApiMessage(res.message)` in a toast.
 // Errors are ApiError: `categoryAlreadyExists` / `subCategoryAlreadyExists` / `childSubcategoryAlreadyExists`
 // (show under the name field), `maximumCategoryLimitReached`, `*NotFound` (kind 'not-found').
+// `meta: SHOWS_OWN_ERROR`: the category screens show these errors themselves (under the name field or in
+// their own toast), so the default error toast of src/utils/query-client.ts stays away.
 
 /** Everything that shows category data: the tree, the product-form pickers, product rows. */
 function invalidateCategoryData(queryClient: QueryClient) {
@@ -31,6 +34,7 @@ export function useSaveCategory() {
   const queryClient = useQueryClient();
   return useMutation<ApiEnvelope<null>, ApiError, SaveCategoryInput>({
     mutationFn: (input) => ProductCategoryService.save(input),
+    meta: SHOWS_OWN_ERROR,
     onSuccess: () => invalidateCategoryData(queryClient),
   });
 }
@@ -40,6 +44,7 @@ export function useDeleteCategory() {
   const queryClient = useQueryClient();
   return useMutation<ApiEnvelope<null>, ApiError, DeleteCategoryInput>({
     mutationFn: (input) => ProductCategoryService.remove(input),
+    meta: SHOWS_OWN_ERROR,
     onSuccess: () => invalidateCategoryData(queryClient),
   });
 }
@@ -77,6 +82,7 @@ export function useReorderCategories() {
     { previous: Array<[readonly unknown[], CategoryTree | undefined]> }
   >({
     mutationFn: (input) => ProductCategoryService.reorderLevel(input),
+    meta: SHOWS_OWN_ERROR,
     onMutate: async ({ level, ids }) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.categories.all });
       const previous = queryClient.getQueriesData<CategoryTree>({ queryKey: queryKeys.categories.all });

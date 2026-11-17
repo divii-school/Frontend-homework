@@ -9,9 +9,11 @@ const LIST_HREF = "/shopping-mall/products";
 
 // 8.1.2 Product edit: loads the product (GET /products/details/:id), then shows the same 4-step form.
 // Loading → spinner, not found / deleted → 404 box, any other failure → error box with "Try again".
+// The form always starts from a copy fetched NOW, never from a cached one (alwaysRefetch + waiting for
+// isFetchedAfterMount below): the edit draft is only restored when it matches this copy (ProductForm).
 export default function ProductEditScreen({ id }: { id: number }) {
   const validId = Number.isInteger(id) && id > 0;
-  const query = useGetProductDetails(validId ? id : null);
+  const query = useGetProductDetails(validId ? id : null, { alwaysRefetch: true });
 
   const backToList = (
     <Link href={LIST_HREF} className="p-button p-button-outlined">
@@ -26,7 +28,7 @@ export default function ProductEditScreen({ id }: { id: number }) {
       </section>
     );
   }
-  if (query.isPending) {
+  if (query.isPending || !query.isFetchedAfterMount) {
     return (
       <section className="content-card">
         <PageLoader label="Loading the product…" />

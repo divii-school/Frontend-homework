@@ -18,7 +18,7 @@ import StepBasicInfo from "./StepBasicInfo";
 import StepImagesStatus from "./StepImagesStatus";
 import StepCategoryOptions, { type LockedCategory } from "./StepCategoryOptions";
 import StepErpReview from "./StepErpReview";
-import { clearDraft, draftStorageKey, DRAFT_SAVE_DELAY_MS, readDraft, saveDraft } from "./product-form-draft";
+import { clearDraft, draftStorageKey, DRAFT_SAVE_DELAY_MS, readDraft, saveDraft, serverVersionOf } from "./product-form-draft";
 import {
   EMPTY_PRODUCT_VALUES,
   FORM_MESSAGES,
@@ -50,16 +50,16 @@ type FocusRequest = { step: StepNumber; target: "heading" | "invalid" | "alert" 
 
 // Saves the form to sessionStorage 0.5 s after the last change — only once the user changed something.
 // A tiny child component, so only it re-renders on every keystroke (not the whole form).
-function DraftAutosave({ storageKey, disabled }: { storageKey: string; disabled: boolean }) {
+function DraftAutosave({ storageKey, baseVersion, disabled }: { storageKey: string; baseVersion?: string; disabled: boolean }) {
   const { control, getValues } = useFormContext<ProductFormValues>();
   const values = useWatch({ control });
   const { isDirty } = useFormState({ control });
 
   useEffect(() => {
     if (disabled || !isDirty) return;
-    const timer = window.setTimeout(() => saveDraft(storageKey, getValues()), DRAFT_SAVE_DELAY_MS);
+    const timer = window.setTimeout(() => saveDraft(storageKey, getValues(), baseVersion), DRAFT_SAVE_DELAY_MS);
     return () => window.clearTimeout(timer);
-  }, [values, isDirty, disabled, storageKey, getValues]);
+  }, [values, isDirty, disabled, storageKey, baseVersion, getValues]);
 
   return null;
 }
@@ -75,6 +75,7 @@ function DraftAutosave({ storageKey, disabled }: { storageKey: string; disabled:
 //  - The current step is `?step=1..4` in the URL; a later step can't be opened before the steps
 //    before it pass validation (stepper, URL edit or reload).
 //  - A draft is kept in sessionStorage (reload-safe) and removed after a successful save / Cancel.
+//    An edit draft is restored only while the product on the server is still the copy it was started from.
 //  - An API error never clears anything: field errors go back to their field (and step marker),
 //    every other error is shown on the review step + toast.
 // =====================================================================================
@@ -105,10 +106,14 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
 
   // ---- Screen state ----
   const storageKey = draftStorageKey(mode, product?.id);
+  // Edit: which server copy this form started from (create: nothing). Read ONCE — when `product` is fetched
+  // again later, the values in the form still come from the first copy.
+  const [baseVersion] = useState(() => (product ? serverVersionOf(product) : undefined));
   const step = parseStep(searchParams.get("step"));
   const [unlocked, setUnlocked] = useState<StepNumber>(mode === "edit" ? LAST_STEP : 1);
   const [draftChecked, setDraftChecked] = useState(false);
   const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
+  const [draftOutdated, setDraftOutdated] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [done, setDone] = useState(false); // saved or left on purpose → no more draft / leave guard
@@ -200,13 +205,19 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
   useEffect(() => {
     if (draftChecked) return;
     const draft = readDraft(storageKey, initialValues);
-    if (draft) {
+    if (draft && draft.baseVersion !== baseVersion) {
+      // Edit only (a create draft has no version on either side): the product was changed on the server
+      // after the draft was saved. Restoring would put the old values over the newer data → drop the draft
+      // and tell the user why.
+      clearDraft(storageKey);
+      setDraftOutdated(true);
+    } else if (draft) {
       // keepDefaultValues → the restored values count as "changed" (isDirty), so the leave guard is on
       reset(draft.values, { keepDefaultValues: true });
       setDraftSavedAt(draft.savedAt);
     }
     setDraftChecked(true);
-  }, [draftChecked, storageKey, initialValues, reset]);
+  }, [draftChecked, storageKey, initialValues, baseVersion, reset]);
 
   // ---- URL guard: ?step=3 on reload / typed URL / browser history → steps 1..2 must be valid ----
   useEffect(() => {
@@ -311,7 +322,7 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
 
   return (
     <FormProvider {...form}>
-      <DraftAutosave storageKey={storageKey} disabled={done} />
+      <DraftAutosave storageKey={storageKey} baseVersion={baseVersion} disabled={done} />
       <section className="content-card product-form-card" aria-label={mode === "create" ? "Product registration form" : "Product edit form"}>
         <ProductFormStepper current={step} unlocked={unlocked} errorSteps={errorSteps} onSelect={(target) => void goToStep(target)} />
 
@@ -321,6 +332,14 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
             <i className="pi pi-history" aria-hidden="true" />
             <span>Draft restored (saved {formatDateTime(draftSavedAt)}).</span>
             <Button type="button" label="Discard" text size="small" className="product-form-notice-action" onClick={discardDraft} />
+          </div>
+        )}
+
+        {/* Edit: a draft was found but the product changed on the server meanwhile → it was not restored */}
+        {draftOutdated && (
+          <div className="product-form-notice" role="status">
+            <i className="pi pi-info-circle" aria-hidden="true" />
+            <span className="product-form-notice-text">{FORM_MESSAGES.draftOutdated}</span>
           </div>
         )}
 

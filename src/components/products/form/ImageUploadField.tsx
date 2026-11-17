@@ -33,6 +33,9 @@ interface PendingUpload {
 const { max: MAX_IMAGES, accept, acceptExtensions } = PRODUCT_RULES.images;
 const ACCEPT_ATTR = [...accept, ...acceptExtensions.map((extension) => `.${extension}`)].join(",");
 
+/** Message for a file that finds no free place (the form holds at most MAX_IMAGES images). */
+const notAddedMessage = (fileName: string) => `"${fileName}" was not added: up to ${MAX_IMAGES} images can be registered.`;
+
 // One thumbnail; a broken preview URL shows the grey placeholder instead of a broken image.
 function Thumb({ src, alt }: { src: string; alt: string }) {
   const [broken, setBroken] = useState(false);
@@ -48,12 +51,14 @@ function Thumb({ src, alt }: { src: string; alt: string }) {
 }
 
 // Image upload (design 8.1.1 #7 / 8.1.2 #6), up to 4 images:
-//  1. the picked files are checked first (type JPG/PNG/GIF/WEBP, ≤ 10 MB, free slots) — a rejected
+//  1. the picked files are checked first (type JPG/PNG/GIF/WEBP, size limit, free slots) — a rejected
 //     file gets its own message and is never uploaded
 //  2. each accepted file is uploaded in order: POST /utils/upload-file-urls → signed S3 URL →
-//     PUT the file → { filePath, preview } (useUploadImage / UploadService)
+//     POST /api/upload (the server PUTs the file to S3) → { filePath, preview } (useUploadImage / UploadService)
 //  3. only then the image joins the form value; failed uploads stay here with Retry / Remove
 //  Removing an image needs no confirm: an "Undo" puts it back at the same place.
+//  The limit of 4 is checked wherever an image can join the list: Add file, Undo, Retry, and when an
+//  upload finishes (stopWhenFull). The form rule in StepImagesStatus is the last guard before saving.
 export default function ImageUploadField({ id, value, onChange, onBlur, onBusyChange, ...aria }: ImageUploadFieldProps) {
   const upload = useUploadImage();
   const fileInput = useRef<HTMLInputElement>(null);
@@ -81,10 +86,21 @@ export default function ImageUploadField({ id, value, onChange, onBlur, onBusyCh
   const patchPending = (key: string, patch: Partial<PendingUpload>) =>
     setPending((list) => list.map((item) => (item.key === key ? { ...item, ...patch } : item)));
 
+  // A waiting or failed upload must never become image no. 5. Known way to get there before this check:
+  // 3 images + 1 failed upload → remove an image → add a file → Undo → Retry on the failed upload.
+  // When the list is full the upload is marked as failed with the limit message; true = the caller stops.
+  const stopWhenFull = (item: PendingUpload): boolean => {
+    if (latestValue.current.length < MAX_IMAGES) return false;
+    patchPending(item.key, { status: "failed", message: notAddedMessage(item.file.name) });
+    return true;
+  };
+
   const uploadOne = async (item: PendingUpload) => {
+    if (stopWhenFull(item)) return; // before the upload: no request for a file that has no place
     patchPending(item.key, { status: "uploading", message: undefined });
     try {
       const result = await upload.mutateAsync(item.file);
+      if (stopWhenFull(item)) return; // and again: the list can fill up while this file is uploading
       const next = [...latestValue.current, { filePath: result.filePath, preview: result.preview, name: item.file.name }];
       latestValue.current = next;
       onChange(next);
@@ -109,7 +125,7 @@ export default function ImageUploadField({ id, value, onChange, onBlur, onBusyCh
       if (problem) {
         messages.push(problem);
       } else if (freeSlots <= 0) {
-        messages.push(`"${file.name}" was not added: up to ${MAX_IMAGES} images can be registered.`);
+        messages.push(notAddedMessage(file.name));
       } else {
         freeSlots -= 1;
         accepted.push({ key: `${Date.now()}-${file.name}-${accepted.length}`, file, localUrl: URL.createObjectURL(file), status: "queued" });

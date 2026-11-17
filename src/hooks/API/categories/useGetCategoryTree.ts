@@ -4,6 +4,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import ProductCategoryService from "@/api-services/ProductCategoryService";
 import type { CategoryTree } from "@/api-services/ProductCategoryService.types";
 import type { ApiError } from "@/types/api";
+import { SHOWS_OWN_ERROR } from "@/utils/query-client";
 import { queryKeys } from "@/utils/query-keys";
 
 /**
@@ -16,5 +17,6 @@ export function useGetCategoryTree(search = "") {
     queryKey: queryKeys.categories.tree(term),
     queryFn: ({ signal }) => ProductCategoryService.getTree(term, signal),
     placeholderData: keepPreviousData,
+    meta: SHOWS_OWN_ERROR, // the category screen shows this error inline (StateWrapper)
   });
 }

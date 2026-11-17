@@ -20,6 +20,16 @@ export const CATEGORY_RULES = {
   maxTopLevel: 3,
 } as const;
 
+/**
+ * Largest image file in MB: NEXT_PUBLIC_MAX_IMAGE_MB, or 10 when it is not set (or not a number above 0).
+ * The file travels through this app's own server route (/api/upload), and a Vercel function refuses request
+ * bodies above 4.5 MB — so the Vercel deployment sets 4. The browser check, the server check and the hint
+ * text all read this one value.
+ */
+const DEFAULT_MAX_IMAGE_MB = 10;
+const configuredMaxImageMB = Number(process.env.NEXT_PUBLIC_MAX_IMAGE_MB);
+export const MAX_IMAGE_MB = configuredMaxImageMB > 0 ? configuredMaxImageMB : DEFAULT_MAX_IMAGE_MB;
+
 /** Product rules from the API DTO + design 8.1.0 / 8.1.1. */
 export const PRODUCT_RULES = {
   /** List selection limit (design 8.1.0 ⑤). */
@@ -27,7 +37,7 @@ export const PRODUCT_RULES = {
   images: {
     min: 1,
     max: 4,
-    maxSizeMB: 10,
+    maxSizeMB: MAX_IMAGE_MB,
     accept: ["image/jpeg", "image/png", "image/gif", "image/webp"] as readonly string[],
     acceptExtensions: ["jpg", "jpeg", "png", "gif", "webp"] as readonly string[],
   },

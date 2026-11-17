@@ -20,7 +20,12 @@ export default function StepImagesStatus({ onUploadingChange }: { onUploadingCha
         control={control}
         name="images"
         rules={{
-          validate: (images) => images.length >= MIN_IMAGES || FORM_MESSAGES.imagesRequired,
+          validate: (images) => {
+            if (images.length < MIN_IMAGES) return FORM_MESSAGES.imagesRequired;
+            // The API accepts any number of images, so this rule is what makes saving a 5th impossible
+            if (images.length > MAX_IMAGES) return FORM_MESSAGES.imagesTooMany;
+            return true;
+          },
         }}
         render={({ field, fieldState }) => (
           <FormField

@@ -9,11 +9,15 @@ import type {
   UpdateProductStatusInput,
 } from "@/api-services/ProductService.types";
 import type { ApiEnvelope, ApiError, PaginatedResult } from "@/types/api";
+import { SHOWS_OWN_ERROR } from "@/utils/query-client";
 import { queryKeys } from "@/utils/query-keys";
 
 // Product writes. Each returns the API envelope (toast `getApiMessage(res.message)`; note the API
 // answers `productCreatedSucessFully` for add AND edit). Errors are ApiError — e.g.
 // `unitPriceMustBeLessThanPrice`, `productNotFound`, DTO validation with `fieldErrors`.
+// `meta: SHOWS_OWN_ERROR`: the product screens show these errors themselves (error box, field message or
+// their own toast), so the default error toast of src/utils/query-client.ts stays away.
+// useCheckErpCode has no screen yet → it keeps the default toast.
 
 function invalidateProducts(queryClient: QueryClient, id?: number) {
   return Promise.all([
@@ -28,6 +32,7 @@ export function useAddProduct() {
   const queryClient = useQueryClient();
   return useMutation<ApiEnvelope<null>, ApiError, AddProductPayload>({
     mutationFn: (payload) => ProductService.add(payload),
+    meta: SHOWS_OWN_ERROR,
     onSuccess: () => invalidateProducts(queryClient),
   });
 }
@@ -36,6 +41,7 @@ export function useEditProduct() {
   const queryClient = useQueryClient();
   return useMutation<ApiEnvelope<null>, ApiError, EditProductInput>({
     mutationFn: ({ id, payload }) => ProductService.edit(id, payload),
+    meta: SHOWS_OWN_ERROR,
     onSuccess: (_res, { id }) => invalidateProducts(queryClient, id),
   });
 }
@@ -45,6 +51,7 @@ export function useDeleteProducts() {
   const queryClient = useQueryClient();
   return useMutation<ApiEnvelope<null>, ApiError, number[]>({
     mutationFn: (ids) => ProductService.deleteMany(ids),
+    meta: SHOWS_OWN_ERROR,
     onSuccess: async (_res, ids) => {
       ids.forEach((id) => queryClient.removeQueries({ queryKey: queryKeys.products.details(id) }));
       await invalidateProducts(queryClient);
@@ -65,6 +72,7 @@ export function useUpdateProductStatus() {
     { previous: Array<[readonly unknown[], PaginatedResult<Product> | undefined]> }
   >({
     mutationFn: ({ id, isVisible }) => ProductService.updateStatus(id, isVisible),
+    meta: SHOWS_OWN_ERROR,
     onMutate: async ({ id, isVisible }) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.products.lists() });
       const previous = queryClient.getQueriesData<PaginatedResult<Product>>({ queryKey: queryKeys.products.lists() });

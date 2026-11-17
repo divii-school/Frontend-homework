@@ -21,6 +21,7 @@ npm run dev                 # http://localhost:3000 → login
 |---|---|
 | `NEXT_PUBLIC_API_BASE_URL` | Talking Club QA admin API root incl. `/api/v1` (URL in `docs/hw3-plan.md`) |
 | `NEXT_PUBLIC_TC_HOME_URL` | optional — target of "Go to Talking Club home" in the no-permission popup |
+| `NEXT_PUBLIC_MAX_IMAGE_MB` | optional — largest product image in MB, default `10`. Images are uploaded through this app's server route `/api/upload`; a Vercel function refuses bodies above 4.5 MB, so set `4` on Vercel. Read at build time (rebuild after a change) |
 | `E2E_ADMIN_ID` / `E2E_ADMIN_PASSWORD` | QA admin login for Playwright — **logins come by DM**, never commit them |
 
 Log in with an HQ admin account (SUPER / MASTER / GENERAL admin). Other roles see the

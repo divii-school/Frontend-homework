@@ -169,6 +169,12 @@ $busy-opacity: 0.6;                    // uploading thumbnail / refreshing optio
   color: var(--color-info);
 }
 
+// A long notice text (draft not restored) wraps beside its icon instead of dropping below it
+.product-form-notice-text {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
 [data-theme] .product-form-notice-action.p-button.p-button-text {
   min-height: auto;
   padding: 0 $space-2;

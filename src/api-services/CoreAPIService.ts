@@ -123,7 +123,7 @@ function fieldFromSentence(sentence: string): string | null {
   return match ? match[1] : null;
 }
 
-function kindFromStatus(status: number, messageKey: string): ApiErrorKind {
+export function kindFromStatus(status: number, messageKey: string): ApiErrorKind {
   if (status === 401) return "unauthorized";
   if (status === 403) return "forbidden";
   if (status === 404 || /NotFound$/.test(messageKey)) return "not-found"; // backend sends *NotFound as 400

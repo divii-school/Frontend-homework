@@ -79,3 +79,9 @@ export interface PaginatedResult<T> {
 
 /** "yes" / "no" flags the product endpoints take as strings. */
 export type YesNo = "yes" | "no";
+
+/**
+ * Answer of this app's own POST /api/upload (src/app/api/upload/route.ts).
+ * On failure `message` is a key of src/utils/api-messages.ts, like the keys the Talking Club API sends.
+ */
+export type UploadRouteResponse = { ok: true } | { ok: false; message: string };

@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import ProductService from "@/api-services/ProductService";
 import type { ApiError } from "@/types/api";
+import { SHOWS_OWN_ERROR } from "@/utils/query-client";
 import { queryKeys } from "@/utils/query-keys";
 
 /**
@@ -17,5 +18,6 @@ export function useGetGeneratedProductCode(enabled = true) {
     staleTime: Infinity,
     gcTime: 0,
     refetchOnMount: "always",
+    meta: SHOWS_OWN_ERROR, // step 1 shows this error under the product code field
   });
 }

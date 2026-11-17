@@ -72,6 +72,8 @@ test.describe("Product list — states (mocked API)", () => {
     await page.goto(LIST_URL);
     await expect(page.getByRole("heading", { name: "Server error" })).toBeVisible();
     await expect(page.getByText("Error code 500")).toBeVisible();
+    // The list shows its error inline (StateWrapper) → the default error toast must stay away
+    await expect(page.locator(".p-toast-message")).toHaveCount(0);
     failing = false;
     await page.getByRole("button", { name: "Try again" }).click();
     await expect(tableRows(page)).toHaveCount(2);
@@ -156,6 +158,8 @@ test.describe("Product list — states (mocked API)", () => {
     await expect(status).toHaveValue("no"); // optimistic
     release();
     await expect(page.getByText("Exposure status not saved")).toBeVisible();
+    // The screen's own toast only — not a second (default) error toast on top of it
+    await expect(page.locator(".p-toast-message")).toHaveCount(1);
     await expect(status).toHaveValue("yes"); // rolled back
   });
 

@@ -6,6 +6,7 @@ import type {
   TaxType,
 } from "@/api-services/ProductService.types";
 import type { ApiError, YesNo } from "@/types/api";
+import { PRODUCT_RULES } from "@/utils/constants";
 
 // Everything the 4-step product form needs that is not UI: the form values, which step owns which
 // field, the rules' messages, and the two mappings (API details → form values, form values → API body).
@@ -114,6 +115,7 @@ export const FORM_MESSAGES = {
   moneyTooLarge: "The amount can be up to ₩2,147,483,647.",
   descriptionRequired: "Enter the detailed description.",
   imagesRequired: "Add at least one image.",
+  imagesTooMany: `Up to ${PRODUCT_RULES.images.max} images can be registered. Remove the extra images.`,
   imagesUploading: "Wait until the images finish uploading.",
   isVisibleRequired: "Select the exposure status.",
   onSaleRequired: "Select the sales status.",
@@ -129,6 +131,8 @@ export const FORM_MESSAGES = {
   quantityTooLarge: "The quantity is too large.",
   taxTypeRequired: "Select the tax type.",
   erpUnitPriceRequired: "Enter the ERP unit price (₩0 or more).",
+  // Notice above the edit form when a saved draft is thrown away (see the draft restore in ProductForm)
+  draftOutdated: "Your saved draft was not restored: this product was changed after the draft was saved. The form shows the current data.",
 } as const;
 
 export const EMPTY_PRODUCT_VALUES: ProductFormValues = {
