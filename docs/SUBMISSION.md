@@ -2,14 +2,14 @@
 
 Notion page: https://app.notion.com/p/416326b2d5fb817c8d6bde4e60f5b656
 Properties: **HW3 status** → Submitted · **Submitted on** → 2026-11-17 · **Vercel link** → https://hw3-sandip.vercel.app ·
-**Branch / PR link** → branch `hw3/sandip` + the PR URL once opened.
+**Branch / PR link** → https://github.com/divii-school/Frontend-homework/pull/3
 Then comment on the TL page: "HW3 submitted" + link to this page, tagging Kakali.
 
 ---
 
 ## 1. Branch and PR link
 - Repo: https://github.com/divii-school/Frontend-homework · branch `hw3/sandip`
-- PR to `main` (review only, never merged): open from https://github.com/divii-school/Frontend-homework/compare/main...hw3/sandip with the text in `docs/PR.md` → paste the PR URL here.
+- PR to `main` (review only, never merged): https://github.com/divii-school/Frontend-homework/pull/3
 
 ## 2. Vercel link (latest build)
 https://hw3-sandip.vercel.app — build `beb0bad` (app code). Logins from DM.
@@ -41,7 +41,7 @@ Real-API tests need `E2E_LOGIN_ID` / `E2E_PASSWORD` in `.env.local` (from the DM
 - HTML report: https://hw3-sandip.vercel.app/playwright-report/index.html
 
 ## 6. Unit test case sheet link
-Import `docs/TEST-CASES.csv` into a Google Sheet (File → Import → Upload) and paste the link here.
+https://docs.google.com/spreadsheets/d/1_YH4pzHaD5ChI8YM80rqsB_nAc39hzzeBvr5r60Yaps/edit?usp=sharing (imported from `docs/TEST-CASES.csv`)
 67 cases (35 P · 32 N), each with the Playwright test that covers it. Markdown: `docs/TEST-CASES.md`.
 
 ## 7. Build report for QA
