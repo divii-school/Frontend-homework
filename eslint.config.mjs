@@ -18,6 +18,9 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      // Generated Playwright output (a report bundles its own trace viewer JS).
+      "playwright-report*/**",
+      "test-results*/**",
     ],
   },
 ];

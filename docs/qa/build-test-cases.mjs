@@ -55,11 +55,16 @@ function indexVitest(report) {
 }
 
 const local = indexPlaywright(load('./evidence/playwright-local.json'));
-// A test that failed only because the shared QA account's session ended mid-run (API question A4)
-// is run again on its own; its re-run result replaces the first one, and the row says so.
+// A test that failed once in the full run is run again on its own; its re-run result replaces the
+// first one, and the row says so, with the reason found in that run's trace (RERUN_REASONS).
 const rerunFile = './evidence/playwright-local-rerun.json';
 const rerun = existsSync(here(rerunFile)) ? indexPlaywright(load(rerunFile)) : null;
 const firstRunFailures = new Map();
+const RERUN_REASONS = {
+  'product-form.spec.ts › 상품 수정 (read only, saves answered here) › edit: 취소 after a change asks first, then returns to the details page unchanged':
+    { en: 'after 예 the server answered but the page did not switch; build report §8', ko: '예 클릭 후 화면 전환 미완료, 빌드 보고서 §8' },
+};
+const reasonOf = (key) => RERUN_REASONS[key] ?? { en: 'the shared QA session was refused mid-run, A4', ko: '공용 QA 세션 거부, A4' };
 if (rerun) {
   for (const [key, entries] of rerun.tests) {
     const before = local.tests.get(key);
@@ -85,8 +90,9 @@ function resolve(ref, run, { optional = false } = {}) {
     if (kind === 'pw') {
       const ok = entries.every((e) => e.ok);
       const rerunOf = run === local ? firstRunFailures.get(key) : undefined;
-      const note = rerunOf === undefined ? '' : ` (re-run; first run: ${rerunOf})`;
-      return { ok, rerun: rerunOf !== undefined, mutation: entries.some((e) => e.project === 'mutation'), label: `Playwright: ${key}${note}`, error: entries.find((e) => !e.ok)?.error };
+      const note =
+        rerunOf === undefined ? '' : ` — failed once in the full run (${reasonOf(key).en}); passed when run again on its own`;
+      return { ok, rerun: rerunOf !== undefined, rerunKey: key, mutation: entries.some((e) => e.project === 'mutation'), label: `Playwright: ${key}${note}`, error: entries.find((e) => !e.ok)?.error };
     }
     const step = findStep(entries[0].steps, stepPrefix);
     if (!step) {
@@ -101,10 +107,22 @@ function resolve(ref, run, { optional = false } = {}) {
     const hits = [...unitRun.tests.entries()].filter(([k]) => (wildcard ? k.startsWith(prefix) : k === prefix));
     if (!hits.length) throw new Error(`Vitest test not found: ${rest}`);
     const failed = hits.find(([, a]) => a.status !== 'passed');
-    const label = wildcard ? `Unit: ${prefix}… (${hits.length} cases)` : `Unit: ${rest}`;
-    return { ok: !failed, unit: true, label, error: failed ? failed[1].failureMessages?.[0] : undefined };
+    // Every matched test by its full title (one per line), never a count.
+    const label = hits.map(([k]) => `Unit: ${k}`).join('\n');
+    return { ok: !failed, unit: true, count: hits.length, label, error: failed ? failed[1].failureMessages?.[0] : undefined };
   }
   throw new Error(`Unknown reference kind: ${ref}`);
+}
+
+/**
+ * The "Automated test" cell: every test by its full title, one per line. When a row has more than 3, a first line
+ * names all the screens / groups covered, so a narrow (wrapped) cell still shows that every screen is included.
+ */
+function testsCell(results, total) {
+  const lines = results.flatMap((r) => r.label.split('\n'));
+  if (total <= 3) return lines.join('\n');
+  const groups = [...new Set(lines.map((l) => l.replace(/^[^:]+: /, '').split(/ › | > /)[1]).filter(Boolean))];
+  return [`${total} tests, one per line below — ${groups.join(' · ')}`, ...lines].join('\n');
 }
 
 const H = [
@@ -121,11 +139,12 @@ const rows = cases.map(([id, module, area, type, priority, role, pre, steps, inp
 
   const results = refs.map((ref) => resolve(ref, ref.startsWith('unit:') ? unitRun : local));
   const ok = results.every((r) => r.ok);
+  const total = results.reduce((n, r) => n + (r.count ?? 1), 0);
   const usedUnit = results.some((r) => r.unit);
   const usedPw = results.some((r) => !r.unit);
   const date = [usedPw && local.date, usedUnit && unitRun.date].filter(Boolean).sort().at(-1);
   const actual = ok
-    ? `기대 결과대로 동작함 — 자동 테스트 ${results.length}건 모두 통과${results.some((r) => r.rerun) ? ' (재실행 통과 포함: 첫 실행 중 공용 QA 계정 세션 만료, A4)' : ''}`
+    ? `기대 결과대로 동작함 — 자동 테스트 ${total}건 모두 통과${results.some((r) => r.rerun) ? ` (1건은 전체 실행 중 실패(${reasonOf(results.find((r) => r.rerun).rerunKey).ko}) 후 단독 재실행에서 통과)` : ''}`
     : `실패: ${firstLine(results.find((r) => !r.ok).error)}`;
 
   // The same readonly tests, run against the Vercel deployment.
@@ -140,7 +159,7 @@ const rows = cases.map(([id, module, area, type, priority, role, pre, steps, inp
 
   return [
     id, 'Admin web (PC browser)', role, module, area, type, priority, pre, steps, input, expected,
-    results.map((r) => r.label).join('\n'), actual, ok ? 'Pass' : 'Fail', date, onVercel, qa, howQa,
+    testsCell(results, total), actual, ok ? 'Pass' : 'Fail', date, onVercel, qa, howQa,
   ];
 });
 

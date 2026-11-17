@@ -88,6 +88,15 @@ test.describe('상품 등록 (read only, saves answered here)', () => {
     await expect(page.getByRole('button', { name: '파일 추가' })).toBeDisabled();
   });
 
+  test('money fields show ₩ and a comma every three digits as you type', async ({ page }) => {
+    await page.goto('/shopping/products/new');
+    await expect(page.getByLabel('상품코드')).toHaveValue(/^PRD-\d+$/);
+    await typeAmount(page, '단가', '1500');
+    await expect(page.getByRole('spinbutton', { name: '단가', exact: true })).toHaveValue('₩ 1,500');
+    await typeAmount(page, '판매가', '1234567');
+    await expect(page.getByRole('spinbutton', { name: '판매가', exact: true })).toHaveValue('₩ 1,234,567');
+  });
+
   test('step 2 defaults: 노출상태 예 and 판매상태 예', async ({ page }) => {
     await fillStep1(page);
     await expect(page.getByRole('combobox', { name: '노출상태' })).toHaveText('예');

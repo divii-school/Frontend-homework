@@ -67,6 +67,17 @@ QA review (Archana, 2026-11-17, Resubmit) — fixed in `733202b`:
 | Found while testing: a 카테고리 search returns deleted products | API question A14. Shown as 삭제된 상품 (no link, not selectable), left out of the CSV. Test TC-PRD-LIST-19 |
 | A1–A8 (sheet and evidence) | Section 7 below and the sheet: results per row from the real run, 14 untested cases now tested, full test titles, unit test list attached, "Runs on QA server" + "How QA reproduces", logout rule, Vercel run, Platform and Role columns |
 
+QA intake notes (Archana, 2026-11-17, accepted at intake) — tests and docs only, no app change:
+
+| Note | What changed |
+|---|---|
+| 1. TC-PRD-FORM-24 pointed at the TC-PRD-FORM-16 step | Its own Playwright test: 단가 1500 → "₩ 1,500", 판매가 1234567 → "₩ 1,234,567" |
+| 2. TC-COMMON-21 said "(4 cases)" | The 4 crash-screen unit tests are listed by full title |
+| 3. TC-COMMON-11–15, 17–18 listed only the 로그인 tests | Every screen's test is listed, with a first line naming all screens covered |
+| 4. TC-PRD-LIST-19 "How QA reproduces" | Full step-by-step instructions |
+| Question: why the session ended mid-run | No test presses the real logout (logout tests use a mocked API). In that run the API refused the token once (401) and then refused its renewal; every later test passed with the same session, so it was a one-off refusal on the server side, cause unknown. Also fixed: two of my runs at the same time shared one saved-login file; it is now one file per target host (`playwright.config.ts`). Final clean runs: 109 / 109 locally, 101 / 101 on Vercel |
+| Question: A14 to the API owner | Raised with Kakali on the TL page, 2026-11-17, to forward to the API owner |
+
 ## 5. Test account / roles
 
 - The shared QA admin account is **sent by DM** (not written here). It is a `SUPER_ADMIN` and sees everything.
@@ -114,6 +125,10 @@ JSON output; it stops if a row names a test that does not exist. Main points:
   suddenly show "로그인이 만료되었습니다", that is the cause, not a bug; log in again. The same applies to Playwright runs.
 - **Deleted products in a 카테고리 search** (questions A14): the API returns them; they are shown as 삭제된 상품 and the
   total / paging follow the API until it is fixed.
+- **Edit 취소 → 예 once stayed on the form** (TC-PRD-EDIT-06): in 1 of 22 runs the page did not switch to the
+  details page after 예, although the server had answered (200) and the build was the same. In every other run (21, including
+  the final clean full run) it passed, so it could not be reproduced; the cause is inside the Next.js client router and is not known.
+  The form had already been reset, so nothing was saved. If it happens: close the box (X) and press 취소 again.
 - **Browser Back** from a half-filled product form goes back to the list without a prompt (in-app navigation; closing or
   reloading the tab does warn). TC-PRD-FORM-29.
 - 11 cases are **Mock only** (no limited-role account, server-down/500 responses, HTML names, crash screens); the sheet says why.
@@ -122,7 +137,7 @@ JSON output; it stops if a row names a test that does not exist. Main points:
 
 ## 9. Check results
 
-Run on 2026-11-17 (commit `733202b`) against the Talking Club QA API. Playwright ran against the **production build**
+Run on 2026-11-17 evening (app code `733202b`, tests from the latest branch commit) against the Talking Club QA API. Playwright ran against the **production build**
 (`next build` + `next start`) and, for the read-only project, against the **Vercel deployment** of the same commit.
 
 | Check | Command | Result |
@@ -131,21 +146,21 @@ Run on 2026-11-17 (commit `733202b`) against the Talking Club QA API. Playwright
 | Type-check | `npm run typecheck` | clean |
 | Unit tests | `npm run test` | 93 passed (9 files); per-test list: `docs/qa/evidence/vitest-verbose.txt` |
 | Build | `npm run build` | compiled successfully, no warnings |
-| Playwright read-only | `npm run test:e2e` | 99 (auth 15 · roles 4 · categories 14 · products 24 · product-form 13 · product-images 2 · quality 27) |
+| Playwright read-only | `npm run test:e2e` | 100 (auth 15 · roles 4 · categories 14 · products 24 · product-form 14 · product-images 2 · quality 27) |
 | Playwright mutation | `npm run test:e2e:mutation` | 8 (only `HW3-Pranesh-*` records; all deleted afterwards) |
-| Total, local run | read-only + mutation + login setup | **107 passed, 1 failed** — the failure: the shared account's session ended mid-run (A4); re-run on its own: **passed** (both reports attached) |
-| Read-only on **Vercel** | `PLAYWRIGHT_BASE_URL=<Vercel URL> npx playwright test --project=readonly` | **100 passed, 0 failed, 0 flaky** |
+| Total, local run | read-only + mutation + login setup | **109 passed, 0 failed, 0 flaky** |
+| Read-only on **Vercel** | `PLAYWRIGHT_BASE_URL=<Vercel URL> npx playwright test --project=readonly` | **101 passed (100 + login setup), 0 failed, 0 flaky** |
 
 The quality tests check every screen (login, list, details and its 4 tabs, register, categories) for zero console
 errors/warnings, zero WCAG 2 A/AA violations (axe) in light **and** dark, and no sideways page scroll at
 1920 / 1440 / 1366 / 768 / 375.
 
-HTML reports (local, local re-run, Vercel) and the JSON results are attached to the submission page (checked: no login data). JSON results are also in `docs/qa/evidence/`.
+HTML reports (local, Vercel) and the JSON results are attached to the submission page (checked: no login data). JSON results are also in `docs/qa/evidence/`.
 
 ## 10. Screen sizes and browsers checked
 
 - **Sizes:** 1920, 1440, 1366, 768, 375, each in light and dark: 50 screenshots in `docs/screenshots/`, taken by
   `npm run screenshots`. Side-by-side images (design | build) are on the submission page.
 - **Browser:** Chromium (Playwright, same engine as Chrome and Edge) on Windows 11, against the production build
-  of commit `733202b`, and the read-only suite against the Vercel deployment of the same commit (100 passed).
+  of commit `733202b`, and the read-only suite against the Vercel deployment of the same commit (100 passed + login setup).
 - Not checked: Safari / iOS (no device available).

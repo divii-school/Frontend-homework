@@ -5,7 +5,9 @@ import { loadEnvConfig } from '@next/env';
 loadEnvConfig(process.cwd());
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000';
-export const AUTH_FILE = 'e2e/.auth/admin.json';
+// One saved session per target host: a localhost run must never overwrite the session a Vercel run is using
+// (its cookies belong to another domain, so every later test would land on the login page).
+export const AUTH_FILE = `e2e/.auth/admin-${new URL(baseURL).host.replace(/[^a-z0-9.-]/gi, '_')}.json`;
 
 /**
  * Projects:
