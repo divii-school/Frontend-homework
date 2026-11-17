@@ -29,6 +29,17 @@ httpClient.interceptors.request.use((config) => {
 /** One refresh at a time: parallel 401s all wait for the same promise. */
 let refreshInFlight: Promise<string | null> | null = null;
 
+/**
+ * Gets a new access token from the refresh token, or null if the session is over.
+ * Used by the 401 handler below and by AuthProvider when a saved session's token has expired.
+ */
+export function renewAccessToken(): Promise<string | null> {
+  refreshInFlight ??= refreshAccessToken().finally(() => {
+    refreshInFlight = null;
+  });
+  return refreshInFlight;
+}
+
 async function refreshAccessToken(): Promise<string | null> {
   try {
     // Same-origin Next.js route: it holds the refresh token in an httpOnly cookie.
@@ -56,10 +67,7 @@ httpClient.interceptors.response.use(
     const original = error.config as RetriableConfig | undefined;
     if (error.response?.status === 401 && original && !original._retried) {
       original._retried = true;
-      refreshInFlight ??= refreshAccessToken().finally(() => {
-        refreshInFlight = null;
-      });
-      const token = await refreshInFlight;
+      const token = await renewAccessToken();
       if (token) {
         original.headers.set('Authorization', `Bearer ${token}`);
         return httpClient(original);

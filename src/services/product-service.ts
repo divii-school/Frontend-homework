@@ -1,7 +1,4 @@
-import axios from 'axios';
 import { httpClient } from '@/lib/api/http-client';
-import { toApiError } from '@/lib/api/api-error';
-import { getAccessToken } from '@/lib/auth/session-storage';
 import type { ApiPagedResponse, ApiResponse } from '@/types/api';
 import type {
   ProductDetails,
@@ -73,18 +70,18 @@ export const ProductService = {
     await httpClient.put(`/products/update-status/${id}/${status}`);
   },
 
-  /** Uploads one image through our /api/upload route (see that file for why). */
+  /**
+   * Uploads one image through our /api/upload route (see that file for why).
+   * Goes through httpClient (same-origin, so `baseURL: ''`) to get the token header, the
+   * refresh-once-on-401 and the redirect to login like every other call.
+   */
   async uploadImage(file: File): Promise<UploadedImage> {
     const form = new FormData();
     form.append('file', file);
-    const token = getAccessToken();
-    try {
-      const { data } = await axios.post<ApiResponse<UploadedImage>>('/api/upload', form, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-      return data.data;
-    } catch (error) {
-      throw toApiError(error);
-    }
+    const { data } = await httpClient.post<ApiResponse<UploadedImage>>('/api/upload', form, {
+      baseURL: '',
+      timeout: 60_000, // a 4 MB file on a slow line takes longer than an ordinary call
+    });
+    return data.data;
   },
 };

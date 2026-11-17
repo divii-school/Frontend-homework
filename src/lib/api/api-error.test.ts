@@ -31,16 +31,42 @@ describe('toApiError (real QA response shapes)', () => {
     expect(errorMessage(error)).toBe(text);
   });
 
-  it('shows the API validation sentences as written', () => {
+  it('turns the API validation sentences into Korean, one line each', () => {
     const error = toApiError(axiosFailure(400, ['name must be a string', 'name should not be empty']));
     expect(error.kind).toBe('validation');
-    expect(errorMessage(error)).toBe('name must be a string\nname should not be empty');
+    expect(errorMessage(error)).toBe('카테고리명: 문자로 입력해 주세요.\n카테고리명: 필수 입력 항목입니다.');
+  });
+
+  it.each([
+    ['productName must be shorter than or equal to 100 characters', '상품명: 100자 이하로 입력해 주세요.'],
+    ['price must not be less than 1', '판매가: 1 이상으로 입력해 주세요.'],
+    ['each value in ids must be a number conforming to the specified constraints', '선택한 항목: 숫자로 입력해 주세요.'],
+    ['images.0 must be a string', '상품 이미지: 문자로 입력해 주세요.'],
+    ['taxType must be one of the following values: tax, tax_free', '과세 구분: 선택할 수 없는 값입니다.'],
+    ['someNewField should not be empty', '입력값: 필수 입력 항목입니다.'],
+    ['a sentence the app has never seen', '입력한 내용을 다시 확인해 주세요.'],
+  ])('"%s" → "%s"', (sentence, text) => {
+    expect(errorMessage(new ApiError('validation', 400, [sentence]))).toBe(text);
+  });
+
+  it('no validation sentence ever reaches the screen in English', () => {
+    const sentences = ['erpName should not be empty', 'quantity must be an integer number', 'whatever must be weird'];
+    const text = errorMessage(new ApiError('validation', 400, sentences));
+    expect(text).not.toMatch(/should|must/);
+    expect(text).toMatch(/[가-힣]/);
   });
 
   it('no response at all is a network error', () => {
     const error = toApiError(new AxiosError('Network Error', 'ERR_NETWORK'));
     expect(error.kind).toBe('network');
     expect(errorMessage(error)).toContain('네트워크');
+  });
+
+  it('a bug in our own code is not reported as a network problem', () => {
+    const error = toApiError(new TypeError("Cannot read properties of undefined (reading 'map')"));
+    expect(error.kind).toBe('unknown');
+    expect(errorMessage(error)).not.toContain('네트워크');
+    expect(errorMessage(error)).toBe('예기치 않은 오류가 발생했습니다. 화면을 새로고침한 후 다시 시도해 주세요.');
   });
 
   it('a non-JSON error body still gives a status-based message', () => {

@@ -77,3 +77,13 @@ test.describe('상품 카테고리 관리 (read only)', () => {
     await expect(page.locator('[aria-label="상품 카테고리"] > li').first()).toBeVisible();
   });
 });
+
+test('a failure no screen shows itself still gets the default error toast', async ({ page }) => {
+  // The "may 대분류 be added?" check only disables a button; it has no error view of its own.
+  await page.route(`${API_GLOB}/product-category/list`, (route) =>
+    route.fulfill({ status: 500, contentType: 'application/json', body: '{"success":false,"message":"boom","statusCode":500}' }),
+  );
+  await page.goto('/shopping/categories');
+  await expect(page.locator('.p-toast').getByText('일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.')).toBeVisible({ timeout: 20_000 });
+  await expect(page.locator('[aria-label="상품 카테고리"] > li').first()).toBeVisible(); // the rest of the screen works
+});

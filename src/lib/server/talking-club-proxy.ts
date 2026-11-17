@@ -1,6 +1,7 @@
 import 'server-only';
 import { NextResponse } from 'next/server';
 import { requireApiBaseUrl, talkingClubHeaders } from '@/config/env';
+import { SESSION_MARKER_COOKIE } from '@/lib/auth/session-marker';
 
 /**
  * Server-side helpers for our /api/* route handlers.
@@ -49,11 +50,14 @@ export function setRefreshCookie(res: NextResponse, token: string, remember: boo
   };
   res.cookies.set(REFRESH_COOKIE, token, options);
   res.cookies.set(REMEMBER_COOKIE, remember ? '1' : '0', options);
+  // Same lifetime, every path: lets middleware.ts see that the session can be renewed.
+  res.cookies.set(SESSION_MARKER_COOKIE, '1', { ...options, path: '/' });
 }
 
 export function clearRefreshCookie(res: NextResponse): void {
   res.cookies.set(REFRESH_COOKIE, '', { httpOnly: true, path: '/api/auth', maxAge: 0 });
   res.cookies.set(REMEMBER_COOKIE, '', { httpOnly: true, path: '/api/auth', maxAge: 0 });
+  res.cookies.set(SESSION_MARKER_COOKIE, '', { httpOnly: true, path: '/', maxAge: 0 });
 }
 
 /**

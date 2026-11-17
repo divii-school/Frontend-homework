@@ -10,7 +10,8 @@ export type ApiErrorKind =
   | 'validation' // 400 with a list of field sentences
   | 'business' // 400/409/422 with one message key
   | 'unavailable' // 502/503/504 and Cloudflare 520–530: the API server itself is down
-  | 'server'; // other 5xx
+  | 'server' // other 5xx
+  | 'unknown'; // not an HTTP failure at all: a bug in our own code
 
 /** One normalised error, so components never read axios internals. */
 export class ApiError extends Error {
@@ -47,7 +48,11 @@ function kindFor(status: number, messages: string[]): ApiErrorKind {
   return 'business';
 }
 
-/** Turns anything thrown by axios (or our code) into an ApiError. */
+/**
+ * Turns anything thrown by axios (or our code) into an ApiError.
+ * Only "axios got no response" is a network problem. Anything else thrown (a TypeError in a
+ * mapper, say) is our own bug and must not tell the user to check their network.
+ */
 export function toApiError(error: unknown): ApiError {
   if (error instanceof ApiError) return error;
   if (axios.isAxiosError(error)) {
@@ -57,5 +62,5 @@ export function toApiError(error: unknown): ApiError {
     const messages = Array.isArray(raw) ? raw : [raw];
     return new ApiError(kindFor(status, messages), status, messages.filter(Boolean));
   }
-  return new ApiError('network', null, []);
+  return new ApiError('unknown', null, []);
 }

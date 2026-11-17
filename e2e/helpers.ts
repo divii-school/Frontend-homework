@@ -67,3 +67,13 @@ export async function loginAs(page: Page, role: string, permissions: Permission[
   await page.getByPlaceholder('비밀번호').fill('not-used');
   await page.getByRole('button', { name: '로그인', exact: true }).click();
 }
+
+/** Types into a PrimeReact money/number input (clears it first; the input formats as you type). */
+export async function typeAmount(page: Page, label: string, value: string): Promise<void> {
+  const input = page.getByRole('spinbutton', { name: label, exact: true });
+  await input.click();
+  await input.press('Control+a');
+  await input.press('Backspace');
+  await input.pressSequentially(value);
+  await input.press('Tab');
+}

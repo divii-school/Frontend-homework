@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useRef, useState, type ChangeEvent } from 'react';
+import { useEffect, useId, useRef, useState, type ChangeEvent } from 'react';
 import Image from 'next/image';
 import { ACCEPT_ATTRIBUTE, IMAGE_UPLOAD, checkImageFile, imageSizeNote } from '@/config/upload';
 import { useUploadProductImage } from '@/hooks/api/product/use-products';
@@ -30,6 +30,17 @@ export function ImageUploader({ value, onChange, error, describedById }: Props) 
   const [uploading, setUploading] = useState(0);
   const room = IMAGE_UPLOAD.maxCount - value.length;
 
+  // The newest image list. Uploads finish one by one after `await`, when `value` in this
+  // closure is already stale; every change goes through `commit`, which keeps this current.
+  const latest = useRef(value);
+  useEffect(() => {
+    latest.current = value;
+  }, [value]);
+  const commit = (images: UploadedImage[]) => {
+    latest.current = images;
+    onChange(images);
+  };
+
   const onFiles = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files ?? []);
     event.target.value = ''; // the same file can be chosen again after removing it
@@ -55,13 +66,13 @@ export function ImageUploader({ value, onChange, error, describedById }: Props) 
       }
     }
 
-    let next = value;
     setUploading(accepted.length);
     for (const file of accepted) {
       try {
         const uploaded = await upload.mutateAsync(file);
-        next = [...next, uploaded];
-        onChange(next);
+        // Append to the CURRENT list, not a copy taken before the uploads started:
+        // an image removed while the others were still uploading must stay removed.
+        commit([...latest.current, uploaded]);
       } catch (uploadError) {
         messages.push(`${file.name}: ${errorMessage(uploadError)}`);
       } finally {
@@ -72,7 +83,7 @@ export function ImageUploader({ value, onChange, error, describedById }: Props) 
     setSizeNotes(notes);
   };
 
-  const remove = (index: number) => onChange(value.filter((_, i) => i !== index));
+  const remove = (index: number) => commit(latest.current.filter((_, i) => i !== index));
 
   return (
     <div className={styles['uploader']}>

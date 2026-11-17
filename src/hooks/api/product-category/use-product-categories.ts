@@ -5,7 +5,7 @@ import type { CategoryLevel, CategorySaveRequest } from '@/types/product-categor
 
 /** 대분류 list. */
 export function useTopCategories() {
-  return useQuery({ queryKey: queryKeys.categories.topLevel(), queryFn: () => ProductCategoryService.topLevel() });
+  return useQuery({ queryKey: queryKeys.categories.topLevel(), queryFn: () => ProductCategoryService.topLevel(), meta: { handlesError: true } });
 }
 
 /**
@@ -20,6 +20,7 @@ export function useChildCategories(level: CategoryLevel, parentId: number, enabl
         ? ProductCategoryService.subCategories(parentId)
         : ProductCategoryService.childCategories(parentId),
     enabled,
+    meta: { handlesError: true },
   });
 }
 
@@ -30,10 +31,14 @@ export function useCategorySearch(term: string) {
     queryFn: () => ProductCategoryService.search(term),
     enabled: term.length > 0,
     placeholderData: keepPreviousData,
+    meta: { handlesError: true },
   });
 }
 
-/** Whether 대분류 등록 is allowed right now (the API caps top-level categories). */
+/**
+ * Whether 대분류 등록 is allowed right now (the API caps top-level categories).
+ * No `handlesError`: the screen only disables the button, so a failure gets the default error toast.
+ */
 export function useCanCreateTopLevel() {
   return useQuery({ queryKey: queryKeys.categories.creatable(), queryFn: () => ProductCategoryService.canCreateTopLevel() });
 }
@@ -43,6 +48,7 @@ export function useSaveCategory() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ request, id }: { request: CategorySaveRequest; id?: number }) => ProductCategoryService.save(request, id),
+    meta: { handlesError: true },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.categories.all }),
   });
 }
@@ -51,6 +57,7 @@ export function useDeleteCategory() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ level, id }: { level: CategoryLevel; id: number }) => ProductCategoryService.remove(level, id),
+    meta: { handlesError: true },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.categories.all }),
   });
 }
@@ -64,6 +71,7 @@ export function useReorderCategories() {
   return useMutation({
     mutationFn: ({ level, orderedIds }: { level: CategoryLevel; parentId: number; orderedIds: number[] }) =>
       ProductCategoryService.reorder(level, orderedIds),
+    meta: { handlesError: true },
     onMutate: async ({ level, parentId, orderedIds }) => {
       const key = queryKeys.categories.children(level, parentId);
       await queryClient.cancelQueries({ queryKey: key });

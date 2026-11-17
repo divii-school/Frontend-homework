@@ -9,6 +9,7 @@ export function useProductList(query: ProductListQuery) {
     queryKey: queryKeys.products.list(query),
     queryFn: () => ProductService.list(query),
     placeholderData: keepPreviousData,
+    meta: { handlesError: true },
   });
 }
 
@@ -19,6 +20,7 @@ export function useProductsInChildCategory(childCategoryId: number | undefined, 
     queryFn: () => ProductService.byChildCategory(childCategoryId as number, page, 10),
     enabled: Boolean(childCategoryId),
     placeholderData: keepPreviousData,
+    meta: { handlesError: true },
   });
 }
 
@@ -27,6 +29,7 @@ export function useProductDetails(id: number) {
     queryKey: queryKeys.products.details(id),
     queryFn: () => ProductService.details(id),
     enabled: Number.isInteger(id) && id > 0,
+    meta: { handlesError: true },
   });
 }
 
@@ -38,6 +41,7 @@ export function useGeneratedProductCode(enabled: boolean) {
     enabled,
     staleTime: 0,
     gcTime: 0,
+    meta: { handlesError: true },
   });
 }
 
@@ -50,6 +54,7 @@ export function useUpdateProductVisibility() {
   return useMutation({
     mutationFn: ({ id, visible }: { id: number; visible: boolean }) =>
       ProductService.updateStatus(id, visible ? 'yes' : 'no'),
+    meta: { handlesError: true },
     onMutate: async ({ id, visible }) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.products.all });
       const snapshots = queryClient.getQueriesData<ProductPage>({ queryKey: ['products', 'list'] });
@@ -77,6 +82,7 @@ export function useDeleteProducts() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (ids: number[]) => ProductService.remove(ids),
+    meta: { handlesError: true },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.products.all }),
   });
 }
@@ -85,6 +91,7 @@ export function useCreateProduct() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (body: ProductSaveRequest) => ProductService.create(body),
+    meta: { handlesError: true },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.products.all }),
   });
 }
@@ -93,10 +100,11 @@ export function useUpdateProduct(id: number) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (body: ProductSaveRequest) => ProductService.update(id, body),
+    meta: { handlesError: true },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.products.all }),
   });
 }
 
 export function useUploadProductImage() {
-  return useMutation({ mutationFn: (file: File) => ProductService.uploadImage(file) });
+  return useMutation({ mutationFn: (file: File) => ProductService.uploadImage(file), meta: { handlesError: true } });
 }

@@ -34,18 +34,83 @@ const BY_KIND: Record<ApiError['kind'], string> = {
   business: '요청을 처리하지 못했습니다.',
   unavailable: MESSAGES.serverUnavailable,
   server: '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+  unknown: '예기치 않은 오류가 발생했습니다. 화면을 새로고침한 후 다시 시도해 주세요.',
+};
+
+/** API field names → the Korean label the screen shows for that field. */
+const FIELD_LABELS: Record<string, string> = {
+  loginId: '아이디',
+  password: '비밀번호',
+  productName: '상품명',
+  productCode: '상품코드',
+  price: '판매가',
+  unitPrice: '단가',
+  description: '상세설명',
+  erpCode: 'ERP 코드',
+  erpName: '상품ERP명',
+  erpUnitPrice: 'ERP 단가',
+  quantity: '수량',
+  taxType: '과세 구분',
+  categoryId: '대분류',
+  subCategoryId: '중분류',
+  childCategoryId: '소분류',
+  images: '상품 이미지',
+  isOptions: '옵션 사용',
+  isVisible: '노출여부',
+  onSale: '판매상태',
+  name: '카테고리명',
+  ids: '선택한 항목',
+  search: '검색어',
+  type: '검색 구분',
+  page: '페이지',
+  limit: '페이지당 개수',
 };
 
 /**
+ * The API's validation sentences (class-validator defaults, in English) → Korean.
+ * Written as "<label>: <rule>" so no Korean particle (을/를) has to be guessed.
+ */
+const VALIDATION_RULES: { pattern: RegExp; text: (n?: string) => string }[] = [
+  { pattern: /^(?:each value in )?(\S+) should not be empty$/, text: () => '필수 입력 항목입니다.' },
+  { pattern: /^(?:each value in )?(\S+) must be a string$/, text: () => '문자로 입력해 주세요.' },
+  { pattern: /^(?:each value in )?(\S+) must be an integer number$/, text: () => '정수로 입력해 주세요.' },
+  { pattern: /^(?:each value in )?(\S+) must be a number\b.*$/, text: () => '숫자로 입력해 주세요.' },
+  { pattern: /^(?:each value in )?(\S+) must be a positive number$/, text: () => '0보다 큰 값을 입력해 주세요.' },
+  { pattern: /^(?:each value in )?(\S+) must not be less than (\S+)$/, text: (n) => `${n} 이상으로 입력해 주세요.` },
+  { pattern: /^(?:each value in )?(\S+) must not be greater than (\S+)$/, text: (n) => `${n} 이하로 입력해 주세요.` },
+  { pattern: /^(\S+) must be longer than or equal to (\d+) characters$/, text: (n) => `${n}자 이상 입력해 주세요.` },
+  { pattern: /^(\S+) must be shorter than or equal to (\d+) characters$/, text: (n) => `${n}자 이하로 입력해 주세요.` },
+  { pattern: /^(\S+) must be one of the following values: .*$/, text: () => '선택할 수 없는 값입니다.' },
+  { pattern: /^(\S+) must be an array$/, text: () => '목록 형식이 올바르지 않습니다.' },
+  { pattern: /^property (\S+) should not exist$/, text: () => '허용되지 않는 항목입니다.' },
+];
+
+/** One API validation sentence in Korean; an unrecognised sentence gets the generic Korean text. */
+export function validationSentenceToKorean(sentence: string): string {
+  for (const rule of VALIDATION_RULES) {
+    const match = rule.pattern.exec(sentence.trim());
+    if (match) {
+      // Nested paths ("images.0.url") are labelled by their last named part.
+      const field = match[1].split('.').filter((part) => !/^\d+$/.test(part)).pop() ?? match[1];
+      return `${FIELD_LABELS[field] ?? '입력값'}: ${rule.text(match[2])}`;
+    }
+  }
+  return BY_KIND.validation;
+}
+
+/**
  * The text to show for an error.
- * Known key → Korean text. Validation sentences from the API ("name should not be empty")
- * are shown as the API wrote them, so the user sees exactly what the server refused.
+ * Known key → Korean text. Validation sentences from the API ("name should not be empty") are
+ * English, so each is turned into Korean ("카테고리명: 필수 입력 항목입니다."); a sentence we do
+ * not recognise becomes the generic Korean "입력한 내용을 다시 확인해 주세요."
  */
 export function errorMessage(error: unknown): string {
-  if (!(error instanceof ApiError)) return BY_KIND.server;
+  if (!(error instanceof ApiError)) return BY_KIND.unknown;
   const known = error.apiMessages.map((m) => MESSAGES[m]).find(Boolean);
   if (known) return known;
-  if (error.kind === 'validation' && error.apiMessages.length) return error.apiMessages.join('\n');
+  if (error.kind === 'validation' && error.apiMessages.length) {
+    return [...new Set(error.apiMessages.map(validationSentenceToKorean))].join('\n');
+  }
   if (error.kind === 'business' && error.apiMessages[0]) return `${BY_KIND.business} (${error.apiMessages[0]})`;
   return BY_KIND[error.kind];
 }

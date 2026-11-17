@@ -91,6 +91,8 @@ test.describe('상품 관리 목록 (read only)', () => {
 test.describe('상품 상세 (read only)', () => {
   test('tabs: each loads on open, active tab in the URL', async ({ page }) => {
     await page.goto('/shopping/products?q=HW3-Pranesh-Probe');
+    // Wait for the search result itself, so the click lands on the loaded, interactive row.
+    await expect(page.getByText(/총 게시물 : 1$/)).toBeVisible();
     await page.getByRole('link', { name: /HW3-Pranesh-Probe/ }).first().click();
     await expect(page).toHaveURL(/\/shopping\/products\/\d+$/);
     await expect(page.getByRole('tab', { name: '기본 정보' })).toHaveAttribute('aria-selected', 'true');

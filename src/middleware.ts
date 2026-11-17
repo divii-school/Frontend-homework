@@ -2,12 +2,15 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { ROUTES, isPublicPath } from '@/config/app-routes';
 import { ACCESS_TOKEN_COOKIE, secondsUntilExpiry } from '@/lib/auth/session-storage';
 import { safeReturnTo } from '@/lib/auth/return-to';
+import { SESSION_MARKER_COOKIE } from '@/lib/auth/session-marker';
 
 /**
  * Runs on the server before every page (see `matcher`).
  * Step 1 of the route guard: "is anyone logged in?"
- *  - no live token on a protected page → /login?returnTo=<page>
- *  - live token on /login              → back to returnTo, or the home page
+ *  - no live token and no renewable session on a protected page → /login?returnTo=<page>
+ *  - access token expired but a refresh token exists (자동 로그인) → let the page load;
+ *    AuthProvider renews the token before anything is shown, or sends the user to login
+ *  - live token on /login → back to returnTo, or the home page
  * Step 2, "may THIS user open THIS page?", needs the permissions, which live in the
  * browser; <RouteGuard> does it with the same config (app-routes.ts).
  */
@@ -15,6 +18,7 @@ export function middleware(request: NextRequest): NextResponse {
   const { pathname, search } = request.nextUrl;
   const token = request.cookies.get(ACCESS_TOKEN_COOKIE)?.value;
   const loggedIn = Boolean(token) && secondsUntilExpiry(token as string) > 0;
+  const canRenew = request.cookies.get(SESSION_MARKER_COOKIE)?.value === '1';
 
   if (isPublicPath(pathname)) {
     if (loggedIn && pathname === ROUTES.login) {
@@ -24,7 +28,7 @@ export function middleware(request: NextRequest): NextResponse {
     return NextResponse.next();
   }
 
-  if (!loggedIn) {
+  if (!loggedIn && !canRenew) {
     const login = new URL(ROUTES.login, request.url);
     if (pathname !== '/') login.searchParams.set('returnTo', `${pathname}${search}`);
     return NextResponse.redirect(login);
