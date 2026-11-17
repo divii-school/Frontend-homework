@@ -99,6 +99,8 @@ The details page has no Figma frame (design question 4); its composite shows 8.1
 - API side: a search by category name (`GET /products?type=categoryName&search=…`) also returns deleted products whose medium or minor category name matches (the OR conditions are not in brackets); the list shows them as normal rows.
 - By design: the row selection is kept when the search or the filters change; the selection bar always shows how many rows are selected, with a Clear action.
 - Known limitation: in edit mode a saved draft is restored over the loaded product with a "Draft restored" notice, and the browser Back button leaves the form without the unsaved-changes dialog.
+- Known issues, app side (not fixed): an image file name with a comma breaks the stored image key after save (rename the file first); a 5th image is possible through Remove, Add file, Undo, then Retry of a failed upload.
+- Visual polish still open at 768 / 375 px: the step 3 label is cut at 768 px, the rows-per-page select height, a wrapped breadcrumb line that starts with "/", the disabled Delete button, the registration time wrapping in some 375 px cards, the "Reset filters" indent.
 - Only a SUPER_ADMIN account exists on QA; other roles are verified with injected sessions in `e2e/roles.spec.ts`.
 
 ## Logins

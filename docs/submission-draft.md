@@ -155,6 +155,8 @@ Full text: `docs/qa-build-report.md` (10 parts, dated 2026-11-17) — post it as
   - `GET /products?type=categoryName&search=<name>` (search by category name) → also returns deleted products whose medium or minor category name matches (the OR conditions are not in brackets after `isDeleted = false`; seen in the release/qa backend code). The list shows them as normal rows.
 - **By design:** the row selection is kept when the search or the filters change; the selection bar always shows how many rows are selected, with a Clear action, and bulk delete deletes every selected product.
 - **Known limitation:** in edit mode a saved draft is restored over the loaded product with a "Draft restored" notice (no check for newer server values), and the browser Back button leaves the form without the unsaved-changes dialog.
+- **Known issues, app side (not fixed):** an image file name with a comma breaks the stored image key after save (rename the file first); a 5th image is possible through Remove, Add file, Undo, then Retry of a failed upload (the form then shows "5 / 4 images").
+- **Visual polish still open (768 / 375 px):** the step 3 label is cut at 768 px, the rows-per-page select is not the same height as the buttons next to it, a wrapped breadcrumb line starts with "/", the disabled Delete button keeps its red border, the registration time wraps in some 375 px cards, "Reset filters" is indented a little.
 - Not covered: Firefox / Safari, concurrent edits, drag reorder on touch screens (Alt + ↑ / ↓ alternative).
 
 ## 8. Side-by-side screenshots (design | your screen) at 1440 / 768 / 375, light and dark
