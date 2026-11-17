@@ -50,9 +50,9 @@ export function DeleteProductsDialog({ ids, onClose, onDeleted }: { ids: number[
         </>
       }
     >
-      <p className={styles.dialogBody}>The selected {label} will be deleted. This can&apos;t be undone.</p>
+      <p className={styles["dialog-body"]}>The selected {label} will be deleted. This can&apos;t be undone.</p>
       {apiError && (
-        <p className={styles.dialogError} role="alert">
+        <p className={styles["dialog-error"]} role="alert">
           {apiError}
         </p>
       )}

@@ -28,13 +28,13 @@
   mix-blend-mode: var(--logo-blend);
 }
 
-.brandDivider {
+.brand-divider {
   width: 1px;
   height: 12px;
   background: var(--color-divider);
 }
 
-.brandLabel {
+.brand-label {
   font-size: 14px;
   line-height: 20px;
   font-weight: 700;
@@ -94,8 +94,8 @@
   }
 }
 
-.inputInvalid,
-.inputInvalid:focus-within {
+.input-invalid,
+.input-invalid:focus-within {
   border-bottom-color: var(--color-danger);
   color: var(--color-danger);
 }
@@ -153,7 +153,7 @@
   }
 }
 
-.checkBox {
+.check-box {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -221,7 +221,7 @@
   line-height: 20px;
 }
 
-.popupBody {
+.popup-body {
   margin: 0;
   text-align: center;
   color: var(--color-text);

@@ -60,14 +60,14 @@ export function ImageUploader({ images, onChange, error }: Props) {
 
   return (
     <div className={styles.images}>
-      <ul className={styles.imageGrid} aria-label="Product images">
+      <ul className={styles["image-grid"]} aria-label="Product images">
         {images.map((image, index) => (
-          <li key={image.filePath} className={styles.imageTile}>
-            <Image src={image.preview} alt={`Product image ${index + 1}`} fill sizes="140px" className={styles.imageImg} />
-            {index === 0 && <span className={styles.mainBadge}>Thumbnail</span>}
+          <li key={image.filePath} className={styles["image-tile"]}>
+            <Image src={image.preview} alt={`Product image ${index + 1}`} fill sizes="140px" className={styles["image-img"]} />
+            {index === 0 && <span className={styles["main-badge"]}>Thumbnail</span>}
             <button
               type="button"
-              className={styles.removeImage}
+              className={styles["remove-image"]}
               onClick={() => onChange(images.filter((_, i) => i !== index))}
               aria-label={`Remove image ${index + 1}`}
             >
@@ -76,13 +76,13 @@ export function ImageUploader({ images, onChange, error }: Props) {
           </li>
         ))}
         {Array.from({ length: uploading }, (_, i) => (
-          <li key={`up-${i}`} className={`${styles.imageTile} ${styles.imageUploading}`} role="status">
+          <li key={`up-${i}`} className={`${styles["image-tile"]} ${styles["image-uploading"]}`} role="status">
             Uploading…
           </li>
         ))}
       </ul>
 
-      <div className={styles.imageActions}>
+      <div className={styles["image-actions"]}>
         <input
           ref={inputRef}
           type="file"
@@ -96,7 +96,7 @@ export function ImageUploader({ images, onChange, error }: Props) {
         />
         <button
           type="button"
-          className={styles.addFile}
+          className={styles["add-file"]}
           onClick={() => inputRef.current?.click()}
           disabled={slotsLeft <= 0}
           aria-describedby={hintId}

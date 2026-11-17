@@ -81,11 +81,11 @@ export function ProductDetail({ productId }: { productId: number }) {
         crumb="Product Details"
         actions={
           <>
-            <Link href="/shopping/products" className={`${btn.button} ${btn.outline} ${styles.linkButton}`}>
+            <Link href="/shopping/products" className={`${btn.button} ${btn.outline} ${styles["link-button"]}`}>
               Back to list
             </Link>
             {detail.data && (
-              <Link href={`/shopping/products/${productId}/edit`} className={`${btn.button} ${btn.primary} ${styles.linkButton}`}>
+              <Link href={`/shopping/products/${productId}/edit`} className={`${btn.button} ${btn.primary} ${styles["link-button"]}`}>
                 Edit
               </Link>
             )}
@@ -107,7 +107,7 @@ export function ProductDetail({ productId }: { productId: number }) {
               aria-selected={tab === t.key}
               aria-controls={`panel-${t.key}`}
               tabIndex={tab === t.key ? 0 : -1}
-              className={`${styles.tab} ${tab === t.key ? styles.tabActive : ""}`}
+              className={`${styles.tab} ${tab === t.key ? styles["tab-active"] : ""}`}
               onClick={() => setUrl(t.key)}
               onKeyDown={(e) => onTabKeyDown(e, t.key)}
             >
@@ -192,14 +192,14 @@ function OverviewTab({ query }: { query: ReturnType<typeof useProductDetail> }) 
   return (
     <div className={styles.overview}>
       <section aria-labelledby="images-heading">
-        <h2 id="images-heading" className={styles.sectionTitle}>
+        <h2 id="images-heading" className={styles["section-title"]}>
           Images
         </h2>
         {images.length ? (
           <ul className={styles.gallery}>
             {images.map((src, i) => (
-              <li key={src} className={styles.galleryItem}>
-                <Image src={src} alt={`${d.productName} image ${i + 1}`} fill sizes="160px" className={styles.galleryImg} />
+              <li key={src} className={styles["gallery-item"]}>
+                <Image src={src} alt={`${d.productName} image ${i + 1}`} fill sizes="160px" className={styles["gallery-img"]} />
               </li>
             ))}
           </ul>
@@ -209,12 +209,12 @@ function OverviewTab({ query }: { query: ReturnType<typeof useProductDetail> }) 
       </section>
 
       <section aria-labelledby="info-heading">
-        <h2 id="info-heading" className={styles.sectionTitle}>
+        <h2 id="info-heading" className={styles["section-title"]}>
           Information
         </h2>
         <dl className={styles.info}>
           {rows.map(([label, value]) => (
-            <div key={label} className={styles.infoRow}>
+            <div key={label} className={styles["info-row"]}>
               <dt>{label}</dt>
               <dd>{value}</dd>
             </div>
@@ -223,7 +223,7 @@ function OverviewTab({ query }: { query: ReturnType<typeof useProductDetail> }) 
       </section>
 
       <section aria-labelledby="desc-heading">
-        <h2 id="desc-heading" className={styles.sectionTitle}>
+        <h2 id="desc-heading" className={styles["section-title"]}>
           Detailed description
         </h2>
         <p className={styles.description}>{d.description?.trim() || "-"}</p>
@@ -243,7 +243,7 @@ function SessionsTab({ productId, page, onPage }: { productId: number; page: num
   return (
     <>
       <p className={styles.count}>Total: {query.data.totalRecords.toLocaleString("en-US")}</p>
-      <div className={styles.tableWrap}>
+      <div className={styles["table-wrap"]}>
         <table className={styles.table}>
           <caption className="visually-hidden">Class sessions that use this product</caption>
           <thead>
@@ -299,7 +299,7 @@ function RelatedTab({
   return (
     <>
       <p className={styles.count}>Products in the same minor category: {Math.max(query.data.totalRecords - 1, rows.length).toLocaleString("en-US")}</p>
-      <div className={styles.tableWrap}>
+      <div className={styles["table-wrap"]}>
         <table className={styles.table}>
           <caption className="visually-hidden">Other products in the same category</caption>
           <thead>
@@ -315,7 +315,7 @@ function RelatedTab({
             {rows.map((row) => (
               <tr key={row.id}>
                 <td>
-                  <Link href={`/shopping/products/${row.id}`} className={styles.rowLink}>
+                  <Link href={`/shopping/products/${row.id}`} className={styles["row-link"]}>
                     {row.productName}
                   </Link>
                 </td>

@@ -16,9 +16,9 @@ test.describe("real QA API (read-only)", () => {
     await expect(table.locator("tbody tr").first()).toContainText(/₩/, { timeout: 20_000 });
     await expect(table.locator("tbody tr")).toHaveCount(10);
     await expect(page.getByText(/^Total Posts: [\d,]+$/)).toBeVisible();
-    // Prices use ₩ with commas; dates are YYYY/MM/DD HH:MM.
+    // Prices use ₩ with commas; dates use the WM format YYYY-MM-DD h:mm AM (KST).
     await expect(table.locator("tbody tr").first()).toContainText(/₩[\d,]+/);
-    await expect(table.locator("tbody tr").first()).toContainText(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}/);
+    await expect(table.locator("tbody tr").first()).toContainText(/\d{4}-\d{2}-\d{2} \d{1,2}:\d{2} (AM|PM)/);
 
     await page.getByRole("button", { name: "Page 2" }).click();
     await expect(page).toHaveURL("/shopping/products?page=2");

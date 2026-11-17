@@ -106,18 +106,18 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
       <div className={styles.content}>
         <ol className={styles.stepper} aria-label="Steps">
           {STEPS.map((s, i) => (
-            <li key={s.key} className={`${styles.stepItem} ${i === step ? styles.stepCurrent : ""} ${i < step ? styles.stepDone : ""}`}>
-              <span className={styles.stepNumber} aria-hidden>
+            <li key={s.key} className={`${styles["step-item"]} ${i === step ? styles["step-current"] : ""} ${i < step ? styles["step-done"] : ""}`}>
+              <span className={styles["step-number"]} aria-hidden>
                 {i + 1}
               </span>
-              <span className={styles.stepLabel}>{s.label}</span>
+              <span className={styles["step-label"]}>{s.label}</span>
               {i === step && <span className="visually-hidden"> (current step)</span>}
             </li>
           ))}
         </ol>
 
         <form className={styles.card} onSubmit={next} noValidate aria-busy={busy}>
-          <h2 ref={headingRef} tabIndex={-1} className={styles.stepHeading}>
+          <h2 ref={headingRef} tabIndex={-1} className={styles["step-heading"]}>
             Step {step + 1} of {STEPS.length}: {STEPS[step].label}
           </h2>
 
@@ -242,7 +242,7 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
           )}
 
           {apiError && (
-            <p className={styles.apiError} role="alert">
+            <p className={styles["api-error"]} role="alert">
               {apiError} Your input is kept — fix the problem and try again.
             </p>
           )}
@@ -251,7 +251,7 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
             <button type="button" className={`${btn.button} ${btn.outline}`} onClick={() => setConfirmCancel(true)} disabled={busy}>
               Cancel
             </button>
-            <div className={styles.footerRight}>
+            <div className={styles["footer-right"]}>
               {step > 0 && (
                 <button type="button" className={`${btn.button} ${btn.outline}`} onClick={() => goTo((step - 1) as StepIndex)} disabled={busy}>
                   Back
@@ -293,7 +293,7 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
           </>
         }
       >
-        <p className={styles.dialogText}>All entered information will be deleted. Do you want to cancel?</p>
+        <p className={styles["dialog-text"]}>All entered information will be deleted. Do you want to cancel?</p>
       </Dialog>
     </>
   );

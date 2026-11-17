@@ -130,7 +130,7 @@ export function ProductList() {
 
             <div className={styles.tools}>
               {selected.size > 0 && (
-                <span className={styles.selectedCount} aria-live="polite">
+                <span className={styles["selected-count"]} aria-live="polite">
                   {selected.size} selected
                   <button type="button" className={styles.clear} onClick={() => setSelected(new Set())}>
                     Clear
@@ -139,7 +139,7 @@ export function ProductList() {
               )}
               <button
                 type="button"
-                className={styles.smallButton}
+                className={styles["small-button"]}
                 onClick={() => setConfirmDelete(true)}
                 disabled={selected.size === 0}
               >
@@ -147,7 +147,7 @@ export function ProductList() {
               </button>
               <button
                 type="button"
-                className={styles.smallButton}
+                className={styles["small-button"]}
                 onClick={exportCsv}
                 disabled={exporting || total === 0}
                 aria-busy={exporting}
@@ -160,14 +160,14 @@ export function ProductList() {
             </div>
           </div>
 
-          <div className={styles.tableWrap} aria-busy={query.isFetching}>
+          <div className={styles["table-wrap"]} aria-busy={query.isFetching}>
             <table className={styles.table}>
               <caption className="visually-hidden">
                 Products, page {params.page} of {totalPages}
               </caption>
               <thead>
                 <tr>
-                  <th scope="col" className={styles.colSelect}>
+                  <th scope="col" className={styles["col-select"]}>
                     <input
                       type="checkbox"
                       className={styles.checkbox}
@@ -180,18 +180,18 @@ export function ProductList() {
                       aria-label="Select all products on this page"
                     />
                   </th>
-                  <th scope="col" className={styles.colThumb}>
+                  <th scope="col" className={styles["col-thumb"]}>
                     Thumbnail
                   </th>
                   <th scope="col">Product Name</th>
-                  <th scope="col" className={styles.colPrice}>
+                  <th scope="col" className={styles["col-price"]}>
                     Selling Price
                   </th>
                   <th scope="col">Category (Course)</th>
-                  <th scope="col" className={styles.colStatus}>
+                  <th scope="col" className={styles["col-status"]}>
                     Exposure Status
                   </th>
-                  <th scope="col" className={styles.colDate}>
+                  <th scope="col" className={styles["col-date"]}>
                     Registration Date
                   </th>
                 </tr>
@@ -199,7 +199,7 @@ export function ProductList() {
               <tbody>
                 {query.isPending ? (
                   Array.from({ length: PRODUCT_PAGE_SIZE }, (_, i) => (
-                    <tr key={i} aria-hidden className={styles.skeletonRow}>
+                    <tr key={i} aria-hidden className={styles["skeleton-row"]}>
                       <td colSpan={7}>
                         <span />
                       </td>
@@ -222,7 +222,7 @@ export function ProductList() {
                   </tr>
                 ) : (
                   rows.map((row) => (
-                    <tr key={row.id} className={selected.has(row.id) ? styles.rowSelected : undefined}>
+                    <tr key={row.id} className={selected.has(row.id) ? styles["row-selected"] : undefined}>
                       <td>
                         <input
                           type="checkbox"
@@ -235,7 +235,7 @@ export function ProductList() {
                       <td>
                         <div className={styles.thumb}>
                           {row.image ? (
-                            <Image src={row.image} alt="" fill sizes="64px" className={styles.thumbImg} />
+                            <Image src={row.image} alt="" fill sizes="64px" className={styles["thumb-img"]} />
                           ) : (
                             <span className="visually-hidden">No image</span>
                           )}

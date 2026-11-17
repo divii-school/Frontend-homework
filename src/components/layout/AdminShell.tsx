@@ -41,14 +41,14 @@ export function AdminShell({ children }: { children: ReactNode }) {
         Skip to content
       </a>
 
-      <aside id="admin-nav" className={`${styles.sidebar} ${drawerOpen ? styles.sidebarOpen : ""}`} aria-label="Main menu">
-        <div className={styles.brandRow}>
+      <aside id="admin-nav" className={`${styles.sidebar} ${drawerOpen ? styles["sidebar-open"] : ""}`} aria-label="Main menu">
+        <div className={styles["brand-row"]}>
           <Link href="/shopping/products" className={styles.brand} onClick={() => setDrawerOpen(false)}>
             <Image src="/images/talkingclub-logo@2x.png" alt="Talking Club Admin" width={158} height={30} className={styles.logo} priority />
           </Link>
           <button
             type="button"
-            className={`${styles.iconButton} ${styles.mobileOnly}`}
+            className={`${styles["icon-button"]} ${styles["mobile-only"]}`}
             onClick={() => setDrawerOpen(false)}
             aria-label="Close menu"
           >
@@ -67,24 +67,24 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 <li key={group.label}>
                   <button
                     type="button"
-                    className={`${styles.groupButton} ${active ? styles.active : ""}`}
+                    className={`${styles["group-button"]} ${active ? styles.active : ""}`}
                     aria-expanded={open}
                     aria-controls={listId}
                     onClick={() => setOpenGroups((s) => ({ ...s, [group.label]: !open }))}
                   >
-                    <GroupIcon className={styles.groupIcon} />
-                    <span className={styles.groupLabel}>{group.label}</span>
-                    <IconArrowDown className={`${styles.chevron} ${open ? styles.chevronOpen : ""}`} />
+                    <GroupIcon className={styles["group-icon"]} />
+                    <span className={styles["group-label"]}>{group.label}</span>
+                    <IconArrowDown className={`${styles.chevron} ${open ? styles["chevron-open"] : ""}`} />
                   </button>
                   {open && (
-                    <ul id={listId} className={styles.subMenu}>
+                    <ul id={listId} className={styles["sub-menu"]}>
                       {group.pages.map((page) => {
                         const current = pathname === page.href || pathname.startsWith(`${page.href}/`);
                         return (
                           <li key={page.href}>
                             <Link
                               href={page.href}
-                              className={`${styles.subLink} ${current ? styles.subLinkActive : ""}`}
+                              className={`${styles["sub-link"]} ${current ? styles["sub-link-active"] : ""}`}
                               aria-current={current ? "page" : undefined}
                               onClick={() => setDrawerOpen(false)}
                             >
@@ -109,7 +109,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         <header className={styles.header}>
           <button
             type="button"
-            className={`${styles.iconButton} ${styles.mobileOnly}`}
+            className={`${styles["icon-button"]} ${styles["mobile-only"]}`}
             onClick={() => setDrawerOpen(true)}
             aria-label="Open menu"
             aria-expanded={drawerOpen}
@@ -117,12 +117,12 @@ export function AdminShell({ children }: { children: ReactNode }) {
           >
             <IconBars />
           </button>
-          <div className={styles.headerRight}>
+          <div className={styles["header-right"]}>
             <button type="button" className={styles.logout} onClick={handleLogout} aria-label="Log out" title="Log out">
               <IconLogout />
             </button>
             <span className={styles.divider} aria-hidden />
-            <span className={styles.userName}>{user?.fullName || "Admin"}</span>
+            <span className={styles["user-name"]}>{user?.fullName || "Admin"}</span>
           </div>
         </header>
 

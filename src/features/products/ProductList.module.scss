@@ -34,7 +34,7 @@
 }
 
 .type,
-.inputWrap {
+.input-wrap {
   height: 40px;
   border: 0;
   border-bottom: 1px solid var(--color-border);
@@ -50,7 +50,7 @@
   cursor: pointer;
 }
 
-.inputWrap {
+.input-wrap {
   position: relative;
   display: flex;
   align-items: center;
@@ -83,12 +83,12 @@
 }
 
 .type:focus-visible,
-.inputWrap:focus-within {
+.input-wrap:focus-within {
   outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
-.searchButton {
+.search-button {
   position: absolute;
   right: -4px;
   display: inline-flex;
@@ -111,7 +111,7 @@
   gap: 10px;
 }
 
-.selectedCount {
+.selected-count {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -129,7 +129,7 @@
   cursor: pointer;
 }
 
-.smallButton {
+.small-button {
   height: 30px;
   padding: 0 15px;
   border: 1px solid var(--color-border-strong);
@@ -160,7 +160,7 @@
 }
 
 // Wide table scrolls inside its card on small screens; the page itself never scrolls sideways.
-.tableWrap {
+.table-wrap {
   overflow-x: auto;
   padding: 20px 10px 0;
 }
@@ -191,27 +191,27 @@
   }
 }
 
-.colSelect {
+.col-select {
   width: 64px;
 }
 
-.colThumb {
+.col-thumb {
   width: 104px;
 }
 
-.colPrice {
+.col-price {
   width: 130px;
 }
 
-.colStatus {
+.col-status {
   width: 140px;
 }
 
-.colDate {
+.col-date {
   width: 170px;
 }
 
-.rowSelected td {
+.row-selected td {
   background: var(--color-row-hover);
 }
 
@@ -231,7 +231,7 @@
   background: var(--color-thumb-placeholder);
 }
 
-.thumbImg {
+.thumb-img {
   object-fit: cover;
 }
 
@@ -292,7 +292,7 @@
   }
 }
 
-.skeletonRow td span {
+.skeleton-row td span {
   display: block;
   height: 78px;
   border-radius: var(--radius-sm);
@@ -311,17 +311,17 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .skeletonRow td span {
+  .skeleton-row td span {
     animation: none;
   }
 }
 
-.dialogBody {
+.dialog-body {
   margin: 0;
   color: var(--color-text-muted);
 }
 
-.dialogError {
+.dialog-error {
   margin: var(--space-3) 0 0;
   font-size: 12px;
   color: var(--color-danger);
@@ -333,7 +333,7 @@
   }
 
   .search,
-  .inputWrap {
+  .input-wrap {
     flex: 1 1 100%;
     width: auto;
   }
@@ -342,7 +342,7 @@
     flex: 0 0 136px;
   }
 
-  .inputWrap {
+  .input-wrap {
     flex: 1 1 160px;
   }
 }
@@ -352,7 +352,7 @@
     padding: 0 var(--space-4) 32px;
   }
 
-  .tableWrap {
+  .table-wrap {
     padding: var(--space-3) 0 0;
   }
 }

@@ -58,7 +58,7 @@ test.describe("product details tabs (mocked API)", () => {
     await expect(panel).toContainText("₩19,000");
     await expect(panel).toContainText("Main > Phonics > ACE Alphabet");
     await expect(panel).toContainText("Tax-free");
-    await expect(panel).toContainText("2026/11/16 12:00");
+    await expect(panel).toContainText("2026-11-16 12:00 PM");
     await expect(panel).toContainText("No images.");
     expect(hits.sessions).toBe(0);
     expect(hits.related).toBe(0);

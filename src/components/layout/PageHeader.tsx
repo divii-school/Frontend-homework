@@ -11,7 +11,7 @@ export function PageHeader({ title, actions, crumb }: { title: string; actions?:
   const crumbs = crumb && base.length ? [...base, crumb] : base;
   return (
     <div className={styles.header}>
-      <div className={styles.titleRow}>
+      <div className={styles["title-row"]}>
         <h1 className={styles.title}>{title}</h1>
         {crumbs.length > 0 && (
           <nav aria-label="Breadcrumb">

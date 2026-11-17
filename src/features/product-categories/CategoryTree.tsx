@@ -54,7 +54,7 @@ function TreeItem({ node, expanded, onToggle, actions }: Omit<Props, "nodes"> & 
               <IconChevronDown16 className={isOpen ? undefined : styles.collapsed} />
             </button>
           ) : (
-            <span className={styles.toggleSpacer} aria-hidden />
+            <span className={styles["toggle-spacer"]} aria-hidden />
           )}
           <span className={styles.code}>[{node.id}]</span>
           <span className={styles.name}>{node.name}</span>
@@ -68,17 +68,17 @@ function TreeItem({ node, expanded, onToggle, actions }: Omit<Props, "nodes"> & 
         {actions && (
           <div className={styles.actions}>
             {node.level < 3 && (
-              <button type="button" className={styles.addButton} onClick={() => actions.onAddChild(node)}>
+              <button type="button" className={styles["add-button"]} onClick={() => actions.onAddChild(node)}>
                 <IconPlus16 />
                 <span>
                   Subcategory<span className="visually-hidden"> under {node.name}</span>
                 </span>
               </button>
             )}
-            <button type="button" className={styles.iconButton} onClick={() => actions.onEdit(node)} aria-label={`Edit ${node.name}`}>
+            <button type="button" className={styles["icon-button"]} onClick={() => actions.onEdit(node)} aria-label={`Edit ${node.name}`}>
               <IconPencil16 />
             </button>
-            <button type="button" className={styles.iconButton} onClick={() => actions.onDelete(node)} aria-label={`Delete ${node.name}`}>
+            <button type="button" className={styles["icon-button"]} onClick={() => actions.onDelete(node)} aria-label={`Delete ${node.name}`}>
               <IconTrash16 />
             </button>
           </div>

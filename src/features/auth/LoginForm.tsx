@@ -65,8 +65,8 @@ export function LoginForm() {
           priority
           className={styles.logo}
         />
-        <span className={styles.brandDivider} aria-hidden />
-        <span className={styles.brandLabel}>Admin</span>
+        <span className={styles["brand-divider"]} aria-hidden />
+        <span className={styles["brand-label"]}>Admin</span>
       </div>
 
       <form className={styles.form} onSubmit={handleSubmit} noValidate>
@@ -79,7 +79,7 @@ export function LoginForm() {
 
         <div className={styles.fields}>
           <div className={styles.field}>
-            <div className={`${styles.input} ${invalid ? styles.inputInvalid : ""}`}>
+            <div className={`${styles.input} ${invalid ? styles["input-invalid"] : ""}`}>
               <IconAdmin className={styles.icon} />
               <label htmlFor={idFieldId} className="visually-hidden">
                 ID
@@ -104,7 +104,7 @@ export function LoginForm() {
           </div>
 
           <div className={styles.field}>
-            <div className={`${styles.input} ${invalid ? styles.inputInvalid : ""}`}>
+            <div className={`${styles.input} ${invalid ? styles["input-invalid"] : ""}`}>
               <IconLock className={styles.icon} />
               <label htmlFor={pwFieldId} className="visually-hidden">
                 Password
@@ -142,7 +142,7 @@ export function LoginForm() {
 
           <label className={styles.check}>
             <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
-            <span className={styles.checkBox} aria-hidden>
+            <span className={styles["check-box"]} aria-hidden>
               <IconCheck />
             </span>
             <span>Auto login</span>
@@ -167,7 +167,7 @@ export function LoginForm() {
           </button>
         }
       >
-        <p className={styles.popupBody}>
+        <p className={styles["popup-body"]}>
           You don&apos;t have admin permission.
           <br />
           Please contact customer service.

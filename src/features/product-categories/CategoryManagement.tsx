@@ -100,16 +100,16 @@ export function CategoryManagement() {
               onChange={(e) => setDraft(e.target.value)}
               maxLength={100}
             />
-            <button type="submit" className={styles.searchButton} aria-label="Search">
+            <button type="submit" className={styles["search-button"]} aria-label="Search">
               <IconSearch16 />
             </button>
           </form>
 
-          <div className={styles.treeButtons}>
-            <button type="button" className={styles.outlineButton} onClick={() => setCollapsed(new Set())} disabled={!nodes.length}>
+          <div className={styles["tree-buttons"]}>
+            <button type="button" className={styles["outline-button"]} onClick={() => setCollapsed(new Set())} disabled={!nodes.length}>
               Expand all
             </button>
-            <button type="button" className={styles.outlineButton} onClick={() => setCollapsed(new Set(allIds))} disabled={!nodes.length}>
+            <button type="button" className={styles["outline-button"]} onClick={() => setCollapsed(new Set(allIds))} disabled={!nodes.length}>
               Fold all
             </button>
           </div>
@@ -128,13 +128,13 @@ export function CategoryManagement() {
             <div className={styles.skeleton} role="status">
               <span className="visually-hidden">Loading categories…</span>
               {Array.from({ length: 6 }, (_, i) => (
-                <div key={i} className={styles.skeletonRow} aria-hidden />
+                <div key={i} className={styles["skeleton-row"]} aria-hidden />
               ))}
             </div>
           ) : query.isError ? (
             <div className={styles.message} role="alert">
               <p>{errorMessage(query.error)}</p>
-              <button type="button" className={styles.outlineButton} onClick={() => query.refetch()}>
+              <button type="button" className={styles["outline-button"]} onClick={() => query.refetch()}>
                 Try again
               </button>
             </div>

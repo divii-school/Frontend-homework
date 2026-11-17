@@ -31,7 +31,7 @@ $drawer-breakpoint: 1024px;
   border-right: 1px solid var(--color-border-card);
 }
 
-.brandRow {
+.brand-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -50,7 +50,7 @@ $drawer-breakpoint: 1024px;
   mix-blend-mode: var(--logo-blend);
 }
 
-.iconButton {
+.icon-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -64,18 +64,18 @@ $drawer-breakpoint: 1024px;
   cursor: pointer;
 }
 
-.mobileOnly {
+.mobile-only {
   display: none;
 }
 
 .menu,
-.subMenu {
+.sub-menu {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.groupButton {
+.group-button {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -97,11 +97,11 @@ $drawer-breakpoint: 1024px;
   }
 }
 
-.groupIcon {
+.group-icon {
   flex: 0 0 24px;
 }
 
-.groupLabel {
+.group-label {
   flex: 1;
 }
 
@@ -111,7 +111,7 @@ $drawer-breakpoint: 1024px;
   transition: transform 0.15s ease;
 }
 
-.chevronOpen {
+.chevron-open {
   transform: rotate(180deg);
 
   .active & {
@@ -119,7 +119,7 @@ $drawer-breakpoint: 1024px;
   }
 }
 
-.subLink {
+.sub-link {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -136,7 +136,7 @@ $drawer-breakpoint: 1024px;
   }
 }
 
-.subLinkActive {
+.sub-link-active {
   background: var(--color-nav-sub-bg);
   color: var(--color-brand);
 }
@@ -171,7 +171,7 @@ $drawer-breakpoint: 1024px;
   border-bottom: 1px solid var(--color-border-card);
 }
 
-.headerRight {
+.header-right {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -203,7 +203,7 @@ $drawer-breakpoint: 1024px;
   background: var(--color-border);
 }
 
-.userName {
+.user-name {
   font-size: 14px;
   font-weight: 700;
   line-height: 20px;
@@ -218,7 +218,7 @@ $drawer-breakpoint: 1024px;
 
 // Tablet and phone: sidebar becomes a drawer opened from the header.
 @media (max-width: $drawer-breakpoint) {
-  .mobileOnly {
+  .mobile-only {
     display: inline-flex;
   }
 
@@ -232,7 +232,7 @@ $drawer-breakpoint: 1024px;
     overflow-y: auto;
   }
 
-  .sidebarOpen {
+  .sidebar-open {
     transform: translateX(0);
   }
 

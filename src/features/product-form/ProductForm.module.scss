@@ -6,7 +6,7 @@
   padding: 0 24px 48px;
 }
 
-.pageState {
+.page-state {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -29,7 +29,7 @@
   padding: 0;
 }
 
-.stepItem {
+.step-item {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -38,7 +38,7 @@
   font-weight: 600;
 }
 
-.stepNumber {
+.step-number {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -49,20 +49,20 @@
   font-size: 13px;
 }
 
-.stepCurrent {
+.step-current {
   color: var(--color-text);
 
-  .stepNumber {
+  .step-number {
     border-color: var(--color-brand);
     background: var(--color-brand);
     color: var(--color-brand-contrast);
   }
 }
 
-.stepDone {
+.step-done {
   color: var(--color-text-muted);
 
-  .stepNumber {
+  .step-number {
     border-color: var(--color-brand);
     color: var(--color-brand);
   }
@@ -76,7 +76,7 @@
   background: var(--color-surface);
 }
 
-.stepHeading {
+.step-heading {
   margin: 0 0 24px;
   font-size: 18px;
   font-weight: 700;
@@ -154,13 +154,13 @@
     }
   }
 
-  &:focus-within:not(.readOnly) {
+  &:focus-within:not(.read-only) {
     outline: 2px solid var(--color-focus-ring);
     outline-offset: 4px;
   }
 }
 
-.readOnly input {
+.read-only input {
   color: var(--color-text-muted);
 }
 
@@ -240,7 +240,7 @@
   gap: 12px;
 }
 
-.imageGrid {
+.image-grid {
   display: grid;
   grid-template-columns: repeat(4, 140px);
   gap: 16px;
@@ -253,7 +253,7 @@
   }
 }
 
-.imageTile {
+.image-tile {
   position: relative;
   aspect-ratio: 1;
   overflow: hidden;
@@ -262,11 +262,11 @@
   background: var(--color-thumb-placeholder);
 }
 
-.imageImg {
+.image-img {
   object-fit: cover;
 }
 
-.imageUploading {
+.image-uploading {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -274,7 +274,7 @@
   font-size: 13px;
 }
 
-.mainBadge {
+.main-badge {
   position: absolute;
   left: 6px;
   bottom: 6px;
@@ -286,7 +286,7 @@
   font-weight: 700;
 }
 
-.removeImage {
+.remove-image {
   position: absolute;
   top: 4px;
   right: 4px;
@@ -309,14 +309,14 @@
   }
 }
 
-.imageActions {
+.image-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 16px;
 }
 
-.addFile {
+.add-file {
   height: 36px;
   padding: 0 28px;
   border: 0;
@@ -336,13 +336,13 @@
 }
 
 // ---- Categories ----
-.categoryColumns {
+.category-columns {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
 
-.categoryColumn {
+.category-column {
   min-width: 0;
   margin: 0;
   padding: 0;
@@ -350,11 +350,11 @@
   border-radius: var(--radius-sm);
 }
 
-.columnInvalid {
+.column-invalid {
   border-color: var(--color-danger);
 }
 
-.columnTitle {
+.column-title {
   float: left;
   width: 100%;
   padding: 10px 12px;
@@ -364,7 +364,7 @@
   color: var(--color-text);
 }
 
-.columnBody {
+.column-body {
   clear: both;
   max-height: 240px;
   min-height: 160px;
@@ -372,13 +372,13 @@
   padding: 6px;
 }
 
-.columnNote {
+.column-note {
   margin: 8px 6px;
   font-size: 13px;
   color: var(--color-text-muted);
 }
 
-.categoryColumn > .error {
+.category-column > .error {
   padding: 0 12px 8px;
 }
 
@@ -401,7 +401,7 @@
   }
 }
 
-.optionSelected {
+.option-selected {
   background: var(--color-table-head);
   font-weight: 600;
 
@@ -410,7 +410,7 @@
   }
 }
 
-.linkButton {
+.link-button {
   padding: 0;
   border: 0;
   background: none;
@@ -421,7 +421,7 @@
 }
 
 // ---- Footer ----
-.apiError {
+.api-error {
   margin: 24px 0 0;
   padding: 10px 14px;
   border: 1px solid var(--color-danger);
@@ -440,12 +440,12 @@
   border-top: 1px solid var(--color-border-card);
 }
 
-.footerRight {
+.footer-right {
   display: flex;
   gap: 8px;
 }
 
-.dialogText {
+.dialog-text {
   margin: 0;
   color: var(--color-text-muted);
 }
@@ -455,15 +455,15 @@
     padding: 20px;
   }
 
-  .imageGrid {
+  .image-grid {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
 
-  .categoryColumns {
+  .category-columns {
     grid-template-columns: 1fr;
   }
 
-  .columnBody {
+  .column-body {
     min-height: 0;
     max-height: 200px;
   }
@@ -478,11 +478,11 @@
     grid-template-columns: 1fr;
   }
 
-  .stepLabel {
+  .step-label {
     display: none;
   }
 
-  .stepCurrent .stepLabel {
+  .step-current .step-label {
     display: inline;
   }
 }

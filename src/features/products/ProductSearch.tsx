@@ -35,7 +35,7 @@ export function ProductSearch({ initialType, initialSearch, onSearch }: Props) {
         <option value="productName">Product Name</option>
         <option value="categoryName">Category Name</option>
       </select>
-      <div className={styles.inputWrap}>
+      <div className={styles["input-wrap"]}>
         <label htmlFor={searchId} className="visually-hidden">
           Search term
         </label>
@@ -47,7 +47,7 @@ export function ProductSearch({ initialType, initialSearch, onSearch }: Props) {
           onChange={(e) => setDraft(e.target.value)}
           maxLength={100}
         />
-        <button type="submit" className={styles.searchButton} aria-label="Search">
+        <button type="submit" className={styles["search-button"]} aria-label="Search">
           <IconSearch16 />
         </button>
       </div>

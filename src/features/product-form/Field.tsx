@@ -68,7 +68,7 @@ export function TextInput({
   numeric?: boolean;
 }) {
   return (
-    <div className={`${styles.underline} ${invalid ? styles.invalid : ""} ${readOnly ? styles.readOnly : ""}`}>
+    <div className={`${styles.underline} ${invalid ? styles.invalid : ""} ${readOnly ? styles["read-only"] : ""}`}>
       {money && (
         <span className={styles.prefix} aria-hidden>
           ₩

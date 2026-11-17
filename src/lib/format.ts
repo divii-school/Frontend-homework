@@ -7,25 +7,26 @@ export function formatWon(value: number): string {
   return `₩${won.format(value)}`;
 }
 
-const dateParts = new Intl.DateTimeFormat("en-CA", {
+const dateParts = new Intl.DateTimeFormat("en-US", {
   timeZone: "Asia/Seoul",
   year: "numeric",
   month: "2-digit",
   day: "2-digit",
-  hour: "2-digit",
+  hour: "numeric",
   minute: "2-digit",
-  hourCycle: "h23",
+  hour12: true,
 });
 
 /**
- * ISO date → "YYYY/MM/DD HH:MM" in server time (KST), as the Figma note asks.
+ * ISO date → WM format "YYYY-MM-DD h:mm AM" (same as HW2), in server time (KST) as the Figma
+ * 8.1.0 note asks ("server time"). Figma itself shows YYYY/MM/DD HH:MM; WM wins (design question).
  * Invalid input → "-".
  */
 export function formatDateTime(iso: string): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return "-";
   const p = Object.fromEntries(dateParts.formatToParts(date).map((part) => [part.type, part.value]));
-  return `${p.year}/${p.month}/${p.day} ${p.hour}:${p.minute}`;
+  return `${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute} ${p.dayPeriod.toUpperCase()}`;
 }
 
 /** Major > Middle > Sub; "-" when there is no category (Figma 8.1.0 #9). */

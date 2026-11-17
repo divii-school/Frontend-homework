@@ -20,7 +20,7 @@ export function CategoryPicker({ categoryId, subCategoryId, childCategoryId, onC
   const children = useChildCategories(subCategoryId);
 
   return (
-    <div className={styles.categoryColumns}>
+    <div className={styles["category-columns"]}>
       <Column
         title="Major Category"
         query={majors}
@@ -78,32 +78,32 @@ function Column({
   const headingId = useId();
   const errorId = useId();
   return (
-    <fieldset className={`${styles.categoryColumn} ${error ? styles.columnInvalid : ""}`} aria-describedby={error ? errorId : undefined}>
-      <legend id={headingId} className={styles.columnTitle}>
+    <fieldset className={`${styles["category-column"]} ${error ? styles["column-invalid"] : ""}`} aria-describedby={error ? errorId : undefined}>
+      <legend id={headingId} className={styles["column-title"]}>
         {title}
         <span className={styles.required} aria-hidden>
           *
         </span>
       </legend>
-      <div className={styles.columnBody}>
+      <div className={styles["column-body"]}>
         {query === null ? (
-          <p className={styles.columnNote}>{waitText}</p>
+          <p className={styles["column-note"]}>{waitText}</p>
         ) : query.isPending ? (
-          <p className={styles.columnNote} role="status">
+          <p className={styles["column-note"]} role="status">
             Loading…
           </p>
         ) : query.isError ? (
-          <p className={styles.columnNote} role="alert">
+          <p className={styles["column-note"]} role="alert">
             Couldn&apos;t load.{" "}
-            <button type="button" className={styles.linkButton} onClick={() => query.refetch()}>
+            <button type="button" className={styles["link-button"]} onClick={() => query.refetch()}>
               Try again
             </button>
           </p>
         ) : !query.data?.length ? (
-          <p className={styles.columnNote}>{emptyText}</p>
+          <p className={styles["column-note"]}>{emptyText}</p>
         ) : (
           query.data.map((option) => (
-            <label key={option.id} className={`${styles.option} ${option.id === value ? styles.optionSelected : ""}`}>
+            <label key={option.id} className={`${styles.option} ${option.id === value ? styles["option-selected"] : ""}`}>
               <input type="radio" name={headingId} checked={option.id === value} onChange={() => onSelect(option.id)} />
               <span>{option.name}</span>
             </label>

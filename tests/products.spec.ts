@@ -90,7 +90,7 @@ test.describe("product list (mocked API)", () => {
     await expect(page.getByText("Total Posts: 25")).toBeVisible();
     const first = body(page).locator("tr").first();
     await expect(first).toContainText("₩4,000");
-    await expect(first).toContainText("2025/09/12 17:10");
+    await expect(first).toContainText("2025-09-12 5:10 PM");
     await expect(first).toContainText("Main > ACE > Insider");
     await expect(body(page).locator("tr").nth(1)).toContainText("-");
     await expect(first.getByRole("link", { name: "=SUM(A1) tricky" })).toHaveAttribute("href", "/shopping/products/1000");

@@ -40,7 +40,7 @@
   }
 }
 
-.searchButton {
+.search-button {
   position: absolute;
   top: 50%;
   left: 6px;
@@ -58,12 +58,12 @@
   cursor: pointer;
 }
 
-.treeButtons {
+.tree-buttons {
   display: flex;
   gap: 12px;
 }
 
-.outlineButton {
+.outline-button {
   height: 44px;
   padding: 8px 16px;
   border: 1px solid var(--color-border-subtle);
@@ -114,7 +114,7 @@
   }
 }
 
-.skeletonRow {
+.skeleton-row {
   height: 56px;
   border-top: 1px solid var(--color-border-subtle);
   background: linear-gradient(90deg, var(--color-surface) 0%, var(--color-surface-muted) 50%, var(--color-surface) 100%);
@@ -136,7 +136,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .skeletonRow {
+  .skeleton-row {
     animation: none;
   }
 }
@@ -150,10 +150,10 @@
     flex-basis: 100%;
   }
 
-  .treeButtons {
+  .tree-buttons {
     flex: 1;
 
-    .outlineButton {
+    .outline-button {
       flex: 1;
     }
   }

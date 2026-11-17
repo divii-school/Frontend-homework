@@ -112,7 +112,7 @@ export function CategoryFormDialog({ target, onClose }: { target: CategoryFormTa
         </label>
         <input
           id={inputId}
-          className={`${styles.input} ${shownError ? styles.inputInvalid : ""}`}
+          className={`${styles.input} ${shownError ? styles["input-invalid"] : ""}`}
           value={name}
           onChange={(e) => {
             setName(e.target.value);

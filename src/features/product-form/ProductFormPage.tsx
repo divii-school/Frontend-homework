@@ -22,7 +22,7 @@ export function ProductFormPage({ productId }: { productId: number | null }) {
     return (
       <>
         <PageHeader title={title} crumb={title} />
-        <p className={styles.pageState} role="status">
+        <p className={styles["page-state"]} role="status">
           Loading…
         </p>
       </>
@@ -34,7 +34,7 @@ export function ProductFormPage({ productId }: { productId: number | null }) {
     return (
       <>
         <PageHeader title={title} crumb={title} />
-        <div className={styles.pageState} role="alert">
+        <div className={styles["page-state"]} role="alert">
           <p>{notFound ? "This product doesn't exist or was deleted." : errorMessage(query.error)}</p>
           {!notFound && (
             <button type="button" className={`${btn.button} ${btn.outline}`} onClick={() => query.refetch()}>
