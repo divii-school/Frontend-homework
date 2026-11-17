@@ -8,9 +8,9 @@ For: Archana (QA) · Bhagyashree (design) · Kakali (code).
 | | |
 |---|---|
 | Branch | `hw3/pranesh` (from `main`) in `divii-school/Frontend-homework` |
-| Commit | `1643925` (app code tested and deployed; any later commit on the branch changes docs only) |
+| Commit | `936dff7` (app code tested and deployed: code-review fixes; any later commit on the branch changes docs only). First build: `1643925` |
 | Link (Vercel) | https://hw3-pranesh-talking-club-admin.vercel.app — frontend only, calls the Talking Club **QA** API (deployed with the Vercel CLI from this branch; no Vercel login needed) |
-| Date | 2026-11-16 |
+| Date | 2026-11-17 (first build 2026-11-16) |
 | API | `NEXT_PUBLIC_API_BASE_URL` = QA server. Never production. |
 
 ## 2. TL task
@@ -41,7 +41,20 @@ For: Archana (QA) · Bhagyashree (design) · Kakali (code).
 
 ## 4. Fixed issues
 
-First build — no QA tickets yet. After each QA round this part lists every ticket: what changed and the commit.
+No QA tickets yet. Code review (Kakali, 2026-11-17, result Pass) listed 8 should-fix items; all 8 are fixed:
+
+| # | Review item | What changed | Proof |
+|---|---|---|---|
+| 1 | 자동 로그인 went to login when the access token expired, without trying a refresh | A `hw3_session` marker cookie (no token in it) is set and cleared with the refresh token. The middleware lets a page through when the session can be renewed; `AuthProvider` renews the token before anything shows. If the renewal is refused: login with "로그인이 만료되었습니다", then back to the same page | `auth.spec` › 자동 로그인 (3 tests) |
+| 2 | Removing an image while others were still uploading could bring it back | Each finished upload is added to the **current** image list, not a copy taken before the uploads started | `product-images.spec` › removed image stays removed |
+| 3 | Empty `pranesh-test-file.txt` | Deleted | — |
+| 4 | No crash screen for the login page | `app/error.tsx` (login and other pages outside the admin shell) and `app/global-error.tsx` (root layout itself) | build |
+| 5 | A screen that forgets its error state fails silently | `QueryCache` / `MutationCache` show a default error toast; screens that show the error themselves mark the hook `meta: { handlesError: true }`; no toast on 401 (already going to login) | `query-defaults.test.ts`, `categories.spec` › default error toast |
+| 6 | Image upload bypassed `httpClient` (no refresh, no redirect) | Upload goes through `httpClient` with `baseURL: ''` | `product-images.spec` › expired token during upload |
+| 7 | A bug in our own code was reported as a network error | New error kind `unknown`: "예기치 않은 오류가 발생했습니다…"; never retried | `api-error.test.ts` |
+| 8 | API validation sentences showed in English | Each class-validator sentence becomes Korean as "<field label>: <rule>", e.g. "카테고리명: 필수 입력 항목입니다."; an unknown sentence becomes "입력한 내용을 다시 확인해 주세요." | `api-error.test.ts` (9 cases) |
+
+Optional item (unknown API key shown as "(someKey)"): kept for HW3 so QA can report the exact key; to be hidden before any client release.
 
 ## 5. Test account / roles
 
@@ -58,8 +71,8 @@ five people share this server. My own test category branch: 학원 Shop › `HW3
 
 ## 7. What to test
 
-Full list with steps and expected results: `docs/qa/HW3-Pranesh-unit-test-cases.csv` (84 cases, 44 positive /
-40 negative, each mapped to its Playwright test). Main points:
+Full list with steps and expected results: `docs/qa/HW3-Pranesh-unit-test-cases.csv` (91 cases, 45 positive /
+46 negative, each mapped to its test; TC-LOGIN-12/13, TC-COMMON-19–21 and TC-PRD-FORM-21/22 are the code-review fixes). Main points:
 
 1. Login: empty, unknown ID, wrong password, network down; 자동 로그인 on/off.
 2. Open a page while logged out → login → back to the same URL (with its search).
@@ -89,18 +102,18 @@ Full list with steps and expected results: `docs/qa/HW3-Pranesh-unit-test-cases.
 
 ## 9. Check results
 
-Run on 2026-11-16 against the Talking Club QA API. Lint, type-check, unit tests and build were run in a **fresh
+Run on 2026-11-17 (commit `936dff7`) against the Talking Club QA API. Lint, type-check, unit tests and build were run in a **fresh
 clone** of the branch (`npm ci` first); Playwright ran against the **production build** (`next build` + `next start`).
 
 | Check | Command | Result |
 |---|---|---|
 | Lint | `npm run lint` | clean: 0 errors, 0 warnings |
 | Type-check | `npm run typecheck` | clean |
-| Unit tests | `npm run test` | 69 passed (7 files) |
+| Unit tests | `npm run test` | 88 passed (8 files) |
 | Build | `npm run build` | compiled successfully, no warnings |
-| Playwright read-only | `npm run test:e2e` | 60 passed (auth 9 · roles 4 · categories 8 · products 14 · quality 25) |
+| Playwright read-only | `npm run test:e2e` | 66 passed (auth 12 · roles 4 · categories 9 · products 14 · product-images 2 · quality 25) |
 | Playwright mutation | `npm run test:e2e:mutation` | 5 passed (only `HW3-Pranesh-*` records; all deleted afterwards) |
-| Total in the HTML report | read-only + mutation + login setup | **66 passed, 0 failed, 0 flaky** |
+| Total in the HTML report | read-only + mutation + login setup | **72 passed, 0 failed, 0 flaky** |
 
 The quality tests check every screen (login, list, details and its 4 tabs, register, categories) for zero console
 errors/warnings, zero WCAG 2 A/AA violations (axe) in light **and** dark, and no sideways page scroll at
@@ -113,6 +126,6 @@ HTML report: zipped `playwright-report/` attached to the submission page (checke
 - **Sizes:** 1920, 1440, 1366, 768, 375, each in light and dark: 50 screenshots in `docs/screenshots/`, taken by
   `npm run screenshots`. Side-by-side images (design | build) are on the submission page.
 - **Browser:** Chromium (Playwright, same engine as Chrome and Edge) on Windows 11, against the production build
-  of commit `1643925`. The Vercel deployment of the same commit was checked without logging in (login page,
+  of commit `936dff7`. The Vercel deployment of the same commit was checked without logging in (login page,
   redirect to login with `returnTo`, wrong-login message from the API, upload refused without login).
 - Not checked: Safari / iOS (no device available).

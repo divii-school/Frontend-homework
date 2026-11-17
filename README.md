@@ -65,7 +65,13 @@ e2e/                        Playwright: *.spec.ts (read-only) · *.mutation.spec
   our domain**, and returns the access token, which goes in a cookie the middleware can read. Every API call
   adds `Authorization: Bearer …`. On a **401** the client asks `/api/auth/refresh` once and replays the call;
   if that fails it goes to `/login?returnTo=<page>` and comes back there after logging in.
+  With 자동 로그인, an expired access token is renewed **before** the page shows: a `hw3_session` marker
+  cookie (no token in it) tells the middleware the session can be renewed, and `AuthProvider` renews it.
   Why the extra routes: the QA API's CORS (`*`, no credentials) never lets a browser send its refresh cookie.
+- **Errors:** every failure becomes an `ApiError` with a kind (network, server down, validation, our own bug…)
+  and Korean text, including the API's English validation sentences. A failure no screen shows itself gets a
+  default error toast (QueryCache / MutationCache). Crash screens: `app/(main)/error.tsx`, `app/error.tsx`,
+  `app/global-error.tsx`.
 - **Route guard + roles:** `app-routes.ts` lists every page with its permission. The side menu, the
   `RouteGuard` (403 view) and the buttons all read it, so they cannot disagree. `SUPER_ADMIN` sees everything.
 - **Table state in the URL:** `?q&type&page&size` is parsed by `parseListParams` (bad values fall back to
@@ -73,7 +79,8 @@ e2e/                        Playwright: *.spec.ts (read-only) · *.mutation.spec
 - **Multi-step form:** one `react-hook-form` instance for all four steps; every step stays mounted (only
   hidden), so going back keeps values; `다음` validates only that step's fields; an API error keeps everything
   and opens the step that owns the failing field.
-- **Image upload:** checked in the browser (type, 4 MB, max 4) → `POST /api/upload` → our route asks the API
+- **Image upload:** checked in the browser (type, 4 MB, max 4) → `POST /api/upload` (through `httpClient`, so
+  an expired token is renewed like on any call) → our route asks the API
   for a signed URL and PUTs the file to S3 from the server (the bucket's CORS allows only `localhost:3000`).
   The form keeps S3 keys; previews use the returned URL; X removes one.
 

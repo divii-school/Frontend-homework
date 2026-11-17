@@ -101,6 +101,14 @@ const cases = [
   ['공통', '키보드 접근성', P, 'Medium', IN, '1) Tab 으로 모든 화면 조작', '-', '포커스 링 표시, 메뉴/드롭다운/모달/탭 키보드 조작 가능, 본문 바로가기 링크', '-'],
   ['공통', '웹 접근성 자동 검사', P, 'Medium', IN, '1) axe WCAG A/AA 검사', '-', '위반 0건', 'products.spec · no accessibility violations'],
   ['공통', '콘솔 오류', P, 'Medium', IN, '1) 모든 화면에서 개발자 도구 콘솔 확인', '-', '오류·경고 0건', '-'],
+  // 코드 리뷰 수정 사항 (2026-11-17). Appended so the IDs above stay the same.
+  ['로그인', '자동 로그인 토큰 재발급', P, 'High', '자동 로그인 후 액세스 토큰만 만료(재발급 가능)', '1) /shopping/products?page=2 접속', '-', '로그인 화면으로 가지 않고 토큰 재발급 후 같은 주소(page=2) 화면 표시', 'auth.spec · 자동 로그인 › the token is renewed…'],
+  ['로그인', '자동 로그인 재발급 실패', N, 'High', '자동 로그인 후 재발급도 불가(세션 종료)', '1) /shopping/categories?q=Shop 접속', '-', '"로그인이 만료되었습니다. 다시 로그인해 주세요." 안내와 로그인 화면, 로그인 후 같은 주소(q 포함)로 복귀', 'auth.spec · 자동 로그인 › if the renewal is refused…'],
+  ['공통', '기본 오류 안내', N, 'Medium', IN, '1) 화면에 오류 표시가 따로 없는 API가 실패(예: 대분류 등록 가능 여부 조회 500)', '-', '"일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요." 토스트, 나머지 화면은 정상 표시', 'categories.spec · default error toast'],
+  ['공통', 'API 입력 오류 한글 표시', N, 'Medium', IN, '1) API가 영어 검증 문장으로 거절(예: "name should not be empty")', '-', '"카테고리명: 필수 입력 항목입니다." 형식의 한글 안내, 영어 문장 미표시. 알 수 없는 문장은 "입력한 내용을 다시 확인해 주세요."', 'api-error.test.ts'],
+  ['공통', '화면 오류(크래시)', N, 'Low', LOGIN, '1) 로그인 화면 등에서 예기치 않은 스크립트 오류 발생', '-', '"화면을 표시하는 중 오류가 발생했습니다." 와 [다시 시도] 버튼, 네트워크 오류로 안내하지 않음', '-'],
+  ['상품 등록', '업로드 중 이미지 삭제', N, 'Medium', IN, '1) 이미지 2장 선택 2) 첫 장 업로드 후 X로 삭제 3) 둘째 장 업로드 완료', 'PNG 2장', '삭제한 이미지가 다시 나타나지 않음, 둘째 이미지만 남음 (1/4)', 'product-images.spec · removed image stays removed'],
+  ['상품 등록', '업로드 중 토큰 만료', N, 'High', IN, '1) 액세스 토큰 만료 상태에서 이미지 업로드', 'PNG 1장', '토큰 1회 재발급 후 업로드 계속, 오류 없이 미리보기 표시, 화면 이동 없음', 'product-images.spec · expired token during upload'],
 ];
 
 const csvCell = (v) => {

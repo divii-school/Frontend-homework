@@ -32,7 +32,11 @@ e2e/                         *.spec.ts read-only · *.mutation.spec.ts writes
 - No hardcoded colours: add a token to _theme.scss with a light AND a dark value (WM Light/Dark).
 - Class names lowercase-with-hyphens; Korean UI text; dates/numbers via src/lib/format.ts.
 - A new page = add it to app-routes.ts (menu, guard and permission in one place).
-- API calls only through services + hooks; no `any`; errors through ApiError/errorMessage.
+- API calls only through services + hooks (uploads too: `httpClient` with `baseURL: ''`); no `any`;
+  errors through ApiError/errorMessage.
+- A query/mutation whose screen shows its own error sets `meta: { handlesError: true }`; anything
+  else gets the default error toast from QueryCache/MutationCache (query-provider.tsx).
+- A new API validation field needs its Korean label in `FIELD_LABELS` (error-messages.ts).
 - Shared QA data: only create/edit/delete HW3-Pranesh-* records. Never commit .env.local or logins.
 - In Playwright, type the real QA login only with `fillSecret` (e2e/helpers.ts): `fill()` writes the typed
   text into the HTML report, which is shared on Notion.
