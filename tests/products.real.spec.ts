@@ -12,6 +12,8 @@ test.describe("real QA API (read-only)", () => {
 
     await realLogin(page, "/shopping/products");
     const table = page.getByRole("table");
+    // First request after a fresh dev-server compile can be slow on QA.
+    await expect(table.locator("tbody tr").first()).toContainText(/₩/, { timeout: 20_000 });
     await expect(table.locator("tbody tr")).toHaveCount(10);
     await expect(page.getByText(/^Total Posts: [\d,]+$/)).toBeVisible();
     // Prices use ₩ with commas; dates are YYYY/MM/DD HH:MM.
@@ -38,6 +40,18 @@ test.describe("real QA API (read-only)", () => {
     const tree = page.getByRole("region", { name: "Category tree" });
     await expect(tree.getByRole("listitem").first()).toBeVisible();
     await expect(tree.getByText(/^\[\d+\]$/).first()).toBeVisible();
+    await realLogout(page);
+  });
+
+  test("product details: overview, sessions and same-category tabs load real data", async ({ page }) => {
+    // 10598 = an existing QA product linked to a class session (read-only).
+    await realLogin(page, "/shopping/products/10598");
+    await expect(page.getByRole("tabpanel")).toContainText(/₩[\d,]+/, { timeout: 20_000 });
+    await page.getByRole("tab", { name: "Sessions" }).click();
+    await expect(page).toHaveURL("/shopping/products/10598?tab=sessions");
+    await expect(page.getByRole("tabpanel").locator("tbody tr").first()).toBeVisible({ timeout: 20_000 });
+    await page.getByRole("tab", { name: "Same category" }).click();
+    await expect(page.getByRole("tabpanel").locator("tbody tr, [role=status]").first()).toBeVisible({ timeout: 20_000 });
     await realLogout(page);
   });
 });
