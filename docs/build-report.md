@@ -70,7 +70,9 @@ Two of my 중분류 stay on the server under 대분류 **학원 Shop**:
 2. **A category that has held a product cannot be deleted.** The API answers 500 "Something went wrong", even after the product is deleted. The app shows "서버에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요." (API question A4.)
 3. **Sort is per page.** The products API has no sort parameter, so sort orders the rows of the current page; the category list is sorted and paged in the browser. (A1, A2.)
 4. **Token refresh is not used**: the API's refresh cookie cannot be used from another domain. When the token expires the app goes to login and returns to the same page.
-5. **Not compared with Figma yet.** I had no access to the Figma file while building; colours and sizes were read from the live QA admin. (Design question Q1.)
+5. **Built before I could open the Figma file.** Colours and sizes were read from the live QA admin while building
+   (design question Q1). On 17 Nov I exported the Figma frames; the side-by-side screenshots are on my submission
+   page. The differences will be fixed in the review round (by 20 Nov).
 6. **White text on the brand pink is 3.98:1**, below the 4.5:1 of WCAG AA. The colour is used as designed. (Q9.)
 7. The description is plain text, not rich text. Category reordering by drag is not built. A new 대분류 cannot be added on the QA server (the API says `isCreatable: false`), so that button is not shown.
 8. Not run yet: real Safari and a real phone. Safari's engine (WebKit) and the phone width (375) were run in Playwright.
