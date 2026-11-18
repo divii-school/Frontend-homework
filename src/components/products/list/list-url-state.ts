@@ -145,7 +145,7 @@ export function hasActiveFilters(state: ProductListUrlState): boolean {
 // the current page on screen, or every exported row in the CSV.
 const COMPARE: Record<SortField, (a: Product, b: Product) => number> = {
   name: (a, b) => (a.productName ?? "").localeCompare(b.productName ?? "", "ko", { numeric: true, sensitivity: "base" }),
-  price: (a, b) => Number(a.unitPrice ?? 0) - Number(b.unitPrice ?? 0),
+  price: (a, b) => Number(a.price ?? 0) - Number(b.price ?? 0), // 판매금액 = the selling price `price`
   date: (a, b) => (Date.parse(a.createdAt) || 0) - (Date.parse(b.createdAt) || 0),
 };
 

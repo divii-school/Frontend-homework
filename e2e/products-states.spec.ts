@@ -188,6 +188,49 @@ test.describe("Product list — states (mocked API)", () => {
   });
 });
 
+// QA round 18 Nov: 판매가 / 판매금액 = API `price` (what the cart and the order charge), 단가 = API `unitPrice`
+// (the API requires unitPrice < price); every date is Korea time (KST) whatever the viewer's time zone is.
+// The browser runs in India time here (UTC+5:30) to prove the dates do not follow it.
+test.describe("Prices and KST dates — viewer in India (mocked API)", () => {
+  test.use({ timezoneId: "Asia/Kolkata" });
+
+  const QA_PRODUCT = mockProduct(7, {
+    productName: "HW3-Mock-Price-KST",
+    price: 1500,
+    unitPrice: 1200,
+    createdAt: "2026-11-13T05:39:00.000Z", // 11:09 in India, 14:39 in Korea
+    updatedAt: "2026-11-13T15:30:00.000Z", // the next day in Korea: 2026/11/14 00:30
+  });
+
+  test("list, CSV and details show 판매가 = price, 단가 = unitPrice and the time in KST", async ({ page }) => {
+    await mockProductApi(page, {
+      list: (route, url) => fulfillProductPage(route, url, [QA_PRODUCT]),
+      details: (route, id) => fulfillJson(route, 200, { success: true, message: "", data: mockDetails(id, QA_PRODUCT) }),
+    });
+
+    // List: 판매금액 is the selling price only (no crossed-out second price); the date is KST
+    await page.goto(LIST_URL);
+    const row = tableRows(page).first();
+    await expect(row.locator(".col-price")).toHaveText("₩1,500");
+    await expect(row.locator(".col-date")).toHaveText("2026/11/13 14:39");
+
+    // CSV: 단가 = unitPrice, 판매금액 = price, 등록일자 in KST
+    const downloadPromise = page.waitForEvent("download");
+    await page.getByRole("button", { name: "CSV 다운로드" }).click();
+    const text = await readFile(await (await downloadPromise).path(), "utf8");
+    const lines = text.slice(1).trim().split("\r\n");
+    expect(lines[1]).toBe("7,PRD-000007,HW3-Mock-Price-KST,1200,1500,Main books > Phonics > Insider,예,예,2026/11/13 14:39");
+
+    // Details: 단가 / 판매가 and both dates in KST
+    await page.goto("/shopping-mall/products/details/7");
+    const info = (label: string) => page.locator(".product-info-item").filter({ has: page.locator("dt", { hasText: new RegExp(`^${label}$`) }) }).locator("dd");
+    await expect(info("단가")).toHaveText("₩1,200");
+    await expect(info("판매가")).toHaveText("₩1,500");
+    await expect(info("등록일자")).toHaveText("2026/11/13 14:39");
+    await expect(info("수정일자")).toHaveText("2026/11/14 00:30");
+  });
+});
+
 test.describe("Product list — 375px phone (mocked API)", () => {
   test.use({ viewport: { width: 375, height: 812 } });
 

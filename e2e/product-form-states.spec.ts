@@ -20,7 +20,7 @@ import {
 // server is down. Each test starts in a fresh browser with an injected SUPER_ADMIN session (no real login).
 // The app's own upload route (/api/upload) is mocked in the browser too, so no test reaches S3; the route
 // itself is tested in upload-route-states.spec.ts.
-//   1. submit → 400 unitPriceMustBeLessThanPrice → back on the selling price (step 1), values kept
+//   1. submit → 400 unitPriceMustBeLessThanPrice → back on the unit price 단가 (step 1), values kept
 //   2. submit → 500 → still on step 4, error box + toast, values kept
 //   3. submit → network error → same, with the connection message
 //   3b. create: a restored draft gets the server's fresh code; Register fetches the code again right before the POST
@@ -210,7 +210,7 @@ test.afterEach(() => {
 });
 
 test.describe("Product form — API error and draft states (mocked API)", () => {
-  test("400 unitPriceMustBeLessThanPrice → back on the selling price, every value kept", async ({ page }) => {
+  test("400 unitPriceMustBeLessThanPrice → back on the unit price, every value kept", async ({ page }) => {
     consoleWatch.allow(isFailedResourceLog);
     let submitted: Record<string, unknown> | null = null;
     await mockApi(page, async (route) => {
@@ -220,8 +220,8 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
 
     await page.goto(CREATE_URL);
     await expect(field(page, "상품코드")).toHaveValue("PRD-E2E-0001");
-    await fillStep1(page, { name: "HW3-Neeraj-mock-400", price: "27000", selling: "17000" });
-    await expect(field(page, "단가")).toHaveValue("₩27,000");
+    await fillStep1(page, { name: "HW3-Neeraj-mock-400", unit: "17000", selling: "27000" });
+    await expect(field(page, "단가")).toHaveValue("₩17,000");
     await clickNext(page);
     await expectStep(page, 2);
     await completeStep2(page);
@@ -253,23 +253,23 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
       erpUnitPrice: 9000,
     });
 
-    // Back on step 1, selling price focused with the API message, nothing lost
+    // Back on step 1, the unit price (단가) focused with the API message, nothing lost
     await expectStep(page, 1);
-    const selling = field(page, "판매가");
-    await expect(selling).toBeFocused();
-    await expect(selling).toHaveAttribute("aria-invalid", "true");
-    await expect(page.locator("#product-unit-price-error")).toHaveText("판매가는 단가보다 낮아야 합니다.");
+    const unit = field(page, "단가");
+    await expect(unit).toBeFocused();
+    await expect(unit).toHaveAttribute("aria-invalid", "true");
+    await expect(page.locator("#product-unit-price-error")).toHaveText("단가는 판매가보다 낮아야 합니다.");
     await expect(page.getByRole("button", { name: /1단계: 기본 정보 \(오류 있음\)/ })).toBeVisible();
     await expect(field(page, "상품명")).toHaveValue("HW3-Neeraj-mock-400");
-    await expect(field(page, "단가")).toHaveValue("₩27,000");
-    await expect(selling).toHaveValue("₩17,000");
+    await expect(field(page, "판매가")).toHaveValue("₩27,000");
+    await expect(unit).toHaveValue("₩17,000");
     await expect(page.locator(".p-toast-message")).toContainText("상품 등록에 실패했습니다.");
 
     // The other steps still hold their values
     await page.getByRole("button", { name: /4단계: ERP 정보 및 확인/ }).click();
     await expectStep(page, 4);
     await expect(field(page, "상품ERP명")).toHaveValue("HW3 mock ERP 400");
-    await expect(page.locator("[data-submit-error]")).toContainText("판매가는 단가보다 낮아야 합니다.");
+    await expect(page.locator("[data-submit-error]")).toContainText("단가는 판매가보다 낮아야 합니다.");
   });
 
   test("500 on submit → stays on review with the error box + toast, values kept", async ({ page }) => {
@@ -306,7 +306,7 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     await page.getByRole("button", { name: /1단계: 기본 정보/ }).click();
     await expectStep(page, 1);
     await expect(field(page, "상품명")).toHaveValue("HW3-Neeraj-mock-product");
-    await expect(field(page, "판매가")).toHaveValue("₩17,000");
+    await expect(field(page, "단가")).toHaveValue("₩17,000");
   });
 
   test("create: a restored draft gets a fresh code, Register sends a code fetched right before the POST", async ({ page }) => {
@@ -379,7 +379,7 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
 
     await page.goto(CREATE_URL);
     await expect(field(page, "상품코드")).toHaveValue("PRD-E2E-0001");
-    await fillStep1(page, { name: "HW3-Neeraj-mock-files", price: "20000", selling: "10000" });
+    await fillStep1(page, { name: "HW3-Neeraj-mock-files", unit: "10000", selling: "20000" });
     await clickNext(page);
     await expectStep(page, 2);
     await page.locator("#product-images-input").setInputFiles([
@@ -406,7 +406,7 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
 
     await page.goto(CREATE_URL);
     await expect(field(page, "상품코드")).toHaveValue("PRD-E2E-0001");
-    await fillStep1(page, { name: "HW3-Neeraj-mock-upload", price: "20000", selling: "10000" });
+    await fillStep1(page, { name: "HW3-Neeraj-mock-upload", unit: "10000", selling: "20000" });
     await clickNext(page);
     await expectStep(page, 2);
     await page.locator("#product-images-input").setInputFiles(PNG_FIXTURE);
@@ -429,7 +429,7 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
 
     await page.goto(CREATE_URL);
     await expect(field(page, "상품코드")).toHaveValue("PRD-E2E-0001");
-    await fillStep1(page, { name: "HW3-Neeraj-mock-comma", price: "20000", selling: "10000" });
+    await fillStep1(page, { name: "HW3-Neeraj-mock-comma", unit: "10000", selling: "20000" });
     await clickNext(page);
     await expectStep(page, 2);
     await page.locator("#product-images-input").setInputFiles({
@@ -458,7 +458,7 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
 
     await page.goto(CREATE_URL);
     await expect(field(page, "상품코드")).toHaveValue("PRD-E2E-0001");
-    await fillStep1(page, { name: "HW3-Neeraj-mock-retry", price: "20000", selling: "10000" });
+    await fillStep1(page, { name: "HW3-Neeraj-mock-retry", unit: "10000", selling: "20000" });
     await clickNext(page);
     await expectStep(page, 2);
     await page.locator("#product-images-input").setInputFiles(PNG_FIXTURE);
@@ -497,7 +497,7 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
 
     await page.goto(CREATE_URL);
     await expect(field(page, "상품코드")).toHaveValue("PRD-E2E-0001");
-    await fillStep1(page, { name: "HW3-Neeraj-mock-max-images", price: "20000", selling: "10000" });
+    await fillStep1(page, { name: "HW3-Neeraj-mock-max-images", unit: "10000", selling: "20000" });
     await clickNext(page);
     await expectStep(page, 2);
 
@@ -574,7 +574,7 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     await expect(code).toHaveValue("PRD-000501");
     await expect(code).toHaveAttribute("readonly", "");
     await field(page, "상품명").fill("HW3-Neeraj-mock-edit-2");
-    await field(page, "판매가").fill("19000");
+    await field(page, "단가").fill("19000");
 
     await page.getByRole("button", { name: /3단계: 카테고리 및 옵션/ }).click();
     await expectStep(page, 3);
@@ -713,7 +713,7 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
 
     await page.goto(CREATE_URL);
     await expect(page.getByText("4단계 중 1단계 · 기본 정보")).toBeVisible();
-    await fillStep1(page, { name: "HW3-Neeraj-mobile", price: "20000", selling: "10000" });
+    await fillStep1(page, { name: "HW3-Neeraj-mobile", unit: "10000", selling: "20000" });
     // Enter in a field = Next
     await field(page, "판매가").press("Enter");
     await expectStep(page, 2);

@@ -11,7 +11,7 @@ export default function NotFound() {
     <main className="full-page">
       <section className="error-page-card">
         <div className="error-page-brand">
-          <BrandLogo suffix="Admin" />
+          <BrandLogo suffix="관리자" />
         </div>
         <ErrorState
           variant="not-found"

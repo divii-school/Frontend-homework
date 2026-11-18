@@ -113,7 +113,7 @@ export default function OptionPickerDialog({ pickedIds, excludeId, onAdd, onClos
                     {already ? " · 이미 추가됨" : ""}
                   </span>
                 </label>
-                <span className="option-picker-price">{formatWon(product.unitPrice)}</span>
+                <span className="option-picker-price">{formatWon(product.price)}</span>
               </li>
             );
           })}

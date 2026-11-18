@@ -88,7 +88,7 @@ test.describe("Product register → list → edit → delete (shared QA DB)", { 
     await page.goto(CREATE_URL);
     await expect(field(page, "상품코드")).not.toHaveValue("", { timeout: 30_000 });
 
-    await fillStep1(page, { name: RUN_NAME, price: "20000", selling: "15000" });
+    await fillStep1(page, { name: RUN_NAME, unit: "15000", selling: "20000" });
     await clickNext(page);
     await expectStep(page, 2);
     await completeStep2(page); // real upload: POST /utils/upload-file-urls → POST /api/upload → the server PUTs to S3
@@ -121,7 +121,7 @@ test.describe("Product register → list → edit → delete (shared QA DB)", { 
     await expect(field(page, "상품코드")).toHaveAttribute("readonly", "");
 
     await field(page, "상품명").fill(EDITED_NAME);
-    await field(page, "판매가").fill("14000");
+    await field(page, "판매가").fill("25000");
     await page.getByRole("button", { name: /4단계: ERP 정보 및 확인/ }).click();
     await expectStep(page, 4);
     await page.getByRole("button", { name: "저장", exact: true }).click();
@@ -132,8 +132,8 @@ test.describe("Product register → list → edit → delete (shared QA DB)", { 
     const response = await page.request.get(`${API_BASE}/products/details/${productId}`, { headers: apiHeaders(token) });
     const details = ((await response.json()) as { data: { productName: string; unitPrice: number; price: number; images: string[] } }).data;
     expect(details.productName).toBe(EDITED_NAME);
-    expect(Number(details.unitPrice)).toBe(14000);
-    expect(Number(details.price)).toBe(20000);
+    expect(Number(details.price)).toBe(25000); // 판매가 = price
+    expect(Number(details.unitPrice)).toBe(15000); // 단가 = unitPrice, unchanged
     expect(details.images).toHaveLength(1);
   });
 

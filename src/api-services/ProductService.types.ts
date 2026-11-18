@@ -19,9 +19,9 @@ export interface Product {
   uuid: string;
   productName: string;
   productCode: string;
-  /** List price (정가). */
+  /** 판매가 (selling price): what the shopping cart and the order charge per item (backend `sellingPrice: product.price`). */
   price: number;
-  /** Selling price (판매가) — must be lower than `price`. */
+  /** 단가 (unit price): must be lower than `price` (API rule unitPriceMustBeLessThanPrice). */
   unitPrice: number;
   description: string;
   /** S3 keys in the lists (e.g. "products/abc.png"). */

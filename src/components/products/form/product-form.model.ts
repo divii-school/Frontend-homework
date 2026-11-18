@@ -34,7 +34,9 @@ export interface ProductFormValues {
   // Step 1 — basic info
   productName: string;
   productCode: string;
+  /** 판매가 (selling price) — what the cart and the order charge per item. */
   price: number | null;
+  /** 단가 (unit price) — must be lower than `price` (API rule unitPriceMustBeLessThanPrice). */
   unitPrice: number | null;
   description: string;
   // Step 2 — images & status
@@ -67,7 +69,7 @@ export const LAST_STEP: StepNumber = 4;
 
 /** "Next" validates only these fields (react-hook-form `trigger(STEP_FIELDS[step])`). */
 export const STEP_FIELDS: Record<StepNumber, ProductFormField[]> = {
-  1: ["productName", "productCode", "price", "unitPrice", "description"],
+  1: ["productName", "productCode", "unitPrice", "price", "description"],
   2: ["images", "isVisible", "onSale"],
   3: ["categoryId", "subCategoryId", "childCategoryId", "options", "optionsRequired"],
   4: ["erpName", "quantity", "taxType", "erpUnitPrice"],
@@ -107,11 +109,11 @@ export const FORM_MESSAGES = {
   productNameRequired: "상품명을 입력해 주세요.",
   productNameTooLong: `상품명은 최대 ${FORM_LIMITS.productNameMax}자까지 입력할 수 있습니다.`,
   productCodeMissing: "상품코드를 생성하지 못했습니다. [다시 생성] 버튼을 눌러 주세요.",
-  priceRequired: "단가를 입력해 주세요.",
-  pricePositive: "단가는 0보다 큰 값을 입력해 주세요.",
-  unitPriceRequired: "판매가를 입력해 주세요.",
-  unitPricePositive: "판매가는 0보다 큰 값을 입력해 주세요.",
-  unitPriceNotLower: "판매가는 단가보다 낮아야 합니다.",
+  priceRequired: "판매가를 입력해 주세요.",
+  pricePositive: "판매가는 0보다 큰 값을 입력해 주세요.",
+  unitPriceRequired: "단가를 입력해 주세요.",
+  unitPricePositive: "단가는 0보다 큰 값을 입력해 주세요.",
+  unitPriceNotLower: "단가는 판매가보다 낮아야 합니다.",
   moneyTooLarge: "금액은 최대 ₩2,147,483,647까지 입력할 수 있습니다.",
   descriptionRequired: "상세설명을 입력해 주세요.",
   imagesRequired: "이미지를 1장 이상 등록해 주세요.",

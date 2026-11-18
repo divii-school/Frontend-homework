@@ -113,7 +113,6 @@ export default function ProductTable({
         <tbody>
           {rows.map((row) => {
             const isSelected = selected.has(row.id);
-            const hasDiscount = Number(row.price) > Number(row.unitPrice);
             return (
               <tr key={row.id} className={`product-row${isSelected ? " is-selected" : ""}`}>
                 <td className="col-select">
@@ -136,13 +135,8 @@ export default function ProductTable({
                   </Link>
                 </td>
                 <td className="col-price">
-                  <span className="product-price">{formatWon(row.unitPrice)}</span>
-                  {hasDiscount && (
-                    <s className="product-list-price">
-                      <span className="sr-only">단가 </span>
-                      {formatWon(row.price)}
-                    </s>
-                  )}
+                  {/* 판매금액 (design 8.1.0) = the selling price `price`, the amount the customer pays */}
+                  <span className="product-price">{formatWon(row.price)}</span>
                 </td>
                 <td className="col-category" data-label="카테고리(과정)">
                   {formatCategoryPath(row.category, row.subCategory, row.childCategory)}

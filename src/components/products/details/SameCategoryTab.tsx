@@ -58,7 +58,7 @@ function RelatedProducts({ product }: { product: ProductDetails & { childCategor
                 {row.productName}
               </Link>
               <span className="related-product-meta">
-                {row.productCode || "-"} · {formatWon(row.unitPrice)}
+                {row.productCode || "-"} · {formatWon(row.price)}
               </span>
             </div>
             <span className={`product-badge${row.isVisible ? " is-on" : ""}`}>{row.isVisible ? "노출" : "미노출"}</span>

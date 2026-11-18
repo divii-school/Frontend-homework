@@ -51,7 +51,7 @@ export const API_MESSAGES: Record<string, string> = {
 
   // ---- Products (src/modules/products/v1/product.service.ts) ------------------------------------
   productNotFound: "존재하지 않는 상품입니다.",
-  unitPriceMustBeLessThanPrice: "판매가는 단가보다 낮아야 합니다.",
+  unitPriceMustBeLessThanPrice: "단가는 판매가보다 낮아야 합니다.",
   someProductDoesNotExist: "선택한 옵션 상품 중 존재하지 않는 상품이 있습니다.",
   productOptionsRequired: "옵션을 1개 이상 추가해 주세요.",
   // The backend answers productCreatedSucessFully for both add AND edit — screens pick their own text.

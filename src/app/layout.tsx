@@ -7,7 +7,7 @@ import AppProviders from "@/providers/AppProviders";
 import { PRIME_THEME_HREF, THEME_INIT_SCRIPT, THEME_LINK_IDS } from "@/utils/theme";
 
 export const metadata: Metadata = {
-  title: { default: "TalkingClub Admin", template: "%s | TalkingClub Admin" },
+  title: { default: "토킹클럽 관리자", template: "%s | 토킹클럽 관리자" },
   description: "토킹클럽 관리자 — 쇼핑몰 관리: 상품 관리 및 상품 카테고리 관리 (HW3).",
 };
 

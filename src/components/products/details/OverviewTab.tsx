@@ -63,8 +63,8 @@ function Overview({ product }: { product: ProductDetails }) {
         <InfoSection
           title="가격 및 상태"
           items={[
-            { label: "단가", value: formatWon(product.price) },
-            { label: "판매가", value: formatWon(product.unitPrice) },
+            { label: "단가", value: formatWon(product.unitPrice) },
+            { label: "판매가", value: formatWon(product.price) },
             { label: "노출상태", value: <YesNoBadge value={product.isVisible} /> },
             { label: "판매상태", value: <YesNoBadge value={product.onSale} /> },
           ]}

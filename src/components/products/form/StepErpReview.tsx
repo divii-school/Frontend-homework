@@ -61,8 +61,8 @@ export default function StepErpReview({ mode, erpCode, lockedCategory, keptOptio
     1: [
       ["상품명", values.productName?.trim() || EMPTY_VALUE],
       ["상품코드", values.productCode || EMPTY_VALUE],
-      ["단가", formatWon(values.price)],
-      ["판매가", formatWon(values.unitPrice)],
+      ["단가", formatWon(values.unitPrice)],
+      ["판매가", formatWon(values.price)],
       ["상세설명", values.description?.trim() || EMPTY_VALUE],
     ],
     2: [
@@ -187,7 +187,7 @@ export default function StepErpReview({ mode, erpCode, lockedCategory, keptOptio
             },
           }}
           render={({ field, fieldState }) => (
-            <FormField id="product-erp-unit-price" label="단가" required error={fieldState.error?.message}>
+            <FormField id="product-erp-unit-price" label="ERP 단가" required error={fieldState.error?.message}>
               {(a11y) => (
                 <MoneyInput {...a11y} ref={field.ref} name={field.name} value={field.value} onChange={field.onChange} onBlur={field.onBlur} placeholder="₩0" />
               )}

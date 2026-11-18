@@ -9,7 +9,7 @@ test.describe("Login page (no API)", () => {
   test("shows the design fields; Login stays disabled until ID and password are filled", async ({ page }) => {
     await page.goto("/login");
     const form = loginForm(page);
-    await expect(page.getByRole("heading", { name: "TalkingClub Admin 로그인" })).toBeAttached();
+    await expect(page.getByRole("heading", { name: "토킹클럽 관리자 로그인" })).toBeAttached();
     await expect(form.id).toBeVisible();
     await expect(form.password).toHaveAttribute("type", "password");
     await expect(form.remember).toBeChecked();
@@ -70,11 +70,18 @@ test.describe("Login page (no API)", () => {
 test.describe("Login with the QA API", () => {
   test.setTimeout(120_000);
 
+  /**
+   * The shared QA API sometimes needs more than the default 5 s for the first login answer of a run (seen on
+   * 17 and 18 Nov: the 로그인 button was still busy; a probe right after measured up to 2.7 s per answer).
+   * The check is the same; only the waiting time for the server is longer.
+   */
+  const QA_API_ANSWER_TIMEOUT = 15_000;
+
   test("an unknown ID shows the API message", async ({ page }) => {
     await page.goto("/login");
     await loginThroughUi(page, { id: "HW3-Neeraj-no-such-user", password: "not-a-real-password" });
     const dialog = page.getByRole("dialog");
-    await expect(dialog).toContainText("등록되지 않은 계정입니다.");
+    await expect(dialog).toContainText("등록되지 않은 계정입니다.", { timeout: QA_API_ANSWER_TIMEOUT });
     await dialog.getByRole("button", { name: "확인" }).click();
     await expect(page.getByText("등록된 아이디가 아닙니다")).toBeVisible();
   });
@@ -84,7 +91,7 @@ test.describe("Login with the QA API", () => {
     await page.goto("/login");
     await loginThroughUi(page, { id, password: "HW3-Neeraj-wrong-password" });
     const dialog = page.getByRole("dialog");
-    await expect(dialog).toContainText("아이디와 비밀번호가 일치하지 않습니다");
+    await expect(dialog).toContainText("아이디와 비밀번호가 일치하지 않습니다", { timeout: QA_API_ANSWER_TIMEOUT });
     await dialog.getByRole("button", { name: "확인" }).click();
     await expect(page.getByText("비밀번호가 일치하지 않습니다")).toBeVisible();
     await expect(loginForm(page).password).toBeFocused();

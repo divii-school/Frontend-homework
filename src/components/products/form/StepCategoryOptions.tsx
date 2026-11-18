@@ -77,7 +77,8 @@ export default function StepCategoryOptions({
         optionId: product.id,
         optionCode: product.productCode ?? "",
         optionName: product.productName ?? "",
-        price: Number.isFinite(Number(product.unitPrice)) ? Math.max(0, Math.trunc(Number(product.unitPrice))) : 0,
+        // starts at that product's own selling price (`price`); the admin can change it in the table
+        price: Number.isFinite(Number(product.price)) ? Math.max(0, Math.trunc(Number(product.price))) : 0,
       })),
     );
     // First option added → "required for purchase" on by default (isOptions = yes when there are options)

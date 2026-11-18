@@ -120,10 +120,10 @@ export default function LoginForm() {
   return (
     <section className="login-card" aria-labelledby="login-title">
       <h1 id="login-title" className="sr-only">
-        TalkingClub Admin 로그인
+        토킹클럽 관리자 로그인
       </h1>
       <div className="login-brand">
-        <BrandLogo suffix="Admin" />
+        <BrandLogo suffix="관리자" />
       </div>
 
       <form className="login-form" onSubmit={handleSubmit(onSubmit)} noValidate>

@@ -68,14 +68,16 @@ export async function clickNext(page: Page) {
 
 export interface Step1Values {
   name: string;
-  price: string;
+  /** 단가 (API unitPrice) — must be lower than the selling price. */
+  unit: string;
+  /** 판매가 (API price) — the amount the customer pays. */
   selling: string;
   description?: string;
 }
 
 export async function fillStep1(page: Page, values: Step1Values) {
   await field(page, "상품명").fill(values.name);
-  await field(page, "단가").fill(values.price);
+  await field(page, "단가").fill(values.unit);
   await field(page, "판매가").fill(values.selling);
   await field(page, "상세설명").fill(values.description ?? "HW3 e2e product — created by Playwright.");
 }
@@ -98,7 +100,7 @@ export async function fillStep4(page: Page, erpName: string) {
   await field(page, "상품ERP명").fill(erpName);
   await field(page, "갯수").fill("1");
   await chooseOption(page, "product-tax-type", "과세");
-  await field(page, "단가").fill("9000");
+  await field(page, "ERP 단가").fill("9000");
 }
 
 // ---- Real API access for setup / cleanup (live specs only) -----------------------------------------

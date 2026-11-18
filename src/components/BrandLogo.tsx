@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 interface BrandLogoProps {
-  /** Extra text after a divider, e.g. "Admin" on the login card (design 1.1.0). */
+  /** Extra text after a divider, e.g. "관리자" on the login card (design 1.1.0). */
   suffix?: string;
   /** Wrap in a link (sidebar: back to the home page). */
   href?: string;
@@ -9,7 +9,8 @@ interface BrandLogoProps {
 }
 
 // "TalkingClub" wordmark: two linked rings (navy + brand pink, colours from tokens) + the name.
-// The rings are decorative (aria-hidden); the text is the accessible name.
+// The rings are decorative (aria-hidden); the text is the accessible name. The Latin "TalkingClub" is the
+// brand mark as in the Figma logo (the designer decides on it); every other text, the suffix included, is Korean.
 export default function BrandLogo({ suffix, href, className }: BrandLogoProps) {
   const content = (
     <>
@@ -25,7 +26,7 @@ export default function BrandLogo({ suffix, href, className }: BrandLogoProps) {
   const classes = className ? `brand-logo ${className}` : "brand-logo";
   if (href) {
     return (
-      <Link href={href} className={classes} aria-label="TalkingClub 홈">
+      <Link href={href} className={classes} aria-label="토킹클럽 홈">
         {content}
       </Link>
     );

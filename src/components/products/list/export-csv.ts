@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import type { Product } from "@/api-services/ProductService.types";
 import type { PaginatedResult } from "@/types/api";
-import { formatCategoryPath, formatDateTime } from "@/utils/format";
+import { DISPLAY_TIME_ZONE, formatCategoryPath, formatDateTime } from "@/utils/format";
 
 // =====================================================================================
 // CSV export of the CURRENT FILTERED RESULT — every page, not only the one on screen.
@@ -52,8 +52,8 @@ function toCsvRow(product: Product): CsvValue[] {
     product.id,
     product.productCode,
     product.productName,
-    product.price,
-    product.unitPrice,
+    product.unitPrice, // 단가
+    product.price, // 판매금액 (selling price)
     formatCategoryPath(product.category, product.subCategory, product.childCategory),
     yesNo(product.isVisible),
     yesNo(product.onSale),
@@ -66,9 +66,9 @@ export function buildProductsCsv(products: readonly Product[]): string {
   return UTF8_BOM + lines.join(LINE_BREAK) + LINE_BREAK;
 }
 
-/** products-20261113-1542.csv */
+/** products-20261113-1542.csv (Korea time, like every date the app shows) */
 export function csvFileName(now: Date = new Date()): string {
-  return `products-${dayjs(now).format("YYYYMMDD-HHmm")}.csv`;
+  return `products-${dayjs(now).tz(DISPLAY_TIME_ZONE).format("YYYYMMDD-HHmm")}.csv`;
 }
 
 /**

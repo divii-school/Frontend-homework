@@ -13,7 +13,8 @@ import { FORM_LIMITS, FORM_MESSAGES, type FormMode, type ProductFormValues } fro
 
 // Step 1 — Basic info (design 8.1.1 #2–6 / 8.1.2 #1–5):
 // product name, product code (create: from GET /products/generate-code, read-only + Regenerate;
-// edit: read-only), unit price (list price), selling price (< unit price), detailed description.
+// edit: read-only), unit price 단가 (API `unitPrice`, lower than the selling price), selling price 판매가
+// (API `price` — the amount the cart and the order charge), detailed description.
 export default function StepBasicInfo({ mode }: { mode: FormMode }) {
   const {
     register,
@@ -40,7 +41,7 @@ export default function StepBasicInfo({ mode }: { mode: FormMode }) {
     if (result.data) setValue("productCode", result.data, { shouldDirty: true, shouldValidate: true });
   };
 
-  // ---- Selling price is re-checked when the unit price changes (selling < unit) ----
+  // ---- The unit price is re-checked when the selling price changes (API rule: unitPrice < price) ----
   const price = useWatch({ control, name: "price" });
   useEffect(() => {
     const state = getFieldState("unitPrice");
@@ -106,26 +107,7 @@ export default function StepBasicInfo({ mode }: { mode: FormMode }) {
         )}
       </FormField>
 
-      <Controller
-        control={control}
-        name="price"
-        rules={{
-          validate: (value) => {
-            if (value === null) return FORM_MESSAGES.priceRequired;
-            if (value <= 0) return FORM_MESSAGES.pricePositive;
-            if (value > FORM_LIMITS.intMax) return FORM_MESSAGES.moneyTooLarge;
-            return true;
-          },
-        }}
-        render={({ field, fieldState }) => (
-          <FormField id="product-price" label="단가" required error={fieldState.error?.message} hint="할인 전 정가입니다.">
-            {(a11y) => (
-              <MoneyInput {...a11y} ref={field.ref} name={field.name} value={field.value} onChange={field.onChange} onBlur={field.onBlur} placeholder="₩0" />
-            )}
-          </FormField>
-        )}
-      />
-
+      {/* 단가 (unit price) = API `unitPrice`. The API refuses a product unless unitPrice < price. */}
       <Controller
         control={control}
         name="unitPrice"
@@ -139,13 +121,28 @@ export default function StepBasicInfo({ mode }: { mode: FormMode }) {
           },
         }}
         render={({ field, fieldState }) => (
-          <FormField
-            id="product-unit-price"
-            label="판매가"
-            required
-            error={fieldState.error?.message}
-            hint="고객이 결제하는 실제 판매가입니다. 단가보다 낮아야 합니다."
-          >
+          <FormField id="product-unit-price" label="단가" required error={fieldState.error?.message} hint="판매가보다 낮은 금액이어야 합니다.">
+            {(a11y) => (
+              <MoneyInput {...a11y} ref={field.ref} name={field.name} value={field.value} onChange={field.onChange} onBlur={field.onBlur} placeholder="₩0" />
+            )}
+          </FormField>
+        )}
+      />
+
+      {/* 판매가 (selling price) = API `price`: the amount the shopping cart and the order charge per item. */}
+      <Controller
+        control={control}
+        name="price"
+        rules={{
+          validate: (value) => {
+            if (value === null) return FORM_MESSAGES.priceRequired;
+            if (value <= 0) return FORM_MESSAGES.pricePositive;
+            if (value > FORM_LIMITS.intMax) return FORM_MESSAGES.moneyTooLarge;
+            return true;
+          },
+        }}
+        render={({ field, fieldState }) => (
+          <FormField id="product-price" label="판매가" required error={fieldState.error?.message} hint="고객이 결제하는 금액입니다.">
             {(a11y) => (
               <MoneyInput {...a11y} ref={field.ref} name={field.name} value={field.value} onChange={field.onChange} onBlur={field.onBlur} placeholder="₩0" />
             )}

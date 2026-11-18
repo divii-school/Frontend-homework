@@ -81,7 +81,7 @@ test.describe("POST /api/upload — refusals (no S3 call)", () => {
     expect(await response.json()).toEqual({ ok: false, message: "fileFormatNotAllowed" });
   });
 
-  test("a file above the size limit → 413", async ({ request }) => {
+  test("a file above the size limit → 413", async ({ request }, testInfo) => {
     // One byte too many: passes the Content-Length pre-check, found when the form is read
     const oneByteOver = await postUpload(request, {
       url: S3_SHAPED_URL,
@@ -90,7 +90,14 @@ test.describe("POST /api/upload — refusals (no S3 call)", () => {
     expect(oneByteOver.status()).toBe(413);
     expect(await oneByteOver.json()).toEqual({ ok: false, message: "uploadTooLarge" });
 
-    // Far too big: refused by its Content-Length, before the body is read
+    // Far too big (limit + 1 MB = 5 MB): only on a local server. On a deployed Vercel link the platform refuses
+    // any body above 4.5 MB itself (413 FUNCTION_PAYLOAD_TOO_LARGE, not JSON) before the route runs.
+    const baseURL = String(testInfo.project.use.baseURL ?? "");
+    if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/.test(baseURL)) {
+      testInfo.annotations.push({ type: "skipped part", description: "5 MB body not sent to a deployed host (platform limit 4.5 MB)" });
+      return;
+    }
+    // Refused by its Content-Length, before the body is read
     const farTooBig = await postUpload(request, {
       url: S3_SHAPED_URL,
       file: { name: "huge.png", mimeType: "image/png", buffer: Buffer.alloc(MAX_IMAGE_BYTES + 1024 * 1024, 1) },
