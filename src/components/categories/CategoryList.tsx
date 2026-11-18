@@ -116,11 +116,6 @@ export function CategoryList() {
       <PageHeading
         title="상품 카테고리 관리"
         breadcrumb={[NAV_GROUP_LABEL, "상품 카테고리 관리"]}
-        actions={
-          // The API says when another 대분류 may be added (isCreatable); the QA server has reached its limit.
-          canWrite &&
-          tree.data?.canCreateTopLevel && <Button type="button" label="대분류 등록" icon="pi pi-plus" onClick={() => setEditing({ level: "category" })} />
-        }
       />
       <section className="panel" aria-label="카테고리 목록">
         <div className="list-toolbar">
@@ -138,7 +133,23 @@ export function CategoryList() {
             <p className="list-toolbar-count" aria-live="polite">
               대분류: <strong>{tree.data ? formatCount(tree.data.categories.length) : "-"}</strong>
             </p>
+            {/* Design 8.2.0: 대분류 등록 at the right end. The API says when another 대분류 may be added
+                (isCreatable); when it may not, the button stays visible, disabled, with the reason (design review). */}
+            {canWrite && (
+              <Button
+                type="button"
+                label="대분류 등록"
+                disabled={!tree.data?.canCreateTopLevel}
+                aria-describedby={tree.data && !tree.data.canCreateTopLevel ? "category-create-hint" : undefined}
+                onClick={() => setEditing({ level: "category" })}
+              />
+            )}
           </div>
+          {canWrite && tree.data && !tree.data.canCreateTopLevel && (
+            <p className="list-hint list-toolbar-hint" id="category-create-hint">
+              대분류는 더 이상 추가할 수 없습니다. (서버에서 대분류 추가가 막혀 있습니다.)
+            </p>
+          )}
         </div>
         {tree.isPending ? (
           <StateBlock kind="loading" title="카테고리를 불러오는 중입니다." />

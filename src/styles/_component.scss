@@ -144,11 +144,24 @@
   gap: $space-2;
 }
 
-.list-toolbar-filters {
-  .p-dropdown {
-    width: $select-width;
-  }
+// The actions stay at the right end, as in the frames, also when they wrap under the filters; on phones the
+// toolbar stacks from the left
+.list-toolbar-actions {
+  margin-left: auto;
 
+  @include mq-down("mobile") {
+    margin-left: 0;
+  }
+}
+
+// A dropdown in a toolbar has a fixed width (the base style fills its box, which would push the buttons beside it
+// onto a second line)
+.list-toolbar-filters .p-dropdown,
+.list-toolbar-actions .p-dropdown {
+  width: $select-width;
+}
+
+.list-toolbar-filters {
   @include mq-down("xs") {
     width: 100%;
 
@@ -156,6 +169,17 @@
     .list-toolbar-search {
       width: 100%;
     }
+  }
+}
+
+// A note on its own line under the toolbar, at the right end under the button it explains (e.g. why 대분류 등록 is
+// disabled); on phones, where the toolbar stacks, it starts at the left
+.list-toolbar-hint {
+  flex-basis: 100%;
+  text-align: right;
+
+  @include mq-down("mobile") {
+    text-align: left;
   }
 }
 

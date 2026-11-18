@@ -40,11 +40,12 @@ test.describe("category management", () => {
     expect(names).toEqual([...names].sort((a, b) => b.localeCompare(a, "ko")));
   });
 
-  test("대분류 등록 is offered only when the API allows another 대분류", async ({ page }) => {
-    // The real QA answer says isCreatable: false, so the button is not drawn
+  test("대분류 등록 is enabled only when the API allows another 대분류, and says why when not", async ({ page }) => {
+    // The real QA answer says isCreatable: false: the button is shown disabled, with the reason (design review)
     await page.goto("/categories");
     await expect(page.locator(".category-row-category").first()).toBeVisible();
-    await expect(page.getByRole("button", { name: "대분류 등록" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "대분류 등록" })).toBeDisabled();
+    await expect(page.getByText("대분류는 더 이상 추가할 수 없습니다.")).toBeVisible();
 
     // An answer with the flag turned on shows it (answered by the test: one category, no call to the server)
     const category = { id: 1, name: "HW3-Sachin-Mock", sortOrder: 1, createdAt: "2026-11-16T00:00:00.000Z", updatedAt: "2026-11-16T00:00:00.000Z", subCategories: [] };
@@ -52,7 +53,8 @@ test.describe("category management", () => {
       route.fulfill({ json: { success: true, message: "Success", data: [category], totalRecords: 1, isCreatable: true } }),
     );
     await page.reload();
-    await expect(page.getByRole("button", { name: "대분류 등록" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "대분류 등록" })).toBeEnabled();
+    await expect(page.getByText("대분류는 더 이상 추가할 수 없습니다.")).toHaveCount(0);
   });
 
   test("paging: 대분류 rows are paged and the page is kept in the URL", async ({ page }) => {
