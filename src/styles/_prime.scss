@@ -153,25 +153,6 @@
   }
 }
 
-.p-password {
-  position: relative;
-  display: block;
-
-  .p-inputtext {
-    padding-right: $space-10;
-  }
-
-  .p-icon,
-  .p-input-icon {
-    position: absolute;
-    top: 50%;
-    right: $space-3;
-    transform: translateY(-50%);
-    color: token("grey-b2");
-    cursor: pointer;
-  }
-}
-
 // ---- Dropdown -------------------------------------------------------
 .p-dropdown {
   display: inline-flex;

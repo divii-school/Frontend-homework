@@ -5,7 +5,6 @@ import { Button } from "primereact/button";
 import { Checkbox } from "primereact/checkbox";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
-import { Password } from "primereact/password";
 import { useEffect, useState, type FormEvent } from "react";
 import { FormField, invalidProps } from "@/components/common/FormField";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -31,6 +30,8 @@ export function LoginForm() {
   const login = useLogin();
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
+  // Design 1.1.0: the eye at the right end of the field shows the typed password; a second click masks it again
+  const [passwordShown, setPasswordShown] = useState(false);
   const [remember, setRemember] = useState(false);
   // Field errors appear after the first submit attempt, not while the user is still typing.
   const [submitted, setSubmitted] = useState(false);
@@ -102,23 +103,29 @@ export function LoginForm() {
         </span>
       </FormField>
       <FormField id="login-password" label="비밀번호" hideLabel error={submitted ? errors.password : undefined}>
-        <span className="login-input">
+        <span className="login-input login-input-password">
           <i className="pi pi-lock" aria-hidden="true" />
-          <Password
-            inputId="login-password"
+          <InputText
+            id="login-password"
+            type={passwordShown ? "text" : "password"}
+            aria-required
             value={password}
             placeholder="비밀번호"
-            feedback={false}
-            toggleMask
+            autoComplete="current-password"
             onChange={(event) => setPassword(event.target.value)}
-            invalid={submitted && Boolean(errors.password)}
-            pt={{
-              input: {
-                autoComplete: "current-password",
-              "aria-required": true,
-                "aria-describedby": submitted && errors.password ? "login-password-error" : undefined,
-              },
-            }}
+            {...invalidProps("login-password", submitted ? errors.password : undefined)}
+          />
+          {/* A real button (reachable with Tab, announced with its state), not a clickable icon. The icon follows the
+              frame: eye-slash while the password is masked, eye while it is shown. */}
+          <Button
+            type="button"
+            text
+            className="login-password-toggle"
+            icon={passwordShown ? "pi pi-eye" : "pi pi-eye-slash"}
+            aria-label="비밀번호 보기"
+            aria-pressed={passwordShown}
+            aria-controls="login-password"
+            onClick={() => setPasswordShown((shown) => !shown)}
           />
         </span>
       </FormField>

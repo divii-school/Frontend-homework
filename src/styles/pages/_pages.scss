@@ -66,6 +66,21 @@
   }
 }
 
+// Room for the eye button at the right end of the password field
+.login-input-password .p-inputtext {
+  padding-right: $space-10 + $space-2;
+}
+
+.login-password-toggle.p-button {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: $space-10;
+  height: $space-10;
+  transform: translateY(-50%);
+  color: token("grey-b2");
+}
+
 .login-remember {
   display: inline-flex;
   align-items: center;
