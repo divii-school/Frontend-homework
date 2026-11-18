@@ -5,8 +5,9 @@ import { toCsv } from "@/utils/csv";
 import { formatDateTime, formatWon } from "@/utils/format";
 import { MESSAGES } from "@/constants/messages";
 import { withDirectionParticle, withObjectParticle } from "@/utils/korean";
+import { koreanForKey, koreanForValidationList } from "@/utils/api-messages";
 import { parseProductParams, toProductQuery } from "@/utils/product-params";
-import { EMPTY_PRODUCT_FORM, firstInvalidStep, imageFileError, salePrice, storageKey, toProductRequest, validateStep } from "@/utils/product-rules";
+import { EMPTY_PRODUCT_FORM, firstInvalidStep, imageFileError, salePrice, storageKey, toProductRequest, uploadFileName, validateStep } from "@/utils/product-rules";
 import { isTokenValid, safeRedirectPath } from "@/utils/session";
 
 const user = (role: string, permissions: AuthUser["permissions"]): AuthUser => ({ id: 1, uuid: "u", fullName: "Tester", userId: "tester", role, permissions });
@@ -19,16 +20,17 @@ describe("permissions (one config for menu, guard and buttons)", () => {
   });
 
   it("a grant opens only its own page, including sub-pages", () => {
-    const categoryOnly = user("ADMIN", [{ module: "shopping_mall", subModules: ["category_management"] }]);
+    const categoryOnly = user("GENERAL_ADMIN", [{ module: "shopping_mall", subModules: ["category_management"] }]);
     expect(canOpen(categoryOnly, "/categories")).toBe(true);
     expect(canOpen(categoryOnly, "/products")).toBe(false);
     expect(canOpen(categoryOnly, "/products/20000/edit")).toBe(false);
   });
 
-  it("delete needs an administrator role on top of the page permission", () => {
-    const teacher = user("TEACHER", ["product_management"]);
-    expect(canDo(teacher, "product.write")).toBe(true);
-    expect(canDo(teacher, "product.delete")).toBe(false);
+  it("every action, delete included, follows the page permission only (no invented role list)", () => {
+    const master = user("MASTER_ADMIN", ["product_management"]);
+    expect(canDo(master, "product.write")).toBe(true);
+    expect(canDo(master, "product.delete")).toBe(true);
+    expect(canDo(master, "category.delete")).toBe(false);
   });
 
   it("nobody signed in may open nothing", () => {
@@ -153,5 +155,41 @@ describe("session helpers", () => {
     // Browsers read a backslash as a slash and drop tabs, so these lead to another site
     expect(safeRedirectPath("/\\example.com")).toBe("/products");
     expect(safeRedirectPath("/\t/example.com")).toBe("/products");
+  });
+});
+
+describe("API errors are always shown in Korean (no key, no English sentence)", () => {
+  const hangul = /[가-힣]/;
+
+  it("known keys use their sentence; the login texts follow the Korean login frame", () => {
+    expect(koreanForKey("invalidCredentials", 400)).toBe("등록되지 않은 계정입니다.");
+    expect(koreanForKey("invalidPassword", 400)).toBe("아이디와 비밀번호가 일치하지 않습니다. 다시 확인해 주세요.");
+    expect(koreanForKey("subCategoryAlreadyExists", 400)).toBe("같은 이름의 중분류가 이미 있습니다.");
+  });
+
+  it("an unknown key gets a Korean sentence by its shape or status, never the key", () => {
+    for (const [key, status] of [["someThingNotFound", 400], ["brandNewAlreadyExists", 409], ["photoLimitReached", 400], ["fooMustBePositive", 400], ["whatever", 400], ["whatever", 500], ["whatever", 403]] as const) {
+      const text = koreanForKey(key, status);
+      expect(text).not.toContain(key);
+      expect(text).toMatch(hangul);
+    }
+    expect(koreanForKey("someThingNotFound", 400)).toBe(MESSAGES.notFound);
+    expect(koreanForKey("whatever", 500)).toBe(MESSAGES.server);
+  });
+
+  it("English validation sentences become Korean, one line per field", () => {
+    expect(koreanForValidationList(["productName should not be empty", "unitPrice must be a number conforming to the specified constraints", "productName should not be empty"]))
+      .toEqual(["상품명을 입력해 주세요.", "단가는 올바른 숫자로 입력해 주세요."]);
+    expect(koreanForValidationList(["name must be shorter than or equal to 50 characters"])).toEqual(["카테고리 이름의 글자 수를 확인해 주세요."]);
+    expect(koreanForValidationList(["property foo should not exist"])).toEqual([MESSAGES.checkInput]);
+    expect(koreanForValidationList([])).toEqual([MESSAGES.checkInput]);
+  });
+});
+
+describe("image upload", () => {
+  it("a comma in a file name is removed, because the API keeps image paths as one comma-separated text", () => {
+    expect(uploadFileName("racer, blue.png")).toBe("racer blue.png");
+    expect(uploadFileName(",,,")).toBe("image");
+    expect(uploadFileName("plain.png")).toBe("plain.png");
   });
 });

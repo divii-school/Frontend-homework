@@ -25,16 +25,60 @@ test.describe("login and protected routes", () => {
     expect(loginCalls).toBe(0);
   });
 
-  test("a wrong password shows the API's error and keeps the typed ID", async ({ page }) => {
+  test("a wrong password shows the API's error in an alert closed with 확인, and keeps the typed ID", async ({ page }) => {
     await page.goto("/auth/login");
     await expect(page.getByRole("button", { name: "로그인" })).toBeEnabled();
     await typeSecret(page, "아이디", credentials().loginId);
     await page.getByLabel("비밀번호", { exact: true }).fill("wrong-password-1!");
     await page.getByRole("button", { name: "로그인" }).click();
-    await expect(page.getByRole("alert").filter({ hasText: "아이디 또는 비밀번호가 올바르지 않습니다." })).toBeVisible();
+    const alert = page.getByRole("dialog", { name: "알림" });
+    await expect(alert).toContainText("아이디와 비밀번호가 일치하지 않습니다. 다시 확인해 주세요.");
+    await alert.getByRole("button", { name: "확인" }).click();
+    await expect(alert).toBeHidden();
     // Compared inside the page so the ID is not printed in the report
     expect(await page.getByLabel("아이디", { exact: true }).evaluate((element, id) => (element as HTMLInputElement).value === id, credentials().loginId)).toBe(true);
     await expect(page).toHaveURL(/\/auth\/login/);
+  });
+
+  test("an ID that does not exist shows '등록되지 않은 계정입니다.' (API key invalidCredentials), never the key", async ({ page }) => {
+    await page.goto("/auth/login");
+    await expect(page.getByRole("button", { name: "로그인" })).toBeEnabled();
+    await page.getByLabel("아이디", { exact: true }).fill("HW3-Sachin-no-such-user");
+    await page.getByLabel("비밀번호", { exact: true }).fill("wrong-password-1!");
+    await page.getByRole("button", { name: "로그인" }).click();
+    const alert = page.getByRole("dialog", { name: "알림" });
+    await expect(alert).toContainText("등록되지 않은 계정입니다.");
+    await expect(page.getByText("invalidCredentials")).toHaveCount(0);
+  });
+
+  test("an account without admin rights gets the '관리자 권한이 없습니다.' popup and stays signed out", async ({ page }) => {
+    // 1. The API refuses it (key userSuspended, as the live admin handles it)
+    await page.route("**/api/v1/auth/login", (route) =>
+      route.fulfill({ status: 400, json: { success: false, message: "userSuspended", data: null, statusCode: 400 } }),
+    );
+    await page.goto("/auth/login");
+    await expect(page.getByRole("button", { name: "로그인" })).toBeEnabled();
+    await page.getByLabel("아이디", { exact: true }).fill("HW3-Sachin-not-admin");
+    await page.getByLabel("비밀번호", { exact: true }).fill("any-password-1!");
+    await page.getByRole("button", { name: "로그인" }).click();
+    const alert = page.getByRole("dialog", { name: "알림" });
+    await expect(alert).toContainText("관리자 권한이 없습니다.");
+    await expect(alert).toContainText("고객센터로 문의해 주세요.");
+    await alert.getByRole("button", { name: "확인" }).click();
+
+    // 2. The API lets it in, but it may open no page of this admin: same popup, no session kept
+    await page.unroute("**/api/v1/auth/login");
+    await page.route("**/api/v1/auth/login", (route) =>
+      route.fulfill({
+        status: 200,
+        json: { success: true, message: "Success", data: { token: "x.eyJleHAiOjk5OTk5OTk5OTl9.y", user: { id: 9, uuid: "u", fullName: "HW3-Sachin", userId: "hw3", role: "GENERAL_ADMIN", permissions: [] } } },
+      }),
+    );
+    await page.getByRole("button", { name: "로그인" }).click();
+    await expect(alert).toContainText("관리자 권한이 없습니다.");
+    await alert.getByRole("button", { name: "확인" }).click();
+    await expect(page).toHaveURL(/\/auth\/login/);
+    expect((await page.context().cookies()).some((cookie) => cookie.name === "tc_admin_token")).toBe(false);
   });
 
   test("login returns to the page that was asked for, and logout ends the session", async ({ page }) => {

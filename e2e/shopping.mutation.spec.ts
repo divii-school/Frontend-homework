@@ -139,8 +139,9 @@ test("product: create through the four steps with an image, and it shows in the 
   // Remove, then add again: the preview goes and comes back
   await page.getByRole("button", { name: "HW3-Sachin-test.png 삭제" }).click();
   await expect(page.getByRole("img", { name: "HW3-Sachin-test.png" })).toHaveCount(0);
-  await page.locator("#product-images").setInputFiles({ name: "HW3-Sachin-test.png", mimeType: "image/png", buffer: PNG });
-  await expect(page.getByRole("img", { name: "HW3-Sachin-test.png" })).toBeVisible();
+  // A comma in the file name would split the API's comma-separated image list: the upload removes it
+  await page.locator("#product-images").setInputFiles({ name: "HW3-Sachin, test.png", mimeType: "image/png", buffer: PNG });
+  await expect(page.getByRole("img", { name: "HW3-Sachin test.png" })).toBeVisible();
 
   await page.getByLabel("상세설명").fill("HW3 Playwright test product");
   await page.getByRole("button", { name: "등록" }).click();
@@ -151,6 +152,9 @@ test("product: create through the four steps with an image, and it shows in the 
   await expect(page.locator(".p-datatable-tbody > tr")).toHaveCount(1);
   await expect(page.locator(".p-datatable-tbody > tr").first()).toContainText(PRODUCT);
   await expect(page.locator(".p-datatable-tbody > tr").first()).toContainText("3,000원");
+  // The saved image, uploaded with a comma in its name, still loads after saving
+  const thumbnail = page.locator(".p-datatable-tbody > tr").first().locator("img");
+  await expect.poll(() => thumbnail.evaluate((image) => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
 });
 
 test("product: an API error on save keeps every value", async ({ page }) => {

@@ -49,6 +49,8 @@ test.describe("product list", () => {
   test("sort is kept in the URL and orders the rows", async ({ page }) => {
     await page.goto("/products?limit=20");
     await expectProductRows(page);
+    // The API has no sort parameter, so the screen says the sort covers only this page (code review, 18 Nov)
+    await expect(page.getByText("정렬은 현재 페이지 기준입니다.")).toBeVisible();
     // First click on a header sorts ascending; the choice is written to the URL.
     await page.getByRole("columnheader", { name: "판매금액" }).click();
     await expect(page).toHaveURL(/sort=price&order=asc/);

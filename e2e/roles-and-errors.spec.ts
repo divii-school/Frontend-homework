@@ -14,7 +14,7 @@ test.describe("roles: menu, route guard and buttons follow one config", () => {
   });
 
   test("a user with only the category permission: product menu hidden, product URLs answer 403", async ({ page }) => {
-    await actAs(page, "ADMIN", ["category_management"]);
+    await actAs(page, "GENERAL_ADMIN", ["category_management"]);
     await page.goto("/categories");
     await expect(page.getByRole("heading", { level: 1, name: "상품 카테고리 관리" })).toBeVisible();
     await expect(page.getByRole("link", { name: "상품 관리", exact: true })).toHaveCount(0);
@@ -30,17 +30,17 @@ test.describe("roles: menu, route guard and buttons follow one config", () => {
     await expect(page).toHaveURL(/\/categories$/);
   });
 
-  test("a non-admin role with the product permission can edit but gets no delete", async ({ page }) => {
-    await actAs(page, "TEACHER", ["product_management"]);
+  test("a MASTER_ADMIN with the product permission may create and delete: actions follow the page permission", async ({ page }) => {
+    await actAs(page, "MASTER_ADMIN", ["product_management"]);
     await page.goto("/products");
     await expectProductRows(page);
     await expect(page.getByRole("link", { name: "등록" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "삭제" })).toHaveCount(0);
-    await expect(page.locator(".p-datatable-tbody .p-checkbox")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "삭제" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "상품 카테고리 관리" })).toHaveCount(0);
   });
 
   test("a user with no permission sees an empty menu and 403", async ({ page }) => {
-    await actAs(page, "ADMIN", []);
+    await actAs(page, "GENERAL_ADMIN", []);
     await page.goto("/products");
     await expect(page.getByText("접근 권한이 없습니다. (403)")).toBeVisible();
     await expect(page.getByText("사용할 수 있는 메뉴가 없습니다.")).toBeVisible();
@@ -90,6 +90,27 @@ test.describe("error handling", () => {
     );
     await page.goto("/products");
     await expect(page.getByText("이 작업을 할 권한이 없습니다.")).toBeVisible();
+  });
+
+  test("no English on screen: an unknown API key and English validation sentences are shown in Korean", async ({ page }) => {
+    let answer: Record<string, unknown> = { success: false, message: "brandNewServerKey", data: null, statusCode: 400 };
+    await page.route("**/api/v1/products?*", (route) => route.fulfill({ status: 400, json: answer }));
+    await page.goto("/products");
+    await expect(page.getByRole("alert").filter({ hasText: "요청을 처리하지 못했습니다." })).toBeVisible();
+    await expect(page.getByText("brandNewServerKey")).toHaveCount(0);
+
+    answer = { success: false, message: ["productName should not be empty", "page must be a positive number"], data: null, statusCode: 400 };
+    await page.reload();
+    await expect(page.getByRole("alert").filter({ hasText: "상품명을 입력해 주세요." })).toBeVisible();
+    await expect(page.getByText("should not be empty")).toHaveCount(0);
+  });
+
+  test("the upload route answers a JSON error, not a crash, when it cannot read the form", async ({ page }) => {
+    await page.goto("/products");
+    await expectProductRows(page);
+    const response = await page.request.post("/api/upload", { headers: { "Content-Type": "text/plain" }, data: "not a form" });
+    expect(response.status()).toBe(400);
+    expect(await response.json()).toMatchObject({ success: false, message: "invalidRequest", statusCode: 400 });
   });
 
   test("a signed-in browser that lost its stored user is sent to login once, not into a redirect loop", async ({ page }) => {
