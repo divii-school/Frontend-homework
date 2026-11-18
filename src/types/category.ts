@@ -38,4 +38,6 @@ export interface CategoryTarget {
   id?: number;
   parentId?: number;
   name?: string;
+  /** How many categories are directly under it, as the tree shows them (a delete is refused while any are left). */
+  childCount?: number;
 }

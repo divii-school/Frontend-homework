@@ -110,6 +110,9 @@ export function CategoryList() {
   };
 
   const canWrite = canDo(user, "category.write");
+  // A category with categories under it is not deleted: the API would remove the whole branch on the shared data
+  // (QA, 18 Nov). The dialog says to delete the lower categories first.
+  const deleteBlocked = (deleting?.childCount ?? 0) > 0;
 
   return (
     <>
@@ -184,18 +187,24 @@ export function CategoryList() {
         visible={deleting !== null}
         title={`${deleting ? LEVEL_LABEL[deleting.level] : ""} 삭제`}
         confirmLabel="삭제"
+        cancelLabel={deleteBlocked ? "확인" : "취소"}
         pending={deleteCategory.isPending}
         error={deleteCategory.error}
-        onConfirm={handleDelete}
+        onConfirm={deleteBlocked ? undefined : handleDelete}
         onCancel={() => {
           setDeleting(null);
           deleteCategory.reset();
         }}
       >
-        <p>
-          <strong>{deleting?.name}</strong> 카테고리를 삭제하시겠습니까?{" "}
-          {deleting?.level === "child" ? "삭제하면 되돌릴 수 없습니다." : "하위 카테고리도 함께 삭제되며 되돌릴 수 없습니다."}
-        </p>
+        {deleteBlocked ? (
+          <p>
+            <strong>{deleting?.name}</strong> 카테고리에 하위 카테고리가 있어 삭제할 수 없습니다. 하위 카테고리를 먼저 삭제해 주세요.
+          </p>
+        ) : (
+          <p>
+            <strong>{deleting?.name}</strong> 카테고리를 삭제하시겠습니까? 삭제하면 되돌릴 수 없습니다.
+          </p>
+        )}
       </ConfirmDialog>
     </>
   );

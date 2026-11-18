@@ -16,11 +16,15 @@ interface ConfirmDialogProps {
   /** True while the request runs: the button shows a spinner and cannot be clicked twice. */
   pending: boolean;
   error: ApiError | null;
-  onConfirm: () => void;
+  /** Left out when the action is not allowed: the dialog then only explains why, with one button (cancelLabel). */
+  onConfirm?: () => void;
   onCancel: () => void;
 }
 
-/** "Are you sure?" before a delete or before leaving a form. Stays open with the API's message when the request fails. */
+/**
+ * "Are you sure?" before a delete or before leaving a form. Stays open with the API's message when the request fails.
+ * Without onConfirm it is a notice: it says why the action cannot be done and has only the close button.
+ */
 export function ConfirmDialog(props: ConfirmDialogProps) {
   const { visible, title, children, confirmLabel, cancelLabel = "취소", danger = true, pending, error, onConfirm, onCancel } = props;
   return (
@@ -35,7 +39,9 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
       footer={
         <>
           <Button type="button" label={cancelLabel} outlined disabled={pending} onClick={onCancel} />
-          <Button type="button" label={confirmLabel} severity={danger ? "danger" : undefined} loading={pending} disabled={pending} onClick={onConfirm} />
+          {onConfirm && (
+            <Button type="button" label={confirmLabel} severity={danger ? "danger" : undefined} loading={pending} disabled={pending} onClick={onConfirm} />
+          )}
         </>
       }
     >

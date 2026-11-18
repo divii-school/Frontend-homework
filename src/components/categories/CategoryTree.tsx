@@ -78,7 +78,7 @@ function CategoryRow({ level, node, parentId, childCount, expanded, canWrite, ca
             text
             icon="pi pi-trash"
             aria-label={`${node.name} 삭제`}
-            onClick={() => onDelete({ level, id: node.id, name: node.name })}
+            onClick={() => onDelete({ level, id: node.id, name: node.name, childCount })}
           />
         )}
       </span>
