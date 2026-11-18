@@ -30,6 +30,8 @@ $colors-day: (
   "red-b2": #fdecea, // error background
   "green-b1": #1b7a3d, // success text
   "green-b2": #e8f5ec, // success background
+  "violet-b1": #7c3aed, // "+ 중분류 / + 소분류" buttons of the category tree (design 8.2.0)
+  "violet-b2": #6d28d9, // the same, hover
   "overlay-b1": rgba(0, 0, 0, 0.4), // behind a dialog or the mobile menu
   "shadow-b1": rgba(24, 24, 24, 0.08), // panel and dialog shadow
 );
@@ -53,6 +55,8 @@ $colors-night: (
   "red-b2": #3b1614,
   "green-b1": #7ddc9c,
   "green-b2": #14301e,
+  "violet-b1": #a78bfa, // with the night text-on-primary colour (dark) it keeps 4.5:1
+  "violet-b2": #c4b5fd,
   "overlay-b1": rgba(0, 0, 0, 0.65),
   "shadow-b1": rgba(0, 0, 0, 0.5),
 );
@@ -112,6 +116,8 @@ $icon-size-lg: 40px;
 $field-label-width: 140px;
 $table-min-width: 880px;
 $grid-min-column: 260px;
+$product-form-width: 630px; // the form column of Figma 8.1.1
+$category-picker-height: 280px; // height of each list of the category picker (Figma 8.1.1)
 
 $radius-sm: 4px;
 $radius-md: 10px;

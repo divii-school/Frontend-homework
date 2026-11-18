@@ -9,6 +9,10 @@ interface ConfirmDialogProps {
   title: string;
   children: ReactNode;
   confirmLabel: string;
+  /** "취소" by default; a yes/no question uses "아니오". */
+  cancelLabel?: string;
+  /** A delete is red; a plain question (leave the form?) is not. */
+  danger?: boolean;
   /** True while the request runs: the button shows a spinner and cannot be clicked twice. */
   pending: boolean;
   error: ApiError | null;
@@ -16,8 +20,9 @@ interface ConfirmDialogProps {
   onCancel: () => void;
 }
 
-/** "Are you sure?" before a delete. Stays open with the API's message when the delete fails. */
-export function ConfirmDialog({ visible, title, children, confirmLabel, pending, error, onConfirm, onCancel }: ConfirmDialogProps) {
+/** "Are you sure?" before a delete or before leaving a form. Stays open with the API's message when the request fails. */
+export function ConfirmDialog(props: ConfirmDialogProps) {
+  const { visible, title, children, confirmLabel, cancelLabel = "취소", danger = true, pending, error, onConfirm, onCancel } = props;
   return (
     <Dialog
       className="confirm-dialog"
@@ -29,8 +34,8 @@ export function ConfirmDialog({ visible, title, children, confirmLabel, pending,
       onHide={onCancel}
       footer={
         <>
-          <Button type="button" label="취소" outlined disabled={pending} onClick={onCancel} />
-          <Button type="button" label={confirmLabel} severity="danger" loading={pending} disabled={pending} onClick={onConfirm} />
+          <Button type="button" label={cancelLabel} outlined disabled={pending} onClick={onCancel} />
+          <Button type="button" label={confirmLabel} severity={danger ? "danger" : undefined} loading={pending} disabled={pending} onClick={onConfirm} />
         </>
       }
     >

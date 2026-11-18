@@ -1,8 +1,9 @@
 "use client";
 
+import { Button } from "primereact/button";
 import { PageHeading } from "@/components/common/PageHeading";
 import { ErrorState, StateBlock } from "@/components/common/StateBlock";
-import { ProductForm } from "@/components/products/ProductForm";
+import { PRODUCT_FORM_ID, ProductForm, SAVE_ALL } from "@/components/products/ProductForm";
 import { NAV_GROUP_LABEL } from "@/config/navigation";
 import { useGenerateProductCode, useGetProductDetails } from "@/hooks/API/products/useGetProductDetails";
 import { useCreateProduct, useUpdateProduct } from "@/hooks/API/products/useProductMutations";
@@ -18,7 +19,7 @@ export function ProductCreateScreen() {
 
   return (
     <>
-      <PageHeading title="상품 등록" breadcrumb={[NAV_GROUP_LABEL, "상품 관리", "등록"]} />
+      <PageHeading title="상품 등록" breadcrumb={[NAV_GROUP_LABEL, "상품 등록"]} />
       {code.data !== undefined ? (
         <ProductForm
           mode="create"
@@ -43,7 +44,24 @@ export function ProductEditScreen({ id }: { id: number }) {
 
   return (
     <>
-      <PageHeading title="상품 수정" breadcrumb={[NAV_GROUP_LABEL, "상품 관리", "수정"]} />
+      <PageHeading
+        title="상품 수정"
+        breadcrumb={[NAV_GROUP_LABEL, "상품 수정"]}
+        actions={
+          // Design 8.1.2: one 저장 at the right of the title. It submits the form below and saves it from any step
+          // (the whole form is checked first); the steps of the form stay as HW3 asks (Q3).
+          product.data !== undefined && (
+            <Button
+              type="submit"
+              form={PRODUCT_FORM_ID}
+              value={SAVE_ALL}
+              label="저장"
+              loading={updateProduct.isPending}
+              disabled={updateProduct.isPending}
+            />
+          )
+        }
+      />
       {!Number.isInteger(id) || id <= 0 ? (
         <StateBlock kind="not-found" title="상품을 찾을 수 없습니다." />
       ) : product.data !== undefined ? (

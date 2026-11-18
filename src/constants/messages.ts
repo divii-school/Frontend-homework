@@ -53,7 +53,7 @@ export const API_FIELD_LABELS: Record<string, string> = {
   unitPrice: "단가",
   price: "판매가",
   quantity: "수량",
-  taxType: "과세 구분",
+  taxType: "비과세",
   description: "상세설명",
   images: "이미지",
   categoryId: "대분류",

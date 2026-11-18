@@ -302,4 +302,110 @@
   align-items: center;
   gap: $space-1;
   margin-left: auto;
+
+  // Design 8.2.0: pencil and trash in the same quiet grey
+  .p-button.p-button-text {
+    color: token("grey-b2");
+  }
+}
+
+// Design 8.2.0: "+ 중분류 / + 소분류" is a small violet button with a + icon
+.category-add-button.p-button {
+  min-height: 28px;
+  padding: 0 $space-3;
+  border-color: token("violet-b1");
+  background: token("violet-b1");
+  color: token("white-b2");
+  font-size: $font-size-xs;
+
+  &:not(:disabled):hover {
+    border-color: token("violet-b2");
+    background: token("violet-b2");
+  }
+}
+
+// ---- Product form: Figma 8.1.1 / 8.1.2 ------------------------------
+// One column of about 630px; underlined fields and grey labels; 취소 and 등록 centred.
+.product-form-step {
+  max-width: $product-form-width;
+
+  .form-field-label {
+    color: token("grey-b1");
+    font-size: $font-size-sm;
+    font-weight: $font-weight-regular;
+  }
+
+  .form-field-label-required::after {
+    margin-left: 0;
+  }
+
+  // Text fields and dropdowns are a line, not a box (the 상세설명 box stays a box, as drawn).
+  .p-inputtext:not(textarea),
+  .p-dropdown {
+    border-width: 0 0 1px;
+    border-radius: 0;
+    background: transparent;
+  }
+}
+
+// 노출상태 and 판매상태 side by side
+.form-grid-pair {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  @include mq-down("mobile") {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.product-form .form-actions {
+  justify-content: center;
+  gap: $space-4;
+
+  .p-button {
+    min-width: $space-16 * 2 - $space-2;
+  }
+}
+
+.button-cancel.p-button.p-button-outlined {
+  border-color: token("pink-b1");
+  color: token("pink-b1");
+}
+
+// Category picker: three lists under one 카테고리* label, each with a grey title row
+.category-picker-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $space-3;
+
+  @include mq-down("mobile") {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.category-picker-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid token("grey-b3");
+  border-radius: $radius-sm;
+  overflow: hidden;
+
+  .p-listbox {
+    border: 0;
+    border-radius: 0;
+  }
+
+  .p-listbox-list-wrapper {
+    height: $category-picker-height;
+  }
+}
+
+.category-picker-title {
+  margin: 0;
+  padding: $space-3 $space-4;
+  border-bottom: 1px solid token("grey-b3");
+  background: token("grey-b6");
+  color: token("black-b1");
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
 }

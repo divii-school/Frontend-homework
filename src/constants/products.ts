@@ -19,13 +19,21 @@ export const SEARCH_TYPE_OPTIONS: { label: string; value: ProductSearchType }[] 
 
 export const SORT_FIELDS: readonly ProductSortField[] = ["createdAt", "productName", "price"];
 
+/** Design 8.1.1: the field is called 비과세 and lists 비과세 first. */
 export const TAX_TYPE_OPTIONS: { label: string; value: TaxType }[] = [
-  { label: "과세", value: "tax" },
   { label: "비과세", value: "tax_free" },
+  { label: "과세", value: "tax" },
 ];
 
-/** Search waits this long after the last key press before it changes the URL. */
-export const SEARCH_DEBOUNCE_MS = 400;
+/** 노출상태 and 판매상태 are 예 / 아니오 dropdowns in the form (design 8.1.1). */
+export const YES_NO_OPTIONS: { label: string; value: boolean }[] = [
+  { label: "예", value: true },
+  { label: "아니오", value: false },
+];
+
+/** Design 8.1.1, rule 2: 상품명 is at most 100 characters. */
+export const PRODUCT_NAME_MAX_LENGTH = 100;
+
 export const TOAST_LIFE_MS = 4_000;
 
 /**

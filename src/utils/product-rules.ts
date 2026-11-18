@@ -1,5 +1,5 @@
 import { MESSAGES } from "@/constants/messages";
-import { IMAGE_RULES } from "@/constants/products";
+import { IMAGE_RULES, PRODUCT_NAME_MAX_LENGTH } from "@/constants/products";
 import type { Product, ProductFormErrors, ProductFormValues, ProductRequest } from "@/types/product";
 import { formatMegabytes } from "@/utils/format";
 
@@ -7,7 +7,7 @@ export const EMPTY_PRODUCT_FORM: ProductFormValues = {
   erpName: "",
   productName: "",
   productCode: "",
-  taxType: "tax",
+  taxType: null,
   quantity: "",
   unitPrice: "",
   erpUnitPrice: "",
@@ -16,8 +16,8 @@ export const EMPTY_PRODUCT_FORM: ProductFormValues = {
   childCategoryId: null,
   description: "",
   images: [],
-  isVisible: false,
-  onSale: false,
+  isVisible: null,
+  onSale: null,
   storedPrice: null,
 };
 
@@ -45,8 +45,12 @@ const STEP_RULES: Array<(values: ProductFormValues) => ProductFormErrors> = [
   (values) => {
     const errors: ProductFormErrors = {};
     if (!values.productName.trim()) errors.productName = MESSAGES.required("상품명");
+    else if (values.productName.trim().length > PRODUCT_NAME_MAX_LENGTH) {
+      errors.productName = `상품명은 ${PRODUCT_NAME_MAX_LENGTH}자 이내로 입력해 주세요.`;
+    }
     if (!values.productCode.trim()) errors.productCode = MESSAGES.required("상품코드");
     if (!values.erpName.trim()) errors.erpName = MESSAGES.required("상품 ERP명");
+    if (values.taxType === null) errors.taxType = MESSAGES.selectRequired("비과세");
     return errors;
   },
   (values) => {
@@ -67,6 +71,8 @@ const STEP_RULES: Array<(values: ProductFormValues) => ProductFormErrors> = [
     const errors: ProductFormErrors = {};
     if (values.images.length === 0) errors.images = "이미지를 1장 이상 등록해 주세요.";
     if (!values.description.trim()) errors.description = MESSAGES.required("상세설명");
+    if (values.isVisible === null) errors.isVisible = MESSAGES.selectRequired("노출상태");
+    if (values.onSale === null) errors.onSale = MESSAGES.selectRequired("판매상태");
     return errors;
   },
 ];
@@ -100,7 +106,8 @@ export function toProductRequest(values: ProductFormValues): ProductRequest {
     description: values.description.trim(),
     erpName: values.erpName.trim(),
     erpUnitPrice: Number(values.erpUnitPrice),
-    taxType: values.taxType,
+    // Only called after every step is valid, so taxType has been picked.
+    taxType: values.taxType ?? "tax",
     quantity: Number(values.quantity),
     unitPrice: Number(values.unitPrice),
     categoryId: values.categoryId as number,

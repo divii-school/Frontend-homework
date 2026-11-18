@@ -32,7 +32,7 @@ function InfoTab({ id }: { id: number }) {
     ["상품명", item.productName],
     ["상품 ERP명", item.erpName],
     ["ERP 코드", item.erpCode ?? "-"],
-    ["과세 구분", TAX_LABEL[item.taxType] ?? item.taxType],
+    ["비과세", TAX_LABEL[item.taxType] ?? item.taxType],
     ["수량", formatCount(item.quantity)],
     ["단가", formatWon(item.unitPrice)],
     ["ERP 단가", formatWon(item.erpUnitPrice)],

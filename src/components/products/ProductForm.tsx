@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "primereact/button";
 import { useState, type FormEvent } from "react";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { ErrorSummary } from "@/components/common/ErrorSummary";
 import { BasicStep, CategoryStep, MediaStep, PriceStep, type StepProps } from "@/components/products/ProductFormSteps";
 import { useToast } from "@/components/providers/ToastProvider";
@@ -15,6 +15,11 @@ import type { ProductFormErrors, ProductFormValues, ProductImage, ProductRequest
 import { firstInvalidStep, toProductRequest, validateStep } from "@/utils/product-rules";
 
 const STEP_KEYS = PRODUCT_FORM_STEPS.map((step) => step.key);
+
+/** id of the form, so the 저장 button in the page heading (edit mode, design 8.1.2) can submit it from outside. */
+export const PRODUCT_FORM_ID = "product-form";
+/** Value of that heading button: save the whole form from any step. */
+export const SAVE_ALL = "save-all";
 const STEP_COMPONENTS: Array<(props: StepProps) => React.ReactNode> = [BasicStep, PriceStep, CategoryStep, MediaStep];
 
 interface ProductFormProps {
@@ -40,6 +45,8 @@ export function ProductForm({ mode, initialValues, saving, saveError, onSave }: 
   const [values, setValues] = useState<ProductFormValues>(initialValues);
   const [errors, setErrors] = useState<ProductFormErrors>({});
   const [stepKey, setStepKey] = useUrlParam("step", STEP_KEYS);
+  // Design 8.1.1, rule 16: 취소 asks before the typed values are thrown away.
+  const [leaving, setLeaving] = useState(false);
   const stepIndex = STEP_KEYS.indexOf(stepKey);
   const isLast = stepIndex === STEP_KEYS.length - 1;
   const Step = STEP_COMPONENTS[stepIndex];
@@ -72,9 +79,11 @@ export function ProductForm({ mode, initialValues, saving, saveError, onSave }: 
     if (Object.keys(stepErrors).length === 0) setStepKey(STEP_KEYS[stepIndex + 1]);
   };
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!isLast) {
+    // The heading's 저장 (edit mode) saves from any step; inside the form, 다음 moves on until the last step.
+    const submitter = (event.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
+    if (!isLast && submitter?.value !== SAVE_ALL) {
       goNext();
       return;
     }
@@ -92,7 +101,7 @@ export function ProductForm({ mode, initialValues, saving, saveError, onSave }: 
   };
 
   return (
-    <form className="panel product-form" onSubmit={handleSubmit} noValidate aria-label={mode === "create" ? "상품 등록" : "상품 수정"}>
+    <form id={PRODUCT_FORM_ID} className="panel product-form" onSubmit={handleSubmit} noValidate aria-label={mode === "create" ? "상품 등록" : "상품 수정"}>
       <ol className="stepper" aria-label={mode === "create" ? "등록 단계" : "수정 단계"}>
         {PRODUCT_FORM_STEPS.map((step, index) => (
           <li
@@ -110,15 +119,27 @@ export function ProductForm({ mode, initialValues, saving, saveError, onSave }: 
         <legend className="product-form-legend">
           {stepIndex + 1}. {PRODUCT_FORM_STEPS[stepIndex].label}
         </legend>
-        <Step values={values} errors={errors} onChange={handleChange} onImagesChange={handleImagesChange} />
+        <Step mode={mode} values={values} errors={errors} onChange={handleChange} onImagesChange={handleImagesChange} />
       </fieldset>
       <div className="form-actions">
-        <Link className="link-button" href={ROUTES.products}>
-          취소
-        </Link>
+        <Button type="button" className="button-cancel" label="취소" outlined disabled={saving} onClick={() => setLeaving(true)} />
         {stepIndex > 0 && <Button type="button" label="이전" outlined disabled={saving} onClick={() => setStepKey(STEP_KEYS[stepIndex - 1])} />}
-        <Button type="submit" label={isLast ? (mode === "create" ? "등록" : "저장") : "다음"} loading={saving} disabled={saving} />
+        {/* When editing, the last step has no button of its own: 저장 is in the page heading (design 8.1.2). */}
+        {!(isLast && mode === "edit") && <Button type="submit" label={isLast ? "등록" : "다음"} loading={saving} disabled={saving} />}
       </div>
+      <ConfirmDialog
+        visible={leaving}
+        title="취소"
+        confirmLabel="예"
+        cancelLabel="아니오"
+        danger={false}
+        pending={false}
+        error={null}
+        onConfirm={() => router.push(ROUTES.products)}
+        onCancel={() => setLeaving(false)}
+      >
+        <p>입력하신 내용이 전부 삭제됩니다. 취소하시겠습니까?</p>
+      </ConfirmDialog>
     </form>
   );
 }

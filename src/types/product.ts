@@ -75,7 +75,8 @@ export interface ProductFormValues {
   erpName: string;
   productName: string;
   productCode: string;
-  taxType: TaxType;
+  /** Null until the user picks one: the design shows "비과세를 선택해 주세요." and no value. */
+  taxType: TaxType | null;
   quantity: string;
   unitPrice: string;
   erpUnitPrice: string;
@@ -84,8 +85,9 @@ export interface ProductFormValues {
   childCategoryId: number | null;
   description: string;
   images: ProductImage[];
-  isVisible: boolean;
-  onSale: boolean;
+  /** 예 / 아니오 dropdowns (design 8.1.1); null until picked in create mode. */
+  isVisible: boolean | null;
+  onSale: boolean | null;
   /** Edit mode: the price saved on the server, kept until 수량 or 단가 is changed. Null in create mode. */
   storedPrice: number | null;
 }

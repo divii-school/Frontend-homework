@@ -66,14 +66,25 @@ describe("product form rules", () => {
     childCategoryId: 3,
     description: "text",
     images: [{ key: "products/a.png", previewUrl: "https://x/products/a.png", name: "a.png" }],
+    taxType: "tax_free" as const,
+    isVisible: true,
+    onSale: false,
   };
 
   it("each step reports only its own fields", () => {
-    expect(Object.keys(validateStep(0, EMPTY_PRODUCT_FORM)).sort()).toEqual(["erpName", "productCode", "productName"]);
+    // 비과세, 노출상태 and 판매상태 start empty and must be picked (design 8.1.1)
+    expect(Object.keys(validateStep(0, EMPTY_PRODUCT_FORM)).sort()).toEqual(["erpName", "productCode", "productName", "taxType"]);
     expect(Object.keys(validateStep(1, { ...EMPTY_PRODUCT_FORM, quantity: "x", unitPrice: "x", erpUnitPrice: "-1" })).sort()).toEqual(["erpUnitPrice", "quantity", "unitPrice"]);
     // 0 is a valid quantity (the API's rule is only "a number"; many saved products have 0)
     expect(validateStep(1, { ...EMPTY_PRODUCT_FORM, quantity: "0", unitPrice: "0", erpUnitPrice: "0" })).toEqual({});
-    expect(Object.keys(validateStep(3, EMPTY_PRODUCT_FORM)).sort()).toEqual(["description", "images"]);
+    expect(Object.keys(validateStep(3, EMPTY_PRODUCT_FORM)).sort()).toEqual(["description", "images", "isVisible", "onSale"]);
+  });
+
+  it("상품명 is at most 100 characters (design 8.1.1, rule 2)", () => {
+    expect(validateStep(0, { ...valid, productName: "가".repeat(100) }).productName).toBeUndefined();
+    expect(validateStep(0, { ...valid, productName: "가".repeat(101) }).productName).toBe("상품명은 100자 이내로 입력해 주세요.");
+    expect(validateStep(0, { ...valid, taxType: null }).taxType).toBe("비과세를 선택해 주세요.");
+    expect(validateStep(3, { ...valid, isVisible: null }).isVisible).toBe("노출상태를 선택해 주세요.");
   });
 
   it("finds the first invalid step, or none", () => {
@@ -84,7 +95,7 @@ describe("product form rules", () => {
   it("sale price is quantity × unit price, and the request uses the API's yes/no strings", () => {
     expect(salePrice({ quantity: "3", unitPrice: "1500" })).toBe(4500);
     expect(salePrice({ quantity: "", unitPrice: "1500" })).toBeNull();
-    expect(toProductRequest(valid)).toMatchObject({ price: 3000, quantity: 2, isVisible: "no", onSale: "no", images: ["products/a.png"] });
+    expect(toProductRequest(valid)).toMatchObject({ price: 3000, quantity: 2, taxType: "tax_free", isVisible: "yes", onSale: "no", images: ["products/a.png"] });
     // Edit mode keeps the saved price, even when it is not 수량 × 단가
     expect(toProductRequest({ ...valid, storedPrice: 1500 }).price).toBe(1500);
   });
