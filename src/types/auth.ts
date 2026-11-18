@@ -1,5 +1,8 @@
-/** Roles the API returns in `user.role`. Only SUPER_ADMIN has every permission without a grant. */
-export type UserRole = "SUPER_ADMIN" | "ADMIN" | "REGIONAL_MANAGER" | "PRINCIPAL" | "TEACHER" | (string & {});
+/**
+ * Roles the API returns in `user.role`: SUPER_ADMIN (the QA account), and the admin roles of the API document,
+ * MASTER_ADMIN and GENERAL_ADMIN. Only SUPER_ADMIN has every permission without a grant; the others need it.
+ */
+export type UserRole = "SUPER_ADMIN" | "MASTER_ADMIN" | "GENERAL_ADMIN" | (string & {});
 
 /** A permission grant as stored by POST /permissions/add: a module key and its sub-module keys. */
 export interface PermissionGrant {

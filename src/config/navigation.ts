@@ -35,12 +35,15 @@ export const NAV_ITEMS: readonly NavItem[] = [
 
 export type ActionKey = "product.write" | "product.delete" | "category.write" | "category.delete";
 
-/** `roles` narrows an action further: deleting is for administrators only, even with the page permission. */
-const ACTIONS: Record<ActionKey, { permission: PermissionKey; roles?: readonly string[] }> = {
+/**
+ * Every action follows its page permission only. Nothing in the design or the API limits deleting to certain
+ * roles, so no role list is invented here (the API has MASTER_ADMIN and GENERAL_ADMIN admins; see A11).
+ */
+const ACTIONS: Record<ActionKey, { permission: PermissionKey }> = {
   "product.write": { permission: PERMISSION_KEYS.products },
-  "product.delete": { permission: PERMISSION_KEYS.products, roles: [SUPER_ADMIN_ROLE, "ADMIN"] },
+  "product.delete": { permission: PERMISSION_KEYS.products },
   "category.write": { permission: PERMISSION_KEYS.categories },
-  "category.delete": { permission: PERMISSION_KEYS.categories, roles: [SUPER_ADMIN_ROLE, "ADMIN"] },
+  "category.delete": { permission: PERMISSION_KEYS.categories },
 };
 
 export function hasPermission(user: AuthUser | null, permission: string): boolean {
@@ -60,9 +63,7 @@ export function canOpen(user: AuthUser | null, pathname: string): boolean {
 }
 
 export function canDo(user: AuthUser | null, action: ActionKey): boolean {
-  const rule = ACTIONS[action];
-  if (!hasPermission(user, rule.permission)) return false;
-  return !rule.roles || (user !== null && rule.roles.includes(user.role));
+  return hasPermission(user, ACTIONS[action].permission);
 }
 
 export const visibleNavItems = (user: AuthUser | null): NavItem[] =>
