@@ -24,7 +24,11 @@ A new Next.js 15 admin app (App Router, React 19, TypeScript strict, PrimeReact 
 
 HW3 — Advanced Frontend Homework: rebuild two real Talking Club admin screens (Product Category Management, Product Management) with login and role-based access on the real QA API, following the WM frontend rules, and hand them over to QA the WM way.
 
-## How it was tested (2026-11-17, real runs; live = against the QA API)
+## How it was tested (2026-11-17 and 2026-11-18, real runs; live = against the QA API)
+
+**Re-run after the re-check fixes (2026-11-18):** gates again 0 / 0 / 0, then the same one command on the production build: **104 passed** (3.3 min), 10:06 to 10:09, including `products.mutation.spec.ts` (real image upload through `/api/upload` to the `talking-club-dev` bucket) and the stricter `upload-route-states.spec.ts` (another bucket is refused). The first attempt at 10:04 stopped on the live login-error test only: the QA API answered too slowly (the `로그인 (Login)` button was still busy after 5 s; a probe right after measured 0.8 to 2.7 s per login answer). No code or test was changed between the two attempts. Leftovers 0; the new report zip was checked: login ID 0, password 0, session token 0.
+
+The full run of 17 Nov:
 
 ```
 npm run type-check    → exit 0
@@ -56,11 +60,13 @@ clean-up check → 0 HW3-Neeraj- products or categories left
 Reviewer Kakali, result "Resubmit": the code was praised; 2 must-fix and 4 should-fix items. All six are done (commit `8b2f596` for items 2 to 6, `356dc8d` for item 1):
 
 1. **UI language (must-fix).** The whole UI text is Korean and follows the Korean Figma frames (8.1.0 `8010:59065`, 8.1.1 `8010:57833`, 8.1.2 `5498:84860`, 8.1.3 `8034:61058`, 8.2.0 `5498:84158`; login `4019:78451`). `docs/ko-glossary.md` lists all 562 strings. Built-in PrimeReact texts use a Korean locale, `<html lang="ko">`, unknown API message keys fall back to the Korean server-error text. The `accept-language` header stays `en` on purpose.
-2. **Upload (must-fix).** The browser no longer sends the file to S3. `UploadService` posts the file and the signed URL to `POST /api/upload` (`src/app/api/upload/route.ts`) and the server sends it to S3, so the bucket CORS no longer matters. The route checks: logged-in session (401 JSON), only https S3 hosts (400), file type (415), size (413), S3 refusal (502). It is left out of the middleware matcher because Next 15.5 passes only the first 10 MB of a body through middleware; the route checks the session itself. Size limit: `NEXT_PUBLIC_MAX_IMAGE_MB` (default 10; 4 on Vercel, because Vercel functions refuse request bodies above 4.5 MB).
+2. **Upload (must-fix).** The browser no longer sends the file to S3. `UploadService` posts the file and the signed URL to `POST /api/upload` (`src/app/api/upload/route.ts`) and the server sends it to S3, so the bucket CORS no longer matters. The route checks: logged-in session (401 JSON), only the `talking-club-dev` bucket (400), file type (415), size (413), S3 refusal (502). It is left out of the middleware matcher because Next 15.5 passes only the first 10 MB of a body through middleware; the route checks the session itself. Size limit: `NEXT_PUBLIC_MAX_IMAGE_MB` (default 4, because Vercel functions refuse request bodies above 4.5 MB).
 3. **A 5th image** can no longer be added or saved (a guard on every add / Undo / Retry path plus a form rule).
 4. **Commas** are removed from image file names before the upload (`src/utils/image-file.ts`, `safeFileName`).
 5. **Edit draft** is restored only if the product was not changed on the server since the draft was saved (compares `updatedAt` plus the option rows); otherwise it is dropped with a notice, and the edit screen always loads a fresh copy. Create drafts are unchanged.
 6. **Default error toast** in `QueryCache` / `MutationCache` (`src/utils/query-client.ts`); hooks whose screen shows its own error opt out with `meta: SHOWS_OWN_ERROR`; a 401 and a cancelled request never toast.
+
+After the code re-check of 18 Nov (code result Pass; two small points, both done): the image size limit defaults to **4 MB** (Vercel functions refuse request bodies above 4.5 MB, so a deployment without `NEXT_PUBLIC_MAX_IMAGE_MB` still works), and `/api/upload` sends files **only to the `talking-club-dev` bucket** (server-only setting `UPLOAD_S3_BUCKET`; any other host, including another S3 bucket, gets 400).
 
 ## Fixed earlier on 17 Nov (two internal reviews, before the hand-over)
 
@@ -103,7 +109,7 @@ The details page has no Figma frame (design question 4); its composite shows 8.1
 
 ## Known limitations
 
-- On the Vercel link an image may be at most 4 MB (platform limit for function request bodies); locally the limit is 10 MB.
+- On the Vercel link an image may be at most 4 MB (platform limit for function request bodies). Since 18 Nov 4 MB is also the default for any build.
 - The category list API has no paging or sort parameter — `GET /product-category/list` (release/qa `filterCategoriesDto`) accepts only `search` and returns the whole 3-level tree. Search is server-side (`?q=`); order is the saved order, changed by drag-and-drop or Alt + ↑ / ↓ and saved through the reorder API; paging does not apply to a tree (question 7).
 - The QA API keeps one live session per account: a new login or logout revokes the previous token (401 on the next request) although its `exp` is 24 h ahead; this decides the test run order.
 - The API has no sort parameter → sort works within the current page only (question 6).

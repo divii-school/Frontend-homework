@@ -21,12 +21,13 @@ export const CATEGORY_RULES = {
 } as const;
 
 /**
- * Largest image file in MB: NEXT_PUBLIC_MAX_IMAGE_MB, or 10 when it is not set (or not a number above 0).
+ * Largest image file in MB: NEXT_PUBLIC_MAX_IMAGE_MB, or 4 when it is not set (or not a number above 0).
  * The file travels through this app's own server route (/api/upload), and a Vercel function refuses request
- * bodies above 4.5 MB — so the Vercel deployment sets 4. The browser check, the server check and the hint
+ * bodies above 4.5 MB — so the safe default is 4: a deployment that forgets the variable still works.
+ * Raise it only where the server accepts bigger bodies. The browser check, the server check and the hint
  * text all read this one value.
  */
-const DEFAULT_MAX_IMAGE_MB = 10;
+const DEFAULT_MAX_IMAGE_MB = 4;
 const configuredMaxImageMB = Number(process.env.NEXT_PUBLIC_MAX_IMAGE_MB);
 export const MAX_IMAGE_MB = configuredMaxImageMB > 0 ? configuredMaxImageMB : DEFAULT_MAX_IMAGE_MB;
 

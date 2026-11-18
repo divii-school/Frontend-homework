@@ -23,7 +23,8 @@ npm run dev                 # http://localhost:3000 → login
 |---|---|
 | `NEXT_PUBLIC_API_BASE_URL` | Talking Club QA admin API root incl. `/api/v1` (URL in `docs/hw3-plan.md`) |
 | `NEXT_PUBLIC_TC_HOME_URL` | optional — target of "Go to Talking Club home" in the no-permission popup |
-| `NEXT_PUBLIC_MAX_IMAGE_MB` | optional — largest product image in MB, default `10`. Used by the browser check, the server route and the hint text. On Vercel set `4`, because Vercel functions refuse request bodies above 4.5 MB. Read at build time (rebuild after a change) |
+| `NEXT_PUBLIC_MAX_IMAGE_MB` | optional — largest product image in MB, default `4` (Vercel functions refuse request bodies above 4.5 MB, so 4 is safe everywhere). Used by the browser check, the server route and the hint text. Set a higher value only where the server accepts bigger bodies. Read at build time (rebuild after a change) |
+| `UPLOAD_S3_BUCKET` | optional, server only — the only S3 bucket `/api/upload` sends images to, default `talking-club-dev` |
 | `E2E_ADMIN_ID` / `E2E_ADMIN_PASSWORD` | QA admin login for Playwright — **logins come by DM**, never commit them |
 
 Log in with an HQ admin account (SUPER / MASTER / GENERAL admin). Other roles see the
@@ -55,7 +56,7 @@ npx playwright test --output=test-results/pw-artifacts --trace=off   # terminal 
 **Image upload.** The browser does not send the image to S3. `UploadService` posts the file and the signed URL to this
 app's own route `POST /api/upload` (`src/app/api/upload/route.ts`), and the server sends the file to S3. So the S3 bucket
 CORS does not matter and the upload works on any address, also on a deployed app (Vercel). The route checks the login
-session (401), that the address is an https S3 host (400), the file type (415), the size (413), and the S3 answer (502).
+session (401), that the address is the `talking-club-dev` bucket (400), the file type (415), the size (413), and the S3 answer (502).
 It is left out of the middleware matcher on purpose (Next 15.5 passes only the first 10 MB of a body through middleware)
 and checks the session itself. No special port is needed for the tests. The option `E2E_MAP_3000_TO=<port>` still exists
 in `playwright.config.ts` (it maps the origin `http://localhost:3000` to another port), but it is no longer needed for

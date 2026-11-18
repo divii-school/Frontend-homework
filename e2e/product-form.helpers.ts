@@ -9,8 +9,8 @@ import { ADMIN_STORAGE_STATE, SESSION_STORAGE_KEY } from "./helpers";
 export const CREATE_URL = "/shopping-mall/products/create";
 export const PNG_FIXTURE = path.join(__dirname, "fixtures", "hw3-product-small.png");
 export const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "").replace(/\/+$/, "");
-/** Largest image in MB — the same rule as MAX_IMAGE_MB in src/utils/constants.ts (default 10). */
-export const MAX_IMAGE_MB = Number(process.env.NEXT_PUBLIC_MAX_IMAGE_MB) > 0 ? Number(process.env.NEXT_PUBLIC_MAX_IMAGE_MB) : 10;
+/** Largest image in MB — the same rule as MAX_IMAGE_MB in src/utils/constants.ts (default 4). */
+export const MAX_IMAGE_MB = Number(process.env.NEXT_PUBLIC_MAX_IMAGE_MB) > 0 ? Number(process.env.NEXT_PUBLIC_MAX_IMAGE_MB) : 4;
 
 // ---- Console guard: every spec fails on console errors / warnings ---------------------------------
 

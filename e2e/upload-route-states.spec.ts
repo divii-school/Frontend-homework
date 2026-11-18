@@ -6,7 +6,7 @@ import { MAX_IMAGE_MB } from "./product-form.helpers";
 // `request` — no browser, no QA API. Only the REFUSALS are tested here: every request below is stopped
 // before the route would contact S3, so nothing ever leaves this machine.
 //   1. no session / expired session → JSON 401 (never a redirect to the login page)
-//   2. an address that is not an https Amazon S3 bucket host → 400
+//   2. an address that is not https on the talking-club-dev bucket host (another site, another bucket) → 400
 //   3. a file that is not an image → 415
 //   4. a file above the size limit → 413 (found in the form, and by Content-Length before reading)
 //   5. a file of exactly the limit is read completely (not cut at 10 MB by the middleware)
@@ -20,8 +20,11 @@ test.skip(!!process.env.E2E_MAP_3000_TO, "request-fixture tests are not mapped b
 
 const UPLOAD_ROUTE = "/api/upload";
 const MAX_IMAGE_BYTES = MAX_IMAGE_MB * 1024 * 1024;
-/** Shaped like a signed S3 URL. It is never contacted: each test using it fails an earlier check. */
-const S3_SHAPED_URL = "https://hw3-e2e-bucket.s3.ap-northeast-2.amazonaws.com/products/e2e/photo.png?X-Amz-Signature=e2e";
+/**
+ * Shaped like a signed URL for the allowed bucket (talking-club-dev). It is never contacted: each test using it
+ * fails another check (session, form, type or size) before the route would call S3.
+ */
+const S3_SHAPED_URL = "https://talking-club-dev.s3.ap-northeast-2.amazonaws.com/products/e2e/photo.png?X-Amz-Signature=e2e";
 const SMALL_PNG = { name: "photo.png", mimeType: "image/png", buffer: Buffer.from("not a real png, small") };
 
 const sessionCookie = (expiresInSeconds?: number) => ({ Cookie: `${SESSION_COOKIE_NAME}=${fakeJwt("SUPER_ADMIN", expiresInSeconds)}` });
@@ -49,13 +52,17 @@ test.describe("POST /api/upload — refusals (no S3 call)", () => {
     expect(await expired.json()).toEqual({ ok: false, message: "sessionExpired" });
   });
 
-  test("an address that is not an https Amazon S3 bucket host → 400 (the route is not an open proxy)", async ({ request }) => {
+  test("an address that is not https on the talking-club-dev bucket host → 400 (no open proxy, no other bucket)", async ({ request }) => {
     const notAllowed = [
       "https://example.com/upload/photo.png",
-      "http://hw3-e2e-bucket.s3.ap-northeast-2.amazonaws.com/photo.png", // http, not https
-      "https://hw3-e2e-bucket.s3.amazonaws.com.example.com/photo.png", // only looks like S3
-      "https://hw3-e2e-bucket.s3.amazonaws.com@example.com/photo.png", // the real host is example.com
+      "http://talking-club-dev.s3.ap-northeast-2.amazonaws.com/photo.png", // http, not https
+      "https://talking-club-dev.s3.amazonaws.com.example.com/photo.png", // only looks like S3
+      "https://talking-club-dev.s3.amazonaws.com@example.com/photo.png", // the real host is example.com
       "https://ec2.ap-northeast-2.amazonaws.com/photo.png", // Amazon, but not S3
+      "https://other-bucket.s3.ap-northeast-2.amazonaws.com/photo.png", // S3, but another bucket
+      "https://talking-club-dev-copy.s3.ap-northeast-2.amazonaws.com/photo.png", // name only starts the same
+      "https://eviltalking-club-dev.s3.ap-northeast-2.amazonaws.com/photo.png", // name only ends the same
+      "https://s3.ap-northeast-2.amazonaws.com/talking-club-dev/photo.png", // path-style: the QA API never signs these
       "not a url",
     ];
     for (const url of notAllowed) {

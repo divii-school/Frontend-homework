@@ -32,7 +32,7 @@ src/app/(full-page)/login, /403        no admin chrome
 src/app/(main)/shopping-mall/...        products, products/create, products/edit/[id], products/details/[id], categories
 src/middleware.ts                       server guard: no/expired cookie → /login?returnTo=…; role not allowed → /403
                                         (/api/upload is NOT in its matcher — the route checks the session itself)
-src/app/api/upload/route.ts             POST /api/upload: the server puts the image on S3 (session 401, https S3 host 400,
+src/app/api/upload/route.ts             POST /api/upload: the server puts the image on S3 (session 401, talking-club-dev bucket only 400,
                                         type 415, size 413, S3 refusal 502); the browser never calls S3
 src/config/navigation.ts                ONE config: sidebar menu + route guard + canDo() for buttons
 src/api-services/                       CoreAPIService (axios, headers, ApiError, 401 → login), AuthService,
@@ -86,7 +86,7 @@ docs/                                   hw3-plan.md (spec), design/ (Korean Figm
   query / mutation. A hook whose screen already shows its own error (inline `StateWrapper`, under a field, or its own
   toast) must set `meta: SHOWS_OWN_ERROR`, or the user sees the error twice. A 401 and a cancelled request never toast.
 - **Image upload** goes browser → `POST /api/upload` (own route) → S3. Never `PUT` to S3 from the browser. Limits:
-  JPG / PNG / GIF / WEBP, 1–4 images, `NEXT_PUBLIC_MAX_IMAGE_MB` (default 10; 4 on Vercel). Use `safeFileName` and
+  JPG / PNG / GIF / WEBP, 1–4 images, `NEXT_PUBLIC_MAX_IMAGE_MB` (default 4, safe on Vercel). Use `safeFileName` and
   `checkImageFile` from `src/utils/image-file.ts` on both sides.
 - **Edit drafts** are restored only if the product is unchanged on the server (`updatedAt` + option rows); create
   drafts have no such check.

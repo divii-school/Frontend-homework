@@ -15,7 +15,7 @@ import { SESSION_COOKIE_NAME } from "@/utils/session";
 //   url   the signed S3 URL the browser got from POST /utils/upload-file-urls
 //   file  the image
 // Answer: { ok: true }, or { ok: false, message } with the matching status
-//   401 no / expired session · 400 form not readable or not an S3 URL · 415 not an image
+//   401 no / expired session · 400 form not readable or not our S3 bucket · 415 not an image
 //   413 too large · 502 S3 refused the file
 // `message` is a key of src/utils/api-messages.ts; UploadService turns it into the text the user sees.
 
@@ -26,18 +26,32 @@ const MAX_IMAGE_BYTES = PRODUCT_RULES.images.maxSizeMB * 1024 * 1024;
 /** Room for the multipart boundaries and the `url` field on top of the file itself. */
 const FORM_EXTRA_BYTES = 64 * 1024;
 
+/**
+ * The only S3 bucket this route uploads to: the bucket the QA API signs product-image URLs for.
+ * Server-only setting (not NEXT_PUBLIC_), so the browser can not change it.
+ */
+const UPLOAD_BUCKET = process.env.UPLOAD_S3_BUCKET?.trim() || "talking-club-dev";
+
 function fail(status: number, message: string) {
   return NextResponse.json<UploadRouteResponse>({ ok: false, message }, { status });
 }
 
+/** Escapes a bucket name for use inside a regular expression (bucket names may contain dots). */
+function escapeForRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/** Host of a signed URL for UPLOAD_BUCKET: <bucket>.s3.amazonaws.com or <bucket>.s3.<region>.amazonaws.com */
+const UPLOAD_BUCKET_HOST = new RegExp(`^${escapeForRegExp(UPLOAD_BUCKET)}\\.s3(\\.[a-z0-9-]+)?\\.amazonaws\\.com$`);
+
 /**
- * Only https URLs on an Amazon S3 bucket host (<bucket>.s3.<region>.amazonaws.com) are accepted.
- * Without this check the route would send a file to ANY address a caller names (an open proxy).
+ * Only https URLs on the host of OUR bucket are accepted. Without this check the route would send a file
+ * to any address a caller names (an open proxy), or to any other S3 bucket.
  */
-function isS3UploadUrl(value: string): boolean {
+function isUploadBucketUrl(value: string): boolean {
   try {
     const { protocol, hostname } = new URL(value);
-    return protocol === "https:" && hostname.endsWith(".amazonaws.com") && hostname.includes(".s3.");
+    return protocol === "https:" && UPLOAD_BUCKET_HOST.test(hostname);
   } catch {
     return false; // not a URL at all
   }
@@ -63,9 +77,9 @@ export async function POST(request: NextRequest) {
   const file = form.get("file");
   if (typeof url !== "string" || !(file instanceof File)) return fail(400, "uploadFailed");
 
-  // 4. Never trust the browser: S3 address, file type and size are checked again here
+  // 4. Never trust the browser: bucket address, file type and size are checked again here
   //    (same rules and constants as the browser check in UploadService.validateImageFile)
-  if (!isS3UploadUrl(url)) return fail(400, "uploadUrlNotAllowed");
+  if (!isUploadBucketUrl(url)) return fail(400, "uploadUrlNotAllowed");
   const problem = checkImageFile(file);
   if (problem === "type") return fail(415, "fileFormatNotAllowed");
   if (problem === "size") return fail(413, "uploadTooLarge");

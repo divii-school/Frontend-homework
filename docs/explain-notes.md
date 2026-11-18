@@ -54,14 +54,14 @@ Files: `src/components/products/form/ProductForm.tsx`, `product-form.model.ts`, 
 ## 5. Image upload — "how does the file reach S3?"
 Files: `src/components/products/form/ImageUploadField.tsx`, `src/api-services/UploadService.ts`, `src/app/api/upload/route.ts`, `src/utils/image-file.ts`, `src/hooks/API/upload/useUploadImage.ts`
 
-1. Check in the browser first: JPG / PNG / GIF / WEBP, size ≤ `NEXT_PUBLIC_MAX_IMAGE_MB` (default 10 MB; 4 on Vercel), max 4 images. A bad file gets its own message and **no request** is sent. The 4-image limit is guarded on every add / Undo / Retry path and again by a form rule, so a 5th image can not be saved.
+1. Check in the browser first: JPG / PNG / GIF / WEBP, size ≤ `NEXT_PUBLIC_MAX_IMAGE_MB` (default 4 MB), max 4 images. A bad file gets its own message and **no request** is sent. The 4-image limit is guarded on every add / Undo / Retry path and again by a form rule, so a 5th image can not be saved.
 2. The comma is removed from the file name (`safeFileName` in `image-file.ts`), because the product API keeps image keys in one comma-separated text; a comma in a name would split one image into two broken ones.
 3. `POST /utils/upload-file-urls { location: 'products', extension, fileName }` → the API returns a **signed S3 URL** + `filePath` (the S3 key) + `preview` (public URL).
 4. The browser does **not** call S3. `UploadService` posts the file and the signed URL (multipart form) to **our own route** `POST /api/upload`, and the server sends the file to S3 with the signed URL. Why: the S3 bucket CORS allowed only `http://localhost:3000`, so a browser upload failed on the Vercel link. CORS is a browser rule; a server is not bound by it.
-5. The route is not an open proxy. It checks: logged-in session (401 JSON), only https Amazon S3 hosts (400), file type (415), size (413), and the S3 answer (502). It uses the same rules as the browser check (`checkImageFile`), because a browser check can always be skipped. Its messages are keys (`sessionExpired`, `uploadTooLarge`, `uploadFailed`, `uploadUrlNotAllowed`, `fileFormatNotAllowed`); the app turns them into Korean text.
+5. The route is not an open proxy. It checks: logged-in session (401 JSON), only the `talking-club-dev` bucket host (400; another site or another S3 bucket is refused), file type (415), size (413), and the S3 answer (502). It uses the same rules as the browser check (`checkImageFile`), because a browser check can always be skipped. Its messages are keys (`sessionExpired`, `uploadTooLarge`, `uploadFailed`, `uploadUrlNotAllowed`, `fileFormatNotAllowed`); the app turns them into Korean text.
 6. Only after the route answers OK, `{ filePath, preview }` is added to the form. `filePath` is what the product API stores; `preview` is shown as the thumbnail.
 7. Remove = trash icon (with Undo `되돌리기`). A failed upload shows Retry (`다시 시도`).
-8. Size limit on Vercel: a Vercel function refuses request bodies above 4.5 MB, so the Vercel project sets `NEXT_PUBLIC_MAX_IMAGE_MB=4`. The check, the hint text and the route all read the same value. It is read at build time (redeploy after a change).
+8. Size limit on Vercel: a Vercel function refuses request bodies above 4.5 MB, so the default is 4 MB (code re-check, 18 Nov): a deployment that forgets `NEXT_PUBLIC_MAX_IMAGE_MB` still works. The check, the hint text and the route all read the same value. It is read at build time (redeploy after a change).
 
 ## 6. Categories — quick points
 Files: `src/components/categories/*`
