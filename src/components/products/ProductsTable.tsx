@@ -44,7 +44,12 @@ export function ProductsTable(props: ProductsTableProps) {
   };
 
   return (
-    <div className="table-scroll">
+    <>
+      {/* The products API has no sort parameter (A1), so a sort orders only the rows of this page: say so. */}
+      <p className="list-hint" id="products-sort-hint">
+        정렬은 현재 페이지 기준입니다.
+      </p>
+      <div className="table-scroll">
       <DataTable
         className="data-table"
         value={products}
@@ -57,6 +62,7 @@ export function ProductsTable(props: ProductsTableProps) {
         selection={selected}
         onSelectionChange={(event: DataTableSelectionMultipleChangeEvent<Product[]>) => onSelect(event.value)}
         aria-label="상품 목록"
+        aria-describedby="products-sort-hint"
       >
         {selectable && <Column selectionMode="multiple" headerClassName="data-table-check" />}
         <Column
@@ -88,6 +94,7 @@ export function ProductsTable(props: ProductsTableProps) {
         />
         <Column field="createdAt" header="등록일자" sortable bodyClassName="data-table-nowrap" body={(product: Product) => formatDateTime(product.createdAt)} />
       </DataTable>
-    </div>
+      </div>
+    </>
   );
 }
