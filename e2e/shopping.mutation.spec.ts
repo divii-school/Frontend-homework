@@ -225,6 +225,10 @@ test("product: 노출여부 dropdown, then bulk delete of our own record only", 
   await page.locator(".p-dropdown-panel .p-dropdown-item").filter({ hasText: new RegExp(`^${other}$`) }).click();
   await expect(page.getByText("저장 완료")).toBeVisible();
   await expect(visibility.locator(".p-dropdown-label")).toHaveText(other);
+  // Saved on the server: a reload shows the new value
+  await page.reload();
+  await expect(tableRow).toContainText(PRODUCT_RENAMED);
+  await expect(visibility.locator(".p-dropdown-label")).toHaveText(other);
 
   await tableRow.locator(".p-checkbox").click();
   await page.getByRole("button", { name: "선택한 상품 1개 삭제" }).click();

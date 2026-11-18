@@ -137,3 +137,25 @@ test.describe("login and protected routes", () => {
     await expect(page).toHaveURL(new URL("/products", baseURL).href);
   });
 });
+
+test("the eye button shows and hides the typed password (design 1.1.0), and is a real button", async ({ page }) => {
+  await page.goto("/auth/login");
+  await expect(page.getByRole("button", { name: "로그인" })).toBeEnabled();
+  const field = page.locator("#login-password");
+  const eye = page.getByRole("button", { name: "비밀번호 보기" });
+  await field.fill("HW3-not-a-real-password");
+  await expect(field).toHaveAttribute("type", "password");
+  await expect(eye).toHaveAttribute("aria-pressed", "false");
+
+  // Reachable with Tab right after the field, and works with the keyboard
+  await field.focus();
+  await page.keyboard.press("Tab");
+  await expect(eye).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(field).toHaveAttribute("type", "text");
+  await expect(eye).toHaveAttribute("aria-pressed", "true");
+  await expect(field).toHaveValue("HW3-not-a-real-password");
+
+  await eye.click();
+  await expect(field).toHaveAttribute("type", "password");
+});

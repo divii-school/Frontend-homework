@@ -21,9 +21,15 @@ test.describe("category management", () => {
   test("search is sent to the server, kept in the URL, and shows the empty state for no match", async ({ page }) => {
     await page.goto("/categories");
     await expect(page.locator(".category-row-category").first()).toBeVisible();
-    const request = page.waitForRequest((item) => item.url().includes("/product-category/list") && item.url().includes("search=Phonics"));
-    await page.getByLabel("카테고리 검색").fill("Phonics");
+    let searchesWhileTyping = 0;
+    page.on("request", (item) => {
+      if (item.url().includes("/product-category/list") && item.url().includes("search=")) searchesWhileTyping += 1;
+    });
     // Design 8.2.0: the search runs on Enter (or the magnifier), not while typing
+    await page.getByLabel("카테고리 검색").pressSequentially("Phonics", { delay: 80 });
+    await page.waitForTimeout(600);
+    expect(searchesWhileTyping).toBe(0);
+    const request = page.waitForRequest((item) => item.url().includes("/product-category/list") && item.url().includes("search=Phonics"));
     await page.getByLabel("카테고리 검색").press("Enter");
     await request;
     await expect(page).toHaveURL(/search=Phonics/);
@@ -72,7 +78,7 @@ test.describe("category management", () => {
     );
     await page.goto("/categories");
     await expect(page.locator(".category-row-category")).toHaveCount(10);
-    await page.getByRole("button", { name: "Page 3" }).click();
+    await page.getByRole("button", { name: "3 페이지" }).click();
     await expect(page).toHaveURL(/page=3/);
     await expect(page.locator(".category-row-category")).toHaveCount(5);
     await expect(page.locator(".category-row-category").first()).toContainText("HW3-Sachin-Mock-21");
@@ -97,6 +103,61 @@ test.describe("category management", () => {
     await expect(page.getByText("중분류 이름을 입력해 주세요.")).toBeVisible();
     await page.getByRole("dialog").getByRole("button", { name: "취소" }).click();
     await expect(page.getByRole("dialog")).toHaveCount(0);
+    expect(writes).toBe(0);
+  });
+
+  test("a name longer than 50 characters is refused with a Korean message, in add and in rename (QA, 18 Nov)", async ({ page }) => {
+    // Any write is stopped here, so the shared data stays untouched even if the rule were broken
+    let writes = 0;
+    await page.route("**/api/v1/product-category/**", (route) => {
+      if (route.request().method() === "GET") return route.continue();
+      writes += 1;
+      return route.abort();
+    });
+    await page.goto("/categories");
+    const firstRow = page.locator(".category-row-category").first();
+    const dialog = page.getByRole("dialog");
+
+    await firstRow.getByRole("button", { name: /중분류 추가/ }).click();
+    await expect(dialog).toContainText("50자 이내");
+    await page.getByLabel("카테고리 이름").fill("가".repeat(50));
+    await expect(dialog.getByRole("alert")).toHaveCount(0);
+    // The message shows as soon as the 51st character is typed, and 등록 sends nothing
+    await page.getByLabel("카테고리 이름").press("End");
+    await page.getByLabel("카테고리 이름").pressSequentially("a");
+    await expect(dialog.getByText("중분류 이름은 50자 이내로 입력해 주세요.")).toBeVisible();
+    await expect(page.getByLabel("카테고리 이름")).toHaveAttribute("aria-invalid", "true");
+    await dialog.getByRole("button", { name: "등록" }).click();
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole("button", { name: "취소" }).click();
+
+    await firstRow.getByRole("button", { name: /수정$/ }).click();
+    await page.getByLabel("카테고리 이름").fill("나".repeat(51));
+    await expect(dialog.getByText("대분류 이름은 50자 이내로 입력해 주세요.")).toBeVisible();
+    await dialog.getByRole("button", { name: "저장" }).click();
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole("button", { name: "취소" }).click();
+    expect(writes).toBe(0);
+  });
+
+  test("a category with lower categories cannot be deleted: the dialog asks to delete them first (QA, 18 Nov)", async ({ page }) => {
+    let writes = 0;
+    await page.route("**/api/v1/product-category/**", (route) => {
+      if (route.request().method() === "GET") return route.continue();
+      writes += 1;
+      return route.abort();
+    });
+    await page.goto("/categories");
+    // The first 대분류 of the QA data (주교재) has 중분류 under it
+    const firstRow = page.locator(".category-row-category").first();
+    await expect(firstRow.locator(".category-row-count")).not.toContainText("(0개");
+    await firstRow.getByRole("button", { name: /삭제$/ }).click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toContainText("하위 카테고리를 먼저 삭제해 주세요.");
+    // Only 확인: there is no button that would delete
+    await expect(dialog.getByRole("button", { name: "삭제" })).toHaveCount(0);
+    await dialog.getByRole("button", { name: "확인" }).click();
+    await expect(dialog).toHaveCount(0);
     expect(writes).toBe(0);
   });
 });

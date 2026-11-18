@@ -37,9 +37,14 @@ test.describe("design review of 18 Nov", () => {
   });
 
   test("the rest of the admin menu is shown greyed out and opens nothing", async ({ page }) => {
+    await useTheme(page, "day");
+    await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/products");
     await expectProductRows(page);
     const sidebar = page.locator(".app-sidebar");
+    // Grey (token grey-b2) with the not-allowed pointer
+    await expect(sidebar.locator(".app-sidebar-other").first()).toHaveCSS("color", "rgb(107, 112, 120)");
+    await expect(sidebar.locator(".app-sidebar-other").first()).toHaveCSS("cursor", "not-allowed");
     for (const label of ["대시보드", "유저관리", "학원 관리", "학사관리", "교육과정 관리", "공지사항 관리", "결제 관리", "지사장 메뉴", "권한 관리", "주문 배송 관리", "적립금 관리"]) {
       // Each row also says "(사용할 수 없음)" to screen readers, so the visible name is matched as part of its text
       await expect(sidebar.getByText(label)).toBeVisible();
@@ -66,6 +71,58 @@ test.describe("design review of 18 Nov", () => {
     expect(Number(await name.evaluate((element) => getComputedStyle(element).fontWeight))).toBeGreaterThanOrEqual(700);
     await name.hover();
     await expect(name).toHaveCSS("text-decoration-line", "underline");
+  });
+
+  test("product list toolbar and header as in 8.1.0: 선택 header without select-all, small grey 삭제, 총 게시물 at the right end", async ({ page }) => {
+    await page.goto("/products");
+    await expectProductRows(page);
+    const header = page.locator(".p-datatable-thead th").first();
+    await expect(header).toHaveText("선택");
+    await expect(header.locator(".p-checkbox")).toHaveCount(0);
+    const remove = page.getByRole("button", { name: "삭제", exact: true });
+    await expect(remove).toHaveClass(/button-small/);
+    await expect(remove).toHaveClass(/p-button-outlined/);
+    const exportBox = (await page.getByRole("button", { name: "내보내기" }).boundingBox())!;
+    const removeBox = (await remove.boundingBox())!;
+    const countBox = (await page.getByText(/총 게시물 :/).boundingBox())!;
+    expect(removeBox.x).toBeGreaterThan(exportBox.x);
+    expect(countBox.x).toBeGreaterThan(removeBox.x);
+  });
+
+  test("category toolbar and tree as in 8.2.0: 모두 펼치기 / 모두 접기 after the search, violet + buttons, one grey for the icons", async ({ page }) => {
+    await useTheme(page, "day");
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/categories");
+    const firstRow = page.locator(".category-row-category").first();
+    await expect(firstRow).toBeVisible();
+    const search = (await page.getByLabel("카테고리 검색").boundingBox())!;
+    const expand = (await page.getByRole("button", { name: "모두 펼치기" }).boundingBox())!;
+    const collapse = (await page.getByRole("button", { name: "모두 접기" }).boundingBox())!;
+    expect(expand.x).toBeGreaterThanOrEqual(search.x + search.width);
+    expect(collapse.x).toBeGreaterThan(expand.x);
+    expect(Math.abs(collapse.y - expand.y)).toBeLessThan(2);
+    // 대분류 등록 on the same row, at the right end
+    const create = (await page.getByRole("button", { name: "대분류 등록" }).boundingBox())!;
+    expect(create.x).toBeGreaterThan(collapse.x);
+    expect(Math.abs(create.y - expand.y)).toBeLessThan(2);
+    // Violet (token violet-b1) + 중분류 button; pencil and trash in the same grey
+    await expect(firstRow.locator(".category-add-button")).toHaveCSS("background-color", "rgb(124, 58, 237)");
+    const iconColour = (name: RegExp) => firstRow.getByRole("button", { name }).evaluate((element) => getComputedStyle(element).color);
+    expect(await iconColour(/수정$/)).toBe(await iconColour(/삭제$/));
+  });
+
+  test("PrimeReact's own labels are Korean: paginator, rows per page, row checkboxes (QA, 18 Nov)", async ({ page }) => {
+    await page.goto("/products");
+    await expectProductRows(page);
+    for (const name of ["첫 페이지", "이전 페이지", "1 페이지", "다음 페이지", "마지막 페이지"]) {
+      await expect(page.getByRole("button", { name, exact: true })).toBeAttached();
+    }
+    // No English word in any label PrimeReact writes: the paginator and the row checkboxes
+    const labels = await page
+      .locator(".p-paginator [aria-label], .p-datatable-tbody .p-checkbox [aria-label], .p-datatable-tbody .p-checkbox[aria-label]")
+      .evaluateAll((elements) => elements.map((element) => element.getAttribute("aria-label") ?? ""));
+    expect(labels.length).toBeGreaterThan(5);
+    expect(labels.filter((label) => /[A-Za-z]{2,}/.test(label))).toEqual([]);
   });
 
   test("a selected row is highlighted, not only its checkbox", async ({ page }) => {

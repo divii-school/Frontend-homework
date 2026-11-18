@@ -38,13 +38,13 @@ test.describe("product list", () => {
     await page.goto("/products");
     await expectProductRows(page);
     const request = page.waitForRequest((item) => item.url().includes("/api/v1/products?") && item.url().includes("page=2"));
-    await page.getByRole("button", { name: "Page 2" }).click();
+    await page.getByRole("button", { name: "2 페이지" }).click();
     await request;
     await expect(page).toHaveURL(/page=2/);
 
     await page.goto("/products?page=3&limit=20");
     await expect(page.locator(".p-datatable-tbody > tr")).toHaveCount(20);
-    await expect(page.getByRole("button", { name: "Page 3" })).toHaveAttribute("aria-current", "true");
+    await expect(page.getByRole("button", { name: "3 페이지" })).toHaveAttribute("aria-current", "true");
   });
 
   test("sort is kept in the URL and orders the rows", async ({ page }) => {
@@ -101,7 +101,7 @@ test.describe("product list", () => {
     await page.goto("/products?search=FLY+HIGH&page=999");
     await expectProductRows(page);
     await expect(page).not.toHaveURL(/page=999/);
-    await expect(page.getByRole("button", { name: "Last Page" })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "마지막 페이지" })).toBeDisabled();
     await expect(page.getByLabel("상품 검색")).toHaveValue("FLY HIGH");
   });
 
@@ -212,10 +212,21 @@ test.describe("product form (no save)", () => {
     // Step 3: categories are required; three lists under one 카테고리 label, the lower lists wait for the upper one
     await page.getByRole("button", { name: "다음" }).click();
     await expect(page).toHaveURL(/step=category/);
-    await expect(page.getByText("대분류(main)")).toBeVisible();
+    // The column headings are Korean only (QA, 18 Nov): no "(main)", "(mid)" or "(minor)"
+    await expect(page.locator(".category-picker-title")).toHaveText(["대분류", "중분류", "소분류"]);
+    await expect(page.locator(".category-picker")).not.toContainText(/main|mid|minor/);
     await page.getByRole("button", { name: "다음" }).click();
     await expect(page.getByText("대분류를 선택해 주세요.")).toBeVisible();
     await expect(page.locator("#product-subCategoryId")).toHaveClass(/p-disabled/);
+  });
+
+  test("상품명 takes at most 100 characters (design 8.1.1)", async ({ page }) => {
+    await page.goto("/products/create");
+    const name = page.getByLabel("상품명");
+    await name.fill("가".repeat(100));
+    await name.press("End");
+    await name.pressSequentially("ab");
+    await expect(name).toHaveValue("가".repeat(100));
   });
 
   test("취소 asks before the typed values are thrown away (design 8.1.1)", async ({ page }) => {
