@@ -1,0 +1,109 @@
+
+ RUN  v5.1.0 C:/Assignments/Frontend-homework
+
+ ✓ src/lib/product-list-params.test.ts > parseListParams (URL → table state) > reads a full URL 5ms
+ ✓ src/lib/product-list-params.test.ts > parseListParams (URL → table state) > falls back to defaults for bad values instead of failing 1ms
+ ✓ src/lib/product-list-params.test.ts > parseListParams (URL → table state) > trims the search and caps its length at 50 3ms
+ ✓ src/lib/product-list-params.test.ts > toQueryString (table state → URL) > leaves defaults out 1ms
+ ✓ src/lib/product-list-params.test.ts > toQueryString (table state → URL) > keeps type only when there is a search 1ms
+ ✓ src/lib/product-list-params.test.ts > toQueryString (table state → URL) > round-trips 2ms
+ ✓ src/lib/format.test.ts > WM formats > Korean date without leading zeros, in Korea time 43ms
+ ✓ src/lib/format.test.ts > WM formats > comma every three digits; won with no decimals 8ms
+ ✓ src/lib/format.test.ts > WM formats > dash for missing values 1ms
+ ✓ src/lib/format.test.ts > 8.1.0 list formats > ₩ price and YYYY/MM/DD HH:MM in Korea time 3ms
+ ✓ src/lib/format.test.ts > 8.1.0 list formats > category path skips missing levels and shows - when empty 1ms
+ ✓ src/lib/format.test.ts > 8.1.0 list formats > file sizes 24ms
+ ✓ src/lib/format.test.ts > helpers > decodes the HTML entities the API stores 1ms
+ ✓ src/lib/format.test.ts > helpers > CSV escapes quotes, commas, line breaks and formula starts 1ms
+ ✓ src/lib/format.test.ts > helpers > accepts only positive whole-number product ids 1ms
+ ✓ src/lib/format.test.ts > helpers > never returns to another site after login (open redirect) 2ms
+ ✓ src/lib/auth/permissions.test.ts > hasPermission > lets SUPER_ADMIN use everything even with an empty list (as the API returns it) 5ms
+ ✓ src/lib/auth/permissions.test.ts > hasPermission > reads { module, subModules } entries 1ms
+ ✓ src/lib/auth/permissions.test.ts > hasPermission > reads plain string keys too 1ms
+ ✓ src/lib/auth/permissions.test.ts > hasPermission > does not accept the right sub-module under another module 1ms
+ ✓ src/lib/auth/permissions.test.ts > hasPermission > refuses when nobody is logged in 1ms
+ ✓ src/lib/auth/permissions.test.ts > canOpenPath / findRoute (one config for menu and guard) > matches nested pages to their menu route 1ms
+ ✓ src/lib/auth/permissions.test.ts > canOpenPath / findRoute (one config for menu and guard) > does not match a path that only starts with the same letters 1ms
+ ✓ src/lib/auth/permissions.test.ts > canOpenPath / findRoute (one config for menu and guard) > allows and refuses by the route permission 1ms
+ ✓ src/lib/auth/permissions.test.ts > canOpenPath / findRoute (one config for menu and guard) > refuses a protected URL that is not in the config at all 1ms
+ ✓ src/lib/auth/permissions.test.ts > canOpenPath / findRoute (one config for menu and guard) > builds the menu from the same permissions 2ms
+ ✓ src/app/error-screens.test.tsx > crash screens > app/error.tsx (login and pages outside the admin shell) shows the crash message and 다시 시도 19ms
+ ✓ src/app/error-screens.test.tsx > crash screens > app/(main)/error.tsx (admin pages, menu stays) shows the crash message and 다시 시도 2ms
+ ✓ src/app/error-screens.test.tsx > crash screens > app/global-error.tsx (root layout itself) shows the crash message and 다시 시도 5ms
+ ✓ src/app/error-screens.test.tsx > crash screens > global-error brings its own <html lang="ko"> and a way back to 상품 관리 2ms
+ ✓ src/lib/text.test.ts > josa (Korean particles) > 을/를, 은/는, 이/가 follow the last syllable 5ms
+ ✓ src/lib/text.test.ts > josa (Korean particles) > 으로/로: a word ending in ㄹ takes 로 1ms
+ ✓ src/lib/text.test.ts > josa (Korean particles) > a word not ending in Hangul is read as having no final consonant 1ms
+ ✓ src/config/upload.test.ts > image upload rules (WM image checks) > valid: jpg / png / webp up to 4 MB 6ms
+ ✓ src/config/upload.test.ts > image upload rules (WM image checks) > invalid size: one byte over 4 MB is refused 1ms
+ ✓ src/config/upload.test.ts > image upload rules (WM image checks) > invalid type: gif, svg and text are refused 1ms
+ ✓ src/config/upload.test.ts > image upload rules (WM image checks) > dimensions: 800×800 gets no note; any other size gets one (recommended, not required) 3ms
+ ✓ src/components/product/form/product-form-schema.test.ts > product form rules > accepts a complete product 13ms
+ ✓ src/components/product/form/product-form-schema.test.ts > product form rules > API rule: 단가 must be smaller than 판매가 (equal is refused) 4ms
+ ✓ src/components/product/form/product-form-schema.test.ts > product form rules > the price rule fires on step 1 even while later steps are still empty (found by e2e) 2ms
+ ✓ src/components/product/form/product-form-schema.test.ts > product form rules > design rules: name required, not blank, ≤ 100 characters 3ms
+ ✓ src/components/product/form/product-form-schema.test.ts > product form rules > amounts are whole numbers greater than 0 2ms
+ ✓ src/components/product/form/product-form-schema.test.ts > product form rules > messages use the particle that fits each field (no 을(를) / 은(는)) 5ms
+ ✓ src/components/product/form/product-form-schema.test.ts > product form rules > at least one and at most four images 2ms
+ ✓ src/components/product/form/product-form-schema.test.ts > product form rules > all three category levels are required 1ms
+ ✓ src/components/product/form/product-form-schema.test.ts > mapping to the API > sends yes/no strings and image keys 4ms
+ ✓ src/components/product/form/product-form-schema.test.ts > mapping to the API > turns a details URL back into the S3 key the API stores 2ms
+ ✓ src/components/product/form/product-form-schema.test.ts > mapping to the API > knows which step owns a field (API error → open that step) 2ms
+ ✓ src/lib/api/query-defaults.test.ts > default error toast (QueryCache / MutationCache) > shows for a failure no screen handles 6ms
+ ✓ src/lib/api/query-defaults.test.ts > default error toast (QueryCache / MutationCache) > stays quiet when the screen shows the error itself 1ms
+ ✓ src/lib/api/query-defaults.test.ts > default error toast (QueryCache / MutationCache) > stays quiet on 401: the user is already on the way to login 1ms
+ ✓ src/lib/api/query-defaults.test.ts > retry > retries what a retry can fix, at most twice 2ms
+ ✓ src/lib/api/query-defaults.test.ts > retry > never retries unauthorized 1ms
+ ✓ src/lib/api/query-defaults.test.ts > retry > never retries forbidden 1ms
+ ✓ src/lib/api/query-defaults.test.ts > retry > never retries notFound 0ms
+ ✓ src/lib/api/query-defaults.test.ts > retry > never retries validation 1ms
+ ✓ src/lib/api/query-defaults.test.ts > retry > never retries business 1ms
+ ✓ src/lib/api/query-defaults.test.ts > retry > never retries unknown 1ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > 400 invalidPassword → business 6ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > 400 invalidCredentials → business 1ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > 400 productNotFound → notFound 1ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > 401 Unauthorized → unauthorized 1ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > 403 forbidden → forbidden 1ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > 500 boom → server 1ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > turns the API validation sentences into Korean, one line each 2ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > "productName must be shorter than or equal to 100 characters" → "상품명: 100자 이하로 입력해 주세요." 2ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > "price must not be less than 1" → "판매가: 1 이상으로 입력해 주세요." 2ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > "each value in ids must be a number conforming to the specified constraints" → "선택한 항목: 숫자로 입력해 주세요." 2ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > "images.0 must be a string" → "상품 이미지: 문자로 입력해 주세요." 1ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > "taxType must be one of the following values: tax, tax_free" → "과세 구분: 선택할 수 없는 값입니다." 1ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > "someNewField should not be empty" → "입력값: 필수 입력 항목입니다." 0ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > "a sentence the app has never seen" → "입력한 내용을 다시 확인해 주세요." 1ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > no validation sentence ever reaches the screen in English 2ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > no response at all is a network error 1ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > a bug in our own code is not reported as a network problem 1ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > a non-JSON error body still gives a status-based message 1ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > gateway 502 (API server down) → "서버가 응답하지 않습니다" 1ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > gateway 503 (API server down) → "서버가 응답하지 않습니다" 0ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > gateway 504 (API server down) → "서버가 응답하지 않습니다" 1ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > gateway 521 (API server down) → "서버가 응답하지 않습니다" 0ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > gateway 522 (API server down) → "서버가 응답하지 않습니다" 1ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > gateway 530 (API server down) → "서버가 응답하지 않습니다" 1ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > our proxy reporting the API unreachable reads the same 1ms
+ ✓ src/lib/api/api-error.test.ts > toApiError (real QA response shapes) > an unknown business key shows the Korean text only, never the raw key 1ms
+ ✓ src/lib/api/api-error.test.ts > upload, shared data and token checks > image type and size 1ms
+ ✓ src/lib/api/api-error.test.ts > upload, shared data and token checks > reorder only when every sibling is our own HW3 record 1ms
+ ✓ src/lib/api/api-error.test.ts > upload, shared data and token checks > reads the JWT expiry 1ms
+ ✓ src/lib/api/api-error.test.ts > every API key seen on the QA server has Korean text (never a raw key on screen) > invalidPassword 1ms
+ ✓ src/lib/api/api-error.test.ts > every API key seen on the QA server has Korean text (never a raw key on screen) > invalidCredentials 0ms
+ ✓ src/lib/api/api-error.test.ts > every API key seen on the QA server has Korean text (never a raw key on screen) > productNotFound 0ms
+ ✓ src/lib/api/api-error.test.ts > every API key seen on the QA server has Korean text (never a raw key on screen) > maximumCategoryLimitReached 1ms
+ ✓ src/lib/api/api-error.test.ts > every API key seen on the QA server has Korean text (never a raw key on screen) > subCategoryAlreadyExists 0ms
+ ✓ src/lib/api/api-error.test.ts > every API key seen on the QA server has Korean text (never a raw key on screen) > childSubcategoryAlreadyExists 0ms
+ ✓ src/lib/api/api-error.test.ts > every API key seen on the QA server has Korean text (never a raw key on screen) > unitPriceMustBeLessThanPrice 0ms
+ ✓ src/services/request-bodies.test.ts > id lists go to the API as numbers > bulk delete sends { ids: number[] } 8ms
+ ✓ src/services/request-bodies.test.ts > id lists go to the API as numbers > category reorder sends { ids: number[] } 2ms
+ ✓ src/services/request-bodies.test.ts > deleted products the API still returns (API question A14) > isLiveProduct is false only for a row marked isDeleted 1ms
+
+ Test Files  10 passed (10)
+      Tests  97 passed (97)
+   Start at  13:12:31
+   Duration  3.00s (import 73%, transform 17%, tests 5%, worker 4%)
+
+    Isolate  10 workers spawned · ~896ms startup each (spawn + environment, per file)
+             at least ~384ms faster with isolate: false — reuses workers across files instead of one per file
+

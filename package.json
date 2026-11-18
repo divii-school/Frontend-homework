@@ -1,0 +1,46 @@
+{
+  "name": "hw3-pranesh-talking-club-admin",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test --project=readonly",
+    "test:e2e:mutation": "playwright test --project=mutation",
+    "test:e2e:ui": "playwright test --project=readonly --ui",
+    "test:e2e:headed": "playwright test --project=readonly --headed",
+    "test:e2e:report": "playwright show-report",
+    "screenshots": "playwright test --project=screenshots"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^7.0.6",
+    "@tanstack/react-query": "^5.107.1",
+    "axios": "^1.21.1",
+    "next": "15.5.29",
+    "primeicons": "^7.0.0",
+    "primereact": "^10.9.9",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-hook-form": "^7.92.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.65.0",
+    "@tanstack/react-query-devtools": "^5.107.1",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.29",
+    "sass": "^1.108.2",
+    "typescript": "^5",
+    "vitest": "^5.1.0"
+  }
+}
