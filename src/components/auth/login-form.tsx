@@ -13,6 +13,7 @@ import { ApiError } from '@/lib/api/api-error';
 import { errorMessage } from '@/lib/api/error-messages';
 import { NoPermissionDialog } from './no-permission-dialog';
 import styles from './login-form.module.scss';
+import { BrandLogo } from '@/components/common/brand-logo';
 
 /** Matches LoginDto: both required. Spaces around the ID are trimmed, never inside the password. */
 const loginSchema = z.object({
@@ -77,7 +78,7 @@ export function LoginForm() {
     <main className={styles['login-page']}>
       <form className={styles['login-card']} onSubmit={onSubmit} noValidate aria-labelledby="login-title">
         <h1 id="login-title" className={styles['login-logo']}>
-          <Image src="/images/logo-talkingclub.png" alt="토킹클럽 TalkingClub" width={158} height={30} priority />
+          <BrandLogo alt="토킹클럽 TalkingClub" priority />
           <span className="sr-only">관리자 로그인</span>
         </h1>
 

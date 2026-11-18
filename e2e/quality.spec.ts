@@ -106,6 +106,16 @@ for (const screen of SCREENS) {
         expect(overflow, `${width}px is ${overflow}px wider than the screen`).toBeLessThanOrEqual(0);
       }
     });
+
+    // Headless Chromium has no scrollbar, so 375 here is wider than 375 in a desktop browser, where a ~17px
+    // scrollbar leaves 358px. The search box overflow at 375 (design review 2026-11-18) only showed there.
+    test('no horizontal page scroll at 358 (375 with a desktop scrollbar)', async ({ page }) => {
+      await page.setViewportSize({ width: 358, height: 900 });
+      await screen.open(page);
+      await settle(page);
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      expect(overflow, `358px is ${overflow}px wider than the screen`).toBeLessThanOrEqual(0);
+    });
   });
 }
 

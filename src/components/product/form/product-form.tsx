@@ -158,7 +158,7 @@ export function ProductForm({ mode, initialValues, productId, erpCode, categoryP
         </section>
 
         <div className={styles['form-actions']}>
-          <Button type="button" label="취소" outlined onClick={cancel} disabled={saving} />
+          <Button type="button" label="취소" outlined className={styles['cancel-button']} onClick={cancel} disabled={saving} />
           <div className={styles['form-actions-right']}>
             {step > 0 && <Button type="button" label="이전" outlined icon="pi pi-angle-left" onClick={() => setStep((s) => s - 1)} disabled={saving} />}
             {isLast ? (

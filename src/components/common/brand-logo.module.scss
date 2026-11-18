@@ -1,0 +1,14 @@
+// Only one logo is shown at a time; display:none also removes the other from the accessibility tree.
+.logo-dark {
+  display: none;
+}
+
+:global([data-theme='dark']) {
+  .logo-light {
+    display: none;
+  }
+
+  .logo-dark {
+    display: inline-block;
+  }
+}

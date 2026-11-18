@@ -186,6 +186,22 @@
   flex: 1;
 }
 
+// Figma menus outside HW3's scope: greyed out, not clickable (design review 2026-11-18).
+.is-out-of-scope {
+  color: var(--color-text-placeholder);
+  cursor: default;
+
+  &:hover {
+    background: transparent;
+  }
+}
+
+.other-menu-icon {
+  width: 24px;
+  font-size: 18px;
+  text-align: center;
+}
+
 .sub-menu-link {
   display: flex;
   align-items: center;

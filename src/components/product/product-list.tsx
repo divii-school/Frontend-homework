@@ -339,12 +339,18 @@ export function ProductList() {
   );
 }
 
+/** Figma 8.1.0: the thumbnail with the product code under it. */
 function thumbnail(p: ProductListItem) {
-  return p.image ? (
-    <Image src={p.image} alt={`${decodeEntities(p.productName)} 대표 이미지`} width={56} height={56} className={styles['thumb']} />
-  ) : (
-    <span className={styles['thumb-empty']} role="img" aria-label="대표 이미지 없음">
-      <i className="pi pi-image" aria-hidden />
-    </span>
+  return (
+    <div className={styles['thumb-cell']}>
+      {p.image ? (
+        <Image src={p.image} alt={`${decodeEntities(p.productName)} 대표 이미지`} width={56} height={56} className={styles['thumb']} />
+      ) : (
+        <span className={styles['thumb-empty']} role="img" aria-label="대표 이미지 없음">
+          <i className="pi pi-image" aria-hidden />
+        </span>
+      )}
+      {p.productCode && <span className={styles['thumb-code']}>{p.productCode}</span>}
+    </div>
   );
 }

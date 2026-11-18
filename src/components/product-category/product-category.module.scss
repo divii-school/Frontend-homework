@@ -151,9 +151,15 @@
   }
 }
 
-// Figma draws every 대분류 row on a light grey band.
+// Figma draws every 대분류 row on a light grey band (#F5F5F7). bg-page was too faint to see (design review 2026-11-18).
 .level-1 {
-  background: var(--color-bg-page);
+  background: var(--color-bg-subtle);
+
+  // The grey code and count need a slightly darker grey on the band to keep 4.5:1 (axe).
+  .node-code,
+  .node-count {
+    color: var(--color-text-muted-on-band);
+  }
 }
 
 .toggle,

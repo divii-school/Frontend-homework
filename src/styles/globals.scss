@@ -25,6 +25,9 @@ body {
   color: var(--color-text);
   background: var(--color-bg-page);
   -webkit-font-smoothing: antialiased;
+  // WM 5.4: Korean breaks between words, never inside one; a long Latin token still wraps rather than overflowing.
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 a {
@@ -68,6 +71,14 @@ html:root {
 .p-toast {
   font-family: $font-family;
   letter-spacing: $letter-spacing;
+}
+
+// One height for every text button, so buttons in a row line up (design review 2026-11-18: 등록 was 40px,
+// 삭제 / CSV 내보내기 45px). Icon-only buttons keep PrimeReact's square size.
+.p-button:not(.p-button-icon-only) {
+  height: $control-height;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 // A link styled as a button (목록, 수정, 등록) must look exactly like a button: no link underline.
@@ -142,6 +153,12 @@ a.p-button {
   background: var(--color-bg-surface);
   color: var(--color-text-strong);
   border-color: var(--color-border-strong);
+}
+
+// Table loading: a light veil over the rows instead of PrimeReact's heavy dark mask (design review 2026-11-18).
+.p-datatable .p-datatable-loading-overlay {
+  background: var(--color-loading-veil);
+  color: var(--color-primary);
 }
 
 .p-inputtext::placeholder {

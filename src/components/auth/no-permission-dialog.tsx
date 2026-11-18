@@ -1,8 +1,8 @@
 'use client';
 
-import Image from 'next/image';
 import { Dialog } from 'primereact/dialog';
 import styles from './login-form.module.scss';
+import { BrandLogo } from '@/components/common/brand-logo';
 
 /** Talking Club's public site, where "토킹클럽 홈으로" leads (Figma 권한없음 팝업). */
 const TALKING_CLUB_HOME = 'https://www.talkingclub.co.kr';
@@ -20,7 +20,7 @@ export function NoPermissionDialog({ visible, onClose }: { visible: boolean; onC
       aria-labelledby="no-permission-text"
     >
       <div className={styles['no-permission-body']}>
-        <Image src="/images/logo-talkingclub.png" alt="토킹클럽" width={158} height={30} />
+        <BrandLogo alt="토킹클럽" />
         <p id="no-permission-text">
           관리자 권한이 없습니다.
           <br />
