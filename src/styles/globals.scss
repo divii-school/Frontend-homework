@@ -46,8 +46,17 @@ html,
 body {
   margin: 0;
   padding: 0;
-  // The page itself never scrolls sideways; wide blocks (tables) scroll inside their own box.
+}
+
+// The page itself never scrolls sideways; wide blocks (tables) scroll inside their own box.
+// `hidden` only on html (it moves to the viewport). On body, `hidden` would make body its own scroll box,
+// and then the sticky sidebar and topbar scrolled away with the page; `clip` cuts without a scroll box.
+html {
   overflow-x: hidden;
+}
+
+body {
+  overflow-x: clip;
 }
 
 body {

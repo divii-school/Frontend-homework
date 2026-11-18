@@ -295,6 +295,16 @@ $product-busy-opacity: 0.6;
   .col-date {
     white-space: nowrap;
   }
+
+  // The row status select keeps its own width (widest option 아니오 + chevron). With width: 100% a
+  // narrow table (1024 px, or 50 rows per page) squeezed the column and cut 아니오 to 아니….
+  .col-status {
+    white-space: nowrap;
+
+    .product-select select {
+      width: auto;
+    }
+  }
 }
 
 .product-checkbox {
