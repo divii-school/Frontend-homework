@@ -1,8 +1,8 @@
 # Build report — HW3 Talking Club Admin, Shopping Management (Sachin)
 
-For: Archana (QA). The checks below were run on 16 Nov 2026 on the production build (`npm run build` +
-`next start`) on my machine, against the Talking Club QA API.
-On 17 Nov 2026 the read-only and the create / edit / delete tests were run again on the deployed build,
+For: Archana (QA). The checks below were last run on 18 Nov 2026, after the code-review and design-review fixes,
+on the production build (`npm run build` + `next start`) on my machine, against the Talking Club QA API.
+The read-only and the create / edit / delete tests are also run on the deployed build,
 https://talkingclub-hw3-sachin.vercel.app (WM: evidence must come from the deployed URL, not localhost).
 
 ## 1. Build
@@ -13,7 +13,7 @@ https://talkingclub-hw3-sachin.vercel.app (WM: evidence must come from the deplo
 | Commit | the latest commit of the branch (see the PR) |
 | Deployed link (Vercel) | https://talkingclub-hw3-sachin.vercel.app |
 | API | Talking Club QA API only |
-| Date | 16 Nov 2026 (my machine), 17 Nov 2026 (Vercel) |
+| Date | 18 Nov 2026 (my machine and Vercel) |
 
 ## 2. TL tasks covered
 
@@ -25,10 +25,10 @@ TL | HW3 — Advanced Frontend Homework (Real Project: Talking Club Shopping Man
 2. **Protected pages**: a signed-out visitor is sent to login and returned to the same page after login.
 3. **Roles**: menu, pages and buttons follow the user's role and permissions; a page the user may not open shows a 403 screen.
 4. **Product Category Management**: tree of 대분류 / 중분류 / 소분류; search, sort, paging; create, rename, delete with confirm.
-5. **Product Management list**: search, search type, category filter, sort, page and page size, all kept in the address bar; row selection with bulk delete; visibility switch; export of the filtered result to CSV.
+5. **Product Management list**: search, search type, category filter, sort, page and page size, all kept in the address bar; row selection with bulk delete; 노출여부 as an inline 예 / 아니오 dropdown saved at once; the product code under each thumbnail; prices as ₩1,500 and dates as YYYY/MM/DD HH:MM in server time; export of the filtered result to CSV.
 6. **Product create / edit** in four steps with validation on each step, and image upload (type and size check, preview, remove).
 7. **Product details** with three tabs; the open tab is kept in the address bar.
-8. **Light and dark mode**, remembered per browser.
+8. **Light and dark mode**, remembered per browser; the logo has its own dark-mode file.
 9. **Error screens** for 401, 403, 404, 500 and no network. Every API answer is shown in Korean: known keys have their own sentence, an unknown key or an English validation sentence gets a Korean one (no key and no English on screen).
 
 ## 4. Fixed issues
@@ -54,7 +54,22 @@ Design fixes of 18 Nov (Figma frames 8.1.0, 8.1.1, 8.1.2 and 8.2.0, compared scr
 | Product edit | 저장 in the page heading, saving from any step; the category is read-only with "등록 후 변경 불가". |
 | Category | Search on Enter; 모두 펼치기 / 모두 접기 right after the search box; violet "+ 중분류 / + 소분류" buttons; pencil and trash in one grey. |
 
-Not changed on purpose: the four form steps (Q3, Q16), the list's 노출여부 switch (Q11, Q15), WM formats for money and dates (Q5), dark mode (Q2), fields the API does not have (Q17), the full admin menu (Q14).
+Design review of 18 Nov (Bhagyashree, Vercel build at 1440 / 768 / 375, light and dark):
+
+| # | Review item | Fix |
+|---|---|---|
+| 1 | Must fix: the logo sits in a white box in dark mode | A dark-mode logo file of the same size (light text, lighter icon, no background), `public/assets/images/login-logo-dark.png`. Both files are in the page and the theme shows one, so they swap 1:1 (`components/common/BrandLogo.tsx`). |
+| 2 | Must fix: 상품 관리 does not follow the Figma description (노출여부, 판매금액, 등록일자) | 노출여부 is an inline 예 / 아니오 dropdown in each row, saved at once with the toast 저장 완료. Money is `₩1,500` and dates `2026/11/13 14:39` (YYYY/MM/DD HH:MM, server time Asia/Seoul) on the list, the details page, the form and the CSV (`utils/format.ts`). |
+| 3 | Should fix: no product code under the thumbnail | The code is under each thumbnail. |
+| 4 | Should fix: 대분류 등록 is hidden | Always shown at the right end of the toolbar, as in the frame; disabled while the API answers `isCreatable: false`, with the reason right under it ("대분류는 더 이상 추가할 수 없습니다."). |
+| 5 | Should fix: Pretendard is not loaded; body text and row borders are not Figma greys | Pretendard 1.3.9 is loaded as a web font (jsDelivr CDN). Body text is Figma Gray 120 `#313131`; table lines and dividers are Background 100 `#EAEAEA`. |
+| – | Minor: product names underlined | Plain bold text; the underline shows only on hover or keyboard focus. |
+| – | Minor: a selected row has no highlight | A selected row has the pale pink background. |
+| – | Minor: only 쇼핑몰 관리 in the sidebar | The full menu of the frames; menus outside HW3 are grey and open nothing. |
+| – | Minor: at 375 the details tabs show a scrollbar and the stepper wraps | The three tabs share the width with no scrollbar; the stepper stays on one line (the current step shows its name, the others their number). |
+| – | Q9 (brand pink contrast) | Kept as designed, as the review says. |
+
+Kept on purpose: the four form steps (Q3, Q16) and the fields the API does not have (Q17).
 
 ## 5. Test accounts
 
@@ -74,14 +89,14 @@ Two of my 중분류 stay on the server under 대분류 **학원 Shop**:
 
 1. Login: empty fields, an ID that does not exist, a wrong password (alert with 확인), correct login, 자동 로그인.
 2. Open `/products?page=2` while signed out, log in, and check you land on page 2.
-3. Product list: search (press Enter or click the magnifier), change the search type, category filter, sort by 상품명 / 판매금액 / 등록일자, page and page size. Refresh after each and check nothing is lost.
+3. Product list: search (press Enter or click the magnifier), change the search type, category filter, sort by 상품명 / 판매금액 / 등록일자, page and page size. Refresh after each and check nothing is lost. Prices read ₩1,500 and dates 2026/11/13 14:39; the product code is under each thumbnail; 노출여부 is a 예 / 아니오 dropdown (change it only on your own records).
 4. Select rows → 삭제 → the dialog lists the names → cancel. (Delete only your own records.)
 5. 내보내기 with a search applied: the CSV has only the filtered rows.
 6. 등록: go through the four steps; press 다음 with empty fields (비과세, 노출상태 and 판매상태 must be chosen); go back and check the values are kept; upload a wrong file type, a file over 4 MB, then a valid image; remove it; press 취소 and answer 아니오; save.
 7. Open the product → tabs 기본 정보 / 카테고리 / 같은 카테고리 상품; refresh on a tab.
 8. 수정: change only the name and press 저장 at the top (from step 1): the price stays as it was. The category is read-only. Then change 수량 and check that 판매가 becomes 수량 × 단가.
-9. Categories: search, sort, open and close rows, add a 중분류 and a 소분류 under a 대분류, rename, delete with confirm.
-10. Dark mode switch on every screen; refresh keeps it.
+9. Categories: search, sort, open and close rows, add a 중분류 and a 소분류 under a 대분류, rename, delete with confirm. 대분류 등록 is shown but disabled, with the reason (the QA API allows no new 대분류).
+10. Dark mode switch on every screen; refresh keeps it; the logo turns light with no white box.
 11. Sizes 1440 / 768 / 375: no sideways page scroll; the table scrolls inside its own box; below 991px the menu opens from the ☰ button.
 12. Keyboard: Tab through login and the product form; arrow keys on the details tabs; focus is visible.
 
@@ -101,18 +116,19 @@ The screen still shows a Korean message and never crashes.
 | 7 | The refresh token cannot be used from another domain | `GET /api/v1/auth/get-access-token` | the cookie is set for the API's own domain | On 401 the app goes to login and returns to the same page. (A6) |
 | 8 | Storage accepts browser uploads only from a fixed list of sites | `PUT` to the signed storage address from a Vercel page | 403 on the preflight | Uploads go through the app's own route `/api/upload`. (A7) |
 | 9 | Image paths are stored as one comma-separated text | `POST /api/v1/products/add` with `images` | a file name with a comma becomes two broken paths | Commas are removed from the file name before the upload. (A17) |
-| 10 | No new 대분류 can be added on the QA server | `GET /api/v1/product-category/list` | `isCreatable: false` | The 대분류 등록 button is not shown. (A12) |
+| 10 | No new 대분류 can be added on the QA server | `GET /api/v1/product-category/list` | `isCreatable: false` | The 대분류 등록 button is shown disabled, with the reason. (A12) |
 
 **Frontend notes**
 
-1. **Built before I could open the Figma file.** Colours and sizes were read from the live QA admin while building
-   (design question Q1). On 17 Nov I exported the Figma frames; the side-by-side screenshots are on my submission
-   page. The differences are being fixed in the review round (by 20 Nov).
-2. **White text on the brand pink is 3.98:1**, below the 4.5:1 of WCAG AA. The colour is used as designed. (Q9.)
+1. **Built before I could open the Figma file.** Colours and sizes were first read from the live QA admin (design
+   question Q1). On 17 Nov I exported the Figma frames; on 18 Nov I fixed the differences and then the items of the
+   design review (part 4). The side-by-side screenshots are on my submission page.
+2. **White text on the brand pink is 3.98:1**, below the 4.5:1 of WCAG AA. Kept as designed, as the design review
+   says (Q9).
 3. The description is plain text, not rich text. Category reordering by drag is not built (A14).
 4. Not run yet: real Safari and a real phone. Safari's engine (WebKit) and the phone width (375) were run in Playwright.
 
-## 9. Results (18 Nov 2026 after the code-review and design fixes, production build on my machine, QA API; the Vercel rows are from 17 Nov)
+## 9. Results (18 Nov 2026, after the design-review fixes, production build on my machine, QA API)
 
 | Check | Command | Result |
 |---|---|---|
@@ -120,17 +136,17 @@ The screen still shows a Korean message and never crashes.
 | Type-check | `npx tsc --noEmit` | Pass: 0 errors |
 | Unit tests | `npm run test:unit` | 23 passed, 0 failed |
 | Build | `npm run build` | Pass: 7 pages, 1 route handler, middleware |
-| Playwright read-only, Chromium | `npm run test:e2e` | 47 passed, 0 failed (login setup + 46 tests), none needed a retry |
-| Playwright read-only, WebKit | `npm run test:e2e:webkit` | 47 passed, 0 failed |
-| Playwright create / edit / delete | `npm run test:e2e:mutation` | 7 passed, 0 failed (login setup + 6 tests) |
+| Playwright read-only, Chromium | `npm run test:e2e` | 55 passed, 0 failed (login setup + 54 tests, 8 of them for the design review), none needed a retry |
+| Playwright read-only, WebKit | `npm run test:e2e:webkit` | 55 passed, 0 failed |
+| Playwright create / edit / delete | `npm run test:e2e:mutation` | 7 passed, 0 failed (login setup + 6 tests; the 노출여부 dropdown is changed and changed back on an `HW3-Sachin-…` product) |
 | The same read-only tests on the dev server (17 Nov) | `npm run test:e2e` without `PLAYWRIGHT_BASE_URL` | 42 passed, 0 failed |
 | Write tests and screenshots without their scripts | `npx playwright test --project=mutation --project=screenshots` | all 16 skipped: nothing written |
 | Console | inside the tests, on every screen | 0 errors, 0 warnings |
 | Sideways scroll | inside the tests, 11 screens × 11 widths (1920 → 375) | none |
-| Playwright read-only on the Vercel link (17 Nov) | `npm run test:e2e` with `PLAYWRIGHT_BASE_URL=https://talkingclub-hw3-sachin.vercel.app` | 42 passed, 0 failed (2 role-menu tests after one retry) |
-| Playwright create / edit / delete on the Vercel link (17 Nov) | `npm run test:e2e:mutation` with the same `PLAYWRIGHT_BASE_URL` | 7 passed, 0 failed (image upload through the app's own route on Vercel) |
 
-The first run on the Vercel link had one failure: the backslash-redirect test expected a `localhost` address,
+The same read-only and create / edit / delete tests are run on the Vercel link after each redeploy
+(`PLAYWRIGHT_BASE_URL=https://talkingclub-hw3-sachin.vercel.app`); those results are in section 5 of my
+submission page. The first run on the Vercel link (17 Nov) had one failure: the backslash-redirect test expected a `localhost` address,
 while the app correctly stayed on its own Vercel address. The test now checks the app's own address and passes
 on both.
 
@@ -165,10 +181,10 @@ Route (app)
 ƒ Middleware
 
 > npm run test:e2e
-  47 passed
+  55 passed
 
 > npm run test:e2e:webkit
-  47 passed
+  55 passed
 
 > npm run test:e2e:mutation
   7 passed
