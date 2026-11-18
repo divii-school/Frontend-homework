@@ -190,7 +190,9 @@ export function ProductForm({ mode, initialValues, productId, erpCode, categoryP
           </div>
         }
       >
-        <p className={styles['dialog-text']}>입력한 정보는 모두 삭제됩니다. 취소하시겠습니까?</p>
+        <p className={styles['dialog-text']}>
+          {mode === 'edit' ? '변경한 내용은 저장되지 않습니다. 취소하시겠습니까?' : '입력한 정보는 모두 삭제됩니다. 취소하시겠습니까?'}
+        </p>
       </Dialog>
     </FormProvider>
   );

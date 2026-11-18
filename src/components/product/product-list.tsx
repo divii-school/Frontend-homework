@@ -195,9 +195,12 @@ export function ProductList() {
               disabled={exporting || total === 0}
               onClick={() => void runExport()}
             />
-            <p className={styles['total']} aria-live="polite">
-              총 게시물 : <strong>{formatNumber(total)}</strong>
-            </p>
+            {/* Shown only once the list has answered, so it never says 0 while still loading. */}
+            {list.data && (
+              <p className={styles['total']} aria-live="polite">
+                총 게시물 : <strong>{formatNumber(total)}</strong>
+              </p>
+            )}
           </div>
         </div>
 

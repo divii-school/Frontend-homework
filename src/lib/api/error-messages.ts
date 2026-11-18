@@ -103,6 +103,7 @@ export function validationSentenceToKorean(sentence: string): string {
  * Known key → Korean text. Validation sentences from the API ("name should not be empty") are
  * English, so each is turned into Korean ("카테고리명: 필수 입력 항목입니다."); a sentence we do
  * not recognise becomes the generic Korean "입력한 내용을 다시 확인해 주세요."
+ * An unknown business key gets the generic Korean text; the raw key is never shown (TL rule, 2026-11-18).
  */
 export function errorMessage(error: unknown): string {
   if (!(error instanceof ApiError)) return BY_KIND.unknown;
@@ -111,6 +112,5 @@ export function errorMessage(error: unknown): string {
   if (error.kind === 'validation' && error.apiMessages.length) {
     return [...new Set(error.apiMessages.map(validationSentenceToKorean))].join('\n');
   }
-  if (error.kind === 'business' && error.apiMessages[0]) return `${BY_KIND.business} (${error.apiMessages[0]})`;
   return BY_KIND[error.kind];
 }

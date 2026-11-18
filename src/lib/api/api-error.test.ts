@@ -83,8 +83,10 @@ describe('toApiError (real QA response shapes)', () => {
     expect(errorMessage(toApiError(axiosFailure(502, 'serverUnavailable')))).toBe('서버가 응답하지 않습니다. 잠시 후 다시 시도해 주세요.');
   });
 
-  it('an unknown business key is shown with the key, never silently dropped', () => {
-    expect(errorMessage(new ApiError('business', 400, ['somethingNew']))).toBe('요청을 처리하지 못했습니다. (somethingNew)');
+  it('an unknown business key shows the Korean text only, never the raw key', () => {
+    const message = errorMessage(new ApiError('business', 400, ['somethingNew']));
+    expect(message).toBe('요청을 처리하지 못했습니다.');
+    expect(message).not.toContain('somethingNew');
   });
 });
 

@@ -112,10 +112,10 @@ test.describe('상품 등록 (read only, saves answered here)', () => {
     await reachErpStep(page);
     await page.getByRole('button', { name: '등록', exact: true }).click();
     await expect(page.getByText('상품ERP명을 입력해 주세요.')).toBeVisible();
-    await expect(page.getByText('ERP 단가을(를) 입력해 주세요.')).toBeVisible();
+    await expect(page.getByText('ERP 단가를 입력해 주세요.')).toBeVisible();
     await typeAmount(page, 'ERP 단가', '0');
     await page.getByRole('button', { name: '등록', exact: true }).click();
-    await expect(page.getByText('ERP 단가은(는) 0보다 커야 합니다.')).toBeVisible();
+    await expect(page.getByText('ERP 단가는 0보다 커야 합니다.')).toBeVisible();
     expect(posted).toBe(0);
   });
 
@@ -220,7 +220,9 @@ test.describe('상품 수정 (read only, saves answered here)', () => {
     await name.fill('HW3-Pranesh-Probe-a-cancel');
     await page.getByRole('button', { name: '취소', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: '작성 취소' });
-    await expect(dialog).toContainText('입력한 정보는 모두 삭제됩니다. 취소하시겠습니까?');
+    // Edit wording: nothing is deleted, the changes are just not saved.
+    await expect(dialog).toContainText('변경한 내용은 저장되지 않습니다. 취소하시겠습니까?');
+    await expect(dialog).not.toContainText('삭제');
     await dialog.getByRole('button', { name: '예' }).click();
     await expect(page).toHaveURL(/\/shopping\/products\/20001$/);
     await expect(page.getByRole('tabpanel')).toContainText('HW3-Pranesh-Probe-a');

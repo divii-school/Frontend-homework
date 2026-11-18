@@ -106,6 +106,21 @@ test.describe('로그인 (logged out)', () => {
     await expect(page.getByPlaceholder('아이디')).toHaveValue('someone');
     await expect(page.getByPlaceholder('비밀번호')).not.toHaveAttribute('aria-invalid', 'true');
   });
+
+  test('static files load on the login page without a session (never redirected to login)', async ({ page }) => {
+    const redirected: string[] = [];
+    page.on('response', (r) => {
+      if (r.status() >= 300 && r.status() < 400 && /\/(themes|icons|images)\//.test(new URL(r.url()).pathname)) redirected.push(r.url());
+    });
+    await page.goto('/login');
+    await expect(page.getByRole('button', { name: '로그인', exact: true })).toBeVisible();
+    for (const path of ['/themes/lara-light-pink/theme.css', '/themes/lara-dark-pink/theme.css']) {
+      const res = await page.request.get(path, { maxRedirects: 0 });
+      expect(res.status(), path).toBe(200);
+      expect(res.headers()['content-type'], path).toContain('text/css');
+    }
+    expect(redirected).toEqual([]);
+  });
 });
 
 test.describe('세션 만료 (logged in)', () => {

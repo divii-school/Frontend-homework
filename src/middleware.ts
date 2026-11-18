@@ -39,6 +39,9 @@ export function middleware(request: NextRequest): NextResponse {
 }
 
 export const config = {
-  // Everything except our API routes, Next internals and static files.
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|webp|ico)$).*)'],
+  // Everything except our API routes, Next internals and static files: the public/ folders (themes, icons,
+  // images) and any file with a static extension, so a stylesheet is never redirected to /login.
+  matcher: [
+    '/((?!api|_next/static|_next/image|themes/|icons/|images/|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|webp|ico|css|js|map|woff2?|ttf|txt)$).*)',
+  ],
 };

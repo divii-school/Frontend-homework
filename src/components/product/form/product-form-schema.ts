@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { IMAGE_UPLOAD } from '@/config/upload';
-import { decodeEntities } from '@/lib/text';
+import { decodeEntities, josa } from '@/lib/text';
 import type { ProductDetails, ProductSaveRequest, UploadedImage } from '@/types/product';
 
 /**
@@ -17,12 +17,12 @@ export const AMOUNT_MAX = 1_000_000_000_000;
 
 const amount = (label: string) =>
   z
-    .number({ error: `${label}을(를) 입력해 주세요.` })
-    .int(`${label}은(는) 정수로 입력해 주세요.`)
-    .min(1, `${label}은(는) 0보다 커야 합니다.`)
-    .max(AMOUNT_MAX, `${label}이(가) 너무 큽니다.`);
+    .number({ error: `${josa(label, '을/를')} 입력해 주세요.` })
+    .int(`${josa(label, '은/는')} 정수로 입력해 주세요.`)
+    .min(1, `${josa(label, '은/는')} 0보다 커야 합니다.`)
+    .max(AMOUNT_MAX, `${josa(label, '이/가')} 너무 큽니다.`);
 
-const categoryId = (label: string) => z.number({ error: `${label}를 선택해 주세요.` }).int().positive();
+const categoryId = (label: string) => z.number({ error: `${josa(label, '을/를')} 선택해 주세요.` }).int().positive();
 
 export const productFormSchema = z
   .object({

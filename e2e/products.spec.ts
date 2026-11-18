@@ -86,6 +86,21 @@ test.describe('상품 관리 목록 (read only)', () => {
     expect(text).toContain('HW3-Pranesh-Probe');
   });
 
+  test('총 게시물 appears only after the list has loaded (never "0" while loading)', async ({ page }) => {
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => (release = resolve));
+    await page.route(`${API_GLOB}/products?**`, async (route) => {
+      await gate;
+      await route.continue();
+    });
+    await page.goto('/shopping/products');
+    await expect(page.getByText('상품 목록을 불러오는 중입니다.')).toBeVisible();
+    await expect(page.getByText(/총 게시물/)).toHaveCount(0);
+    release();
+    await expect(page.locator('tbody tr').first()).toBeVisible();
+    await expect(page.getByText(/총 게시물 : [1-9]/)).toBeVisible();
+  });
+
   test('API error shows an error with retry; network loss too', async ({ page }) => {
     await page.route(`${API_GLOB}/products?**`, (route) => route.fulfill({ status: 500, body: '{}' }));
     await page.goto('/shopping/products');

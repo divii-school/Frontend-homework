@@ -53,6 +53,17 @@ describe('product form rules', () => {
     expect(errorsOf({ erpUnitPrice: undefined }).erpUnitPrice).toBeDefined();
   });
 
+  it('messages use the particle that fits each field (no 을(를) / 은(는))', () => {
+    expect(errorsOf({ price: 0 }).price).toBe('판매가는 0보다 커야 합니다.');
+    expect(errorsOf({ unitPrice: undefined }).unitPrice).toBe('단가를 입력해 주세요.');
+    expect(errorsOf({ quantity: 1.5 }).quantity).toBe('수량은 정수로 입력해 주세요.');
+    expect(errorsOf({ quantity: undefined }).quantity).toBe('수량을 입력해 주세요.');
+    expect(errorsOf({ erpUnitPrice: 0 }).erpUnitPrice).toBe('ERP 단가는 0보다 커야 합니다.');
+    expect(errorsOf({ categoryId: undefined }).categoryId).toBe('대분류를 선택해 주세요.');
+    const all = Object.values(errorsOf({ price: 0, unitPrice: undefined, quantity: 1.5, erpUnitPrice: 0 })).join(' ');
+    expect(all).not.toMatch(/\((을|를|은|는|이|가)\)/);
+  });
+
   it('at least one and at most four images', () => {
     expect(errorsOf({ images: [] }).images).toBe('대표 이미지를 1장 이상 등록해 주세요.');
     const five = Array.from({ length: 5 }, (_, i) => ({ filePath: `p/${i}`, preview: `u/${i}` }));
