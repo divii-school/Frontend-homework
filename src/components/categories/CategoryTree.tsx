@@ -56,8 +56,9 @@ function CategoryRow({ level, node, parentId, childCount, expanded, canWrite, ca
         {canWrite && childLevel && (
           <Button
             type="button"
-            size="small"
-            label={`+ ${LEVEL_LABEL[childLevel]}`}
+            className="category-add-button"
+            icon="pi pi-plus"
+            label={LEVEL_LABEL[childLevel]}
             aria-label={`${node.name}에 ${LEVEL_LABEL[childLevel]} 추가`}
             onClick={() => onEdit({ level: childLevel, parentId: node.id })}
           />
@@ -75,7 +76,6 @@ function CategoryRow({ level, node, parentId, childCount, expanded, canWrite, ca
           <Button
             type="button"
             text
-            severity="danger"
             icon="pi pi-trash"
             aria-label={`${node.name} 삭제`}
             onClick={() => onDelete({ level, id: node.id, name: node.name })}
