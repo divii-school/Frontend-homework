@@ -6,8 +6,12 @@ import { useState, type ReactNode } from "react";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { ToastProvider } from "@/components/providers/ToastProvider";
+import { PRIMEREACT_LOCALE, registerKoreanLocale } from "@/config/primereact-locale";
 import { QUERY_RETRY_COUNT, QUERY_RETRY_DELAY_MS, QUERY_STALE_MS } from "@/constants/api";
 import { ApiError } from "@/types/api";
+
+// PrimeReact's own texts (screen-reader labels, empty lists) in Korean, before the first component draws
+registerKoreanLocale();
 
 /** Client-side providers for the whole app: PrimeReact, the TanStack Query cache, theme, toast and the signed-in user. */
 export function AppProviders({ children }: { children: ReactNode }) {
@@ -29,7 +33,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
   );
 
   return (
-    <PrimeReactProvider value={{ ripple: false }}>
+    <PrimeReactProvider value={{ ripple: false, locale: PRIMEREACT_LOCALE }}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <ToastProvider>
