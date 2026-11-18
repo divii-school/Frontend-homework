@@ -8,7 +8,7 @@ For: Archana (QA) · Bhagyashree (design) · Kakali (code).
 | | |
 |---|---|
 | Branch | `hw3/pranesh` (from `main`) in `divii-school/Frontend-homework` |
-| Commit | `0eac864` (app code tested and deployed: QA round notes `cae155a` + hydration fix, 2026-11-18; any later commit on the branch changes docs and evidence only). Earlier: `733202b` QA review fixes, `936dff7` code-review fixes, `1643925` first build |
+| Commit | `4614ee2` (app code tested and deployed: design review fixes, 2026-11-18; earlier `0eac864` QA round notes + hydration fix; any later commit on the branch changes docs and evidence only). Earlier: `733202b` QA review fixes, `936dff7` code-review fixes, `1643925` first build |
 | Link (Vercel) | https://hw3-pranesh-talking-club-admin.vercel.app — frontend only, calls the Talking Club **QA** API (deployed with the Vercel CLI from this branch; no Vercel login needed) |
 | Date | 2026-11-18 (first build 2026-11-16) |
 | API | `NEXT_PUBLIC_API_BASE_URL` = QA server. Never production. |
@@ -99,6 +99,24 @@ Found while re-testing on Vercel (2026-11-18), not reported by QA — **React hy
 | Fix | The light and dark theme links are now part of the server HTML (`PrimeThemeLinks`); the script only switches which one is `disabled`, never adds an element or changes an href. Our `:root` overrides became `html:root`, so they still win now that the theme loads after our CSS |
 | Proof | With JS delayed at random: previous build 4 / 30 loads with the error, fixed build 0 / 30 light and 0 / 30 dark. Computed styles of every element on 로그인, 상품 관리, 상품 상세, 상품 등록 and 카테고리 in light and dark: identical to the previous build. Tests: `quality.spec` › theme stylesheet and hydration (2), both fail on the previous build |
 
+Design review (Bhagyashree, 2026-11-18, Resubmit with 2 must-fix) — all must-fix, should-fix and minor items fixed:
+
+| Item | What changed | Test |
+|---|---|---|
+| Must 1. Dark mode logo in a white box (header, login) | The logo PNG had a white background baked in (no transparency). Two transparent versions made from it: light, and dark with a light-grey wordmark; `BrandLogo` shows the one for the current theme via `<html data-theme>`, so it never flashes | `design.spec` › logo (3): one logo, corner pixel transparent, the right version per theme |
+| Must 2. 상품 관리 search box overflows at 375 | The form could not shrink below the input's built-in width (~355px). `min-width: 0` on the form and `width: 0` on the input let it shrink. The old test missed it because headless Chromium has no scrollbar, so a new check runs every screen at 358px (375 minus a 17px desktop scrollbar); it failed on the old build (9px too wide) | `design.spec` › search box at 375 / 358; `quality.spec` › no horizontal page scroll at 358 (8 screens) |
+| Should 3. Product code under each thumbnail | Shown under the thumbnail, one line, as in Figma 8.1.0 | `design.spec` › product code under each thumbnail |
+| Should 4. Boxed inputs on 상품 등록 | Single-line fields and dropdowns are underline-only; 상세설명 stays boxed; focus is a thicker brand-colour underline | `design.spec` › underline-only fields |
+| Should 5. 취소 grey | Red outline and red text | `design.spec` › 취소 is a red outline |
+| Should 6. Korean breaks inside words | `word-break: keep-all` on the body (WM 5.4), with `overflow-wrap: break-word` so long Latin names still wrap | `design.spec` › Korean text breaks between words |
+| Should 7. 상품 상세 tabs at 375: scrollbar, last tab cut | On phones the four tabs share the width and a long label wraps | `design.spec` › all four tabs visible at 375 |
+| Minor: button heights 40 / 45px | Every text button is 40px | `design.spec` › same height |
+| Minor: sidebar shows only 쇼핑몰 관리 | The full Figma menu; menus outside HW3 are grey text (`aria-disabled`, not links) | `design.spec` › sidebar |
+| Minor: 대분류 rows have no grey band | The band uses #F5F5F7 (the old one was too faint to see); the grey code and count on it use a darker grey to keep 4.5:1 (axe found this) | `quality.spec` › axe, 카테고리 light / dark |
+| Minor: heavy dark loading mask | A light veil (token per theme) | visual check |
+
+The coloured 대분류 badges and the 검색 button inside the category search box are kept, as allowed in the review.
+
 ## 5. Test account / roles
 
 - The shared QA admin account is **sent by DM** (not written here). It is a `SUPER_ADMIN` and sees everything.
@@ -114,7 +132,7 @@ five people share this server. My own test category branch: 학원 Shop › `HW3
 
 ## 7. What to test
 
-Full list: `docs/qa/HW3-Pranesh-unit-test-cases.csv` and the shared Google Sheet — **130 cases (62 positive / 68 negative)**,
+Full list: `docs/qa/HW3-Pranesh-unit-test-cases.csv` and the shared Google Sheet — **140 cases (69 positive / 71 negative)**,
 one scenario per row, WM columns (Test Case ID, Platform, Role, Function / Module, Scenario, Input, Expected Result,
 Actual Result, Pass / Fail, Last Run Date) plus the exact automated test(s), the result on Vercel, whether the case
 can run on the QA server (Yes 97 · Yes with DevTools 15 · Mock only 11 · Do not run on the shared account 1) and
@@ -178,7 +196,7 @@ Full evidence for each: [design-and-api-questions.md](HW3-Pranesh-design-and-api
 
 ## 9. Check results
 
-Run on 2026-11-18 (commit `0eac864`) against the Talking Club QA API. Playwright ran against the **production build**
+Run on 2026-11-18 (commit `4614ee2`) against the Talking Club QA API. Playwright ran against the **production build**
 (`next build` + `next start`) and, for the read-only project, against the **Vercel deployment** of the same commit.
 
 | Check | Command | Result |
@@ -187,10 +205,10 @@ Run on 2026-11-18 (commit `0eac864`) against the Talking Club QA API. Playwright
 | Type-check | `npm run typecheck` | clean |
 | Unit tests | `npm run test` | 97 passed (10 files); per-test list: `docs/qa/evidence/vitest-verbose.txt` |
 | Build | `npm run build` | compiled successfully, no warnings |
-| Playwright read-only | `npm run test:e2e` | 104 (auth 16 · roles 4 · categories 14 · products 25 · product-form 14 · product-images 2 · quality 29) |
+| Playwright read-only | `npm run test:e2e` | 123 (auth 16 · roles 4 · categories 14 · products 25 · product-form 14 · product-images 2 · quality 37 · design 11) |
 | Playwright mutation | `npm run test:e2e:mutation` | 8 (only `HW3-Pranesh-*` records; all deleted afterwards) |
-| Total, local run | read-only + mutation + login setup | **113 passed, 0 failed, 0 flaky** |
-| Read-only on **Vercel** | `PLAYWRIGHT_BASE_URL=<Vercel URL> npx playwright test --project=readonly` | **105 passed (104 + login setup), 0 failed, 0 flaky** — two earlier runs that day each had 7–10 failures from one point on, because the QA API refused the shared session for a few minutes (401, then the renewal refused); the screens showed "로그인이 만료되었습니다" as designed. API issue A4, not a frontend fault |
+| Total, local run | read-only + mutation + login setup | **132 passed, 0 failed, 0 flaky** |
+| Read-only on **Vercel** | `PLAYWRIGHT_BASE_URL=<Vercel URL> npx playwright test --project=readonly` | **124 passed (123 + login setup), 0 failed, 0 flaky**. Two earlier runs that day (before the design fixes) each had 7–10 failures from one point on, because the QA API refused the shared session for a few minutes (401, then the renewal refused); the screens showed "로그인이 만료되었습니다" as designed. API issue A4, not a frontend fault |
 
 The quality tests check every screen (login, list, details and its 4 tabs, register, categories) for zero console
 errors/warnings, zero WCAG 2 A/AA violations (axe) in light **and** dark, and no sideways page scroll at
@@ -203,5 +221,5 @@ HTML reports (local, Vercel) and the JSON results are attached to the submission
 - **Sizes:** 1920, 1440, 1366, 768, 375, each in light and dark: 50 screenshots in `docs/screenshots/`, taken by
   `npm run screenshots`. Side-by-side images (design | build) are on the submission page.
 - **Browser:** Chromium (Playwright, same engine as Chrome and Edge) on Windows 11, against the production build
-  of commit `0eac864`, and the read-only suite against the Vercel deployment of the same commit (104 passed + login setup).
+  of commit `4614ee2`, and the read-only suite against the Vercel deployment of the same commit. Layout is also checked at 358px (375 with a desktop scrollbar) on every screen.
 - Not checked: Safari / iOS (no device available).

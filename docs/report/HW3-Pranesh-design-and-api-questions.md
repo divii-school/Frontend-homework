@@ -19,6 +19,7 @@ None of them blocks the build; each needs an answer from design (Bhagyashree) or
 | D9 | 8.1.3 options. | The option section has no API (`isOptions` is always `no` in the API body). | Not built; noted as out of scope. |
 | D10 | Image size "800×800 recommended". | Is a different size allowed? | Allowed, with a note under the uploader. Type (JPG/PNG/WEBP), size (4 MB) and count (4) are refused. |
 | D11 | States not drawn: loading, empty, error per screen and per tab, 403, 404. | Only the login error states and "검색 결과가 없습니다" are drawn. | Built with one shared StateBlock in the same spacing and type scale. |
+| D12 | Is there an official dark-mode logo (or a transparent / SVG one)? | Figma's logo is an image fill; the PNG has a white background baked in (no transparency), which showed as a white box in dark mode (design review 2026-11-18). | Two transparent versions made from the PNG: light, and dark with a light-grey wordmark (the coloured mark unchanged). Replace with the official files when design supplies them. |
 
 ## API (QA server `tkclub-admn-api-qa.dvconsulting.org`)
 

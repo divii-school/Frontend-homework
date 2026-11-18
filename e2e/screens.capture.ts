@@ -18,8 +18,15 @@ for (const theme of THEMES) {
   for (const width of WIDTHS) {
     test.describe(`${width} ${theme}`, () => {
       test.use({ viewport: { width, height: 900 }, colorScheme: theme });
-      const shot = (page: Page, name: string) =>
-        page.screenshot({ path: `${OUT}/${width}-${theme}-${name}.png`, fullPage: true });
+      // Waits for every visible image (logo, field icons, thumbnails) to finish loading: on the Vercel build a
+      // shot taken as soon as the button showed could catch the dark login before its images arrived.
+      const shot = async (page: Page, name: string) => {
+        await page.waitForLoadState('networkidle');
+        await page.waitForFunction(() =>
+          [...document.images].filter((i) => i.offsetParent !== null).every((i) => i.complete && i.naturalWidth > 0),
+        );
+        await page.screenshot({ path: `${OUT}/${width}-${theme}-${name}.png`, fullPage: true });
+      };
 
       test.describe('logged out', () => {
         test.use({ storageState: { cookies: [], origins: [] } });
@@ -36,8 +43,9 @@ for (const theme of THEMES) {
         await settle(page);
         await shot(page, '2-product-list');
 
-        await page.locator('tbody tr').first().getByRole('link').first().click();
-        await expect(page.getByRole('tabpanel')).toBeVisible();
+        // Our own probe product, not the first row: the shared list's first row is often another developer's record.
+        await page.goto('/shopping/products/20001');
+        await expect(page.getByRole('tabpanel')).toContainText('HW3-Pranesh-Probe-a');
         await settle(page);
         await shot(page, '3-product-details');
 
