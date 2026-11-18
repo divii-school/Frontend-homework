@@ -43,12 +43,23 @@ async function openParent(page: Page): Promise<void> {
 async function pick(page: Page, label: string, option: string): Promise<void> {
   const select = page.locator(".form-field", { has: page.locator(`#product-${label}`) }).locator(".p-dropdown");
   const item = page.locator(".p-dropdown-panel .p-dropdown-item").filter({ hasText: option }).first();
+  // The panel of the previous select may still be closing; with the same option texts (예 / 아니오) its items
+  // would be clicked instead of this select's, so wait until no panel is left.
+  await expect(page.locator(".p-dropdown-panel")).toHaveCount(0);
   await expect(async () => {
     if (!(await item.isVisible())) await select.click();
     await expect(item).toBeVisible({ timeout: 2_000 });
   }).toPass();
   await item.click();
   await expect(select).toContainText(option);
+}
+
+/** Choose an item of one column of the category picker (a list, design 8.1.1); its options may still be loading. */
+async function pickCategory(page: Page, field: string, option: string): Promise<void> {
+  const item = page.locator(`#product-${field} .p-listbox-item`).filter({ hasText: option }).first();
+  await expect(item).toBeVisible({ timeout: 15_000 });
+  await item.click();
+  await expect(item).toHaveClass(/p-highlight/);
 }
 
 /** Walk from step 1 to step 4, waiting for each step to appear (the step is in the URL). */
@@ -118,6 +129,7 @@ test("product: create through the four steps with an image, and it shows in the 
   await page.goto("/products/create");
   await page.getByLabel("상품명").fill(PRODUCT);
   await page.getByLabel("상품 ERP명").fill(`${PRODUCT}-ERP`);
+  await pick(page, "taxType", "과세");
   await page.getByRole("button", { name: "다음" }).click();
 
   await page.getByLabel("수량").fill("2");
@@ -125,14 +137,17 @@ test("product: create through the four steps with an image, and it shows in the 
   await page.getByLabel("ERP 단가(원)").fill("1000");
   await page.getByRole("button", { name: "다음" }).click();
 
-  await pick(page, "categoryId", PARENT_CATEGORY);
-  await pick(page, "subCategoryId", FIXTURE_SUB);
-  await pick(page, "childCategoryId", FIXTURE_CHILD);
+  await pickCategory(page, "categoryId", PARENT_CATEGORY);
+  await pickCategory(page, "subCategoryId", FIXTURE_SUB);
+  await pickCategory(page, "childCategoryId", FIXTURE_CHILD);
   await page.getByRole("button", { name: "다음" }).click();
 
-  // Saving without an image or a description is refused on the last step
+  // Saving without an image, a description, 노출상태 or 판매상태 is refused on the last step
   await page.getByRole("button", { name: "등록" }).click();
   await expect(page.getByText("이미지를 1장 이상 등록해 주세요.")).toBeVisible();
+  await expect(page.getByText("노출상태를 선택해 주세요.")).toBeVisible();
+  await pick(page, "isVisible", "예");
+  await pick(page, "onSale", "예");
 
   await page.locator("#product-images").setInputFiles({ name: "HW3-Sachin-test.png", mimeType: "image/png", buffer: PNG });
   await expect(page.getByRole("img", { name: "HW3-Sachin-test.png" })).toBeVisible();
@@ -169,13 +184,17 @@ test("product: an API error on save keeps every value", async ({ page }) => {
   );
   await page.getByLabel("상품명").fill(PRODUCT_RENAMED);
   await toLastStep(page);
+  // When editing, 저장 is in the page heading (design 8.1.2) and the last step has no button of its own
   await page.getByRole("button", { name: "저장" }).click();
   await expect(page.getByRole("alert").filter({ hasText: "서버에서 오류가 발생했습니다." })).toBeVisible();
   await expect(page.getByLabel("상세설명")).toHaveValue("HW3 Playwright test product");
   // Every earlier step still holds its values
   await page.getByRole("button", { name: "이전" }).click();
   await expect(page).toHaveURL(/step=category/);
-  await expect(page.locator(".form-field", { has: page.locator("#product-childCategoryId") }).locator(".p-dropdown")).toContainText(FIXTURE_CHILD);
+  // The category cannot be changed after registration (design 8.1.2): the saved path is shown read-only
+  await expect(page.locator("#product-childCategoryId .p-highlight")).toContainText(FIXTURE_CHILD);
+  await expect(page.locator("#product-childCategoryId")).toHaveClass(/p-disabled/);
+  await expect(page.getByText("등록 후 변경 불가")).toBeVisible();
   await page.getByRole("button", { name: "이전" }).click();
   await expect(page).toHaveURL(/step=price/);
   await expect(page.getByLabel("수량")).toHaveValue("2");
@@ -183,9 +202,8 @@ test("product: an API error on save keeps every value", async ({ page }) => {
   await expect(page).not.toHaveURL(/step=/);
   await expect(page.getByLabel("상품명")).toHaveValue(PRODUCT_RENAMED);
 
-  // The real save now goes through
+  // The real save now goes through, straight from step 1 with the heading's 저장 (the whole form is checked first)
   await page.unroute("**/api/v1/products/edit/*");
-  await toLastStep(page);
   await page.getByRole("button", { name: "저장" }).click();
   await expect(page.getByText("수정 완료")).toBeVisible();
   await page.goto(`/products?search=${PRODUCT_RENAMED}`);
@@ -205,9 +223,9 @@ test("product: visibility switch, then bulk delete of our own record only", asyn
   await expect(toggle).toBeChecked({ checked: !before });
 
   await tableRow.locator(".p-checkbox").click();
-  await page.getByRole("button", { name: "삭제 (1)" }).click();
+  await page.getByRole("button", { name: "선택한 상품 1개 삭제" }).click();
   await expect(page.getByRole("dialog")).toContainText(PRODUCT_RENAMED);
   await page.getByRole("dialog").getByRole("button", { name: "삭제" }).click();
   await expect(page.getByText("삭제 완료")).toBeVisible();
-  await expect(page.getByText("조건에 맞는 상품이 없습니다.")).toBeVisible();
+  await expect(page.getByText("검색 결과가 없습니다.")).toBeVisible();
 });

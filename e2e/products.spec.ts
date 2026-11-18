@@ -9,7 +9,7 @@ test.describe("product list", () => {
     await page.goto("/products");
     await expectProductRows(page);
     await expect(page).toHaveTitle(/상품 관리/);
-    await expect(page.getByText(/총 게시물:/)).toContainText(/\d/);
+    await expect(page.getByText(/총 게시물 :/)).toContainText(/\d/);
     await expect(page.getByRole("columnheader", { name: "판매금액" })).toBeVisible();
     // WM formats: won with a three-digit comma and no space, Korean date with 오전/오후 before the time
     await expect(page.locator(".p-datatable-tbody > tr").first()).toContainText(/[\d,]+원/);
@@ -25,6 +25,7 @@ test.describe("product list", () => {
     await page.goto("/products");
     await expectProductRows(page);
     await page.getByLabel("상품 검색").fill("FLY HIGH");
+    await page.getByLabel("상품 검색").press("Enter");
     await expect(page).toHaveURL(/search=FLY\+HIGH/);
     await expect(page.locator(".p-datatable-tbody > tr").first()).toContainText("FLY HIGH");
 
@@ -87,7 +88,7 @@ test.describe("product list", () => {
 
   test("a search with no result shows the empty state", async ({ page }) => {
     await page.goto("/products?search=zzzz-no-such-product-qq");
-    await expect(page.getByText("조건에 맞는 상품이 없습니다.")).toBeVisible();
+    await expect(page.getByText("검색 결과가 없습니다.")).toBeVisible();
   });
 
   test("an invalid URL falls back to the defaults instead of breaking", async ({ page }) => {
@@ -104,21 +105,25 @@ test.describe("product list", () => {
     await expect(page.getByLabel("상품 검색")).toHaveValue("FLY HIGH");
   });
 
-  test("a search with a space typed slowly keeps the space", async ({ page }) => {
+  test("the search runs on Enter or a click on the magnifier, not while typing (design 8.1.0)", async ({ page }) => {
     await page.goto("/products");
     await expectProductRows(page);
     const box = page.getByLabel("상품 검색");
-    await box.pressSequentially("FLY ");
-    await expect(page).toHaveURL(/search=FLY$/);
-    await box.pressSequentially("HIGH");
-    await expect(box).toHaveValue("FLY HIGH");
+    await box.pressSequentially("FLY HIGH");
+    await page.waitForTimeout(800);
+    await expect(page).not.toHaveURL(/search=/);
+    await box.press("Enter");
     await expect(page).toHaveURL(/search=FLY\+HIGH/);
+    await box.fill("FLY");
+    await page.getByRole("button", { name: "검색", exact: true }).click();
+    await expect(page).toHaveURL(/search=FLY(&|$)/);
+    await expect(box).toHaveValue("FLY");
   });
 
   test("export downloads exactly the filtered result as CSV", async ({ page }) => {
     await page.goto("/products?search=FLY+HIGH");
     await expectProductRows(page);
-    const total = Number((await page.getByText(/총 게시물:/).textContent())?.replace(/[^\d]/g, ""));
+    const total = Number((await page.getByText(/총 게시물 :/).textContent())?.replace(/[^\d]/g, ""));
     const downloadEvent = page.waitForEvent("download");
     await page.getByRole("button", { name: "내보내기" }).click();
     const download = await downloadEvent;
@@ -175,8 +180,17 @@ test.describe("product form (no save)", () => {
     await page.getByRole("button", { name: "다음" }).click();
     await expect(page.getByText("상품명을 입력해 주세요.")).toBeVisible();
     await expect(page.getByText("상품 ERP명을 입력해 주세요.")).toBeVisible();
+    // The placeholder of 비과세 is the same sentence (as drawn), so the error line is found by its id
+    await expect(page.locator("#product-taxType-error")).toHaveText("비과세를 선택해 주세요.");
     await page.getByLabel("상품명").fill("HW3-Sachin-Draft");
     await page.getByLabel("상품 ERP명").fill("HW3-Sachin-ERP");
+    const taxSelect = page.locator(".form-field", { has: page.locator("#product-taxType") }).locator(".p-dropdown");
+    const taxFree = page.locator(".p-dropdown-panel .p-dropdown-item").filter({ hasText: "비과세" }).first();
+    await expect(async () => {
+      if (!(await taxFree.isVisible())) await taxSelect.click();
+      await expect(taxFree).toBeVisible({ timeout: 2_000 });
+    }).toPass();
+    await taxFree.click();
     await page.getByRole("button", { name: "다음" }).click();
     await expect(page).toHaveURL(/step=price/);
 
@@ -195,13 +209,27 @@ test.describe("product form (no save)", () => {
     await page.getByRole("button", { name: "다음" }).click();
     await expect(page.getByLabel("수량")).toHaveValue("3");
 
-    // Step 3: categories are required; the lower selects wait for the upper one
+    // Step 3: categories are required; three lists under one 카테고리 label, the lower lists wait for the upper one
     await page.getByRole("button", { name: "다음" }).click();
     await expect(page).toHaveURL(/step=category/);
+    await expect(page.getByText("대분류(main)")).toBeVisible();
     await page.getByRole("button", { name: "다음" }).click();
     await expect(page.getByText("대분류를 선택해 주세요.")).toBeVisible();
-    const subSelect = page.locator(".form-field", { has: page.locator("#product-subCategoryId") }).locator(".p-dropdown");
-    await expect(subSelect).toHaveClass(/p-disabled/);
+    await expect(page.locator("#product-subCategoryId")).toHaveClass(/p-disabled/);
+  });
+
+  test("취소 asks before the typed values are thrown away (design 8.1.1)", async ({ page }) => {
+    await page.goto("/products/create");
+    await expect(page.getByLabel("상품코드")).toHaveValue(/PRD-\d+/);
+    await page.getByLabel("상품명").fill("HW3-Sachin-Draft");
+    await page.getByRole("button", { name: "취소" }).click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toContainText("입력하신 내용이 전부 삭제됩니다. 취소하시겠습니까?");
+    await dialog.getByRole("button", { name: "아니오" }).click();
+    await expect(page.getByLabel("상품명")).toHaveValue("HW3-Sachin-Draft");
+    await page.getByRole("button", { name: "취소" }).click();
+    await page.getByRole("dialog").getByRole("button", { name: "예" }).click();
+    await expect(page).toHaveURL(/\/products$/);
   });
 
   test("a wrong file type is refused without an upload request", async ({ page }) => {

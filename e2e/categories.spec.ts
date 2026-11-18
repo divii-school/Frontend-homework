@@ -23,6 +23,8 @@ test.describe("category management", () => {
     await expect(page.locator(".category-row-category").first()).toBeVisible();
     const request = page.waitForRequest((item) => item.url().includes("/product-category/list") && item.url().includes("search=Phonics"));
     await page.getByLabel("카테고리 검색").fill("Phonics");
+    // Design 8.2.0: the search runs on Enter (or the magnifier), not while typing
+    await page.getByLabel("카테고리 검색").press("Enter");
     await request;
     await expect(page).toHaveURL(/search=Phonics/);
     await expect(page.locator(".category-row-category").first()).toBeVisible();
