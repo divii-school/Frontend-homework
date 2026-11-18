@@ -79,6 +79,30 @@
   }
 }
 
+// Menus of the admin outside HW3 (Figma shows the full menu): greyed out, not clickable (Q14)
+.app-sidebar-others {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-sidebar-other {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-3 $space-2 $space-3 $space-3;
+  color: token("grey-b2");
+  cursor: not-allowed;
+}
+
+.app-sidebar-link-disabled {
+  color: token("grey-b2");
+  cursor: not-allowed;
+
+  &:hover {
+    background: transparent;
+  }
+}
+
 .app-sidebar-link-active {
   background: token("pink-b3");
   color: token("pink-b1");

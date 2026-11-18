@@ -33,6 +33,30 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { key: "categories", label: "상품 카테고리 관리", path: ROUTES.categories, permission: PERMISSION_KEYS.categories },
 ];
 
+/**
+ * The rest of the Talking Club admin menu, as the Figma frames draw it. HW3 builds only the two shopping pages, so
+ * these are shown greyed out and cannot be opened (design review of 18 Nov, design question Q14).
+ */
+export interface OutsideMenu {
+  label: string;
+  icon: string;
+}
+export const MENUS_BEFORE_SHOPPING: readonly OutsideMenu[] = [
+  { label: "대시보드", icon: "pi-th-large" },
+  { label: "유저관리", icon: "pi-users" },
+  { label: "학원 관리", icon: "pi-building" },
+  { label: "학사관리", icon: "pi-book" },
+  { label: "교육과정 관리", icon: "pi-file" },
+];
+export const MENUS_AFTER_SHOPPING: readonly OutsideMenu[] = [
+  { label: "공지사항 관리", icon: "pi-megaphone" },
+  { label: "결제 관리", icon: "pi-credit-card" },
+  { label: "지사장 메뉴", icon: "pi-id-card" },
+  { label: "권한 관리", icon: "pi-key" },
+];
+/** Shopping pages outside HW3, drawn greyed out under 쇼핑몰 관리. */
+export const OTHER_SHOPPING_PAGES: readonly string[] = ["주문 배송 관리", "적립금 관리"];
+
 export type ActionKey = "product.write" | "product.delete" | "category.write" | "category.delete";
 
 /**
