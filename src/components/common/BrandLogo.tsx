@@ -9,14 +9,15 @@ interface BrandLogoProps {
 }
 
 /**
- * The Talking Club logo on a white plate. The logo file has a white background, so on a dark surface it would
- * show as a white rectangle; the plate (same white in both themes, with padding and round corners) makes
- * that deliberate. On a white surface the plate cannot be seen.
+ * The Talking Club logo. Light theme: the original file. Dark theme: a dark-mode version of the same size (light
+ * text, lighter icon, no white background), so the logo swaps 1:1 with the theme (WM Light/Dark Mode Color System).
+ * Both are in the page; CSS shows the one for the current theme, so a theme switch never waits for an image.
  */
 export function BrandLogo({ className, priority = false }: BrandLogoProps) {
   return (
     <span className={className ? `brand-logo ${className}` : "brand-logo"}>
-      <Image src={LOGO.src} alt="TalkingClub" width={LOGO.width} height={LOGO.height} priority={priority} />
+      <Image className="brand-logo-day" src={LOGO.src} alt="TalkingClub" width={LOGO.width} height={LOGO.height} priority={priority} />
+      <Image className="brand-logo-night" src={LOGO.darkSrc} alt="TalkingClub" width={LOGO.width} height={LOGO.height} priority={priority} />
     </span>
   );
 }

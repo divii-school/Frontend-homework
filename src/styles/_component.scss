@@ -42,13 +42,19 @@
 }
 
 // ---- Logo -----------------------------------------------------------
-// The logo file has a white background. The plate keeps the same white in both themes, so at night the logo
-// sits on a deliberate white label instead of showing as a bare rectangle.
+// One logo file per theme (design review, 18 Nov): the dark-mode file has light text and no white background,
+// so the logo swaps 1:1 with the theme and never sits in a white box.
 .brand-logo {
   display: inline-flex;
-  padding: $space-1 $space-2;
-  background: token("white-c1");
-  border-radius: $radius-sm;
+}
+
+.brand-logo-night,
+[data-theme="night"] .brand-logo-day {
+  display: none;
+}
+
+[data-theme="night"] .brand-logo-night {
+  display: block;
 }
 
 // ---- Panel ----------------------------------------------------------

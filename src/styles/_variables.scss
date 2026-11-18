@@ -63,7 +63,6 @@ $colors-night: (
 
 // ---- Constant colours: the same in both themes (WM colour system: "Constant") ----
 $colors-constant: (
-  "white-c1": #ffffff, // plate behind the logo, whose file has a white background
 );
 
 // Read a colour as a CSS custom property, so day/night switch at runtime: color: token("pink-b1");
