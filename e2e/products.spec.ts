@@ -11,12 +11,12 @@ test.describe("product list", () => {
     await expect(page).toHaveTitle(/상품 관리/);
     await expect(page.getByText(/총 게시물 :/)).toContainText(/\d/);
     await expect(page.getByRole("columnheader", { name: "판매금액" })).toBeVisible();
-    // WM formats: won with a three-digit comma and no space, Korean date with 오전/오후 before the time
-    await expect(page.locator(".p-datatable-tbody > tr").first()).toContainText(/[\d,]+원/);
-    await expect(page.locator(".p-datatable-tbody > tr").first()).toContainText(/\d{4}년 \d{1,2}월 \d{1,2}일 (오전|오후) \d{2}:\d{2}/);
-    // Every price has its three-digit comma: at least one is 1,000원 or more, and none shows four digits in a row
+    // Formats of the Figma description (design review of 18 Nov): ₩ with thousands commas, YYYY/MM/DD HH:MM
+    await expect(page.locator(".p-datatable-tbody > tr").first()).toContainText(/₩[\d,]+/);
+    await expect(page.locator(".p-datatable-tbody > tr").first()).toContainText(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}/);
+    // Every price has its three-digit comma: at least one is ₩1,000 or more, and none shows four digits in a row
     const prices = await page.locator(".p-datatable-tbody > tr > td:nth-child(4)").allTextContents();
-    expect(prices.some((text) => /\d,\d{3}원/.test(text))).toBe(true);
+    expect(prices.some((text) => /₩\d{1,3},\d{3}/.test(text))).toBe(true);
     expect(prices.filter((text) => /\d{4}/.test(text))).toEqual([]);
     expect(problems).toEqual([]);
   });
@@ -136,7 +136,7 @@ test.describe("product list", () => {
     expect(header).toBe("상품코드,상품명,판매금액,카테고리,노출여부,판매상태,등록일자");
     expect(rows).toHaveLength(total);
     expect(rows.every((row) => row.toUpperCase().includes("FLY HIGH"))).toBe(true);
-    expect(rows.every((row) => /"\d{1,3}(,\d{3})*원"|,\d{1,3}원,/.test(row))).toBe(true);
+    expect(rows.every((row) => /"₩\d{1,3}(,\d{3})*"|,₩\d{1,3},/.test(row))).toBe(true);
   });
 });
 
@@ -201,7 +201,7 @@ test.describe("product form (no save)", () => {
     await page.getByLabel("수량").fill("3");
     await page.getByLabel("단가(원)", { exact: true }).fill("1500");
     await page.getByLabel("ERP 단가(원)").fill("1000");
-    await expect(page.getByLabel("판매가")).toHaveValue("4,500원");
+    await expect(page.getByLabel("판매가")).toHaveValue("₩4,500");
 
     // Back: step 1 still has what was typed; forward again: step 2 too
     await page.getByRole("button", { name: "이전" }).click();

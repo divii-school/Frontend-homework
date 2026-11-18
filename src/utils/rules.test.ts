@@ -114,14 +114,15 @@ describe("product form rules", () => {
   });
 });
 
-describe("WM formats", () => {
-  it("won: three-digit comma, no decimals, unit with no space", () => {
-    expect(formatWon(1980000)).toBe("1,980,000원");
+describe("formats of the Figma description (design review of 18 Nov)", () => {
+  it("money: the won sign, three-digit commas, no decimals", () => {
+    expect(formatWon(1980000)).toBe("₩1,980,000");
   });
 
-  it("Korean date: no leading zero on month/day, 오전/오후 before the time", () => {
-    expect(formatDateTime(new Date(2026, 4, 7, 20, 3).toISOString())).toBe("2026년 5월 7일 오후 08:03");
-    expect(formatDateTime(new Date(2026, 10, 13, 0, 9).toISOString())).toBe("2026년 11월 13일 오전 12:09");
+  it("date and time: YYYY/MM/DD HH:MM in server time", () => {
+    // Server time (Korea, UTC+9), 24-hour clock, whatever the viewer's own time zone is
+    expect(formatDateTime("2026-11-13T05:39:00.000Z")).toBe("2026/11/13 14:39");
+    expect(formatDateTime("2026-05-07T15:03:00.000Z")).toBe("2026/05/08 00:03");
   });
 
   it("CSV quotes commas and quotes", () => {

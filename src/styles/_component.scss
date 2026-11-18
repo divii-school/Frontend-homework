@@ -211,15 +211,38 @@
   white-space: nowrap;
 }
 
+// Figma 8.1.0: product names are plain bold text; the underline shows only on hover or keyboard focus
 .data-table-link {
   color: token("black-b1");
   font-weight: $font-weight-bold;
-  text-decoration: underline;
+  text-decoration: none;
   text-underline-offset: $space-1;
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     color: token("pink-b1");
+    text-decoration: underline;
   }
+}
+
+// Figma 8.1.0: the product code under each thumbnail
+.product-thumbnail-cell {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-1;
+}
+
+.product-thumbnail-code {
+  color: token("black-b1");
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  white-space: nowrap;
+}
+
+// Inline 예 / 아니오 dropdown of 노출여부 in a row
+.visibility-select.p-dropdown {
+  min-width: $space-16 + $space-6;
 }
 
 .product-thumbnail {
@@ -287,20 +310,6 @@
   display: flex;
   flex-direction: column;
   gap: $space-5;
-}
-
-.form-switches {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $space-6;
-}
-
-.form-switch {
-  display: inline-flex;
-  align-items: center;
-  gap: $space-2;
-  color: token("black-b1");
-  font-weight: $font-weight-bold;
 }
 
 .form-actions {

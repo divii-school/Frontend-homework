@@ -38,7 +38,7 @@ export function ProductsList() {
   const exportProducts = useExportProducts();
   const [selected, setSelected] = useState<Product[]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  // Rows whose visibility is being saved. Each switch keeps its own state and gets its own error toast.
+  // Rows whose visibility is being saved. Each row keeps its own state and gets its own error toast.
   const [savingIds, setSavingIds] = useState<ReadonlySet<number>>(new Set());
 
   const canWrite = canDo(user, "product.write");

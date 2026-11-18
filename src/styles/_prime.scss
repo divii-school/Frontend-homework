@@ -282,63 +282,6 @@
   }
 }
 
-// ---- Switch ---------------------------------------------------------
-.p-inputswitch {
-  position: relative;
-  display: inline-block;
-  flex: 0 0 auto;
-  width: $switch-width;
-  height: $switch-height;
-
-  // The real (invisible) input lies on top of the drawn slider, so a click anywhere on the switch reaches it.
-  .p-inputswitch-input {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    opacity: 0;
-    cursor: pointer;
-  }
-
-  .p-inputswitch-slider {
-    position: absolute;
-    inset: 0;
-    background: token("grey-b2");
-    border-radius: $switch-height;
-    transition: background-color $transition-fast;
-
-    &::before {
-      content: "";
-      position: absolute;
-      top: ($switch-height - $switch-knob-size) * 0.5;
-      left: ($switch-height - $switch-knob-size) * 0.5;
-      width: $switch-knob-size;
-      height: $switch-knob-size;
-      background: token("white-b2");
-      border-radius: $radius-round;
-      transition: transform $transition-fast;
-    }
-  }
-
-  &.p-highlight .p-inputswitch-slider {
-    background: token("pink-b1");
-
-    &::before {
-      transform: translateX($switch-width - $switch-height);
-    }
-  }
-
-  &.p-disabled {
-    opacity: 0.5;
-  }
-
-  .p-inputswitch-input:focus-visible + .p-inputswitch-slider {
-    @include focus-ring;
-  }
-}
-
 // ---- Data table -----------------------------------------------------
 .p-datatable {
   table {
@@ -379,6 +322,12 @@
 
     &:hover {
       background: token("grey-b6");
+    }
+
+    // A selected row is highlighted, not only its checkbox (design review, 18 Nov)
+    &.p-highlight,
+    &.p-highlight:hover {
+      background: token("pink-b3");
     }
 
     > td {

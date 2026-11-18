@@ -166,7 +166,7 @@ test("product: create through the four steps with an image, and it shows in the 
   await page.goto(`/products?search=${PRODUCT}`);
   await expect(page.locator(".p-datatable-tbody > tr")).toHaveCount(1);
   await expect(page.locator(".p-datatable-tbody > tr").first()).toContainText(PRODUCT);
-  await expect(page.locator(".p-datatable-tbody > tr").first()).toContainText("3,000원");
+  await expect(page.locator(".p-datatable-tbody > tr").first()).toContainText("₩3,000");
   // The saved image, uploaded with a comma in its name, still loads after saving
   const thumbnail = page.locator(".p-datatable-tbody > tr").first().locator("img");
   await expect.poll(() => thumbnail.evaluate((image) => (image as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
@@ -209,18 +209,22 @@ test("product: an API error on save keeps every value", async ({ page }) => {
   await page.goto(`/products?search=${PRODUCT_RENAMED}`);
   await expect(page.locator(".p-datatable-tbody > tr")).toHaveCount(1);
   // Only the name was changed, so the saved price is unchanged
-  await expect(page.locator(".p-datatable-tbody > tr").first()).toContainText("3,000원");
+  await expect(page.locator(".p-datatable-tbody > tr").first()).toContainText("₩3,000");
 });
 
-test("product: visibility switch, then bulk delete of our own record only", async ({ page }) => {
+test("product: 노출여부 dropdown, then bulk delete of our own record only", async ({ page }) => {
   await page.goto(`/products?search=${PRODUCT_RENAMED}`);
   const tableRow = page.locator(".p-datatable-tbody > tr").first();
   await expect(tableRow).toContainText(PRODUCT_RENAMED);
 
-  const toggle = tableRow.getByRole("switch");
-  const before = await toggle.isChecked();
-  await tableRow.locator(".p-inputswitch").click();
-  await expect(toggle).toBeChecked({ checked: !before });
+  // Design 8.1.0: an inline 예 / 아니오 dropdown, saved at once with a toast
+  const visibility = tableRow.locator(".visibility-select");
+  const before = (await visibility.locator(".p-dropdown-label").textContent())?.trim();
+  const other = before === "예" ? "아니오" : "예";
+  await visibility.click();
+  await page.locator(".p-dropdown-panel .p-dropdown-item").filter({ hasText: new RegExp(`^${other}$`) }).click();
+  await expect(page.getByText("저장 완료")).toBeVisible();
+  await expect(visibility.locator(".p-dropdown-label")).toHaveText(other);
 
   await tableRow.locator(".p-checkbox").click();
   await page.getByRole("button", { name: "선택한 상품 1개 삭제" }).click();
