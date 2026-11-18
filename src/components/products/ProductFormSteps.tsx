@@ -130,7 +130,7 @@ export function PriceStep(props: StepProps) {
 /** One column of the category picker: a list whose options depend on the level above. */
 function CategoryColumn(props: {
   level: CategoryLevel;
-  title: string;
+  /** 대분류 / 중분류 / 소분류: the column heading and the list's name for screen readers. Korean only (QA, 18 Nov). */
   label: string;
   field: "categoryId" | "subCategoryId" | "childCategoryId";
   parentId: number | null;
@@ -139,7 +139,7 @@ function CategoryColumn(props: {
   readOnly: boolean;
   onSelect: (id: number | null) => void;
 }) {
-  const { level, title, label, field, parentId, value, invalid, readOnly, onSelect } = props;
+  const { level, label, field, parentId, value, invalid, readOnly, onSelect } = props;
   const options = useCategoryOptions(level, parentId);
   const waitingForParent = level !== "category" && parentId === null;
   const emptyMessage = waitingForParent
@@ -150,7 +150,7 @@ function CategoryColumn(props: {
   return (
     <div className="category-picker-column">
       <p className="category-picker-title" aria-hidden="true">
-        {title}
+        {label}
       </p>
       <ListBox
         id={`product-${field}`}
@@ -188,7 +188,6 @@ export function CategoryStep({ mode, values, errors, onChange }: StepProps) {
       <div className="category-picker-columns">
         <CategoryColumn
           level="category"
-          title="대분류(main)"
           label="대분류"
           field="categoryId"
           parentId={null}
@@ -199,7 +198,6 @@ export function CategoryStep({ mode, values, errors, onChange }: StepProps) {
         />
         <CategoryColumn
           level="sub"
-          title="중분류(mid)"
           label="중분류"
           field="subCategoryId"
           parentId={values.categoryId}
@@ -210,7 +208,6 @@ export function CategoryStep({ mode, values, errors, onChange }: StepProps) {
         />
         <CategoryColumn
           level="child"
-          title="소분류(minor)"
           label="소분류"
           field="childCategoryId"
           parentId={values.subCategoryId}
