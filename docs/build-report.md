@@ -21,7 +21,7 @@ TL | HW3 — Advanced Frontend Homework (Real Project: Talking Club Shopping Man
 
 ## 3. What is in this build
 
-1. **Login and logout** with the real API; messages under empty fields and the API's error for a wrong ID or password; 자동 로그인 (stay signed in after the browser closes).
+1. **Login and logout** with the real API; messages under empty fields; a wrong ID or password opens an alert closed with 확인 ("등록되지 않은 계정입니다." / "아이디와 비밀번호가 일치하지 않습니다. 다시 확인해 주세요."); an account without admin rights gets the "관리자 권한이 없습니다." popup; 자동 로그인 (stay signed in after the browser closes).
 2. **Protected pages**: a signed-out visitor is sent to login and returned to the same page after login.
 3. **Roles**: menu, pages and buttons follow the user's role and permissions; a page the user may not open shows a 403 screen.
 4. **Product Category Management**: tree of 대분류 / 중분류 / 소분류; search, sort, paging; create, rename, delete with confirm.
@@ -29,11 +29,20 @@ TL | HW3 — Advanced Frontend Homework (Real Project: Talking Club Shopping Man
 6. **Product create / edit** in four steps with validation on each step, and image upload (type and size check, preview, remove).
 7. **Product details** with three tabs; the open tab is kept in the address bar.
 8. **Light and dark mode**, remembered per browser.
-9. **Error screens** for 401, 403, 404, 500 and no network.
+9. **Error screens** for 401, 403, 404, 500 and no network. Every API answer is shown in Korean: known keys have their own sentence, an unknown key or an English validation sentence gets a Korean one (no key and no English on screen).
 
 ## 4. Fixed issues
 
-None; this is the first build.
+Code review of 18 Nov 2026 (Kakali, PR #4):
+
+| # | Review item | Fix |
+|---|---|---|
+| 1 | Must fix: raw English API keys and validation sentences could appear on the Korean screen | Korean text for every key we know (`constants/messages.ts`); an unknown key gets a Korean sentence by its shape (…NotFound, …AlreadyExists, …LimitReached) or by its status; English validation sentences are translated per field (`utils/api-messages.ts`). |
+| 2 | Sorting orders only the current page, and the screen did not say so | A hint "정렬은 현재 페이지 기준입니다." above the product table. |
+| 3 | Delete was limited to `SUPER_ADMIN` and a made-up `ADMIN` role | Every action follows its page permission only (`config/navigation.ts`); the roles are the API's (MASTER_ADMIN, GENERAL_ADMIN). |
+| 4 | No "관리자 권한이 없습니다" popup at login | The popup shows when the API refuses the account (`userSuspended`) or when the account may open no page; no session is kept. |
+| 5 | A comma in an image file name broke the images after saving | Commas are removed from the name before the upload. |
+| 6 | The upload route could crash with a 500 | An unreadable form answers 400 `invalidRequest`; no answer, an unexpected answer or a storage refusal answers 502 `uploadFailed`, always as JSON. |
 
 ## 5. Test accounts
 
@@ -47,11 +56,11 @@ Nothing. Please create, edit and delete only your own records. My test records a
 Two of my 중분류 stay on the server under 대분류 **학원 Shop**:
 
 - `HW3-Sachin-Fixture-Sub` / `HW3-Sachin-Fixture-Child`: kept on purpose; my tests create products under it.
-- `HW3-Sachin-Unremovable-Sub` / `HW3-Sachin-Unremovable-Child`: cannot be deleted (Known issues, 2).
+- `HW3-Sachin-Unremovable-Sub` / `HW3-Sachin-Unremovable-Child`: cannot be deleted (API issue 2 in part 8).
 
 ## 7. What to test
 
-1. Login: empty fields, wrong password, correct login, 자동 로그인.
+1. Login: empty fields, an ID that does not exist, a wrong password (alert with 확인), correct login, 자동 로그인.
 2. Open `/products?page=2` while signed out, log in, and check you land on page 2.
 3. Product list: search, change the search type, category filter, sort by 상품명 / 판매금액 / 등록일자, page and page size. Refresh after each and check nothing is lost.
 4. Select rows → 삭제 → the dialog lists the names → cancel. (Delete only your own records.)
@@ -66,34 +75,48 @@ Two of my 중분류 stay on the server under 대분류 **학원 Shop**:
 
 ## 8. Known issues and what is not covered
 
-1. **Logout signs out everyone.** The QA API's logout ends every session of the account, and all HW3 developers share one account. If you are suddenly sent to the login page, someone pressed logout: log in again and you return to the same page.
-2. **A category that has held a product cannot be deleted.** The API answers 500 "Something went wrong", even after the product is deleted. The app shows "서버에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요." (API question A4.)
-3. **Sort is per page.** The products API has no sort parameter, so sort orders the rows of the current page; the category list is sorted and paged in the browser. (A1, A2.)
-4. **Token refresh is not used**: the API's refresh cookie cannot be used from another domain. When the token expires the app goes to login and returns to the same page.
-5. **Built before I could open the Figma file.** Colours and sizes were read from the live QA admin while building
-   (design question Q1). On 17 Nov I exported the Figma frames; the side-by-side screenshots are on my submission
-   page. The differences will be fixed in the review round (by 20 Nov).
-6. **White text on the brand pink is 3.98:1**, below the 4.5:1 of WCAG AA. The colour is used as designed. (Q9.)
-7. The description is plain text, not rich text. Category reordering by drag is not built. A new 대분류 cannot be added on the QA server (the API says `isCreatable: false`), so that button is not shown.
-8. Not run yet: real Safari and a real phone. Safari's engine (WebKit) and the phone width (375) were run in Playwright.
+**API issues.** These come from the QA API, not from the frontend; they are kept as they are (TL update of 18 Nov).
+The screen still shows a Korean message and never crashes.
 
-## 9. Results (16 Nov 2026 on my machine, 17 Nov 2026 on the Vercel link, QA API)
+| # | What I saw | Request | Answer | What the screen does |
+|---|---|---|---|---|
+| 1 | Logout signs out every user of the shared account | `GET /api/v1/auth/logout` | 200; afterwards every token of the account answers 401 | If you are suddenly sent to login, someone pressed logout: log in again and you return to the same page. My tests never send the real call. (A3) |
+| 2 | A category that has held a product cannot be deleted, even after the product is deleted | `DELETE /api/v1/product-category/subcategory/delete/{id}` | 500 `{"message":"Something went wrong"}` | "서버에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요." (A4) |
+| 3 | The products list cannot be sorted on the server | `GET /api/v1/products?sort=…` | 200; the sort parameter is ignored | Sort orders the current page, with the hint "정렬은 현재 페이지 기준입니다." (A1) |
+| 4 | The category list has no sort or paging parameter | `GET /api/v1/product-category/list` | the whole tree | Sorted and paged in the browser. (A2) |
+| 5 | Error answers are English keys, also with `accept-language: ko` | e.g. `POST /api/v1/auth/login` with an unknown ID | 400 `{"message":"invalidCredentials"}` | Each key is shown as a Korean sentence; unknown keys get a Korean fallback. (A16) |
+| 6 | A missing record answers 400, not 404 | `GET /api/v1/products/details/{id}` for a deleted id | 400 `{"message":"productNotFound"}` | The not-found state. (A5) |
+| 7 | The refresh token cannot be used from another domain | `GET /api/v1/auth/get-access-token` | the cookie is set for the API's own domain | On 401 the app goes to login and returns to the same page. (A6) |
+| 8 | Storage accepts browser uploads only from a fixed list of sites | `PUT` to the signed storage address from a Vercel page | 403 on the preflight | Uploads go through the app's own route `/api/upload`. (A7) |
+| 9 | Image paths are stored as one comma-separated text | `POST /api/v1/products/add` with `images` | a file name with a comma becomes two broken paths | Commas are removed from the file name before the upload. (A17) |
+| 10 | No new 대분류 can be added on the QA server | `GET /api/v1/product-category/list` | `isCreatable: false` | The 대분류 등록 button is not shown. (A12) |
+
+**Frontend notes**
+
+1. **Built before I could open the Figma file.** Colours and sizes were read from the live QA admin while building
+   (design question Q1). On 17 Nov I exported the Figma frames; the side-by-side screenshots are on my submission
+   page. The differences are being fixed in the review round (by 20 Nov).
+2. **White text on the brand pink is 3.98:1**, below the 4.5:1 of WCAG AA. The colour is used as designed. (Q9.)
+3. The description is plain text, not rich text. Category reordering by drag is not built (A14).
+4. Not run yet: real Safari and a real phone. Safari's engine (WebKit) and the phone width (375) were run in Playwright.
+
+## 9. Results (18 Nov 2026 after the code-review fixes, production build on my machine, QA API; the Vercel rows are from 17 Nov)
 
 | Check | Command | Result |
 |---|---|---|
 | Lint | `npm run lint` | Pass: 0 errors, 0 warnings |
 | Type-check | `npx tsc --noEmit` | Pass: 0 errors |
-| Unit tests | `npm run test:unit` | 18 passed, 0 failed |
+| Unit tests | `npm run test:unit` | 22 passed, 0 failed |
 | Build | `npm run build` | Pass: 7 pages, 1 route handler, middleware |
-| Playwright read-only, Chromium | `npm run test:e2e` | 42 passed, 0 failed (login setup + 41 tests) |
-| Playwright read-only, WebKit | `npm run test:e2e:webkit` | 42 passed, 0 failed |
+| Playwright read-only, Chromium | `npm run test:e2e` | 46 passed, 0 failed (login setup + 45 tests), none needed a retry |
+| Playwright read-only, WebKit | `npm run test:e2e:webkit` | 46 passed, 0 failed |
 | Playwright create / edit / delete | `npm run test:e2e:mutation` | 7 passed, 0 failed (login setup + 6 tests) |
-| The same read-only tests on the dev server | `npm run test:e2e` without `PLAYWRIGHT_BASE_URL` | 42 passed, 0 failed |
+| The same read-only tests on the dev server (17 Nov) | `npm run test:e2e` without `PLAYWRIGHT_BASE_URL` | 42 passed, 0 failed |
 | Write tests and screenshots without their scripts | `npx playwright test --project=mutation --project=screenshots` | all 16 skipped: nothing written |
 | Console | inside the tests, on every screen | 0 errors, 0 warnings |
 | Sideways scroll | inside the tests, 11 screens × 11 widths (1920 → 375) | none |
-| Playwright read-only on the Vercel link | `npm run test:e2e` with `PLAYWRIGHT_BASE_URL=https://talkingclub-hw3-sachin.vercel.app` | 42 passed, 0 failed (2 role-menu tests after one retry) |
-| Playwright create / edit / delete on the Vercel link | `npm run test:e2e:mutation` with the same `PLAYWRIGHT_BASE_URL` | 7 passed, 0 failed (image upload through the app's own route on Vercel) |
+| Playwright read-only on the Vercel link (17 Nov) | `npm run test:e2e` with `PLAYWRIGHT_BASE_URL=https://talkingclub-hw3-sachin.vercel.app` | 42 passed, 0 failed (2 role-menu tests after one retry) |
+| Playwright create / edit / delete on the Vercel link (17 Nov) | `npm run test:e2e:mutation` with the same `PLAYWRIGHT_BASE_URL` | 7 passed, 0 failed (image upload through the app's own route on Vercel) |
 
 The first run on the Vercel link had one failure: the backslash-redirect test expected a `localhost` address,
 while the app correctly stayed on its own Vercel address. The test now checks the app's own address and passes
@@ -111,9 +134,9 @@ The HTML report of the Chromium read-only run is `docs/playwright-report.zip`. W
 (no output: 0 errors)
 
 > npm run test:unit
- ✓ src/utils/rules.test.ts (18 tests)
+ ✓ src/utils/rules.test.ts (22 tests)
  Test Files  1 passed (1)
-      Tests  18 passed (18)
+      Tests  22 passed (22)
 
 > npm run build
  ✓ Compiled successfully
@@ -130,10 +153,10 @@ Route (app)
 ƒ Middleware
 
 > npm run test:e2e
-  42 passed
+  46 passed
 
 > npm run test:e2e:webkit
-  42 passed
+  46 passed
 
 > npm run test:e2e:mutation
   7 passed
