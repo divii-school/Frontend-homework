@@ -130,6 +130,44 @@ test('dark mode: the header button switches it, it survives a reload, and switch
   await expect(html).toHaveAttribute('data-theme', 'light');
 });
 
+test.describe('theme stylesheet and hydration (React #418 found on Vercel, 2026-11-18)', () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  test('both theme links come in the server HTML; the boot script only enables one', async ({ page, request }) => {
+    const html = await (await request.get('/login')).text();
+    expect(html).toContain('id="prime-theme-light"');
+    expect(html).toContain('id="prime-theme-dark"');
+    for (const scheme of ['light', 'dark'] as const) {
+      await page.emulateMedia({ colorScheme: scheme });
+      await page.goto('/login');
+      await expect(page.locator('html')).toHaveAttribute('data-theme', scheme);
+      const enabled = await page.evaluate(() =>
+        [...document.querySelectorAll<HTMLLinkElement>('link[id^="prime-theme"]')].filter((l) => !l.disabled).map((l) => l.id),
+      );
+      expect(enabled).toEqual([`prime-theme-${scheme}`]);
+    }
+  });
+
+  test('login hydrates cleanly even when the JS files arrive late and out of order (12 cold loads)', async ({ browser }) => {
+    const errors: string[] = [];
+    for (let i = 0; i < 12; i += 1) {
+      const context = await browser.newContext({ colorScheme: i % 3 === 0 ? 'dark' : 'light' });
+      const page = await context.newPage();
+      page.on('pageerror', (e) => errors.push(`load ${i}: ${e.message.slice(0, 120)}`));
+      // Delay each JS file by a different amount, so they finish in a different order each time.
+      await page.route('**/_next/static/chunks/**', async (route) => {
+        await new Promise((resolve) => setTimeout(resolve, Math.random() * 600));
+        await route.continue();
+      });
+      await page.goto('/login');
+      await expect(page.getByRole('button', { name: '로그인', exact: true })).toBeVisible();
+      await page.waitForTimeout(300);
+      await context.close();
+    }
+    expect(errors).toEqual([]);
+  });
+});
+
 test('keyboard only: skip link, menu, dialog with Escape, visible focus ring', async ({ page }) => {
   await page.goto('/shopping/products');
   await expect(page.locator('tbody tr').first()).toBeVisible();

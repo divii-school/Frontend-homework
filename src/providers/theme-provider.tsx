@@ -1,29 +1,25 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { PRIME_THEME_LINKS, THEME_STORAGE_KEY as STORAGE_KEY, type ThemeMode } from '@/config/theme';
 
-export type ThemeMode = 'light' | 'dark';
+/** Re-exported for existing imports. */
+export type { ThemeMode };
 
 interface ThemeContextValue {
   theme: ThemeMode;
   toggleTheme: () => void;
 }
 
-const STORAGE_KEY = 'hw3_theme';
-/** <link id="prime-theme"> in the root layout; swapped so PrimeReact components follow the theme too. */
-const PRIME_THEME_LINK_ID = 'prime-theme';
-const PRIME_THEME_HREF: Record<ThemeMode, string> = {
-  light: '/themes/lara-light-pink/theme.css',
-  dark: '/themes/lara-dark-pink/theme.css',
-};
-
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-/** Applies the theme to <html data-theme> (our tokens) and to the PrimeReact theme stylesheet. */
+/** Applies the theme to <html data-theme> (our tokens) and enables the matching PrimeReact theme stylesheet. */
 function applyTheme(theme: ThemeMode): void {
   document.documentElement.dataset.theme = theme;
-  const link = document.getElementById(PRIME_THEME_LINK_ID) as HTMLLinkElement | null;
-  if (link && !link.href.endsWith(PRIME_THEME_HREF[theme])) link.href = PRIME_THEME_HREF[theme];
+  for (const mode of ['light', 'dark'] as const) {
+    const link = document.getElementById(PRIME_THEME_LINKS[mode].id) as HTMLLinkElement | null;
+    if (link) link.disabled = mode !== theme;
+  }
 }
 
 /**
@@ -74,8 +70,3 @@ export function useTheme(): ThemeContextValue {
   if (!ctx) throw new Error('useTheme must be used inside <ThemeProvider>');
   return ctx;
 }
-
-/** Runs before React, inside <head>: picks the saved theme (else the OS one) and adds the PrimeReact
- * theme as the FIRST stylesheet, so our own SCSS (loaded after it) wins the cascade. */
-export const THEME_BOOT_SCRIPT = `(function(){try{var t=localStorage.getItem('${STORAGE_KEY}');if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.dataset.theme=t;var l=document.getElementById('${PRIME_THEME_LINK_ID}');if(!l){l=document.createElement('link');l.id='${PRIME_THEME_LINK_ID}';l.rel='stylesheet';document.head.insertBefore(l,document.head.firstChild);}l.href=t==='dark'?'${PRIME_THEME_HREF.dark}':'${PRIME_THEME_HREF.light}';}catch(e){}})();`;
-

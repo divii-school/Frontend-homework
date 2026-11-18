@@ -54,7 +54,8 @@ img {
 }
 
 // PrimeReact: bring the Lara theme onto our tokens so light and dark both follow them.
-:root {
+// `html:root` outranks the theme's own `:root` block, whichever stylesheet the browser loads last.
+html:root {
   --primary-color: var(--color-primary);
   --primary-color-text: var(--color-on-primary);
   --font-family: #{$font-family};

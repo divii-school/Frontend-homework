@@ -5,7 +5,7 @@ import 'primeicons/primeicons.css';
 import '@/styles/globals.scss';
 import { StateBlock } from '@/components/common/state-block';
 import { ROUTES } from '@/config/app-routes';
-import { THEME_BOOT_SCRIPT } from '@/providers/theme-provider';
+import { PrimeThemeLinks } from '@/components/common/prime-theme-links';
 import styles from './not-found.module.scss';
 
 /**
@@ -22,7 +22,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
     <html lang="ko" suppressHydrationWarning>
       <head>
         <title>오류 | 토킹클럽 관리자</title>
-        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+        <PrimeThemeLinks />
       </head>
       <body>
         <main className={styles['not-found-page']}>
