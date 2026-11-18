@@ -85,6 +85,12 @@ export function imageFileError(file: Pick<File, "type" | "size">, currentCount: 
   return null;
 }
 
+/**
+ * The API keeps a product's image paths as ONE comma-separated text, and the path contains the file name,
+ * so a comma in the name would split one image into two broken ones after saving. Commas are removed.
+ */
+export const uploadFileName = (name: string): string => name.replace(/,/g, "").trim() || "image";
+
 /** Form values -> request body. Only called after every step is valid. */
 export function toProductRequest(values: ProductFormValues): ProductRequest {
   return {
