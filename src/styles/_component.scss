@@ -302,6 +302,23 @@
   overflow-y: auto;
 }
 
+// Login alert (wrong ID or password, no admin rights): one line per sentence, closed with 확인.
+.login-alert-line {
+  margin: 0;
+}
+
+.login-alert-line + .login-alert-line {
+  margin-top: $space-2;
+  color: token("grey-b1");
+}
+
+// A short note above a list, e.g. that sorting covers only the current page.
+.list-hint {
+  margin: 0 0 $space-2;
+  color: token("grey-b1");
+  font-size: $font-size-sm;
+}
+
 // ---- Tabs -----------------------------------------------------------
 .tabs {
   display: flex;
