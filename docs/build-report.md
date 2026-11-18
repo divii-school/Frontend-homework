@@ -21,15 +21,16 @@ TL | HW3 — Advanced Frontend Homework (Real Project: Talking Club Shopping Man
 
 ## 3. What is in this build
 
-1. **Login and logout** with the real API; messages under empty fields; a wrong ID or password opens an alert closed with 확인 ("등록되지 않은 계정입니다." / "아이디와 비밀번호가 일치하지 않습니다. 다시 확인해 주세요."); an account without admin rights gets the "관리자 권한이 없습니다." popup; 자동 로그인 (stay signed in after the browser closes).
+1. **Login and logout** with the real API; messages under empty fields; a wrong ID or password opens an alert closed with 확인 ("등록되지 않은 계정입니다." / "아이디와 비밀번호가 일치하지 않습니다. 다시 확인해 주세요."); an account without admin rights gets the "관리자 권한이 없습니다." popup; an eye button shows or hides the typed password; 자동 로그인 (stay signed in after the browser closes).
 2. **Protected pages**: a signed-out visitor is sent to login and returned to the same page after login.
 3. **Roles**: menu, pages and buttons follow the user's role and permissions; a page the user may not open shows a 403 screen.
-4. **Product Category Management**: tree of 대분류 / 중분류 / 소분류; search, sort, paging; create, rename, delete with confirm.
+4. **Product Category Management**: tree of 대분류 / 중분류 / 소분류; search, sort, paging; create and rename (names up to 50 characters); delete with confirm, refused while a category still has categories under it.
 5. **Product Management list**: search, search type, category filter, sort, page and page size, all kept in the address bar; row selection with bulk delete; 노출여부 as an inline 예 / 아니오 dropdown saved at once; the product code under each thumbnail; prices as ₩1,500 and dates as YYYY/MM/DD HH:MM in server time; export of the filtered result to CSV.
 6. **Product create / edit** in four steps with validation on each step, and image upload (type and size check, preview, remove).
 7. **Product details** with three tabs; the open tab is kept in the address bar.
 8. **Light and dark mode**, remembered per browser; the logo has its own dark-mode file.
-9. **Error screens** for 401, 403, 404, 500 and no network. Every API answer is shown in Korean: known keys have their own sentence, an unknown key or an English validation sentence gets a Korean one (no key and no English on screen).
+9. **Korean only on screen and for screen readers**, PrimeReact's own labels included (페이지당 행 수, 첫 페이지, 행 선택, …).
+10. **Error screens** for 401, 403, 404, 500 and no network. Every API answer is shown in Korean: known keys have their own sentence, an unknown key or an English validation sentence gets a Korean one (no key and no English on screen).
 
 ## 4. Fixed issues
 
@@ -71,6 +72,19 @@ Design review of 18 Nov (Bhagyashree, Vercel build at 1440 / 768 / 375, light an
 
 Kept on purpose: the four form steps (Q3, Q16) and the fields the API does not have (Q17).
 
+QA review of 18 Nov (Archana, Vercel build b731072):
+
+| # | QA item | Fix |
+|---|---|---|
+| A1 | Must fix: a category name has no length limit (51 characters were saved) | At most 50 characters in the add and rename dialogs, with "50자 이내" under the field; from the 51st character the message "중분류 이름은 50자 이내로 입력해 주세요." shows and nothing is sent (`utils/category-rules.ts`). |
+| A2 | Must fix: English in step 3 of the form ("대분류(main)", "중분류(mid)", "소분류(minor)") | The lists are headed 대분류, 중분류, 소분류. |
+| A3 | Must fix: a category with children can be deleted in one click | Refused: the dialog says "하위 카테고리가 있어 삭제할 수 없습니다. 하위 카테고리를 먼저 삭제해 주세요." and has only 확인. Delete the lower categories first. |
+| A4 | Must fix: price and date format, time in the viewer's zone | Done in the design round: ₩1,500 and 2026/11/13 14:39 in Korea time for every viewer, CSV included. |
+| B5 | No show / hide password button | Figma 1.1.0 has an eye at the right end of the field. It is now a real button: reached with Tab, read as "비밀번호 보기" with its pressed state, eye-slash while masked. |
+| B6 | Screen-reader labels in English (PrimeReact defaults) | A Korean locale for every PrimeReact text (`config/primereact-locale.ts`). The rows-per-page box ignores it (PrimeReact 10.9 bug), so the paginator draws that box itself with the name "페이지당 행 수". |
+| B7 | Sheet: old run dates, one Actual Result sentence on every row, no Platform / Role | Every row has its run date, the test that checks it (spec › title, as in the report) and the Platform and Role columns. Rows that said more than their test checked now have a test for it (reload after 노출여부, 100 characters typed, no search while typing, grey menu). |
+| B8 | Only the local report attached | The report of the run on the Vercel link is attached too (submission page, section 5). |
+
 ## 5. Test accounts
 
 The QA admin account sent by DM (role SUPER_ADMIN). No other role exists on the QA server, so limited roles
@@ -87,7 +101,7 @@ Two of my 중분류 stay on the server under 대분류 **학원 Shop**:
 
 ## 7. What to test
 
-1. Login: empty fields, an ID that does not exist, a wrong password (alert with 확인), correct login, 자동 로그인.
+1. Login: empty fields, an ID that does not exist, a wrong password (alert with 확인), the eye button (Tab to it, Enter), correct login, 자동 로그인.
 2. Open `/products?page=2` while signed out, log in, and check you land on page 2.
 3. Product list: search (press Enter or click the magnifier), change the search type, category filter, sort by 상품명 / 판매금액 / 등록일자, page and page size. Refresh after each and check nothing is lost. Prices read ₩1,500 and dates 2026/11/13 14:39; the product code is under each thumbnail; 노출여부 is a 예 / 아니오 dropdown (change it only on your own records).
 4. Select rows → 삭제 → the dialog lists the names → cancel. (Delete only your own records.)
@@ -95,7 +109,7 @@ Two of my 중분류 stay on the server under 대분류 **학원 Shop**:
 6. 등록: go through the four steps; press 다음 with empty fields (비과세, 노출상태 and 판매상태 must be chosen); go back and check the values are kept; upload a wrong file type, a file over 4 MB, then a valid image; remove it; press 취소 and answer 아니오; save.
 7. Open the product → tabs 기본 정보 / 카테고리 / 같은 카테고리 상품; refresh on a tab.
 8. 수정: change only the name and press 저장 at the top (from step 1): the price stays as it was. The category is read-only. Then change 수량 and check that 판매가 becomes 수량 × 단가.
-9. Categories: search, sort, open and close rows, add a 중분류 and a 소분류 under a 대분류, rename, delete with confirm. 대분류 등록 is shown but disabled, with the reason (the QA API allows no new 대분류).
+9. Categories: search, sort, open and close rows, add a 중분류 and a 소분류 under a 대분류, rename, delete with confirm. Type 51 characters in a name: the message shows and nothing is saved. 삭제 on a category that has categories under it: refused with "하위 카테고리를 먼저 삭제해 주세요.". 대분류 등록 is shown but disabled, with the reason (the QA API allows no new 대분류).
 10. Dark mode switch on every screen; refresh keeps it; the logo turns light with no white box.
 11. Sizes 1440 / 768 / 375: no sideways page scroll; the table scrolls inside its own box; below 991px the menu opens from the ☰ button.
 12. Keyboard: Tab through login and the product form; arrow keys on the details tabs; focus is visible.
@@ -128,17 +142,17 @@ The screen still shows a Korean message and never crashes.
 3. The description is plain text, not rich text. Category reordering by drag is not built (A14).
 4. Not run yet: real Safari and a real phone. Safari's engine (WebKit) and the phone width (375) were run in Playwright.
 
-## 9. Results (18 Nov 2026, after the design-review fixes, production build on my machine, QA API)
+## 9. Results (18 Nov 2026, after the design-review and QA fixes, production build on my machine, QA API)
 
 | Check | Command | Result |
 |---|---|---|
 | Lint | `npm run lint` | Pass: 0 errors, 0 warnings |
 | Type-check | `npx tsc --noEmit` | Pass: 0 errors |
-| Unit tests | `npm run test:unit` | 23 passed, 0 failed |
+| Unit tests | `npm run test:unit` | 24 passed, 0 failed |
 | Build | `npm run build` | Pass: 7 pages, 1 route handler, middleware |
-| Playwright read-only, Chromium | `npm run test:e2e` | 55 passed, 0 failed (login setup + 54 tests, 8 of them for the design review), none needed a retry |
-| Playwright read-only, WebKit | `npm run test:e2e:webkit` | 55 passed, 0 failed |
-| Playwright create / edit / delete | `npm run test:e2e:mutation` | 7 passed, 0 failed (login setup + 6 tests; the 노출여부 dropdown is changed and changed back on an `HW3-Sachin-…` product) |
+| Playwright read-only, Chromium | `npm run test:e2e` | 62 passed, 0 failed (login setup + 61 tests), none needed a retry |
+| Playwright read-only, WebKit | `npm run test:e2e:webkit` | 62 passed, 0 failed |
+| Playwright create / edit / delete | `npm run test:e2e:mutation` | 7 passed, 0 failed (login setup + 6 tests; the 노출여부 dropdown is changed on an `HW3-Sachin-…` product and checked again after a reload) |
 | The same read-only tests on the dev server (17 Nov) | `npm run test:e2e` without `PLAYWRIGHT_BASE_URL` | 42 passed, 0 failed |
 | Write tests and screenshots without their scripts | `npx playwright test --project=mutation --project=screenshots` | all 16 skipped: nothing written |
 | Console | inside the tests, on every screen | 0 errors, 0 warnings |
@@ -162,9 +176,9 @@ The HTML report of the Chromium read-only run is `docs/playwright-report.zip`. W
 (no output: 0 errors)
 
 > npm run test:unit
- ✓ src/utils/rules.test.ts (23 tests)
+ ✓ src/utils/rules.test.ts (24 tests)
  Test Files  1 passed (1)
-      Tests  23 passed (23)
+      Tests  24 passed (24)
 
 > npm run build
  ✓ Compiled successfully
@@ -181,10 +195,10 @@ Route (app)
 ƒ Middleware
 
 > npm run test:e2e
-  55 passed
+  62 passed
 
 > npm run test:e2e:webkit
-  55 passed
+  62 passed
 
 > npm run test:e2e:mutation
   7 passed
