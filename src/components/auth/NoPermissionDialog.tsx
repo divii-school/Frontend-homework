@@ -35,7 +35,7 @@ export default function NoPermissionDialog({ visible, onClose }: NoPermissionDia
       aria-labelledby="no-permission-title"
     >
       <div className="no-permission-body">
-        <BrandLogo suffix="관리자" />
+        <BrandLogo />
         <p className="no-permission-message" id="no-permission-title" role="alert">
           관리자 권한이 없습니다.
           <br />

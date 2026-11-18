@@ -28,15 +28,25 @@ $product-related-min-width: $space-16 * 4; // 256px card in the related grid
 }
 
 // ---- Tabs ------------------------------------------------------------------------------------
+// The grey line under the tabs is an inset shadow, so the 2px line of the active tab lies on top of it without a
+// negative margin. (The negative margin made the bar 1px taller than its box, and because the bar scrolls
+// sideways on a narrow phone the browser then drew a native scrollbar on it at every width.)
+// If the tabs are ever wider than the screen they still scroll by swipe / arrow keys, without a scrollbar.
 .details-tabs {
   display: flex;
   gap: $space-1;
   overflow-x: auto;
-  border-bottom: $border-width solid var(--color-border);
+  overflow-y: hidden;
+  scrollbar-width: none;
+  box-shadow: inset 0 (-$border-width) 0 var(--color-border);
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .details-tab {
-  margin-bottom: -$border-width;
+  flex: 0 0 auto;
   padding: $space-3 $space-4;
   font-family: inherit;
   font-size: $font-size-sm;
@@ -63,6 +73,11 @@ $product-related-min-width: $space-16 * 4; // 256px card in the related grid
 
   @include upto('sm') {
     min-height: $touch-target;
+  }
+
+  // Phones: tighter side padding so the three tabs fit on one line
+  @include upto('xs') {
+    padding: $space-3 $space-2;
   }
 }
 

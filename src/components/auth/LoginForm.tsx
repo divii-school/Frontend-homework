@@ -123,7 +123,7 @@ export default function LoginForm() {
         토킹클럽 관리자 로그인
       </h1>
       <div className="login-brand">
-        <BrandLogo suffix="관리자" />
+        <BrandLogo />
       </div>
 
       <form className="login-form" onSubmit={handleSubmit(onSubmit)} noValidate>

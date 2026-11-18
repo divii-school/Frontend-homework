@@ -60,8 +60,9 @@
   border-bottom: $border-width solid var(--color-border-strong);
   transition: border-color $transition-fast;
 
+  // Focus: the same brand-colour line as the other underline fields
   &:focus-within {
-    border-bottom-color: var(--color-text);
+    @include underline-field-focus;
   }
 
   .login-field-invalid & {

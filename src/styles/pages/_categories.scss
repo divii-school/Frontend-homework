@@ -3,7 +3,8 @@
 
 // ---- 8.2.0 Product Category Management (/shopping-mall/categories) — tree, search, add/edit modals, drag reorder
 // Tokens only (var(--color-*), $space-*, $font-size-*), class names lowercase-with-hyphens,
-// breakpoints via @include upto(…). 1440 = design; ≤ 991 search gets its own line; ≤ 640 row actions wrap.
+// breakpoints via @include upto(…). 1440 = design; ≤ 991 search gets its own line; ≤ 640 every row stays ONE
+// line: "[code] name" flows as text, the level badge is hidden and "+ 소분류" becomes a square icon button.
 
 // Card content: toolbar, status line, tree
 .category-page {
@@ -159,15 +160,16 @@
     padding: $space-1 $space-2;
   }
 
-  // Phones: actions move to a second line (right-aligned) only when they don't fit next to the name
+  // Phones: one line per row, as on a wide screen. Every pixel goes to the name: no gaps, small side padding.
   @include upto('xs-sm') {
-    flex-wrap: wrap;
+    gap: 0;
+    padding: $space-1;
   }
 }
 
 // Level look: main rows are grey bands (design), lower levels step in
 .category-row-depth-1 {
-  background: var(--color-surface-alt);
+  background: var(--color-tree-band);
 }
 
 .category-row-depth-2 {
@@ -175,6 +177,10 @@
 
   @include upto('sm') {
     padding-left: $space-2 + $space-4;
+  }
+
+  @include upto('xs-sm') {
+    padding-left: $space-1 + $space-3;
   }
 }
 
@@ -187,7 +193,7 @@
 
   // Phones: no chevron spacer on this level (below), so step in further to stay under the parent's name
   @include upto('xs-sm') {
-    padding-left: $space-16;
+    padding-left: $space-1 + $space-6 + $space-8;
   }
 }
 
@@ -268,10 +274,14 @@
   column-gap: $space-2;
   row-gap: $space-1;
 
-  // Phones: grow from 0 but keep at least 40% of the row, so the actions wrap instead of the name
+  // Phones: the name block is plain text flow, so "[72] Phonics & Alphabet" breaks between words and the code
+  // stays in front of the name (as flex items the code and the name ended up on two lines). The actions keep
+  // their place at the right of the same line on every row.
   @include upto('xs-sm') {
+    display: block;
     flex-basis: 0;
-    min-width: 40%;
+    padding: 0 $space-1;
+    line-height: $line-height-tight;
   }
 }
 
@@ -281,6 +291,11 @@
   font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
   line-height: $line-height-base;
+
+  // Phones: no badge (the design has none); the indent, the band and the bold name show the level
+  @include upto('xs-sm') {
+    display: none;
+  }
 }
 
 .category-badge-depth-1 {
@@ -300,6 +315,10 @@
 
 .category-id {
   color: var(--color-text-muted);
+
+  @include upto('xs-sm') {
+    margin-right: $space-1;
+  }
 }
 
 .category-name {
@@ -312,9 +331,20 @@
   font-weight: $font-weight-semibold;
 }
 
+// On the band of a top-level row the muted grey would be just under 4.5:1, so [code] and count go one step darker
+.category-row-depth-1 .category-id,
+.category-row-depth-1 .category-count {
+  color: var(--color-text-secondary);
+}
+
 .category-count {
   font-size: $font-size-xs;
   color: var(--color-text-muted);
+
+  // Phones: the count goes under the name
+  @include upto('xs-sm') {
+    display: block;
+  }
 }
 
 // Actions: purple add pill, pencil, trash
@@ -324,6 +354,10 @@
   align-items: center;
   gap: $space-1;
   margin-left: auto;
+
+  @include upto('xs-sm') {
+    gap: 0;
+  }
 }
 
 // Specificity above the global [data-theme] .p-button rules
@@ -339,11 +373,44 @@
   .p-button-icon {
     font-size: $font-size-xs;
   }
+
+  // Phones: a square "+" button (its label stays for screen readers), so the three actions fit on the row
+  @include upto('xs-sm') {
+    justify-content: center;
+    width: $control-height;
+    padding: 0;
+
+    .p-button-icon {
+      margin: 0;
+    }
+
+    .p-button-label {
+      @include visually-hidden;
+    }
+  }
 }
 
 .category-actions .p-button.category-icon-button {
   width: $control-height;
   height: $control-height;
+}
+
+// Pencil and trash are grey (design 8.2.0). The trash shows the danger colour only on hover / keyboard focus.
+// .p-button-text lifts the specificity above the global text-button colours.
+[data-theme] .category-actions .p-button.p-button-text.category-icon-button {
+  color: var(--color-icon-muted);
+
+  &:enabled:hover,
+  &:focus-visible {
+    background: var(--color-surface-sunken);
+    color: var(--color-text);
+  }
+
+  &.category-delete-button:enabled:hover,
+  &.category-delete-button:focus-visible {
+    background: var(--color-danger-soft);
+    color: var(--color-danger-strong);
+  }
 }
 
 // ---- Loading skeleton ------------------------------------------------------------------------

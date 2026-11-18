@@ -1,5 +1,5 @@
 import { test, expect, type Page, type Request, type Route } from "@playwright/test";
-import { injectSession } from "./helpers";
+import { injectSession, tokenColor } from "./helpers";
 import {
   API_BASE,
   CREATE_URL,
@@ -705,6 +705,47 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     await expect(page.getByText(DRAFT_OUTDATED_NOTICE)).toBeVisible();
     await expect(field(page, "상품명")).toHaveValue("HW3-Neeraj-saved-by-someone-else");
     expect(await readEditDraft(page)).toBeNull();
+  });
+
+  test("fields are underline-only (the textarea stays boxed): error = danger line + message, focus = brand-colour line", async ({ page }) => {
+    await mockApi(page, (route) => json(route, 200, ok(null)));
+    await page.goto(CREATE_URL);
+    await expect(field(page, "상품코드")).toHaveValue("PRD-E2E-0001");
+
+    const name = field(page, "상품명");
+    const line = await tokenColor(page, "border-strong");
+    // Text inputs: no box, one Gray 80 line under the value, still 40px high (design 8.1.1)
+    for (const input of [name, field(page, "단가"), field(page, "판매가"), field(page, "상품코드")]) {
+      await expect(input).toHaveCSS("border-top-width", "0px");
+      await expect(input).toHaveCSS("border-left-width", "0px");
+      await expect(input).toHaveCSS("border-right-width", "0px");
+      await expect(input).toHaveCSS("border-bottom-width", "1px");
+      expect((await input.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(40);
+    }
+    await expect(name).toHaveCSS("border-bottom-color", line);
+    // The textarea is drawn as a box in the frame
+    await expect(field(page, "상세설명")).toHaveCSS("border-top-width", "1px");
+
+    // Focus: the line turns to the focus colour (= brand colour) and gets a second pixel
+    await name.focus();
+    await expect(name).toHaveCSS("border-bottom-color", await tokenColor(page, "focus-ring"));
+    await expect(name).not.toHaveCSS("box-shadow", "none");
+
+    // Error: Next on the empty form → message + danger line (seen once the focus is on another field)
+    await clickNext(page);
+    await expect(page.getByText("상품명을 입력해 주세요.")).toBeVisible();
+    await field(page, "판매가").focus();
+    await expect(name).toHaveCSS("border-bottom-color", await tokenColor(page, "danger"));
+    await expect(name).toHaveCSS("border-top-width", "0px");
+
+    // Dropdowns of the form are underline fields too (step 2: 노출상태)
+    await fillStep1(page, { name: "HW3-Neeraj-underline", unit: "10000", selling: "20000" });
+    await clickNext(page);
+    await expectStep(page, 2);
+    const dropdown = page.locator(".product-form-step:not([hidden]) .p-dropdown").first();
+    await expect(dropdown).toHaveCSS("border-top-width", "0px");
+    await expect(dropdown).toHaveCSS("border-bottom-width", "1px");
+    await expect(dropdown).toHaveCSS("border-bottom-color", line);
   });
 
   test("375 px: compact stepper, one column, no horizontal page scroll", async ({ page }) => {

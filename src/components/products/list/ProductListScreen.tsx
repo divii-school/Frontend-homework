@@ -100,7 +100,7 @@ export default function ProductListScreen() {
           </p>
           <div className="product-page-size">
             <label htmlFor="product-page-size">페이지당 행 수</label>
-            <span className="product-select product-select-compact">
+            <span className="product-select">
               <select id="product-page-size" value={state.limit} onChange={(event) => update({ limit: Number(event.target.value) })}>
                 {PAGE_SIZE_OPTIONS.map((size) => (
                   <option key={size} value={size}>

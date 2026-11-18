@@ -42,8 +42,7 @@
 
     .app-nav-label,
     .app-nav-chevron,
-    .app-nav-sublist,
-    .brand-logo-text {
+    .app-nav-sublist {
       display: none;
     }
 
@@ -76,8 +75,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: $space-2;
-  padding: 0 $space-3 0 $space-4;
+  gap: $space-1;
+  padding: 0 $space-2 0 $space-4;
+}
+
+// Menu (hamburger) buttons: the navy of the logo, as in the frames. Specificity above the global text-button rule.
+[data-theme] .app-sidebar-toggle.p-button.p-button-text.p-button-secondary,
+[data-theme] .app-topbar-menu.p-button.p-button-text.p-button-secondary {
+  color: var(--color-menu-icon);
 }
 
 // Collapse toggle lives in the sidebar head on desktop only; the drawer has a close button instead
@@ -95,12 +100,12 @@
   }
 }
 
-// ---- Brand logo ("TalkingClub") ----------------------------------------------------------------
+// ---- Brand logo: the TalkingClub logo image (three-ring mark + wordmark), see BrandLogo.tsx --------
 .brand-logo {
   display: inline-flex;
   align-items: center;
-  gap: $space-2;
-  color: var(--color-text);
+  flex: 0 0 auto;
+  border-radius: $radius-xs;
   text-decoration: none;
 
   &:hover {
@@ -108,41 +113,26 @@
   }
 }
 
-.brand-logo-mark {
-  width: $logo-mark-size;
-  height: $logo-mark-size;
-  flex: 0 0 auto;
-}
-
-.brand-logo-ring-a {
-  stroke: var(--color-logo-ring);
-}
-
-.brand-logo-ring-b {
-  stroke: var(--color-brand);
-}
-
-.brand-logo-text {
-  font-size: $font-size-lg;
-  font-weight: $font-weight-bold;
-  letter-spacing: -0.01em;
-  color: var(--color-text-secondary);
-}
-
-.brand-logo-suffix {
+// One image for screen readers ("TalkingClub"); height from the token, width follows the artwork (158 : 30)
+.brand-logo-image {
   display: inline-flex;
-  align-items: center;
-  gap: $space-2;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-bold;
-  color: var(--color-text);
+  align-items: stretch;
+  height: $logo-height;
+  // The wordmark is drawn with currentColor: the logo's own grey on light, a light grey on dark
+  color: var(--color-logo-text);
+}
 
-  &::before {
-    content: '';
-    width: $border-width;
-    height: $space-3;
-    background: var(--color-border-strong);
-  }
+.brand-logo-mark,
+.brand-logo-wordmark {
+  display: block;
+  flex: 0 0 auto;
+  width: auto;
+  height: 100%;
+}
+
+// Dark surface: the navy ring of the image would disappear, so the mark is lightened (same hues)
+[data-theme='dark'] .brand-logo-mark {
+  filter: $logo-mark-dark-filter;
 }
 
 // ---- Navigation --------------------------------------------------------------------------------
@@ -167,7 +157,7 @@
   padding: $space-2 $space-4;
   border: 0;
   background: transparent;
-  color: var(--color-text);
+  color: var(--color-nav-text);
   font: inherit;
   font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
@@ -187,7 +177,7 @@
   .app-nav-icon {
     flex: 0 0 auto;
     font-size: $icon-size-md;
-    color: var(--color-text-secondary);
+    color: var(--color-nav-text);
   }
 
   .app-nav-label {
@@ -198,7 +188,7 @@
   .app-nav-chevron {
     flex: 0 0 auto;
     font-size: $font-size-xs;
-    color: var(--color-text-secondary);
+    color: var(--color-nav-text);
   }
 }
 
@@ -237,7 +227,7 @@
   align-items: center;
   min-height: $touch-target;
   padding: $space-2 $space-4 $space-2 $space-10;
-  color: var(--color-text-secondary);
+  color: var(--color-nav-text);
   font-size: $font-size-sm;
   line-height: $line-height-tight;
   text-decoration: none;
@@ -263,13 +253,14 @@
   }
 }
 
+// Current page (design: Gray 10 row, brand-colour label)
 .app-nav-sublink-active {
-  background: var(--color-primary-soft);
+  background: var(--color-nav-active);
   color: var(--color-primary);
   font-weight: $font-weight-semibold;
 
   &:hover {
-    background: var(--color-primary-soft);
+    background: var(--color-nav-active);
   }
 }
 
@@ -334,7 +325,7 @@
   }
 }
 
-// Brand next to the hamburger when the sidebar is hidden
+// Brand next to the hamburger when the sidebar is hidden; phones show the mark alone (the name is still read out)
 .app-topbar-brand {
   display: none;
 
@@ -343,7 +334,11 @@
   }
 
   @include upto('xs') {
-    .brand-logo-text {
+    .brand-logo-image {
+      height: $logo-height-sm;
+    }
+
+    .brand-logo-wordmark {
       display: none;
     }
   }

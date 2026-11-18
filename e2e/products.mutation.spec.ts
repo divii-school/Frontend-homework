@@ -147,7 +147,10 @@ test.describe("Product register → list → edit → delete (shared QA DB)", { 
     await page.locator(".p-confirm-dialog").getByRole("button", { name: "삭제" }).click();
 
     await expect(rowCheckbox).toHaveCount(0, { timeout: 30_000 });
-    await expect.poll(async () => (await findOwnProducts(page.request, RUN_NAME)).length).toBe(0);
+    // The shared QA API sometimes needs more than the default 5 s before its list no longer returns the deleted
+    // product (seen on 18 Nov; the row was already gone from the screen and the product was deleted). Same check,
+    // longer wait for the server.
+    await expect.poll(async () => (await findOwnProducts(page.request, RUN_NAME)).length, { timeout: 30_000 }).toBe(0);
     productId = null;
   });
 });

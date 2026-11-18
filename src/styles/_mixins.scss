@@ -39,6 +39,24 @@
   outline-offset: $focus-ring-offset;
 }
 
+// Underline-only field (design 8.1.0 search, 8.1.1 / 8.1.2 form, 1.1.0 login): no box, one line under the value.
+@mixin underline-field {
+  padding-left: 0;
+  background: transparent;
+  border: 0;
+  border-bottom: $border-width solid var(--color-border-strong);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+// Its focus state: the line turns to the brand colour and gets twice as thick. The second pixel is a shadow
+// under the border, so the field keeps its height and nothing below it moves.
+@mixin underline-field-focus {
+  outline: none;
+  border-bottom-color: var(--color-focus-ring);
+  box-shadow: 0 $border-width 0 0 var(--color-focus-ring);
+}
+
 // Keeps text on one line and cuts it with an ellipsis.
 @mixin truncate {
   overflow: hidden;

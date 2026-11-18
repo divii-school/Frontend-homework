@@ -186,8 +186,8 @@ export default function CategoryNode({ node, siblings, index, tree }: CategoryNo
               icon={busy ? "pi pi-spin pi-spinner" : "pi pi-trash"}
               text
               rounded
-              severity="danger"
-              className="category-icon-button"
+              severity="secondary"
+              className="category-icon-button category-delete-button"
               aria-label={`${label} 삭제`}
               disabled={busy}
               onClick={() => tree.onDelete(node)}

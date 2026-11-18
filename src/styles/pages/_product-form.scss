@@ -119,10 +119,11 @@ $busy-opacity: 0.6;                    // uploading thumbnail / refreshing optio
     color: var(--color-success);
   }
 
+  // Text on the soft danger fill uses the strong danger colour (Danger 110), so it stays readable
   .product-stepper-item-error & {
     background: var(--color-danger-soft);
     border-color: var(--color-danger);
-    color: var(--color-danger);
+    color: var(--color-danger-strong);
   }
 }
 
@@ -185,7 +186,7 @@ $busy-opacity: 0.6;                    // uploading thumbnail / refreshing optio
 .product-form-alert {
   margin-bottom: $space-4;
   background: var(--color-danger-soft);
-  color: var(--color-danger);
+  color: var(--color-danger-strong);
 
   > div {
     flex: 1 1 0;
@@ -265,16 +266,17 @@ $busy-opacity: 0.6;                    // uploading thumbnail / refreshing optio
   grid-column: 1 / -1;
 }
 
+// Field label (design 8.1.1: Bold 14, Gray 100) + the required mark (Danger 110)
 .product-form-label {
   margin: 0;
   font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  color: var(--color-text);
+  font-weight: $font-weight-bold;
+  color: var(--color-text-muted);
 }
 
 .product-form-required {
   margin-left: $space-1;
-  color: var(--color-danger);
+  color: var(--color-danger-strong);
 }
 
 // Input + button / unit on one line (product code + Regenerate, quantity + "pcs")
@@ -299,8 +301,10 @@ $busy-opacity: 0.6;                    // uploading thumbnail / refreshing optio
   color: var(--color-text-secondary);
 }
 
+// Read-only values (product code, ERP code, a locked category): underline like the other fields
+// (.field-underline in globals.scss); the dashed line tells them apart from a field you can type in.
 [data-theme] .product-form-field .p-inputtext[readonly] {
-  background: var(--color-surface-alt);
+  border-bottom-style: dashed;
   color: var(--color-text-secondary);
 }
 
@@ -473,7 +477,7 @@ $busy-opacity: 0.6;                    // uploading thumbnail / refreshing optio
 .image-upload-rejected {
   padding: $space-3 $space-4 $space-3 $space-8;
   font-size: $font-size-sm;
-  color: var(--color-danger);
+  color: var(--color-danger-strong);
   background: var(--color-danger-soft);
   border-radius: $radius-md;
 

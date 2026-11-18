@@ -105,6 +105,21 @@ export async function injectSession(context: BrowserContext, baseURL: string, op
   );
 }
 
+/**
+ * The colour of a design token (`--color-<name>`, src/styles/_tokens.scss) as the browser resolves it for the
+ * theme of the page, in the same "rgb(r, g, b)" form as getComputedStyle / toHaveCSS.
+ */
+export async function tokenColor(page: Page, name: string): Promise<string> {
+  return page.evaluate((token) => {
+    const probe = document.createElement("span");
+    probe.style.color = `var(--color-${token})`;
+    document.body.appendChild(probe);
+    const color = getComputedStyle(probe).color;
+    probe.remove();
+    return color;
+  }, name);
+}
+
 /** Answers every call to the API with an empty success envelope, so role tests never hit the QA server. */
 export async function mockApi(page: Page): Promise<void> {
   const base = process.env.NEXT_PUBLIC_API_BASE_URL;

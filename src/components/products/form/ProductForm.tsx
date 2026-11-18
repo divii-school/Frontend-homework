@@ -349,7 +349,7 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
           </p>
         )}
 
-        <form ref={formRef} className="product-form" noValidate onSubmit={onFormSubmit}>
+        <form ref={formRef} className="product-form field-underline" noValidate onSubmit={onFormSubmit}>
           {/* Step 1 — Basic info */}
           <section data-step={1} hidden={step !== 1} className="product-form-step" aria-labelledby="product-step-1-title">
             <h2 id="product-step-1-title" className="product-form-step-title" tabIndex={-1}>

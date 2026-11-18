@@ -3,8 +3,12 @@
 // =====================================================================================
 // Design tokens — the ONLY file where a colour, size or breakpoint value is written down.
 //
-// Source: Talking Club admin Figma (file 4wQgaju5jbb5BNRCeNmGZ0) — login 1.1.0, product list
-// 8.1.0, category 8.2.0. The design has no dark frames, so every dark colour below is ours.
+// Source: Talking Club admin Figma (file 4wQgaju5jbb5BNRCeNmGZ0), Korean frames 1.1.0 login (4019:78451),
+// 8.1.0 product list (8010:59065), 8.1.1 registration (8010:57833), 8.1.2 edit (5498:84860), 8.2.0 category
+// (5498:84158). The frames use the paint styles of the WM library (Grayscale/Gray 130, Primary/Primary 80 …):
+// every light value below is the hex of that style, and the comment starts with the style name.
+// "frame fill" = the frame uses this hex without a style. "kept" = the frames give no value for the role.
+// The design has no dark frames, so every dark colour below is ours.
 //
 // 1. Palette — raw colours, named colour + code (WM rule): `$red-b1`, `$gray-b3` …
 //    "b" codes are the light (day) palette, "n" codes the dark (night) palette.
@@ -15,35 +19,40 @@
 //    Components only use `var(--color-*)`.
 // =====================================================================================
 
-// ---- 1a. Palette — light (day) ---------------------------------------------------------
-$red-b1: #ee2e5d;    // brand pink-red (design Register button / active menu) — decorative use only
-$red-b2: #d41f4e;    // primary action: #ee2e5d is 4.05:1 on white, this is 5.1:1 (WCAG AA)
-$red-b3: #b3173f;    // primary hover / pressed
-$red-b4: #fdeef2;    // table header row, active menu background (light pink)
-$red-b5: #c81e1e;    // danger text / invalid field
-$red-b6: #fdecec;    // danger background
-$purple-b1: #7b3ff2; // "+ subcategory" pill (5.5:1 with white)
-$purple-b2: #f1eafe; // purple soft background
-$gray-b1: #1f2024;   // text
-$gray-b2: #4f535b;   // secondary text
-$gray-b3: #6b7079;   // muted text / placeholder (4.9:1 on white)
-$gray-b4: #e4e5e8;   // border
-$gray-b5: #c4c6cc;   // strong border / input underline
-$gray-b6: #f6f6f8;   // page background, hover row
-$gray-b7: #ffffff;   // surface (cards, sidebar, topbar)
-$gray-b8: #eeeff2;   // thumbnail placeholder, skeleton, sunken fill
-$gray-b9: #d9d9dc;   // disabled button background (login "Login" before input)
-$green-b1: #15803d;  // success text
-$green-b2: #e6f6ec;  // success background
-$yellow-b1: #a15c07; // warning text
-$yellow-b2: #fdf3dc; // warning background
-$blue-b1: #1d5fd0;   // info text / focus ring
-$blue-b2: #e8f0fd;   // info background
-$navy-b1: #2b2d7c;   // logo ring (navy)
-$shade-b1: rgba(17, 18, 24, 0.45);  // modal / drawer backdrop
-$shade-b2: rgba(17, 18, 24, 0.08);  // card shadow
+// ---- 1a. Palette — light (day): Figma style name, then the role -----------------------------
+$red-b1: #ef325b;    // Talking Club/Talking Club — brand: primary button, active menu, links, focus ring (3.98:1 with white)
+$red-b3: #ac0c18;    // Primary/Primary 110 — primary hover / pressed (buttons "status=Hover")
+$red-b4: #fff1f3;    // Primary/Primary 80 — table header row, soft primary fill (selected row, 파일추가)
+$red-b5: #e66565;    // Danger/Danger 100 — error message, invalid field line, danger outline button (3.28:1 on white)
+$red-b6: #ffdcdc;    // Danger/Danger 90 — danger hover fill ("Danger outline, status=Hover")
+$red-b7: #a92e2e;    // Danger/Danger 110 — required mark (*), filled danger button
+$purple-b1: #7c3aed; // frame fill 8.2.0 — "+ 소분류" button (5.7:1 with white)
+$purple-b2: #f1eafe; // kept — purple soft background (level badge)
+$gray-b1: #181818;   // Grayscale/Gray 130 — text
+$gray-b2: #505050;   // Grayscale/Gray 110 — secondary text (table header text, outlined button label)
+$gray-b3: #737373;   // Grayscale/Gray 100 — muted text (breadcrumb, field label, caption; 4.74:1 on white)
+$gray-b4: #eaeaea;   // Grayscale/Background 100 — border (card, topbar, table rows)
+$gray-b5: #d9d9d9;   // Grayscale/Gray 80 — strong border, input underline, disabled button fill
+$gray-b6: #f7f7f7;   // Grayscale/Background 90 — hover fill, disabled field fill
+$gray-b7: #ffffff;   // White/White off — page, cards, sidebar, topbar
+$gray-b8: #f3f4f6;   // frame fill 8.1.0 — thumbnail placeholder; also skeleton, sunken fill
+$gray-b9: #afafaf;   // Grayscale/Gray 90 — placeholder text, field icons (2.19:1 on white)
+$gray-b10: #fafafa;  // Gray 10 — active sub-menu row
+$gray-b11: #99a1af;  // frame stroke 8.2.0 — pencil / trash icons of a category row (2.6:1 on white)
+$gray-b12: #f5f7fa;  // frame fill 8.2.0 — band of a top-level category row
+$gray-b13: #595757;  // wordmark grey of the TalkingClub logo image (read from the logo file)
+$green-b1: #15803d;  // kept — success text
+$green-b2: #e6f6ec;  // kept — success background
+$yellow-b1: #a15c07; // kept — warning text
+$yellow-b2: #fdf3dc; // kept — warning background
+$blue-b1: #1d5fd0;   // kept — info text
+$blue-b2: #e8f0fd;   // kept — info background
+$navy-b1: #2d2f8e;   // Talking Club/Talking Club (navy) — menu (hamburger) icon
+$navy-b2: #293241;   // icons & buttons — sidebar menu label + icon
+$shade-b1: rgba(17, 18, 24, 0.45);  // kept — modal / drawer backdrop
+$shade-b2: rgba(17, 18, 24, 0.08);  // kept — card shadow
 
-// ---- 1b. Palette — dark (night), 1:1 with the light roles below --------------------------
+// ---- 1b. Palette — dark (night). Not in Figma; unchanged, each role keeps its dark partner ------
 $red-n1: #ff6b8e;
 $red-n2: #ff5c85;    // primary on dark (6.1:1 on $gray-n7, dark label 6.6:1)
 $red-n3: #ff8aa7;
@@ -74,24 +83,26 @@ $shade-n2: rgba(0, 0, 0, 0.4);
 // ---- 2. Theme map: semantic role → (light, dark) ------------------------------------------
 // Adding a colour = one new line here with BOTH values. Nothing else.
 $theme-colors: (
-  'bg': ($gray-b6, $gray-n6),                         // page background
+  'bg': ($gray-b7, $gray-n6),                         // page background (Figma: white page, bordered cards)
   'surface': ($gray-b7, $gray-n7),                    // cards, sidebar, topbar, dialogs
-  'surface-alt': ($gray-b6, $gray-n8),                // hover rows, subtle fills
+  'surface-alt': ($gray-b6, $gray-n8),                // hover rows, subtle fills, disabled fields
   'surface-sunken': ($gray-b8, $gray-n8),             // thumbnail placeholder, skeleton
   'border': ($gray-b4, $gray-n4),
   'border-strong': ($gray-b5, $gray-n5),              // input underline, outlined buttons
   'text': ($gray-b1, $gray-n1),
   'text-secondary': ($gray-b2, $gray-n2),
-  'text-muted': ($gray-b3, $gray-n3),                 // placeholder, captions
+  'text-muted': ($gray-b3, $gray-n3),                 // captions, labels, breadcrumb
+  'text-placeholder': ($gray-b9, $gray-n3),           // placeholder inside a field, field icons
   'text-inverse': ($gray-b7, $gray-n6),               // label on a primary / purple fill
-  'brand': ($red-b1, $red-n1),                        // logo, decorative dots
-  'primary': ($red-b2, $red-n2),                      // primary buttons, active menu, links
+  'brand': ($red-b1, $red-n1),                        // decorative dots
+  'primary': ($red-b1, $red-n2),                      // primary buttons, active menu, links
   'primary-hover': ($red-b3, $red-n3),
-  'primary-soft': ($red-b4, $red-n4),                 // active menu background
+  'primary-soft': ($red-b4, $red-n4),                 // selected row, selection bar, 파일추가
   'table-head': ($red-b4, $red-n4),                   // table header row (design: light pink)
   'accent-purple': ($purple-b1, $purple-n1),          // "+ subcategory" pill
   'accent-purple-soft': ($purple-b2, $purple-n2),
-  'danger': ($red-b5, $red-n5),
+  'danger': ($red-b5, $red-n5),                       // error message, invalid field, danger outline
+  'danger-strong': ($red-b7, $red-n5),                // required mark, filled danger button
   'danger-soft': ($red-b6, $red-n6),
   'success': ($green-b1, $green-n1),
   'success-soft': ($green-b2, $green-n2),
@@ -99,10 +110,15 @@ $theme-colors: (
   'warning-soft': ($yellow-b2, $yellow-n2),
   'info': ($blue-b1, $blue-n1),
   'info-soft': ($blue-b2, $blue-n2),
-  'focus-ring': ($blue-b1, $blue-n1),                 // keyboard focus outline (3:1+ on both surfaces)
-  'disabled-bg': ($gray-b9, $gray-n9),
+  'focus-ring': ($red-b1, $red-n2),                   // keyboard focus outline = brand colour (3:1+ on both surfaces)
+  'disabled-bg': ($gray-b5, $gray-n9),                // every disabled button: grey fill, white label (Figma "status=Disabled")
   'disabled-text': ($gray-b7, $gray-n3),
-  'logo-ring': ($navy-b1, $navy-n1),
+  'nav-text': ($navy-b2, $gray-n1),                   // sidebar menu label + icon
+  'nav-active': ($gray-b10, $gray-n8),                // active sub-menu row
+  'menu-icon': ($navy-b1, $navy-n1),                  // hamburger (menu) button
+  'icon-muted': ($gray-b11, $gray-n3),                // row icons of the category tree (pencil, trash)
+  'tree-band': ($gray-b12, $gray-n8),                 // top-level row of the category tree
+  'logo-text': ($gray-b13, $gray-n1),                 // wordmark of the logo (the rings keep the colours of the image)
   'overlay': ($shade-b1, $shade-n1),                  // drawer / dialog backdrop
   'shadow': ($shade-b2, $shade-n2),
 );
@@ -120,9 +136,11 @@ $space-12: 48px;
 $space-16: 64px;
 
 // ---- Typography ------------------------------------------------------------------------
-// 'Inter var' ships with the PrimeReact Lara theme (public/themes/*/fonts) — no network font.
-$font-family-base: 'Inter var', 'Inter', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-  'Apple SD Gothic Neo', 'Malgun Gothic', Roboto, 'Helvetica Neue', Arial, sans-serif;
+// Pretendard is the font of the Figma frames. It is self-hosted with next/font/local (src/app/layout.tsx →
+// src/fonts/PretendardVariable.woff2) and reaches CSS as var(--font-pretendard); the names after it are only
+// fallbacks while the file loads. No CDN <link>, no 'Inter var' in front of it.
+$font-family-base: var(--font-pretendard), 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont,
+  'Apple SD Gothic Neo', 'Malgun Gothic', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 $font-size-xs: 12px;
 $font-size-sm: 14px;
 $font-size-md: 15px;
@@ -160,7 +178,9 @@ $touch-target: 44px;        // minimum tap size on phones
 $icon-size-sm: 16px;
 $icon-size-md: 20px;
 $icon-size-lg: 40px;        // empty / error state icon
-$logo-mark-size: 32px;
+$logo-height: 30px;         // Figma: logo 158 x 30 on the header and on the login card
+$logo-height-sm: 24px;      // logo mark in the topbar of a phone
+$logo-mark-dark-filter: brightness(1.45); // dark mode only: lifts the navy ring of the logo image off the dark surface
 $topbar-user-max-width: 200px;
 $topbar-user-max-width-xs: 96px;
 $login-card-width: 460px;

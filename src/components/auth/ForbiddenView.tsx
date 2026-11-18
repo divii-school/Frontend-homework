@@ -24,7 +24,7 @@ export default function ForbiddenView() {
   return (
     <section className="error-page-card" aria-label="권한 없음">
       <div className="error-page-brand">
-        <BrandLogo suffix="관리자" />
+        <BrandLogo />
       </div>
       <ErrorState
         variant="forbidden"

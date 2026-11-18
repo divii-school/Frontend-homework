@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { injectSession, mockApi } from "./helpers";
+import { injectSession, mockApi, tokenColor } from "./helpers";
 import {
   FAILED_RESOURCE,
   fulfillJson,
@@ -352,6 +352,46 @@ test.describe("Category tree interactions (mocked API)", () => {
       }
     });
   }
+
+  test("375px: every row is one line — [code] and name together, the buttons beside them; row icons are grey", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await mockCategoryApi(page);
+    await page.goto(PAGE_URL);
+    await expect(nodeRow(page, "childCategory", 536)).toBeVisible();
+
+    for (const [level, id] of [
+      ["category", 67],
+      ["subCategory", 72],
+      ["childCategory", 536],
+    ] as const) {
+      const row = await nodeRow(page, level, id).evaluate((element) => {
+        const box = (selector: string) => (element.querySelector(selector) as Element).getBoundingClientRect();
+        const firstLine = (selector: string) => (element.querySelector(selector) as Element).getClientRects()[0];
+        return {
+          codeTop: firstLine(".category-id").top,
+          codeRight: firstLine(".category-id").right,
+          nameTop: firstLine(".category-name").top,
+          nameLeft: firstLine(".category-name").left,
+          titleRight: box(".category-title").right,
+          titleBottom: box(".category-title").bottom,
+          actionsLeft: box(".category-actions").left,
+          actionsTop: box(".category-actions").top,
+        };
+      });
+      // The name starts on the line of its [code], right after it (it used to drop to the next line)
+      expect(Math.abs(row.nameTop - row.codeTop), `${level} ${id}: code and name on one line`).toBeLessThan(4);
+      expect(row.nameLeft, `${level} ${id}: name after the code`).toBeGreaterThanOrEqual(row.codeRight);
+      // The buttons are to the right of the name block, never under it
+      expect(row.actionsLeft, `${level} ${id}: buttons beside the name`).toBeGreaterThanOrEqual(row.titleRight - 1);
+      expect(row.actionsTop, `${level} ${id}: buttons not under the name`).toBeLessThan(row.titleBottom);
+    }
+
+    // Pencil and trash are grey (design 8.2.0), not the danger red
+    const grey = await tokenColor(page, "icon-muted");
+    expect(grey).not.toBe(await tokenColor(page, "danger"));
+    await expect(page.getByRole("button", { name: "[536] ACE Alphabet 삭제" })).toHaveCSS("color", grey);
+    await expect(page.getByRole("button", { name: "[536] ACE Alphabet 수정" })).toHaveCSS("color", grey);
+  });
 });
 
 // The steps of the live specs (categories.flows.ts) against the in-memory API, so they are proven

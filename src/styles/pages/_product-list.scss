@@ -11,8 +11,10 @@ $product-thumb-width: $space-16;                    // 64px  (design thumbnail 6
 $product-thumb-height: $space-16 + $space-4;        // 80px
 $product-table-min-width: $space-16 * 14;           // 896px — below this the table scrolls in its box
 $product-search-max-width: $space-16 * 7;           // 448px (design search field)
-$product-search-type-width: $space-16 * 2 + $space-8; // 160px
+$product-search-type-width: $space-16 * 2 + $space-2; // 136px (design search type)
+$product-search-type-width-phone: $space-16 + $space-10; // 104px
 $product-select-compact-height: $control-height - $space-2; // 32px (design "Yes ⌄" in a row)
+$product-filter-count-size: $space-5;               // 20px pill with the number of active filters
 $product-busy-opacity: 0.6;
 
 // ---- Screen layout ------------------------------------------------------------------------
@@ -67,11 +69,26 @@ $product-busy-opacity: 0.6;
   pointer-events: none;
 }
 
+// Only the row status select is compact (design: a small "예 ⌄" inside the row). The rows-per-page select is a
+// normal 40px control, the same height as the buttons next to it.
 .product-select-compact select {
   min-height: $product-select-compact-height;
 
   @include upto('sm') {
     min-height: $touch-target;
+  }
+}
+
+// Underline-only select (design 8.1.0 search type): no box, a line under the value; focus = brand-colour line
+.product-select-underline select {
+  @include underline-field;
+
+  &:hover:not(:disabled) {
+    border-bottom-color: var(--color-text-muted);
+  }
+
+  &:focus-visible {
+    @include underline-field-focus;
   }
 }
 
@@ -84,15 +101,20 @@ $product-busy-opacity: 0.6;
   border-bottom: $border-width solid var(--color-border);
 }
 
+// One line at every width: search type + search term (design 8.1.0: two underline fields side by side)
 .product-search {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: $space-2;
+  min-width: 0;
 }
 
 .product-search-type {
   flex: 0 0 $product-search-type-width;
+
+  @include upto('xs-sm') {
+    flex-basis: $product-search-type-width-phone;
+  }
 }
 
 .product-search-field {
@@ -117,10 +139,75 @@ $product-busy-opacity: 0.6;
 }
 
 @include upto('xs-sm') {
-  .product-search-type,
   .product-search-field {
-    flex: 1 1 100%;
+    flex: 1 1 0;
     max-width: none;
+  }
+}
+
+// "필터" button: phones / tablets only (≤ 768px, where the list is cards). It opens the filter block below.
+.product-filter-toggle {
+  display: none;
+
+  @include upto('sm') {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    gap: $space-2;
+    min-height: $touch-target;
+    padding: 0 $space-3;
+    font: inherit;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: var(--color-text-secondary);
+    background: var(--color-surface);
+    border: $border-width solid var(--color-border-strong);
+    border-radius: $radius-sm;
+    cursor: pointer;
+
+    &:hover,
+    &[aria-expanded='true'] {
+      background: var(--color-surface-alt);
+      border-color: var(--color-text-muted);
+      color: var(--color-text);
+    }
+  }
+}
+
+.product-filter-toggle-chevron {
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+}
+
+// Number of active filters on the button (still shown while the block is closed)
+.product-filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: $product-filter-count-size;
+  height: $product-filter-count-size;
+  padding: 0 $space-1;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  color: var(--color-surface);
+  background: var(--color-text-secondary);
+  border-radius: $radius-pill;
+}
+
+// The filter block: always shown on wide screens; ≤ 768px only while the "필터" button is open
+.product-filter-panel {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  min-width: 0;
+
+  @include upto('sm') {
+    display: none;
+
+    &.is-open {
+      display: flex;
+    }
   }
 }
 
@@ -133,9 +220,13 @@ $product-busy-opacity: 0.6;
   @include upto('md') {
     grid-template-columns: repeat(2, minmax(0, 1fr));
 
-    .product-filters-reset {
+    // On its own line the text button starts at the left edge of the fields above it (no indent):
+    // the padding that holds its hover fill is taken back with a negative margin.
+    .product-filters-reset.p-button {
       grid-column: 1 / -1;
       justify-self: start;
+      margin-left: -$space-2;
+      padding: 0 $space-2;
     }
   }
 
@@ -263,8 +354,10 @@ $product-busy-opacity: 0.6;
     border-bottom: $border-width solid var(--color-border);
   }
 
+  // Header row (design: Primary 80 fill, Bold 14, Gray 110)
   thead th {
-    font-weight: $font-weight-semibold;
+    font-weight: $font-weight-bold;
+    color: var(--color-text-secondary);
     white-space: nowrap;
     background: var(--color-table-head);
   }

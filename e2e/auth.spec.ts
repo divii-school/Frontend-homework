@@ -25,6 +25,29 @@ test.describe("Login page (no API)", () => {
     await expect(form.submit).toBeDisabled();
   });
 
+  test("the logo is the TalkingClub image, alone as in frame 1.1.0; the page heading stays for screen readers", async ({ page }) => {
+    await page.goto("/login");
+    const logo = page.getByRole("img", { name: "TalkingClub" });
+    await expect(logo).toBeVisible();
+    // The mark and the wordmark both come from the logo file (not text, not a drawn copy)
+    await expect(logo.locator("image").first()).toHaveAttribute("href", "/brand/talkingclub-logo.png");
+    const file = await page.evaluate(async (src) => {
+      const image = new Image();
+      image.src = src;
+      await image.decode();
+      return { width: image.naturalWidth, height: image.naturalHeight };
+    }, "/brand/talkingclub-logo.png");
+    expect(file).toEqual({ width: 512, height: 107 });
+    const box = await logo.boundingBox();
+    expect(Math.round(box?.width ?? 0)).toBe(158); // Figma: 158 x 30
+    expect(Math.round(box?.height ?? 0)).toBe(30);
+
+    // No visible text beside the logo ("관리자" was removed); the name of the page is still there for screen readers
+    await expect(page.locator(".login-brand")).toHaveText("");
+    await expect(page.getByRole("heading", { name: "토킹클럽 관리자 로그인" })).toBeAttached();
+    await expect(page).toHaveTitle(/토킹클럽 관리자$/);
+  });
+
   test("touched empty fields show validation messages", async ({ page }) => {
     await page.goto("/login");
     const form = loginForm(page);
