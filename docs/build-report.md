@@ -44,6 +44,18 @@ Code review of 18 Nov 2026 (Kakali, PR #4):
 | 5 | A comma in an image file name broke the images after saving | Commas are removed from the name before the upload. |
 | 6 | The upload route could crash with a 500 | An unreadable form answers 400 `invalidRequest`; no answer, an unexpected answer or a storage refusal answers 502 `uploadFailed`, always as JSON. |
 
+Design fixes of 18 Nov (Figma frames 8.1.0, 8.1.1, 8.1.2 and 8.2.0, compared screen by screen):
+
+| Screen | Fix |
+|---|---|
+| Login | A wrong ID or password opens an alert closed with 확인, with the two texts of the frame. |
+| Product list | Search runs on Enter or the magnifier; "검색 결과가 없습니다." for a search without result; small grey 삭제 button; header 선택 without select-all; a toast when 노출여부 is saved; "총 게시물 : n" at the far right. |
+| Product create / edit | 취소 asks "입력하신 내용이 전부 삭제됩니다. 취소하시겠습니까?" (예 / 아니오); 상품명 at most 100 characters; 비과세*, 노출상태* and 판매상태* are required dropdowns; the category is three lists (대분류 / 중분류 / 소분류) under one 카테고리* label; underlined fields, grey labels, one 630px column, 취소 and 등록 centred. |
+| Product edit | 저장 in the page heading, saving from any step; the category is read-only with "등록 후 변경 불가". |
+| Category | Search on Enter; 모두 펼치기 / 모두 접기 right after the search box; violet "+ 중분류 / + 소분류" buttons; pencil and trash in one grey. |
+
+Not changed on purpose: the four form steps (Q3, Q16), the list's 노출여부 switch (Q11, Q15), WM formats for money and dates (Q5), dark mode (Q2), fields the API does not have (Q17), the full admin menu (Q14).
+
 ## 5. Test accounts
 
 The QA admin account sent by DM (role SUPER_ADMIN). No other role exists on the QA server, so limited roles
@@ -62,12 +74,12 @@ Two of my 중분류 stay on the server under 대분류 **학원 Shop**:
 
 1. Login: empty fields, an ID that does not exist, a wrong password (alert with 확인), correct login, 자동 로그인.
 2. Open `/products?page=2` while signed out, log in, and check you land on page 2.
-3. Product list: search, change the search type, category filter, sort by 상품명 / 판매금액 / 등록일자, page and page size. Refresh after each and check nothing is lost.
+3. Product list: search (press Enter or click the magnifier), change the search type, category filter, sort by 상품명 / 판매금액 / 등록일자, page and page size. Refresh after each and check nothing is lost.
 4. Select rows → 삭제 → the dialog lists the names → cancel. (Delete only your own records.)
 5. 내보내기 with a search applied: the CSV has only the filtered rows.
-6. 등록: go through the four steps; press 다음 with empty fields; go back and check the values are kept; upload a wrong file type, a file over 4 MB, then a valid image; remove it; save.
+6. 등록: go through the four steps; press 다음 with empty fields (비과세, 노출상태 and 판매상태 must be chosen); go back and check the values are kept; upload a wrong file type, a file over 4 MB, then a valid image; remove it; press 취소 and answer 아니오; save.
 7. Open the product → tabs 기본 정보 / 카테고리 / 같은 카테고리 상품; refresh on a tab.
-8. 수정: change only the name and save: the price stays as it was. Then change 수량 and check that 판매가 becomes 수량 × 단가.
+8. 수정: change only the name and press 저장 at the top (from step 1): the price stays as it was. The category is read-only. Then change 수량 and check that 판매가 becomes 수량 × 단가.
 9. Categories: search, sort, open and close rows, add a 중분류 and a 소분류 under a 대분류, rename, delete with confirm.
 10. Dark mode switch on every screen; refresh keeps it.
 11. Sizes 1440 / 768 / 375: no sideways page scroll; the table scrolls inside its own box; below 991px the menu opens from the ☰ button.
@@ -100,16 +112,16 @@ The screen still shows a Korean message and never crashes.
 3. The description is plain text, not rich text. Category reordering by drag is not built (A14).
 4. Not run yet: real Safari and a real phone. Safari's engine (WebKit) and the phone width (375) were run in Playwright.
 
-## 9. Results (18 Nov 2026 after the code-review fixes, production build on my machine, QA API; the Vercel rows are from 17 Nov)
+## 9. Results (18 Nov 2026 after the code-review and design fixes, production build on my machine, QA API; the Vercel rows are from 17 Nov)
 
 | Check | Command | Result |
 |---|---|---|
 | Lint | `npm run lint` | Pass: 0 errors, 0 warnings |
 | Type-check | `npx tsc --noEmit` | Pass: 0 errors |
-| Unit tests | `npm run test:unit` | 22 passed, 0 failed |
+| Unit tests | `npm run test:unit` | 23 passed, 0 failed |
 | Build | `npm run build` | Pass: 7 pages, 1 route handler, middleware |
-| Playwright read-only, Chromium | `npm run test:e2e` | 46 passed, 0 failed (login setup + 45 tests), none needed a retry |
-| Playwright read-only, WebKit | `npm run test:e2e:webkit` | 46 passed, 0 failed |
+| Playwright read-only, Chromium | `npm run test:e2e` | 47 passed, 0 failed (login setup + 46 tests), none needed a retry |
+| Playwright read-only, WebKit | `npm run test:e2e:webkit` | 47 passed, 0 failed |
 | Playwright create / edit / delete | `npm run test:e2e:mutation` | 7 passed, 0 failed (login setup + 6 tests) |
 | The same read-only tests on the dev server (17 Nov) | `npm run test:e2e` without `PLAYWRIGHT_BASE_URL` | 42 passed, 0 failed |
 | Write tests and screenshots without their scripts | `npx playwright test --project=mutation --project=screenshots` | all 16 skipped: nothing written |
@@ -134,9 +146,9 @@ The HTML report of the Chromium read-only run is `docs/playwright-report.zip`. W
 (no output: 0 errors)
 
 > npm run test:unit
- ✓ src/utils/rules.test.ts (22 tests)
+ ✓ src/utils/rules.test.ts (23 tests)
  Test Files  1 passed (1)
-      Tests  22 passed (22)
+      Tests  23 passed (23)
 
 > npm run build
  ✓ Compiled successfully
@@ -153,10 +165,10 @@ Route (app)
 ƒ Middleware
 
 > npm run test:e2e
-  46 passed
+  47 passed
 
 > npm run test:e2e:webkit
-  46 passed
+  47 passed
 
 > npm run test:e2e:mutation
   7 passed

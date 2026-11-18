@@ -20,6 +20,10 @@ The HW3 page asks to list these as questions; they are not design bugs.
 | Q11 | The live product list shows 노출여부 as a 예 / 아니오 dropdown in each row. | A switch in each row (one click, same API call). |
 | Q12 | Some labels of the live admin differ between screens or from standard spelling: 판매금액 (list) and 판매가 (form, details); 노출여부 (list) and 노출상태 (form, details); 총 게시물 above a product list; 아니오 (standard: 아니요); 썸네일 (standard: 섬네일); 파일추가, 상품코드, 상세설명 without a space. Keep them, or use one word per field and the standard spelling? | Kept exactly as in the live admin, so the screens match the design. |
 | Q13 | WM \| Error Message List has no wording yet (only a table header). Every Korean error and validation sentence in the app is mine (`src/constants/messages.ts`, `src/utils/product-rules.ts`). Can you confirm them or give the wording? | Short sentences in the polite style of the live admin, for example "상품명을 입력해 주세요." |
+| Q14 | The Figma frames show the full admin menu (대시보드 … 권한 관리, and 주문 배송 관리 / 적립금 관리 under 쇼핑몰 관리). | HW3 builds only 상품 관리 and 상품 카테고리 관리, so the menu shows only those two: a menu entry that leads nowhere would be a dead link. |
+| Q15 | The list frame shows 노출여부 as a 예 / 아니오 dropdown per row (Q11); the form frames show 노출상태* and 판매상태* as required dropdowns. | Form: two required 예 / 아니오 dropdowns that start empty, as drawn (18 Nov). List: the switch of Q11 stays (one click, saved at once, with a toast). |
+| Q16 | The edit frame (8.1.2) is one page with a single 저장 at the top; HW3 asks for a multi-step create/edit form (Q3). | Both: the four steps stay, and 저장 is in the page heading; it checks the whole form and saves from any step (18 Nov). |
+| Q17 | Frames 8.1.1 and 8.1.2 also show fields the API does not have: ERP 코드 search, 갯수 / 할인가격, 티켓유무, 배송비설정, 옵션 카테고리 and the 단권 옵션 popup (8.1.3). | Not built: the product API has no field for them (A8, A9). Please confirm whether they are in scope. |
 
 ## API questions (for the backend owner)
 
