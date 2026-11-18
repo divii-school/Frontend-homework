@@ -63,8 +63,10 @@ export function ProductsTable(props: ProductsTableProps) {
         onSelectionChange={(event: DataTableSelectionMultipleChangeEvent<Product[]>) => onSelect(event.value)}
         aria-label="상품 목록"
         aria-describedby="products-sort-hint"
+        // Design 8.1.0: the first header cell is the word 선택, with no select-all box.
+        showSelectAll={false}
       >
-        {selectable && <Column selectionMode="multiple" headerClassName="data-table-check" />}
+        {selectable && <Column selectionMode="multiple" header="선택" headerClassName="data-table-check" />}
         <Column
           header="썸네일"
           body={(product: Product) => <ProductThumbnail src={product.image} alt="" size={THUMBNAIL_SIZE} />}

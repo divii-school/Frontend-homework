@@ -157,10 +157,43 @@
   width: $search-width;
 }
 
+// A search field whose magnifier, at the right end, submits the search (Enter does too)
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .p-inputtext {
+    width: 100%;
+    padding-right: $space-10;
+  }
+}
+
+.search-box-button.p-button {
+  position: absolute;
+  right: 0;
+  width: $space-10;
+  height: 100%;
+  color: token("grey-b2");
+}
+
 .list-toolbar-count {
-  margin-right: $space-2;
+  margin-left: $space-2;
   color: token("black-b1");
   white-space: nowrap;
+}
+
+// Small grey outlined button (design 8.1.0: 삭제 above the product table)
+.button-small.p-button {
+  min-height: $space-8;
+  padding: 0 $space-4;
+  font-size: $font-size-sm;
+}
+
+.button-neutral.p-button.p-button-outlined {
+  border-color: token("grey-b1");
+  background: token("white-b1");
+  color: token("grey-b1");
 }
 
 // The table scrolls sideways inside this box; the page itself never does

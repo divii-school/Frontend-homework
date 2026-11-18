@@ -72,6 +72,10 @@ export function ProductsList() {
     setSavingIds((current) => new Set(current).add(product.id));
     setVisible
       .mutateAsync({ id: product.id, visible: !product.isVisible })
+      // Design 8.1.0: the change is saved at once and a toast confirms it.
+      .then(() =>
+        showToast({ severity: "success", summary: "저장 완료", detail: `${product.productName}: 노출여부를 변경했습니다.` }),
+      )
       .catch((error: ApiError) =>
         showToast({ severity: "error", summary: "저장 실패", detail: `${product.productName}: ${error.messages[0]}` }),
       )
@@ -137,7 +141,12 @@ export function ProductsList() {
         ) : list.isError ? (
           <ErrorState error={list.error} onRetry={() => list.refetch()} />
         ) : list.data.items.length === 0 ? (
-          <StateBlock kind="empty" title="조건에 맞는 상품이 없습니다." description="검색어나 필터를 바꿔 다시 찾아보세요." />
+          params.search || params.categoryId !== null ? (
+            // Design 8.1.0, rule 2: a search without a result says "검색 결과가 없습니다".
+            <StateBlock kind="empty" title="검색 결과가 없습니다." description="검색어나 필터를 바꿔 다시 찾아보세요." />
+          ) : (
+            <StateBlock kind="empty" title="등록된 상품이 없습니다." />
+          )
         ) : (
           <>
             <ProductsTable
