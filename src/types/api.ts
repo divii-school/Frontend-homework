@@ -20,10 +20,13 @@ export interface PagedResult<T> {
   page: number;
 }
 
-/** Error body: `message` is a key ("invalidPassword") or, for validation, a list of sentences. */
+/**
+ * Error body: `message` is a key ("invalidPassword"), a list of English validation sentences, or an object
+ * that names the field ({ loginId: "invalidCredentials" }).
+ */
 export interface ApiErrorBody {
   success: false;
-  message: string | string[];
+  message: string | string[] | Record<string, unknown>;
   statusCode: number;
 }
 

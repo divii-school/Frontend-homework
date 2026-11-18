@@ -1,9 +1,10 @@
 import axios, { AxiosError } from "axios";
 import { env } from "@/config/env";
 import { API_HEADERS, API_PREFIX, API_TIMEOUT_MS } from "@/constants/api";
-import { API_MESSAGES, MESSAGES } from "@/constants/messages";
+import { MESSAGES } from "@/constants/messages";
 import { ApiError, type ApiErrorBody, type ApiErrorKind } from "@/types/api";
 import { API_ENDPOINTS } from "@/utils/api-integration";
+import { koreanForKey, koreanForValidationList } from "@/utils/api-messages";
 import { clearSession, loginUrlFor, readToken } from "@/utils/session";
 
 /** One axios instance for the whole app. The base URL comes from the env variable, never from code. */
@@ -76,11 +77,19 @@ export function toApiError(error: unknown): ApiError {
     return new ApiError({ status, kind, code: null, messages: [kind === "server" ? MESSAGES.server : MESSAGES.unknown] });
   }
 
-  // Validation errors arrive as a list of sentences; everything else is one message key.
+  // Validation errors arrive as a list of English sentences; everything else is one message key.
+  // Both are turned into Korean (utils/api-messages.ts): no key and no English sentence reaches the screen.
   if (Array.isArray(body.message)) {
-    return new ApiError({ status, kind: "validation", code: null, messages: body.message });
+    return new ApiError({ status, kind: "validation", code: null, messages: koreanForValidationList(body.message) });
   }
-  const code = body.message;
-  const fallback = status >= 500 ? MESSAGES.server : code;
-  return new ApiError({ status, kind: kindOf(status, code), code, messages: [API_MESSAGES[code] ?? fallback] });
+  // Some answers name the field: { loginId: "invalidCredentials" } or { password: "Password is wrong" }.
+  if (typeof body.message === "object" && body.message !== null) {
+    const lines = Object.entries(body.message).map(([field, value]) =>
+      /\s/.test(String(value)) ? `${field} ${String(value)}` : String(value),
+    );
+    const messages = [...new Set(lines.map((line) => (/\s/.test(line) ? koreanForValidationList([line])[0] : koreanForKey(line, status))))];
+    return new ApiError({ status, kind: "validation", code: null, messages: messages.length > 0 ? messages : [MESSAGES.checkInput] });
+  }
+  const code = String(body.message);
+  return new ApiError({ status, kind: kindOf(status, code), code, messages: [koreanForKey(code, status)] });
 }

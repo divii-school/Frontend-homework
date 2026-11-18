@@ -15,6 +15,12 @@ function finalConsonant(word: string): number {
 /** "상품명" -> "상품명을", "아이디" -> "아이디를" */
 export const withObjectParticle = (word: string): string => `${word}${finalConsonant(word) === 0 ? "를" : "을"}`;
 
+/** "상품명" -> "상품명은", "수량" -> "수량은", "단가" -> "단가는" */
+export const withTopicParticle = (word: string): string => `${word}${finalConsonant(word) === 0 ? "는" : "은"}`;
+
+/** True when the text already contains Hangul, so a Korean user can read it as it is. */
+export const hasHangul = (text: string): boolean => /[가-힣]/.test(text);
+
 /** "상품 관리" -> "상품 관리로", "목록" -> "목록으로". A final ㄹ takes 로 like a vowel ("서울로"). */
 export function withDirectionParticle(word: string): string {
   const final = finalConsonant(word);
