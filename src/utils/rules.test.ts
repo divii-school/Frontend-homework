@@ -6,6 +6,7 @@ import { formatDateTime, formatWon } from "@/utils/format";
 import { MESSAGES } from "@/constants/messages";
 import { withDirectionParticle, withObjectParticle } from "@/utils/korean";
 import { koreanForKey, koreanForValidationList } from "@/utils/api-messages";
+import { categoryNameError } from "@/utils/category-rules";
 import { parseProductParams, toProductQuery } from "@/utils/product-params";
 import { EMPTY_PRODUCT_FORM, firstInvalidStep, imageFileError, salePrice, storageKey, toProductRequest, uploadFileName, validateStep } from "@/utils/product-rules";
 import { isTokenValid, safeRedirectPath } from "@/utils/session";
@@ -80,11 +81,12 @@ describe("product form rules", () => {
     expect(Object.keys(validateStep(3, EMPTY_PRODUCT_FORM)).sort()).toEqual(["description", "images", "isVisible", "onSale"]);
   });
 
-  it("상품명 is at most 100 characters (design 8.1.1, rule 2)", () => {
+  it("상품명 at most 100 characters; 비과세, 노출상태 and 판매상태 must be chosen (design 8.1.1)", () => {
     expect(validateStep(0, { ...valid, productName: "가".repeat(100) }).productName).toBeUndefined();
     expect(validateStep(0, { ...valid, productName: "가".repeat(101) }).productName).toBe("상품명은 100자 이내로 입력해 주세요.");
     expect(validateStep(0, { ...valid, taxType: null }).taxType).toBe("비과세를 선택해 주세요.");
     expect(validateStep(3, { ...valid, isVisible: null }).isVisible).toBe("노출상태를 선택해 주세요.");
+    expect(validateStep(3, { ...valid, onSale: null }).onSale).toBe("판매상태를 선택해 주세요.");
   });
 
   it("finds the first invalid step, or none", () => {
@@ -195,6 +197,17 @@ describe("API errors are always shown in Korean (no key, no English sentence)", 
     expect(koreanForValidationList(["name must be shorter than or equal to 50 characters"])).toEqual(["카테고리 이름의 글자 수를 확인해 주세요."]);
     expect(koreanForValidationList(["property foo should not exist"])).toEqual([MESSAGES.checkInput]);
     expect(koreanForValidationList([])).toEqual([MESSAGES.checkInput]);
+  });
+});
+
+describe("category name (QA, 18 Nov)", () => {
+  it("is required and at most 50 characters, with a Korean message", () => {
+    expect(categoryNameError("", "중분류 이름")).toBe("중분류 이름을 입력해 주세요.");
+    expect(categoryNameError("   ", "중분류 이름")).toBe("중분류 이름을 입력해 주세요.");
+    expect(categoryNameError("가".repeat(50), "중분류 이름")).toBeUndefined();
+    expect(categoryNameError("가".repeat(51), "중분류 이름")).toBe("중분류 이름은 50자 이내로 입력해 주세요.");
+    // Spaces around the name are not counted (they are not saved)
+    expect(categoryNameError(`  ${"a".repeat(50)}  `, "소분류 이름")).toBeUndefined();
   });
 });
 
