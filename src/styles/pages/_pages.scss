@@ -409,3 +409,16 @@
   font-size: $font-size-sm;
   font-weight: $font-weight-bold;
 }
+
+// ---- Phone width (design review, 18 Nov) ----------------------------
+@include mq-down("mobile") {
+  // The stepper stays on one line: the current step shows its name, the others only their number
+  .stepper {
+    flex-wrap: nowrap;
+    gap: $space-2;
+  }
+
+  .stepper-item:not(.stepper-item-active) .stepper-label {
+    @include visually-hidden;
+  }
+}

@@ -397,6 +397,24 @@
   gap: $space-1;
   border-bottom: $border-width solid token("grey-b4");
   overflow-x: auto;
+  // No scrollbar with arrows under the tabs (design review, 18 Nov); at phone width the three tabs fit anyway
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @include mq-down("mobile") {
+    gap: 0;
+
+    .tabs-tab {
+      flex: 1 1 0;
+      padding: $space-3 $space-2;
+      font-size: $font-size-sm;
+      white-space: normal;
+      word-break: keep-all;
+    }
+  }
 }
 
 .tabs-tab {
