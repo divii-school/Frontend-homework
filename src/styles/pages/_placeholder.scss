@@ -1,0 +1,19 @@
+@use 'tokens' as *;
+@use 'mixins' as *;
+
+// ---- "Coming soon" pages (foundation only; each screen replaces its placeholder) -----------
+.placeholder-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: $space-2;
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+
+  code {
+    padding: 0 $space-1;
+    border-radius: $radius-xs;
+    background: var(--color-surface-sunken);
+    color: var(--color-text-secondary);
+  }
+}

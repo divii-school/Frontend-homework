@@ -1,0 +1,46 @@
+{
+  "name": "talking-club-admin-hw3",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "type-check": "tsc --noEmit",
+    "postinstall": "node scripts/copy-primereact-themes.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:mutations": "cross-env E2E_ALLOW_MUTATIONS=1 playwright test mutation.spec"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.104.1",
+    "axios": "^1.20.0",
+    "dayjs": "^1.11.23",
+    "next": "15.5.27",
+    "primeflex": "^3.3.0",
+    "primeicons": "^6.0.1",
+    "primereact": "10.2.1",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-hook-form": "^7.89.0",
+    "sass": "^1.105.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@playwright/test": "1.64.1",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "cross-env": "^10.1.0",
+    "dotenv": "^16.4.5",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.27",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

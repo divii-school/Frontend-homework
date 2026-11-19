@@ -1,0 +1,74 @@
+@use 'tokens' as *;
+@use 'mixins' as *;
+
+// ---- Empty / error states: centred icon, title, description, optional action ----------------
+.state-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: $space-12 $space-4;
+  text-align: center;
+
+  @include upto('sm') {
+    padding: $space-8 $space-4;
+  }
+}
+
+.state-box-icon {
+  font-size: $icon-size-lg;
+  color: var(--color-text-muted);
+}
+
+.state-box-error .state-box-icon {
+  color: var(--color-danger);
+}
+
+.state-box-title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: var(--color-text);
+}
+
+.state-box-description {
+  max-width: 52ch;
+  font-size: $font-size-sm;
+  color: var(--color-text-secondary);
+}
+
+.state-box-code {
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+}
+
+.state-box-action {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: $space-2;
+  margin-top: $space-3;
+}
+
+// ---- Loading skeleton: one grid row per table row --------------------------------------------
+.table-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-4 0;
+}
+
+.table-skeleton-row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: $space-4;
+
+  @include upto('sm') {
+    gap: $space-2;
+  }
+}
+
+.table-skeleton-cell {
+  height: $skeleton-row-height;
+}

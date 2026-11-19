@@ -1,0 +1,627 @@
+@use 'tokens' as *;
+@use 'mixins' as *;
+
+// ---- 8.1.0 Product Management list (/shopping-mall/products) — search bar, table, inline visibility, bulk delete, export
+// Tokens only (var(--color-*), $space-*, $font-size-*), class names lowercase-with-hyphens,
+// breakpoints via @include upto(…). The thumbnail / select / badge blocks are also used by the
+// details page (_product-details.scss).
+
+// Sizes of this screen, derived from tokens (change request: move them into _tokens.scss).
+$product-thumb-width: $space-16;                    // 64px  (design thumbnail 64 × 78)
+$product-thumb-height: $space-16 + $space-4;        // 80px
+$product-table-min-width: $space-16 * 14;           // 896px — below this the table scrolls in its box
+$product-search-max-width: $space-16 * 7;           // 448px (design search field)
+$product-search-type-width: $space-16 * 2 + $space-2; // 136px (design search type)
+$product-search-type-width-phone: $space-16 + $space-10; // 104px
+$product-select-compact-height: $control-height - $space-2; // 32px (design "Yes ⌄" in a row)
+$product-filter-count-size: $space-5;               // 20px pill with the number of active filters
+$product-busy-opacity: 0.6;
+
+// ---- Screen layout ------------------------------------------------------------------------
+.product-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+// ---- Native <select> styled like the PrimeReact inputs (filters, page size, row status) ----
+.product-select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+
+  select {
+    appearance: none;
+    width: 100%;
+    min-height: $control-height;
+    padding: 0 $space-8 0 $space-3; // room for the chevron
+    font-family: inherit;
+    font-size: $font-size-sm;
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: $border-width solid var(--color-border-strong);
+    border-radius: $radius-sm;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      border-color: var(--color-text-muted);
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+
+    &:disabled {
+      color: var(--color-text-muted);
+      background: var(--color-surface-alt);
+      border-color: var(--color-border);
+      cursor: not-allowed;
+    }
+  }
+}
+
+.product-select-icon {
+  position: absolute;
+  right: $space-3;
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+// Only the row status select is compact (design: a small "예 ⌄" inside the row). The rows-per-page select is a
+// normal 40px control, the same height as the buttons next to it.
+.product-select-compact select {
+  min-height: $product-select-compact-height;
+
+  @include upto('sm') {
+    min-height: $touch-target;
+  }
+}
+
+// Underline-only select (design 8.1.0 search type): no box, a line under the value; focus = brand-colour line
+.product-select-underline select {
+  @include underline-field;
+
+  &:hover:not(:disabled) {
+    border-bottom-color: var(--color-text-muted);
+  }
+
+  &:focus-visible {
+    @include underline-field-focus;
+  }
+}
+
+// ---- Toolbar: search row + filter row (design ②) -------------------------------------------
+.product-list-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  padding-bottom: $space-4;
+  border-bottom: $border-width solid var(--color-border);
+}
+
+// One line at every width: search type + search term (design 8.1.0: two underline fields side by side)
+.product-search {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  min-width: 0;
+}
+
+.product-search-type {
+  flex: 0 0 $product-search-type-width;
+
+  @include upto('xs-sm') {
+    flex-basis: $product-search-type-width-phone;
+  }
+}
+
+.product-search-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  max-width: $product-search-max-width;
+  min-width: 0;
+
+  .p-inputtext {
+    width: 100%;
+    padding-right: $control-height;
+  }
+
+  .product-search-button.p-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: var(--color-text-secondary);
+  }
+}
+
+@include upto('xs-sm') {
+  .product-search-field {
+    flex: 1 1 0;
+    max-width: none;
+  }
+}
+
+// "필터" button: phones / tablets only (≤ 768px, where the list is cards). It opens the filter block below.
+.product-filter-toggle {
+  display: none;
+
+  @include upto('sm') {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    gap: $space-2;
+    min-height: $touch-target;
+    padding: 0 $space-3;
+    font: inherit;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: var(--color-text-secondary);
+    background: var(--color-surface);
+    border: $border-width solid var(--color-border-strong);
+    border-radius: $radius-sm;
+    cursor: pointer;
+
+    &:hover,
+    &[aria-expanded='true'] {
+      background: var(--color-surface-alt);
+      border-color: var(--color-text-muted);
+      color: var(--color-text);
+    }
+  }
+}
+
+.product-filter-toggle-chevron {
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+}
+
+// Number of active filters on the button (still shown while the block is closed)
+.product-filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: $product-filter-count-size;
+  height: $product-filter-count-size;
+  padding: 0 $space-1;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  color: var(--color-surface);
+  background: var(--color-text-secondary);
+  border-radius: $radius-pill;
+}
+
+// The filter block: always shown on wide screens; ≤ 768px only while the "필터" button is open
+.product-filter-panel {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  min-width: 0;
+
+  @include upto('sm') {
+    display: none;
+
+    &.is-open {
+      display: flex;
+    }
+  }
+}
+
+.product-filters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+  align-items: end;
+  gap: $space-3;
+
+  @include upto('md') {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    // On its own line the text button starts at the left edge of the fields above it (no indent):
+    // the padding that holds its hover fill is taken back with a negative margin.
+    .product-filters-reset.p-button {
+      grid-column: 1 / -1;
+      justify-self: start;
+      margin-left: -$space-2;
+      padding: 0 $space-2;
+    }
+  }
+
+  @include upto('xs-sm') {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.product-filter {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  min-width: 0;
+
+  .product-select {
+    width: 100%;
+  }
+}
+
+.product-filter-label {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: var(--color-text-secondary);
+}
+
+.product-filters-hint {
+  margin-top: -$space-2;
+}
+
+// ---- Summary row: total, page size, export, delete (design ③ ④) ----------------------------
+.product-list-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-3 $space-5;
+}
+
+.product-list-total {
+  font-size: $font-size-sm;
+  color: var(--color-text-secondary);
+
+  strong {
+    font-size: $font-size-md;
+    color: var(--color-text);
+  }
+}
+
+.product-page-size {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: $font-size-sm;
+  color: var(--color-text-secondary);
+}
+
+.product-list-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin-left: auto;
+
+  @include upto('xs-sm') {
+    width: 100%;
+    margin-left: 0;
+
+    .p-button {
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+  }
+}
+
+// Selection count bar. Empty → visually hidden but still in the accessibility tree, so the
+// live region exists before the first count is announced.
+.product-selection-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-1 $space-3;
+  font-size: $font-size-sm;
+  color: var(--color-text);
+  background: var(--color-primary-soft);
+  border-radius: $radius-md;
+
+  &[data-empty] {
+    @include visually-hidden;
+  }
+
+  .product-selection-clear.p-button {
+    min-height: $product-select-compact-height;
+    padding: 0 $space-2;
+  }
+}
+
+.product-sort-note {
+  display: flex;
+  align-items: center;
+  gap: $space-1;
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+}
+
+// ---- Table (design ⑤ – ⑪) -------------------------------------------------------------------
+.product-table-box {
+  transition: opacity $transition-fast;
+
+  &.is-busy {
+    opacity: $product-busy-opacity;
+  }
+}
+
+.product-table {
+  width: 100%;
+  min-width: $product-table-min-width;
+  border-collapse: collapse;
+  font-size: $font-size-sm;
+  color: var(--color-text);
+
+  th,
+  td {
+    padding: $space-3;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: $border-width solid var(--color-border);
+  }
+
+  // Header row (design: Primary 80 fill, Bold 14, Gray 110)
+  thead th {
+    font-weight: $font-weight-bold;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    background: var(--color-table-head);
+  }
+
+  tbody tr {
+    transition: background-color $transition-fast;
+
+    &:hover {
+      background: var(--color-surface-alt);
+    }
+
+    &.is-selected {
+      background: var(--color-primary-soft);
+    }
+  }
+
+  .col-select {
+    width: $space-10;
+    text-align: center;
+  }
+
+  .col-thumb {
+    width: $product-thumb-width + $space-6;
+    text-align: center;
+  }
+
+  .col-price,
+  .col-date {
+    white-space: nowrap;
+  }
+
+  // The row status select keeps its own width (widest option 아니오 + chevron). With width: 100% a
+  // narrow table (1024 px, or 50 rows per page) squeezed the column and cut 아니오 to 아니….
+  .col-status {
+    white-space: nowrap;
+
+    .product-select select {
+      width: auto;
+    }
+  }
+}
+
+.product-checkbox {
+  width: $icon-size-sm;
+  height: $icon-size-sm;
+  margin: 0;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.product-sort-button {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  padding: 0;
+  font: inherit;
+  font-weight: inherit;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: $radius-xs;
+  cursor: pointer;
+
+  i {
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+  }
+
+  &:hover,
+  &.is-active,
+  &.is-active i {
+    color: var(--color-primary);
+  }
+}
+
+// Thumbnail + grey placeholder (design ⑥) — also used on the details page
+.product-thumb {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: $product-thumb-width;
+  height: $product-thumb-height;
+  overflow: hidden;
+  color: var(--color-text-muted);
+  background: var(--color-surface-sunken);
+  border-radius: $radius-sm;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.product-thumb-placeholder {
+  font-size: $icon-size-md;
+}
+
+.product-code {
+  display: block;
+  margin-top: $space-1;
+  font-size: $font-size-xs;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+}
+
+.product-name-link {
+  font-weight: $font-weight-semibold;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+
+  &:hover {
+    color: var(--color-primary);
+  }
+}
+
+.product-price {
+  display: block;
+  font-weight: $font-weight-semibold;
+}
+
+.product-list-price {
+  display: block;
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+}
+
+// Small Yes / No / type pill — also used on the details page
+.product-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: $space-6;
+  padding: 0 $space-2;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-sunken);
+  border-radius: $radius-pill;
+
+  &.is-on {
+    color: var(--color-success);
+    background: var(--color-success-soft);
+  }
+}
+
+// ---- ≤ 768px: every row becomes a card (checkbox | thumbnail | details) ----------------------
+// Same markup as the table; the header row stays as a strip with "select all" + the sort buttons.
+@include upto('sm') {
+  .table-scroll-box.product-table-box {
+    overflow-x: visible;
+  }
+
+  .product-table {
+    display: block;
+    min-width: 0;
+
+    thead,
+    tbody,
+    tr,
+    th,
+    td {
+      display: block;
+    }
+
+    thead tr {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: $space-2;
+      padding-bottom: $space-3;
+      border-bottom: $border-width solid var(--color-border);
+    }
+
+    thead th {
+      padding: 0;
+      background: transparent;
+      border: 0;
+    }
+
+    thead .col-thumb,
+    thead .col-category,
+    thead .col-status {
+      display: none;
+    }
+
+    thead .col-select {
+      width: auto;
+      padding-right: $space-2;
+    }
+
+    thead .product-sort-button {
+      min-height: $touch-target;
+      padding: 0 $space-3;
+      font-size: $font-size-xs;
+      border: $border-width solid var(--color-border-strong);
+      border-radius: $radius-pill;
+    }
+
+    tbody {
+      display: flex;
+      flex-direction: column;
+      gap: $space-3;
+      padding-top: $space-3;
+    }
+
+    tbody tr {
+      display: grid;
+      grid-template-columns: auto auto minmax(0, 1fr);
+      column-gap: $space-3;
+      row-gap: $space-1;
+      padding: $space-3;
+      border: $border-width solid var(--color-border);
+      border-radius: $radius-md;
+    }
+
+    tbody td {
+      padding: 0;
+      border: 0;
+    }
+
+    tbody .col-select {
+      grid-column: 1;
+      grid-row: 1 / span 5;
+      width: auto;
+    }
+
+    tbody .col-thumb {
+      grid-column: 2;
+      grid-row: 1 / span 5;
+      width: auto;
+    }
+
+    tbody td:not(.col-select):not(.col-thumb) {
+      grid-column: 3;
+    }
+
+    .col-category,
+    .col-date {
+      font-size: $font-size-xs;
+      color: var(--color-text-secondary);
+      white-space: normal;
+    }
+
+    .col-status {
+      display: flex;
+      align-items: center;
+      gap: $space-2;
+    }
+
+    td[data-label]::before {
+      content: attr(data-label) ': ';
+      font-size: $font-size-xs;
+      color: var(--color-text-muted);
+    }
+  }
+
+  .product-checkbox {
+    width: $icon-size-md;
+    height: $icon-size-md;
+  }
+}

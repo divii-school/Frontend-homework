@@ -1,0 +1,20 @@
+@use 'tokens' as *;
+@use 'mixins' as *;
+
+// ---- 403 / 404 / 500 full-page cards ----------------------------------------------------------
+.error-page-card {
+  @include surface;
+  width: 100%;
+  max-width: $login-card-width;
+  padding: $space-10 $space-8;
+
+  @include upto('xs') {
+    padding: $space-8 $space-5;
+  }
+}
+
+.error-page-brand {
+  display: flex;
+  justify-content: center;
+  margin-bottom: $space-4;
+}

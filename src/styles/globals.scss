@@ -1,0 +1,594 @@
+@use 'sass:list';
+@use 'tokens' as *;
+@use 'mixins' as *;
+
+// Component and page partials (one file per block, WM folder rule)
+@use 'components/app-shell';
+@use 'components/page-header';
+@use 'components/state';
+@use 'components/list-pagination';
+@use 'components/dialogs';
+@use 'pages/login';
+@use 'pages/error-pages';
+@use 'pages/placeholder';
+// Screen partials — filled by the screen work (categories / product list / form / details)
+@use 'pages/categories';
+@use 'pages/product-list';
+@use 'pages/product-form';
+@use 'pages/product-details';
+
+// ---- Colour custom properties ------------------------------------------------------------
+// Generated from $theme-colors so light and dark can never drift apart (1:1 rule).
+// :root carries the light values too, so the page is styled even before data-theme is set.
+:root,
+[data-theme='light'] {
+  @each $name, $pair in $theme-colors {
+    --color-#{$name}: #{list.nth($pair, 1)};
+  }
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  @each $name, $pair in $theme-colors {
+    --color-#{$name}: #{list.nth($pair, 2)};
+  }
+  color-scheme: dark;
+}
+
+// ---- Base ------------------------------------------------------------------------------
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+// The page itself never scrolls sideways; wide blocks (tables) scroll inside their own box.
+// `hidden` only on html (it moves to the viewport). On body, `hidden` would make body its own scroll box,
+// and then the sticky sidebar and topbar scrolled away with the page; `clip` cuts without a scroll box.
+html {
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: clip;
+}
+
+body {
+  min-height: 100vh;
+  font-family: $font-family-base;
+  font-size: $font-size-sm;
+  line-height: $line-height-base;
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  // Korean (WM 5.4): a line breaks between words, never inside one ("접두 / 어로"). A single word that is
+  // wider than its box (a long code or URL) may still break, so nothing pushes the page sideways.
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+// Form controls do not inherit the font by default; they use the same family as the page.
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  // Links styled as PrimeReact buttons ("Go to …" on 403 / 404)
+  &.p-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+// Keyboard focus ring for every focusable element (mouse clicks don't show it)
+:focus-visible {
+  @include focus-ring;
+}
+
+// Screen-reader-only text (labels for icon buttons, hidden form labels)
+.sr-only {
+  @include visually-hidden;
+}
+
+// "Skip to content" link: hidden until it gets keyboard focus
+.skip-link {
+  @include visually-hidden;
+
+  &:focus {
+    position: fixed;
+    top: $space-2;
+    left: $space-2;
+    z-index: $z-sidebar + 1;
+    width: auto;
+    height: auto;
+    margin: 0;
+    clip: auto;
+    padding: $space-2 $space-4;
+    background: var(--color-surface);
+    color: var(--color-primary);
+    border-radius: $radius-sm;
+    @include focus-ring;
+  }
+}
+
+// Wide content (tables) scrolls inside this box, never the page
+.table-scroll-box {
+  width: 100%;
+  overflow-x: auto;
+}
+
+// Small text under a form field
+.field-error {
+  margin-top: $space-1;
+  font-size: $font-size-xs;
+  color: var(--color-danger);
+}
+
+.field-hint {
+  margin-top: $space-1;
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+}
+
+// ---- PrimeReact → design tokens ------------------------------------------------------------
+// The Lara pink theme ships its own (lighter) pink and a focus glow. Every interactive colour below
+// comes from the token map instead. Scoped under [data-theme] (+1 specificity) so these win over the
+// theme <link> whatever the load order.
+// The Lara theme sets "Inter var" (and Inter's stylistic sets) through its own variables on :root; html[data-theme]
+// is more specific, so every PrimeReact part (also the ones without .p-component) uses the page font.
+html[data-theme] {
+  --font-family: #{$font-family-base};
+  --font-feature-settings: normal;
+  font-feature-settings: normal;
+}
+
+[data-theme] {
+  .p-component {
+    font-family: $font-family-base;
+    font-feature-settings: normal;
+  }
+
+  // Buttons — one height, width from padding (WM), visible focus ring instead of the glow
+  .p-button {
+    min-height: $control-height;
+    padding: 0 $space-4;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    background: var(--color-primary);
+    border: $border-width solid var(--color-primary);
+    border-radius: $radius-sm;
+    color: var(--color-text-inverse);
+
+    &:enabled:hover {
+      background: var(--color-primary-hover);
+      border-color: var(--color-primary-hover);
+      color: var(--color-text-inverse);
+    }
+
+    &:focus {
+      box-shadow: none;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+
+    &.p-button-icon-only {
+      width: $control-height;
+      padding: 0;
+    }
+
+    &.p-button-outlined {
+      background: var(--color-surface);
+      border-color: var(--color-border-strong);
+      color: var(--color-text-secondary);
+
+      &:enabled:hover {
+        background: var(--color-surface-alt);
+        border-color: var(--color-text-muted);
+        color: var(--color-text);
+      }
+    }
+
+    &.p-button-text {
+      background: transparent;
+      border-color: transparent;
+      color: var(--color-primary);
+
+      &:enabled:hover {
+        background: var(--color-surface-alt);
+        border-color: transparent;
+        color: var(--color-primary-hover);
+      }
+
+      &.p-button-secondary {
+        color: var(--color-text-secondary);
+
+        &:enabled:hover {
+          color: var(--color-text);
+        }
+      }
+
+      &.p-button-danger {
+        color: var(--color-danger);
+
+        &:enabled:hover {
+          background: var(--color-danger-soft);
+        }
+      }
+    }
+
+    &.p-button-danger:not(.p-button-text):not(.p-button-outlined) {
+      background: var(--color-danger-strong);
+      border-color: var(--color-danger-strong);
+      color: var(--color-text-inverse);
+    }
+
+    &.p-button-danger.p-button-outlined {
+      border-color: var(--color-danger);
+      color: var(--color-danger);
+
+      &:enabled:hover {
+        background: var(--color-danger-soft);
+      }
+    }
+
+    &.p-button-help:not(.p-button-text):not(.p-button-outlined) {
+      background: var(--color-accent-purple);
+      border-color: var(--color-accent-purple);
+      color: var(--color-text-inverse);
+    }
+
+    // Disabled is its own state, the same for EVERY filled / outlined button whatever its colour (design, buttons
+    // "status=Disabled": grey fill, no border colour, white label), not a 60% fade. The :not() parts lift the
+    // specificity above the outlined / danger / help rules, so a disabled 삭제 never keeps its red border and text.
+    &:disabled:not(.p-button-text):not(.p-button-link) {
+      opacity: 1;
+      background: var(--color-disabled-bg);
+      border-color: var(--color-disabled-bg);
+      color: var(--color-disabled-text);
+    }
+
+    &.p-button-text:disabled {
+      background: transparent;
+      border-color: transparent;
+      color: var(--color-text-muted);
+    }
+  }
+
+  // Text inputs, textareas, dropdowns
+  .p-inputtext {
+    min-height: $control-height;
+    padding: 0 $space-3;
+    font-size: $font-size-sm;
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: $border-width solid var(--color-border-strong);
+    border-radius: $radius-sm;
+
+    &::placeholder {
+      color: var(--color-text-placeholder);
+    }
+  }
+
+  textarea.p-inputtext {
+    padding: $space-2 $space-3;
+  }
+
+  .p-dropdown,
+  .p-multiselect {
+    min-height: $control-height;
+    align-items: center;
+    background: var(--color-surface);
+    border: $border-width solid var(--color-border-strong);
+    border-radius: $radius-sm;
+
+    .p-dropdown-label,
+    .p-multiselect-label {
+      display: flex;
+      align-items: center;
+      padding: 0 $space-3;
+      font-size: $font-size-sm;
+      color: var(--color-text);
+      border: 0;
+
+      &.p-placeholder {
+        color: var(--color-text-placeholder);
+      }
+    }
+
+    .p-dropdown-trigger,
+    .p-multiselect-trigger {
+      color: var(--color-text-placeholder);
+    }
+  }
+
+  .p-dropdown-panel,
+  .p-multiselect-panel {
+    background: var(--color-surface);
+    color: var(--color-text);
+
+    .p-dropdown-items .p-dropdown-item,
+    .p-multiselect-items .p-multiselect-item {
+      font-size: $font-size-sm;
+      color: var(--color-text);
+
+      &.p-highlight {
+        background: var(--color-primary-soft);
+        color: var(--color-primary);
+      }
+
+      &:not(.p-highlight):not(.p-disabled):hover {
+        background: var(--color-surface-alt);
+      }
+    }
+  }
+
+  .p-inputtext:enabled:hover,
+  .p-dropdown:not(.p-disabled):hover,
+  .p-multiselect:not(.p-disabled):hover {
+    border-color: var(--color-text-muted);
+  }
+
+  .p-inputtext:enabled:focus,
+  .p-dropdown:not(.p-disabled).p-focus,
+  .p-multiselect:not(.p-disabled).p-focus {
+    border-color: var(--color-focus-ring);
+    box-shadow: 0 0 0 1px var(--color-focus-ring);
+    outline: none;
+  }
+
+  .p-inputtext.p-invalid,
+  .p-dropdown.p-invalid,
+  .p-multiselect.p-invalid,
+  .p-invalid > .p-inputtext {
+    border-color: var(--color-danger);
+  }
+
+  .p-inputtext:disabled,
+  .p-dropdown.p-disabled {
+    opacity: 1;
+    background: var(--color-surface-alt);
+    color: var(--color-text-muted);
+    border-color: var(--color-border);
+  }
+
+  // Underline-only fields: every text input and dropdown inside a .field-underline block (the product search of
+  // 8.1.0, the product form of 8.1.1 / 8.1.2). A textarea stays boxed, as the frames draw it. Same 40px height,
+  // same states as the boxed fields: hover, focus (brand-colour line), invalid (danger line), disabled / read-only.
+  .field-underline {
+    .p-inputtext:not(textarea),
+    .p-dropdown {
+      @include underline-field;
+    }
+
+    // The value inside a dropdown is a .p-inputtext too: the line belongs to the dropdown, not to its label
+    .p-dropdown .p-dropdown-label {
+      padding-left: 0;
+      border: 0;
+    }
+
+    .p-inputtext:not(textarea):enabled:hover,
+    .p-dropdown:not(.p-disabled):hover {
+      border-bottom-color: var(--color-text-muted);
+    }
+
+    .p-inputtext:not(textarea).p-invalid,
+    .p-dropdown.p-invalid,
+    .p-invalid > .p-inputtext:not(textarea) {
+      border-bottom-color: var(--color-danger);
+    }
+
+    .p-inputtext:not(textarea):enabled:focus,
+    .p-dropdown:not(.p-disabled).p-focus {
+      @include underline-field-focus;
+    }
+
+    .p-inputtext:not(textarea):disabled,
+    .p-inputtext:not(textarea)[readonly],
+    .p-dropdown.p-disabled {
+      background: transparent;
+      border-bottom-color: var(--color-border);
+      color: var(--color-text-muted);
+    }
+  }
+
+  // Checkbox / switch — brand colour when on
+  .p-checkbox .p-checkbox-box {
+    background: var(--color-surface);
+    border-color: var(--color-border-strong);
+    border-radius: $radius-xs;
+
+    &.p-highlight {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+
+      .p-checkbox-icon {
+        color: var(--color-text-inverse);
+      }
+    }
+
+    &.p-focus {
+      box-shadow: none;
+      @include focus-ring;
+    }
+  }
+
+  .p-inputswitch {
+    .p-inputswitch-slider {
+      background: var(--color-border-strong);
+    }
+
+    // PrimeReact 10.2.1 marks an "on" switch with .p-inputswitch-checked (not .p-highlight)
+    &.p-inputswitch-checked .p-inputswitch-slider {
+      background: var(--color-primary);
+    }
+
+    &.p-focus .p-inputswitch-slider {
+      box-shadow: none;
+      @include focus-ring;
+    }
+  }
+
+  // Link-style button — text only, no filled background
+  .p-button.p-button-link {
+    background: transparent;
+    border-color: transparent;
+    color: var(--color-primary);
+
+    &:enabled:hover {
+      background: transparent;
+      color: var(--color-primary-hover);
+      text-decoration: underline;
+    }
+  }
+
+  // Table — light pink header row (design 8.1.0)
+  .p-datatable {
+    .p-datatable-thead > tr > th {
+      background: var(--color-table-head);
+      color: var(--color-text-secondary);
+      font-size: $font-size-sm;
+      font-weight: $font-weight-semibold;
+      border-color: var(--color-border);
+    }
+
+    .p-datatable-tbody > tr {
+      background: var(--color-surface);
+      color: var(--color-text);
+
+      > td {
+        border-color: var(--color-border);
+      }
+
+      &.p-highlight {
+        background: var(--color-primary-soft);
+        color: var(--color-text);
+      }
+    }
+
+    .p-sortable-column.p-highlight,
+    .p-sortable-column.p-highlight .p-sortable-column-icon {
+      color: var(--color-primary);
+    }
+
+    .p-sortable-column:focus-visible {
+      box-shadow: none;
+      @include focus-ring;
+    }
+  }
+
+  // Paginator — current page = filled brand circle (design 8.1.0)
+  .p-paginator {
+    background: transparent;
+    border: 0;
+    color: var(--color-text-secondary);
+
+    .p-paginator-pages .p-paginator-page,
+    .p-paginator-first,
+    .p-paginator-prev,
+    .p-paginator-next,
+    .p-paginator-last {
+      min-width: $control-height;
+      height: $control-height;
+      border-radius: $radius-pill;
+      color: var(--color-text-secondary);
+
+      &:focus-visible {
+        box-shadow: none;
+        @include focus-ring;
+      }
+    }
+
+    .p-paginator-pages .p-paginator-page.p-highlight {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: var(--color-text-inverse);
+    }
+  }
+
+  // Dialog / confirm
+  .p-dialog {
+    .p-dialog-header,
+    .p-dialog-content,
+    .p-dialog-footer {
+      background: var(--color-surface);
+      color: var(--color-text);
+    }
+
+    .p-dialog-header-icon:focus-visible {
+      box-shadow: none;
+      @include focus-ring;
+    }
+  }
+
+  .p-component-overlay {
+    background-color: var(--color-overlay);
+  }
+
+  // Tabs (details page)
+  .p-tabview {
+    .p-tabview-nav {
+      background: transparent;
+      border-color: var(--color-border);
+
+      li .p-tabview-nav-link {
+        background: transparent;
+        color: var(--color-text-secondary);
+        border-color: transparent;
+
+        &:not(.p-disabled):focus-visible {
+          box-shadow: none;
+          @include focus-ring;
+        }
+      }
+
+      li.p-highlight .p-tabview-nav-link {
+        color: var(--color-primary);
+        border-color: var(--color-primary);
+      }
+    }
+
+    .p-tabview-panels {
+      background: transparent;
+      color: var(--color-text);
+    }
+  }
+
+  .p-skeleton {
+    background: var(--color-surface-sunken);
+  }
+}

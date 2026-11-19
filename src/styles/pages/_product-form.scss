@@ -1,0 +1,810 @@
+@use 'tokens' as *;
+@use 'mixins' as *;
+
+// ---- 8.1.1 / 8.1.2 Product registration + edit (/shopping-mall/products/create|edit/[id]) — 4-step form, image upload, options
+// Tokens only (var(--color-*), $space-*, $font-size-*), class names lowercase-with-hyphens,
+// breakpoints via @include upto(...). Sizes that have no token are built from tokens.
+
+$thumb-size: $space-16 * 2;            // 128px image thumbnail
+$stepper-dot: $space-8;                // 32px step number circle
+$picker-list-height: $space-16 * 5;    // 320px scroll area in the option popup
+$busy-opacity: 0.6;                    // uploading thumbnail / refreshing option list
+
+// ---- Card + stepper ---------------------------------------------------------------------------
+.product-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+}
+
+.product-stepper-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $space-2;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  // Phones: only the numbered dots stay (labels are in the "Step 2 of 4" line)
+  @include upto('xs-sm') {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.product-stepper-item {
+  position: relative;
+  min-width: 0;
+  border-bottom: $focus-ring-width solid var(--color-border);
+
+  &.product-stepper-item-current {
+    border-bottom-color: var(--color-primary);
+  }
+
+  &.product-stepper-item-done {
+    border-bottom-color: var(--color-success);
+  }
+
+  &.product-stepper-item-error {
+    border-bottom-color: var(--color-danger);
+  }
+
+  @include upto('xs-sm') {
+    flex: 1 1 0;
+  }
+}
+
+.product-stepper-button {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  width: 100%;
+  min-height: $touch-target;
+  padding: $space-2 $space-1;
+  font: inherit;
+  font-size: $font-size-sm;
+  text-align: left;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 0;
+  border-radius: $radius-sm;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: var(--color-surface-alt);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    color: var(--color-text-muted);
+  }
+
+  &[aria-current='step'] {
+    color: var(--color-text);
+    font-weight: $font-weight-semibold;
+  }
+
+  @include upto('xs-sm') {
+    justify-content: center;
+  }
+}
+
+.product-stepper-index {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: $stepper-dot;
+  height: $stepper-dot;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  border: $border-width solid var(--color-border-strong);
+  border-radius: $radius-pill;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+
+  .product-stepper-item-current & {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-text-inverse);
+  }
+
+  .product-stepper-item-done & {
+    background: var(--color-success-soft);
+    border-color: var(--color-success);
+    color: var(--color-success);
+  }
+
+  // Text on the soft danger fill uses the strong danger colour (Danger 110), so it stays readable
+  .product-stepper-item-error & {
+    background: var(--color-danger-soft);
+    border-color: var(--color-danger);
+    color: var(--color-danger-strong);
+  }
+}
+
+.product-stepper-label {
+  @include truncate;
+  min-width: 0;
+
+  @include upto('xs-sm') {
+    @include visually-hidden;
+  }
+}
+
+// "Step 2 of 4 · Images & status": read by screen readers always, visible on phones only
+.product-stepper-compact {
+  margin-bottom: $space-2;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: var(--color-text);
+
+  @include above('xs-sm') {
+    @include visually-hidden;
+  }
+}
+
+// ---- Notices (draft restored, API error) ------------------------------------------------------
+.product-form-notice,
+.product-form-alert {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: $space-2;
+  padding: $space-3 $space-4;
+  font-size: $font-size-sm;
+  border-radius: $radius-md;
+
+  > .pi {
+    margin-top: $space-1;
+  }
+}
+
+.product-form-notice {
+  align-items: center;
+  background: var(--color-info-soft);
+  color: var(--color-info);
+}
+
+// A long notice text (draft not restored) wraps beside its icon instead of dropping below it
+.product-form-notice-text {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+[data-theme] .product-form-notice-action.p-button.p-button-text {
+  min-height: auto;
+  padding: 0 $space-2;
+  color: var(--color-info);
+  text-decoration: underline;
+}
+
+.product-form-alert {
+  margin-bottom: $space-4;
+  background: var(--color-danger-soft);
+  color: var(--color-danger-strong);
+
+  > div {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+// ---- Steps (one visible at a time) ------------------------------------------------------------
+.product-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+  min-width: 0;
+}
+
+.product-form-step {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+  min-width: 0;
+
+  // `hidden` must win over the display above — the other steps stay in the DOM but are not shown
+  &[hidden] {
+    display: none;
+  }
+}
+
+.product-form-step-title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: var(--color-text);
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+// Two columns of fields (design 1440), one column on tablets / phones
+.product-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $space-5 $space-8;
+
+  @include upto('sm') {
+    grid-template-columns: minmax(0, 1fr);
+    gap: $space-4;
+  }
+}
+
+.product-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  min-width: 0;
+
+  > .p-inputtext,
+  > .p-dropdown,
+  > textarea {
+    width: 100%;
+  }
+
+  > .field-hint,
+  > .field-error {
+    margin-top: 0;
+  }
+}
+
+.product-form-field-wide {
+  grid-column: 1 / -1;
+}
+
+// Field label (design 8.1.1: Bold 14, Gray 100) + the required mark (Danger 110)
+.product-form-label {
+  margin: 0;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: var(--color-text-muted);
+}
+
+.product-form-required {
+  margin-left: $space-1;
+  color: var(--color-danger-strong);
+}
+
+// Input + button / unit on one line (product code + Regenerate, quantity + "pcs")
+.product-form-inline {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  min-width: 0;
+
+  > .p-inputtext {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  > .p-button {
+    flex: 0 0 auto;
+  }
+}
+
+.product-form-unit {
+  font-size: $font-size-sm;
+  color: var(--color-text-secondary);
+}
+
+// Read-only values (product code, ERP code, a locked category): underline like the other fields
+// (.field-underline in globals.scss); the dashed line tells them apart from a field you can type in.
+[data-theme] .product-form-field .p-inputtext[readonly] {
+  border-bottom-style: dashed;
+  color: var(--color-text-secondary);
+}
+
+// ---- Category picker (Major → Medium → Minor) -------------------------------------------------
+.product-form-fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+
+  > legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: $space-2;
+    margin-bottom: $space-3;
+    padding: 0;
+  }
+}
+
+.product-form-legend-note {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-normal;
+  color: var(--color-text-muted);
+}
+
+.category-picker {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $space-4;
+  padding: $space-4;
+  background: var(--color-surface-alt);
+  border: $border-width solid var(--color-border);
+  border-radius: $radius-md;
+
+  @include upto('sm') {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+// ---- Image upload ------------------------------------------------------------------------------
+.image-upload {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  min-width: 0;
+}
+
+.image-upload-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-4;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.image-upload-item {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  width: $thumb-size;
+  min-width: 0;
+}
+
+.image-upload-thumb {
+  position: relative;
+  width: $thumb-size;
+  height: $thumb-size;
+  overflow: hidden;
+  background: var(--color-surface-sunken);
+  border: $border-width solid var(--color-border);
+  border-radius: $radius-md;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .image-upload-item-uploading &,
+  .image-upload-item-queued & {
+    opacity: $busy-opacity;
+  }
+
+  .image-upload-item-failed & {
+    border-color: var(--color-danger);
+  }
+}
+
+.image-upload-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: $icon-size-lg;
+  color: var(--color-text-muted);
+}
+
+.image-upload-badge {
+  position: absolute;
+  top: $space-1;
+  left: $space-1;
+  padding: 0 $space-2;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: var(--color-text-inverse);
+  background: var(--color-primary);
+  border-radius: $radius-pill;
+}
+
+.image-upload-meta {
+  display: flex;
+  align-items: center;
+  gap: $space-1;
+  min-width: 0;
+  font-size: $font-size-xs;
+
+  &.image-upload-meta-failed,
+  &.image-upload-meta-progress {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.image-upload-name {
+  @include truncate;
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--color-text-secondary);
+}
+
+[data-theme] .image-upload-remove.p-button.p-button-icon-only {
+  flex: 0 0 auto;
+  width: $touch-target;
+  min-height: $touch-target;
+}
+
+.image-upload-actions {
+  display: flex;
+  gap: $space-1;
+}
+
+[data-theme] .image-upload-progress.p-progressbar {
+  height: $space-1;
+  background: var(--color-surface-sunken);
+
+  .p-progressbar-value {
+    background: var(--color-primary);
+  }
+}
+
+.image-upload-status {
+  color: var(--color-text-secondary);
+}
+
+.image-upload-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-3;
+}
+
+.image-upload-count {
+  font-size: $font-size-sm;
+  color: var(--color-text-secondary);
+}
+
+.image-upload-rejected {
+  padding: $space-3 $space-4 $space-3 $space-8;
+  font-size: $font-size-sm;
+  color: var(--color-danger-strong);
+  background: var(--color-danger-soft);
+  border-radius: $radius-md;
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.image-upload-undo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-1 $space-3;
+  font-size: $font-size-sm;
+  color: var(--color-text);
+  background: var(--color-surface-alt);
+  border-radius: $radius-md;
+
+  > span {
+    @include truncate;
+    min-width: 0;
+  }
+}
+
+// ---- Options (single-item) ---------------------------------------------------------------------
+.product-options {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  min-width: 0;
+}
+
+.product-options-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+}
+
+.product-options-optional {
+  font-weight: $font-weight-normal;
+  color: var(--color-text-muted);
+}
+
+.product-options-switch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2;
+  font-size: $font-size-sm;
+  color: var(--color-text-secondary);
+}
+
+.product-options-switch-error {
+  flex-basis: 100%;
+}
+
+// PrimeReact 10.2 marks a switched-on InputSwitch with .p-inputswitch-checked (globals.scss expects .p-highlight)
+[data-theme] .product-options-switch .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
+  background: var(--color-primary);
+}
+
+// The scroll box is the containing block of the table's screen-reader-only texts (position: absolute),
+// otherwise they escape the box and widen the page on phones
+.product-options .table-scroll-box {
+  position: relative;
+}
+
+.product-options-table {
+  width: 100%;
+  min-width: $dialog-width-sm;
+  border-collapse: collapse;
+  font-size: $font-size-sm;
+
+  th,
+  td {
+    padding: $space-2 $space-3;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: $border-width solid var(--color-border);
+  }
+
+  th {
+    font-weight: $font-weight-semibold;
+    color: var(--color-text);
+    background: var(--color-table-head);
+  }
+
+  td {
+    color: var(--color-text);
+  }
+
+  th:last-child,
+  td:last-child {
+    width: $touch-target;
+    text-align: right;
+  }
+}
+
+.product-options-price {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+
+  .p-inputtext {
+    width: 100%;
+  }
+}
+
+.product-options-empty {
+  padding: $space-4;
+  font-size: $font-size-sm;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-alt);
+  border-radius: $radius-md;
+}
+
+.product-options-add {
+  align-self: flex-start;
+}
+
+// ---- Option picker popup (8.1.3) -------------------------------------------------------------
+.option-picker-dialog {
+  width: $dialog-width-sm;
+  max-width: calc(100vw - #{$space-8});
+}
+
+// Pink header like design 8.1.3 ([data-theme] beats the global dialog colours)
+[data-theme] .option-picker-dialog .p-dialog-header {
+  background: var(--color-primary-soft);
+}
+
+.option-picker-title {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--color-text);
+}
+
+.option-picker-search {
+  position: relative;
+  margin-bottom: $space-3;
+
+  .p-inputtext {
+    width: 100%;
+    padding-right: $space-10;
+  }
+
+  > .pi {
+    position: absolute;
+    top: 0;
+    right: $space-3;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    color: var(--color-text-muted);
+  }
+}
+
+.option-picker-list {
+  max-height: $picker-list-height;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+
+  &[aria-busy='true'] {
+    opacity: $busy-opacity;
+  }
+}
+
+.option-picker-row {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  min-height: $touch-target;
+  padding: $space-1 0;
+  border-bottom: $border-width solid var(--color-border);
+}
+
+.option-picker-name {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  font-size: $font-size-sm;
+  color: var(--color-text);
+  cursor: pointer;
+
+  > span {
+    @include truncate;
+  }
+}
+
+.option-picker-code {
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+}
+
+.option-picker-price {
+  flex: 0 0 auto;
+  font-size: $font-size-sm;
+  color: var(--color-text-secondary);
+}
+
+.option-picker-footer {
+  display: flex;
+  justify-content: center;
+  gap: $space-2;
+}
+
+// ---- Review summary (step 4) --------------------------------------------------------------------
+.product-review {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  margin-top: $space-6;
+  padding-top: $space-6;
+  border-top: $border-width solid var(--color-border);
+}
+
+.product-review-title {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--color-text);
+}
+
+.product-review-block {
+  padding: $space-4;
+  border: $border-width solid var(--color-border);
+  border-radius: $radius-md;
+
+  &.product-review-block-error {
+    border-color: var(--color-danger);
+  }
+}
+
+.product-review-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2;
+  margin-bottom: $space-2;
+
+  h4 {
+    margin: 0;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: var(--color-text);
+  }
+}
+
+.product-review-fix {
+  color: var(--color-danger);
+}
+
+.product-review-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $space-2 $space-6;
+  margin: 0;
+
+  @include upto('sm') {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.product-review-row {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  dt {
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+  }
+
+  dd {
+    margin: 0;
+    font-size: $font-size-sm;
+    color: var(--color-text);
+    overflow-wrap: anywhere;
+    white-space: pre-line;
+  }
+}
+
+// ---- Footer: Cancel left, Back / Next / Register right ----------------------------------------
+.product-form-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  padding-top: $space-5;
+  border-top: $border-width solid var(--color-border);
+
+  // Phones: main action on top, full width
+  @include upto('xs-sm') {
+    flex-direction: column-reverse;
+    align-items: stretch;
+
+    .p-button {
+      justify-content: center;
+    }
+  }
+}
+
+.product-form-footer-nav {
+  display: flex;
+  gap: $space-2;
+
+  @include upto('xs-sm') {
+    > .p-button {
+      flex: 1 1 0;
+    }
+  }
+}
+
+[data-theme] .product-form-cancel.p-button.p-button-outlined {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
