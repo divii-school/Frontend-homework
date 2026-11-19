@@ -748,6 +748,28 @@ test.describe("Product form — API error and draft states (mocked API)", () => 
     await expect(dropdown).toHaveCSS("border-bottom-color", line);
   });
 
+  test("the first mouse click on 다음 is not lost when the cursor is in an empty field", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await mockApi(page, (route) => json(route, 200, ok(null)));
+    await page.goto(CREATE_URL);
+    await expect(field(page, "상품코드")).toHaveValue("PRD-E2E-0001");
+
+    // Cursor in the empty name field, then ONE real mouse click on Next: press and release at the same point.
+    // Before the fix the field's message appeared on the press, the button moved down and the click was lost.
+    await field(page, "상품명").click();
+    const next = page.getByRole("button", { name: "다음" });
+    const box = await next.boundingBox();
+    if (!box) throw new Error("the Next button is not on screen");
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+
+    // The click arrived: step 1 was checked as a whole (not only the field that lost the focus)
+    await expect(page.locator("#product-name-error")).toHaveText("상품명을 입력해 주세요.");
+    await expect(page.locator("#product-unit-price-error")).toHaveText("단가를 입력해 주세요.");
+    await expect(page.locator("#product-price-error")).toHaveText("판매가를 입력해 주세요.");
+    // Still on step 1, with the focus on the first field that needs a value
+    await expect(field(page, "상품명")).toBeFocused();
+  });
+
   test("375 px: compact stepper, one column, no horizontal page scroll", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await mockApi(page, (route) => json(route, 200, ok(null)));

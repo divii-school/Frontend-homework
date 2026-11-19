@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type MouseEvent } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FormProvider, useForm, useFormContext, useFormState, useWatch, type FieldErrors } from "react-hook-form";
 import { Button } from "primereact/button";
@@ -47,6 +47,12 @@ interface ProductFormProps {
 const LIST_HREF = "/shopping-mall/products";
 
 type FocusRequest = { step: StepNumber; target: "heading" | "invalid" | "alert" } | null;
+
+// A mouse press on a footer button must not take the focus out of the field first. The form checks a field when
+// it loses focus (mode "onTouched"), so the field's message appeared on mouse-down, the footer moved down before
+// the mouse button was released, and the click was lost (found in the manual run of 19 Nov, test case PF-035).
+// With the focus kept in the field, the click arrives and the step is checked as a whole. Keyboard use is unchanged.
+const keepFocusInField = (event: MouseEvent<HTMLButtonElement>) => event.preventDefault();
 
 // Saves the form to sessionStorage 0.5 s after the last change — only once the user changed something.
 // A tiny child component, so only it re-renders on every keystroke (not the whole form).
@@ -406,7 +412,14 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
 
           {/* Footer: Cancel on the left, Back / Next / Register on the right */}
           <div className="product-form-footer">
-            <Button type="button" label="취소" outlined className="product-form-cancel" onClick={() => void cancel()} />
+            <Button
+              type="button"
+              label="취소"
+              outlined
+              className="product-form-cancel"
+              onMouseDown={keepFocusInField}
+              onClick={() => void cancel()}
+            />
             <div className="product-form-footer-nav">
               {step > 1 && (
                 <Button
@@ -414,16 +427,18 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
                   label="이전"
                   icon="pi pi-arrow-left"
                   outlined
+                  onMouseDown={keepFocusInField}
                   onClick={() => void goToStep((step - 1) as StepNumber)}
                 />
               )}
               {step < LAST_STEP ? (
-                <Button type="submit" label="다음" icon="pi pi-arrow-right" iconPos="right" />
+                <Button type="submit" label="다음" icon="pi pi-arrow-right" iconPos="right" onMouseDown={keepFocusInField} />
               ) : (
                 <Button
                   type="submit"
                   label={submitLabel}
                   icon="pi pi-check"
+                  onMouseDown={keepFocusInField}
                   loading={isSubmitting}
                   disabled={!canSave || uploading || isSubmitting || done}
                 />
