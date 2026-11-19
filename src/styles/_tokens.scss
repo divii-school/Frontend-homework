@@ -136,10 +136,10 @@ $space-12: 48px;
 $space-16: 64px;
 
 // ---- Typography ------------------------------------------------------------------------
-// Pretendard is the font of the Figma frames. It is self-hosted with next/font/local (src/app/layout.tsx →
-// src/fonts/PretendardVariable.woff2) and reaches CSS as var(--font-pretendard); the names after it are only
-// fallbacks while the file loads. No CDN <link>, no 'Inter var' in front of it.
-$font-family-base: var(--font-pretendard), 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont,
+// Pretendard is the font of the Figma frames. It is self-hosted as a dynamic subset: src/styles/pretendard-font.css
+// (imported in src/app/layout.tsx) declares 'Pretendard Variable' with one small file per unicode-range, served from
+// public/fonts/pretendard/. The names after it are only fallbacks while the files load. No CDN <link>, no 'Inter var'.
+$font-family-base: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont,
   'Apple SD Gothic Neo', 'Malgun Gothic', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 $font-size-xs: 12px;
 $font-size-sm: 14px;
