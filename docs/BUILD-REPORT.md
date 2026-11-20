@@ -9,7 +9,7 @@ A hand-over to QA (Archana): everything needed to test is on this page or linked
 | --- | --- |
 | Repository | https://github.com/divii-school/Frontend-homework |
 | Branch | `hw3/sandip` (PR to `main`, never merged) |
-| Commit (deployed app) | `8498009` (Korean UI on every screen `3002f93` + Korean text for more API keys, Kakali's 11-20 points). Later commits only add docs and the published HTML report. |
+| Commit (deployed app) | `8572d0c`: Korean UI on every screen (`3002f93`), Korean text for more API keys (`8498009`) and Korean upload-route messages (`8572d0c`, Kakali's 11-20 note). Full Playwright run in part 9 is on `8498009`; on `8572d0c` the mocked tests (52) and the real upload test (mutation) passed again. Later commits only add docs and the published HTML report. |
 | Date | 2026-11-20 (first build `beb0bad` 2026-11-17; Korean error messages `29e011f`; Korean UI `3002f93`) |
 | Demo | https://hw3-sandip.vercel.app — own Vercel account, only `NEXT_PUBLIC_API_BASE_URL` set (QA API), no deployment protection |
 | API | Talking Club **QA** API (`tkclub-admn-api-qa.dvconsulting.org`). Never production. |
