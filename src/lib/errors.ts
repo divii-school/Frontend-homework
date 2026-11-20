@@ -14,6 +14,12 @@ const BY_CODE: Record<string, string> = {
   productNotFound: "상품을 찾을 수 없습니다. 이미 삭제되었을 수 있습니다.",
   productCodeAlreadyExists: "이미 사용 중인 상품 코드입니다. 페이지를 새로 고친 뒤 다시 등록해 주세요.",
   erpCodeAlreadyExists: "이미 사용 중인 ERP 코드입니다.",
+  categoryAlreadyExists: "이미 같은 이름의 대분류가 있습니다. 다른 이름을 입력해 주세요.",
+  subCategoryAlreadyExists: "이미 같은 이름의 중분류가 있습니다. 다른 이름을 입력해 주세요.",
+  childSubcategoryAlreadyExists: "이미 같은 이름의 소분류가 있습니다. 다른 이름을 입력해 주세요.",
+  maximumCategoryLimitReached: "카테고리를 더 등록할 수 없습니다. 등록 가능한 최대 개수에 도달했습니다.",
+  unitPriceMustBeLessThanPrice: "단가는 판매가보다 작아야 합니다. 금액을 확인해 주세요.",
+  fileRequired: "이미지 파일을 선택해 주세요.",
 };
 
 export const ERROR_TEXT = {

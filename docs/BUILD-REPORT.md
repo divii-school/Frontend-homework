@@ -45,6 +45,8 @@ A hand-over to QA (Archana): everything needed to test is on this page or linked
 | WM: date format | `YYYY-MM-DD h:mm AM` in KST (design question D3) |
 | Kakali 11-18: API errors showed English text or the raw key (e.g. `productCodeAlreadyExists`) | Every error is a Korean message by API code or HTTP status; raw keys never shown (tests assert it) |
 | Kakali 11-20: the screens still showed English (login, menu, breadcrumb, form labels, page titles, "Saving…", `lang="en"`) | Whole UI in Korean: login (아이디, 비밀번호, 자동 로그인, 권한 없음), menu / breadcrumb (쇼핑몰 관리 › 상품 관리), all form labels and validation messages, buttons and busy text (저장 중…, 삭제 중…, 내보내는 중…), tables, tabs, dialogs, toasts, aria-labels, CSV headers, page titles (상품 관리 · 토킹클럽 관리자), dialog close button (닫기); `<html lang="ko">`. Tests now find every control by its Korean name |
+| Kakali 11-20 (should fix): only 5 API keys had their own Korean text | Added 6 more: category name already used (대분류 / 중분류 / 소분류), category limit reached, unit price must be less than selling price, file required. Others still fall back to a Korean message by HTTP status |
+| Kakali 11-20 (should fix): empty `sandip.txt` in the repo | Deleted |
 | A page of only deleted rows (API A2) said "No search results found" | Says the page has only deleted products and keeps the pagination |
 | HTML report could contain the QA login (Playwright records typed values) | Real-API tests log in through an API request; the published report was scanned: no ID, password or token |
 
@@ -65,7 +67,7 @@ A hand-over to QA (Archana): everything needed to test is on this page or linked
 
 ## 7. What to test, numbered
 
-Full cases (67, each P or N, with the automated test that covers it): [`docs/TEST-CASES.md`](TEST-CASES.md) · Google Sheet import: `docs/TEST-CASES.csv`.
+Full cases (68, each P or N, with the automated test that covers it): [`docs/TEST-CASES.md`](TEST-CASES.md) · Google Sheet import: `docs/TEST-CASES.csv`.
 
 1. `/login`: empty / wrong / correct login; Auto login on and off; Log out.
 2. Open `/shopping/products?page=3` logged out → login → you land on page 3.

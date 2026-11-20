@@ -42,7 +42,7 @@ Real-API tests need `E2E_LOGIN_ID` / `E2E_PASSWORD` in `.env.local` (from the DM
 
 ## 6. Unit test case sheet link
 https://docs.google.com/spreadsheets/d/1_YH4pzHaD5ChI8YM80rqsB_nAc39hzzeBvr5r60Yaps/edit?usp=sharing (imported from `docs/TEST-CASES.csv`)
-67 cases (35 P · 32 N), each with the Playwright test that covers it. Markdown: `docs/TEST-CASES.md`.
+68 cases (35 P · 33 N), each with the Playwright test that covers it. Markdown: `docs/TEST-CASES.md`.
 
 ## 7. Build report for QA
 `docs/BUILD-REPORT.md` (10 parts) — https://github.com/divii-school/Frontend-homework/blob/hw3/sandip/docs/BUILD-REPORT.md

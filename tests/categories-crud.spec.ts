@@ -24,7 +24,7 @@ function seed(): Node[] {
 
 const ok = (data: unknown = null) => JSON.stringify({ success: true, message: "ok", data, errors: null, statusCode: 200 });
 
-async function setup(page: Page, opts: { failWrites?: boolean } = {}) {
+async function setup(page: Page, opts: { failWrites?: boolean; failKey?: string } = {}) {
   const tree = seed();
   const calls: { method: string; path: string; body: unknown }[] = [];
   let nextId = 900;
@@ -47,7 +47,7 @@ async function setup(page: Page, opts: { failWrites?: boolean } = {}) {
       return route.fulfill({
         status: 400,
         contentType: "application/json",
-        body: JSON.stringify({ success: false, message: "Category name already exists", data: null, errors: null, statusCode: 400 }),
+        body: JSON.stringify({ success: false, message: opts.failKey ?? "Category name already exists", data: null, errors: null, statusCode: 400 }),
       });
     }
     if (path === "/add") tree.push({ id: nextId++, name: body.name, subCategories: [] });
@@ -141,6 +141,16 @@ test.describe("product category add / edit / delete (mocked API)", () => {
     await expect(dialog(page).getByRole("alert")).toHaveText("요청을 처리하지 못했습니다. 입력한 내용을 확인해 주세요.");
     await expect(dialog(page)).not.toContainText("Category name already exists");
     await expect(dialog(page).getByLabel("카테고리명")).toHaveValue("HW3-Sandip-Dup");
+  });
+
+  test("a known API key gets its own Korean message, never the key", async ({ page }) => {
+    await setup(page, { failWrites: true, failKey: "maximumCategoryLimitReached" });
+    await page.getByRole("button", { name: "등록" }).click();
+    await dialog(page).getByLabel("카테고리명").fill("HW3-Sandip-Limit");
+    await dialog(page).getByRole("button", { name: "추가" }).click();
+
+    await expect(dialog(page).getByRole("alert")).toHaveText("카테고리를 더 등록할 수 없습니다. 등록 가능한 최대 개수에 도달했습니다.");
+    await expect(dialog(page)).not.toContainText("maximumCategoryLimitReached");
   });
 
   test("delete: blocked while it has subcategories; a leaf is deleted after confirm", async ({ page }) => {

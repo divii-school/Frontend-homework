@@ -49,6 +49,7 @@ create / edit / delete only records named `HW3-Sandip-…` and delete them after
 | CA-11 | N | Category with subcategories | Trash icon | "삭제할 수 없는 카테고리 — 하위 카테고리가 N개 있습니다…"; nothing deleted | categories-crud.spec › delete: blocked… |
 | CA-12 | P | Own leaf category | Trash → 삭제 | Confirm dialog (focus on 취소) → toast, row gone | categories-crud.spec › delete: … a leaf is deleted |
 | CA-13 | N | Any dialog open | Press Escape | Dialog closes, nothing saved | categories-crud.spec › Escape closes the dialog… |
+| CA-14 | N | 등록 dialog | API rejects with a known key (e.g. `maximumCategoryLimitReached`) | That key's own Korean message ("카테고리를 더 등록할 수 없습니다…"); the key itself never shown | categories-crud.spec › a known API key gets its own Korean message… |
 
 ## 4. Product list (8.1.0)
 
@@ -117,4 +118,4 @@ create / edit / delete only records named `HW3-Sandip-…` and delete them after
 | SZ-03 | P | Keyboard only | Tab through login, list, form, dialogs | Visible focus ring; dialogs focus the name field or the safe button; Escape closes | manual + categories-crud.spec / products.spec focus checks |
 | SZ-04 | P | Any page | Open DevTools console | No errors or warnings from the app (the browser's own "Failed to load resource: 400" on a wrong login is a network log) | smoke.spec · products.real.spec (console check) |
 
-**Totals:** 67 cases — 35 P · 32 N (counted from the tables; the CSV has the same 67 rows).
+**Totals:** 68 cases — 35 P · 33 N (counted from the tables; the CSV has the same 68 rows).
