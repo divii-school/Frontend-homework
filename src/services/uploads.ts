@@ -30,11 +30,11 @@ export async function uploadProductImage(file: File): Promise<ProductImage> {
   try {
     response = await fetch("/api/upload", { method: "POST", body: form });
   } catch {
-    throw new ApiError(0, "Network error. Check your connection and try again.");
+    throw new ApiError(0, "네트워크 오류가 발생했습니다. 연결을 확인한 뒤 다시 시도해 주세요.");
   }
   if (!response.ok) {
     const body = (await response.json().catch(() => null)) as { message?: string } | null;
-    throw new ApiError(response.status, body?.message ?? "The image could not be uploaded.", null, body);
+    throw new ApiError(response.status, body?.message ?? "이미지를 업로드하지 못했습니다.", null, body);
   }
   return { filePath: signed.filePath, preview: imagePreviewUrl(signed.filePath) };
 }

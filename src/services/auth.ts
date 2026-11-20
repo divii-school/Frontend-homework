@@ -27,7 +27,7 @@ export const authService = {
   async login(input: LoginInput): Promise<LoginResult> {
     const data = await apiRequest<unknown>("/api/v1/auth/login", { method: "POST", body: input, anonymous: true });
     const parsed = loginDataSchema.safeParse(data);
-    if (!parsed.success) throw new Error("Unexpected login response from the server.");
+    if (!parsed.success) throw new Error("서버의 로그인 응답 형식이 올바르지 않습니다.");
     const { token, user } = parsed.data;
     return { accessToken: token, user: { id: user.id, fullName: user.fullName ?? "", role: user.role } };
   },

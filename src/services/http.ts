@@ -92,7 +92,7 @@ async function send(path: string, options: RequestOptions, token: string | null)
     return await fetch(buildUrl(path, query), { method, headers: finalHeaders, body: payload, signal });
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") throw error;
-    throw new ApiError(0, "Network error. Check your connection and try again.");
+    throw new ApiError(0, "네트워크 오류가 발생했습니다. 연결을 확인한 뒤 다시 시도해 주세요.");
   }
 }
 
@@ -120,7 +120,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   const data = await parse(response);
   if (!response.ok) {
     const code = codeFrom(data);
-    throw new ApiError(response.status, code ?? `Request failed (${response.status})`, code, data);
+    throw new ApiError(response.status, code ?? `요청을 처리하지 못했습니다. (${response.status})`, code, data);
   }
   return data as T;
 }

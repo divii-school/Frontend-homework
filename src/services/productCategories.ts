@@ -46,7 +46,7 @@ const ENDPOINTS: Record<CategoryLevel, { base: string; parentField: "categoryId"
 function bodyFor(level: CategoryLevel, name: string, parentId: number | null): Record<string, string | number> {
   const { parentField } = ENDPOINTS[level];
   if (parentField === null) return { name };
-  if (parentId === null) throw new Error(`A level-${level} category needs a parent.`);
+  if (parentId === null) throw new Error(`${level}단계 카테고리에는 상위 카테고리가 필요합니다.`);
   return { name, [parentField]: parentId };
 }
 

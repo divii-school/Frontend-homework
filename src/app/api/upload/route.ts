@@ -20,24 +20,24 @@ export async function POST(request: Request) {
   try {
     form = await request.formData();
   } catch {
-    return fail(400, "Send the file as multipart form data.");
+    return fail(400, "파일을 multipart/form-data 형식으로 보내 주세요.");
   }
 
   const url = form.get("url");
   const file = form.get("file");
-  if (typeof url !== "string" || !(file instanceof File)) return fail(400, "Missing url or file.");
+  if (typeof url !== "string" || !(file instanceof File)) return fail(400, "업로드 주소 또는 파일이 없습니다.");
 
   let target: URL;
   try {
     target = new URL(url);
   } catch {
-    return fail(400, "Invalid upload URL.");
+    return fail(400, "업로드 주소가 올바르지 않습니다.");
   }
   if (target.protocol !== "https:" || target.host !== ALLOWED_HOST || !target.pathname.startsWith("/products/")) {
-    return fail(400, "Upload URL is not allowed.");
+    return fail(400, "허용되지 않은 업로드 주소입니다.");
   }
-  if (!ALLOWED_TYPES.has(file.type)) return fail(415, "Only JPG, PNG or WebP images can be uploaded.");
-  if (file.size > MAX_BYTES) return fail(413, "Images must be 3 MB or smaller.");
+  if (!ALLOWED_TYPES.has(file.type)) return fail(415, "JPG, PNG, WebP 이미지만 올릴 수 있습니다.");
+  if (file.size > MAX_BYTES) return fail(413, "이미지는 3MB 이하만 올릴 수 있습니다.");
 
   try {
     const put = await fetch(target, {
@@ -45,9 +45,9 @@ export async function POST(request: Request) {
       headers: { "Content-Type": file.type },
       body: Buffer.from(await file.arrayBuffer()),
     });
-    if (!put.ok) return fail(502, "The image storage rejected the upload. Please try again.");
+    if (!put.ok) return fail(502, "이미지 저장소가 업로드를 거부했습니다. 다시 시도해 주세요.");
   } catch {
-    return fail(502, "The image storage could not be reached. Please try again.");
+    return fail(502, "이미지 저장소에 연결하지 못했습니다. 다시 시도해 주세요.");
   }
   return Response.json({ ok: true });
 }
