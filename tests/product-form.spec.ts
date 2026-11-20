@@ -60,15 +60,15 @@ async function fillStep1(page: Page) {
   await page.getByLabel("상품명").fill("HW3-Sandip-Form");
   await page.getByLabel("단가").fill("15,000");
   await page.getByLabel("판매가").fill("19000");
-  await page.getByLabel("상세 설명").fill("A product made by the form test.");
+  await page.getByLabel("상세설명").fill("A product made by the form test.");
 }
 
 test.describe("product form (mocked API)", () => {
   test("step 1 validates before moving on; the code is generated and read-only", async ({ page }) => {
     await setup(page);
     await page.goto("/shopping/products/new");
-    await expect(page.getByLabel("상품 코드")).toHaveValue("PRD-099999");
-    await expect(page.getByLabel("상품 코드")).toHaveAttribute("readonly", "");
+    await expect(page.getByLabel("상품코드")).toHaveValue("PRD-099999");
+    await expect(page.getByLabel("상품코드")).toHaveAttribute("readonly", "");
 
     await next(page);
     await expect(page.getByText("상품명을 입력해 주세요.")).toBeVisible();
@@ -92,7 +92,7 @@ test.describe("product form (mocked API)", () => {
     await page.getByRole("button", { name: "이전" }).click();
     await expect(page.getByLabel("상품명")).toHaveValue("HW3-Sandip-Form");
     await expect(page.getByLabel("단가")).toHaveValue("15,000");
-    await expect(page.getByLabel("상세 설명")).toHaveValue("A product made by the form test.");
+    await expect(page.getByLabel("상세설명")).toHaveValue("A product made by the form test.");
   });
 
   test("images: type and size are checked, preview shows, remove works, max 4", async ({ page }) => {
@@ -129,7 +129,7 @@ test.describe("product form (mocked API)", () => {
 
     await next(page);
     await expect(page.getByText("대분류를 선택해 주세요.")).toBeVisible();
-    await page.getByLabel("노출 상태").selectOption("no");
+    await page.getByLabel("노출상태").selectOption("no");
     await page.getByRole("radio", { name: "Main textbook" }).check();
     await page.getByRole("radio", { name: "Phonics & Alphabet" }).check();
     await page.getByRole("radio", { name: "ACE Alphabet" }).check();
@@ -141,9 +141,9 @@ test.describe("product form (mocked API)", () => {
     await page.getByRole("radio", { name: "ACE Alphabet" }).check();
     await next(page);
 
-    await page.getByLabel("ERP 상품명").fill("Form ERP");
-    await page.getByLabel("수량").fill("2");
-    await page.getByLabel("면세 여부").selectOption("tax");
+    await page.getByLabel("상품ERP명").fill("Form ERP");
+    await page.getByLabel("갯수").fill("2");
+    await page.getByLabel("비과세").selectOption("tax");
     await page.getByLabel("ERP 단가").fill("8,000");
     await page.getByRole("button", { name: "등록" }).click();
 
@@ -171,19 +171,31 @@ test.describe("product form (mocked API)", () => {
     await page.getByRole("radio", { name: "Phonics & Alphabet" }).check();
     await page.getByRole("radio", { name: "ACE Alphabet" }).check();
     await next(page);
-    await page.getByLabel("ERP 상품명").fill("Form ERP");
-    await page.getByLabel("수량").fill("2");
-    await page.getByLabel("면세 여부").selectOption("tax");
+    await page.getByLabel("상품ERP명").fill("Form ERP");
+    await page.getByLabel("갯수").fill("2");
+    await page.getByLabel("비과세").selectOption("tax");
     await page.getByLabel("ERP 단가").fill("8000");
     await page.getByRole("button", { name: "등록" }).click();
 
     // Known API code → Korean text; the raw key is never shown.
     await expect(page.getByRole("alert").filter({ hasText: "이미 사용 중인 상품 코드입니다" })).toContainText("입력한 내용은 그대로 남아 있습니다.");
     await expect(page.getByText("productCodeAlreadyExists")).toHaveCount(0);
-    await expect(page.getByLabel("ERP 상품명")).toHaveValue("Form ERP");
+    await expect(page.getByLabel("상품ERP명")).toHaveValue("Form ERP");
     await page.getByRole("button", { name: "이전" }).click();
     await page.getByRole("button", { name: "이전" }).click();
     await expect(page.getByRole("img", { name: "상품 이미지 1" })).toBeVisible();
+  });
+
+  test("edit: 저장 in the page header saves from any step; prices get thousands commas", async ({ page }) => {
+    const captured = await setup(page);
+    await page.goto("/shopping/products/5/edit");
+    await expect(page.getByLabel("상품명")).toHaveValue("HW3-Sandip-Existing");
+    await page.getByLabel("판매가").fill("1980000");
+    await expect(page.getByLabel("판매가")).toHaveValue("1,980,000");
+    // Still on step 1: the header button checks every step and saves.
+    await page.getByRole("button", { name: "저장" }).first().click();
+    await expect(page).toHaveURL("/shopping/products");
+    expect(captured.edits[0].body).toMatchObject({ price: 1980000 });
   });
 
   test("ERP code is server-assigned: read-only and never sent", async ({ page }) => {
@@ -193,7 +205,7 @@ test.describe("product form (mocked API)", () => {
     for (let i = 0; i < 3; i++) await next(page);
     await expect(page.getByLabel("ERP 코드")).toHaveValue("ERP-5");
     await expect(page.getByLabel("ERP 코드")).toHaveAttribute("readonly", "");
-    await page.getByRole("button", { name: "저장" }).click();
+    await page.locator("form").getByRole("button", { name: "저장" }).click();
     await expect(page).toHaveURL("/shopping/products");
     expect(captured.edits[0].body).not.toHaveProperty("erpCode");
   });
@@ -203,11 +215,11 @@ test.describe("product form (mocked API)", () => {
     await page.goto("/shopping/products/5/edit");
     await expect(page.getByRole("heading", { name: "상품 수정", level: 1 })).toBeVisible();
     await expect(page.getByLabel("상품명")).toHaveValue("HW3-Sandip-Existing");
-    await expect(page.getByLabel("상품 코드")).toHaveValue("PRD-000005");
+    await expect(page.getByLabel("상품코드")).toHaveValue("PRD-000005");
     await page.getByLabel("판매가").fill("21000");
     for (let i = 0; i < 3; i++) await next(page);
-    await expect(page.getByLabel("면세 여부")).toHaveValue("tax_free");
-    await page.getByRole("button", { name: "저장" }).click();
+    await expect(page.getByLabel("비과세")).toHaveValue("tax_free");
+    await page.locator("form").getByRole("button", { name: "저장" }).click();
 
     await expect(page).toHaveURL("/shopping/products");
     expect(captured.edits).toHaveLength(1);

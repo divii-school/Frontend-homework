@@ -4,6 +4,7 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import "@/styles/globals.scss";
 import { AppProviders } from "@/providers/AppProviders";
+import { THEME_INIT_SCRIPT } from "@/lib/theme/theme";
 
 // Pretendard (OFL-1.1), the font used throughout the Talking Club Figma.
 const pretendard = localFont({
@@ -20,7 +21,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ko" className={pretendard.variable}>
+    <html lang="ko" className={pretendard.variable} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body>
         <AppProviders>{children}</AppProviders>
       </body>

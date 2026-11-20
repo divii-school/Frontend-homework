@@ -66,7 +66,7 @@ export function validateStep(step: StepIndex, v: ProductFormValues): FieldErrors
         ["productCode", v.productCode ? null : "상품 코드를 만들지 못했습니다. 페이지를 새로 고쳐 주세요."],
         ["unitPrice", wholeNumber(v.unitPrice, "단가", MONEY_MAX)],
         ["price", wholeNumber(v.price, "판매가", MONEY_MAX)],
-        ["description", required(v.description, "상세 설명", DESCRIPTION_MAX)],
+        ["description", required(v.description, "상세설명", DESCRIPTION_MAX)],
       ]);
     case 1:
       return collect([["images", v.images.length ? null : "이미지를 1장 이상 등록해 주세요."]]);
@@ -78,9 +78,9 @@ export function validateStep(step: StepIndex, v: ProductFormValues): FieldErrors
       ]);
     case 3:
       return collect([
-        ["erpName", required(v.erpName, "ERP 상품명", ERP_TEXT_MAX)],
-        ["quantity", wholeNumber(v.quantity, "수량", QUANTITY_MAX)],
-        ["taxType", v.taxType ? null : "면세 여부를 선택해 주세요."],
+        ["erpName", required(v.erpName, "상품ERP명", ERP_TEXT_MAX)],
+        ["quantity", wholeNumber(v.quantity, "갯수", QUANTITY_MAX)],
+        ["taxType", v.taxType ? null : "비과세를 선택해 주세요."],
         ["erpUnitPrice", wholeNumber(v.erpUnitPrice, "ERP 단가", MONEY_MAX)],
       ]);
   }

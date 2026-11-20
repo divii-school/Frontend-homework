@@ -33,6 +33,16 @@ export const NAVIGATION: readonly NavGroup[] = [
   },
 ];
 
+/**
+ * The rest of the Figma admin menu (8.1.0 sidebar), outside HW3. Shown greyed out and not clickable
+ * so the menu looks like the design (design review 2026-11-20, minor).
+ */
+export const OUT_OF_SCOPE_MENU = {
+  before: ["대시보드", "유저관리", "학원 관리", "학사관리", "교육과정 관리"],
+  shoppingPages: ["주문 배송 관리", "적립금 관리"],
+  after: ["공지사항 관리", "결제 관리", "지사장 메뉴", "권한 관리"],
+} as const;
+
 const ALL_PAGES: readonly NavPage[] = NAVIGATION.flatMap((group) => group.pages);
 const ADMIN_ROLES: ReadonlySet<string> = new Set(ALL_PAGES.flatMap((page) => page.roles));
 

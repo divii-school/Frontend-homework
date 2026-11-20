@@ -65,8 +65,6 @@ export function LoginForm() {
           priority
           className={styles.logo}
         />
-        <span className={styles["brand-divider"]} aria-hidden />
-        <span className={styles["brand-label"]}>Admin</span>
       </div>
 
       <form className={styles.form} onSubmit={handleSubmit} noValidate>

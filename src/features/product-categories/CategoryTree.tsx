@@ -60,7 +60,7 @@ function TreeItem({ node, expanded, onToggle, actions }: Omit<Props, "nodes"> & 
           <span className={styles.name}>{node.name}</span>
           {hasChildren && (
             <span className={styles.count}>
-              (하위 {node.children.length}개)
+              ({node.children.length}개 {node.level === 1 ? "중분류" : "소분류"})
             </span>
           )}
         </div>
@@ -72,10 +72,10 @@ function TreeItem({ node, expanded, onToggle, actions }: Omit<Props, "nodes"> & 
                 type="button"
                 className={styles["add-button"]}
                 onClick={() => actions.onAddChild(node)}
-                aria-label={`${node.name} 하위 카테고리`}
+                aria-label={`${node.name}에 ${node.level === 1 ? "중분류" : "소분류"} 추가`}
               >
                 <IconPlus16 />
-                <span>하위 카테고리</span>
+                <span>{node.level === 1 ? "중분류" : "소분류"}</span>
               </button>
             )}
             <button type="button" className={styles["icon-button"]} onClick={() => actions.onEdit(node)} aria-label={`${node.name} 수정`}>

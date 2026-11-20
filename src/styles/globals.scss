@@ -19,6 +19,9 @@ body {
   color: var(--color-text);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  // WM | Frontend Development Standard 5.4: Korean breaks between words, never inside one.
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 :focus-visible {

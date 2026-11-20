@@ -15,10 +15,10 @@ test.describe("real QA API (read-only)", () => {
     // First request after a fresh dev-server compile can be slow on QA.
     await expect(table.locator("tbody tr").first()).toContainText(/₩/, { timeout: 20_000 });
     await expect(table.locator("tbody tr")).toHaveCount(10);
-    await expect(page.getByText(/^전체 [\d,]+건$/)).toBeVisible();
-    // Prices use ₩ with commas; dates use the WM format YYYY-MM-DD h:mm AM (KST).
+    await expect(page.getByText(/^총 게시물 : [\d,]+$/)).toBeVisible();
+    // Prices use ₩ with commas; dates use the Korean Figma format YYYY/MM/DD HH:MM (KST).
     await expect(table.locator("tbody tr").first()).toContainText(/₩[\d,]+/);
-    await expect(table.locator("tbody tr").first()).toContainText(/\d{4}-\d{2}-\d{2} \d{1,2}:\d{2} (AM|PM)/);
+    await expect(table.locator("tbody tr").first()).toContainText(/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}/);
 
     await page.getByRole("button", { name: "2 페이지" }).click();
     await expect(page).toHaveURL("/shopping/products?page=2");

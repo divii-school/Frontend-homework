@@ -87,10 +87,10 @@ test.describe("product list (mocked API)", () => {
     await setup(page);
     await page.goto("/shopping/products");
     await expect(body(page).locator("tr")).toHaveCount(10);
-    await expect(page.getByText("전체 25건")).toBeVisible();
+    await expect(page.getByText("총 게시물 : 25")).toBeVisible();
     const first = body(page).locator("tr").first();
     await expect(first).toContainText("₩4,000");
-    await expect(first).toContainText("2025-09-12 5:10 PM");
+    await expect(first).toContainText("2025/09/12 17:10");
     await expect(first).toContainText("Main > ACE > Insider");
     await expect(body(page).locator("tr").nth(1)).toContainText("-");
     await expect(first.getByRole("link", { name: "=SUM(A1) tricky" })).toHaveAttribute("href", "/shopping/products/1000");
@@ -108,7 +108,7 @@ test.describe("product list (mocked API)", () => {
     await page.getByLabel("검색어").fill("Product 1");
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL("/shopping/products?search=Product+1");
-    await expect(page.getByText(/^전체 \d+건$/)).toHaveText("전체 10건"); // Product 10–19 (row 1 is "=SUM(A1) tricky")
+    await expect(page.getByText(/^총 게시물 : \d+$/)).toHaveText("총 게시물 : 10"); // Product 10–19 (row 1 is "=SUM(A1) tricky")
 
     await page.goBack();
     await expect(page).toHaveURL("/shopping/products?page=3");
@@ -138,7 +138,7 @@ test.describe("product list (mocked API)", () => {
     await dialog.getByRole("button", { name: "삭제" }).click();
 
     await expect(page.getByText("상품 11개를 삭제했습니다.")).toBeVisible();
-    await expect(page.getByText("전체 14건")).toBeVisible();
+    await expect(page.getByText("총 게시물 : 14")).toBeVisible();
     expect(calls).toHaveLength(1);
     expect(calls[0].url).toBe("/api/v1/products/delete");
     expect(calls[0].body).toEqual({ ids: [...Array.from({ length: 10 }, (_, i) => 1000 + i), 1011] });
@@ -147,15 +147,15 @@ test.describe("product list (mocked API)", () => {
   test("exposure status changes inline with a toast", async ({ page }) => {
     const { calls } = await setup(page);
     await page.goto("/shopping/products");
-    await page.getByLabel("Product 2 노출 여부").selectOption("yes");
-    await expect(page.getByText("“Product 2” 노출 여부를 노출로 변경했습니다.")).toBeVisible();
+    await page.getByLabel("Product 2 노출여부").selectOption("yes");
+    await expect(page.getByText("“Product 2” 노출여부를 예로 변경했습니다.")).toBeVisible();
     expect(calls).toEqual([{ method: "PUT", url: "/api/v1/products/update-status/1001/yes", body: null }]);
   });
 
   test("exposure status rolls back when the API fails", async ({ page }) => {
     await setup(page, 25, { failStatus: true });
     await page.goto("/shopping/products");
-    const select = page.getByLabel("Product 2 노출 여부");
+    const select = page.getByLabel("Product 2 노출여부");
     await select.selectOption("yes");
     await expect(page.getByText("서버에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.")).toBeVisible();
     await expect(select).toHaveValue("no");
@@ -170,7 +170,7 @@ test.describe("product list (mocked API)", () => {
     expect(download.suggestedFilename()).toMatch(/^products-\d{4}-\d{2}-\d{2}\.csv$/);
     const csv = (await readFile(await download.path())).toString("utf8");
     const lines = csv.replace(/^﻿/, "").trim().split("\r\n");
-    expect(lines[0]).toBe("ID,상품 코드,상품명,판매가,카테고리,노출 여부,등록일");
+    expect(lines[0]).toBe("ID,상품코드,상품명,판매금액,카테고리(과정),노출여부,등록일자");
     expect(lines).toHaveLength(11); // header + Product 10–19, across two pages of the list
     await expect(page.getByText("상품 10개를 내보냈습니다.")).toBeVisible();
   });
@@ -225,4 +225,17 @@ test("a page with only deleted rows says so instead of 'No search results'", asy
   await page.goto("/shopping/products?search=ACE&type=categoryName");
   await expect(page.getByText("이 페이지에는 삭제된 상품만 있어 표시할 상품이 없습니다.", { exact: false })).toBeVisible();
   await expect(page.getByRole("button", { name: "2 페이지" })).toBeVisible();
+});
+
+test("the header switch changes light / dark and remembers it after a reload", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "light" });
+  await setup(page);
+  await page.goto("/shopping/products");
+  const html = page.locator("html");
+  await page.getByRole("button", { name: "다크 모드로 전환" }).click();
+  await expect(html).toHaveAttribute("data-theme", "dark");
+  await page.reload();
+  await expect(html).toHaveAttribute("data-theme", "dark");
+  await page.getByRole("button", { name: "라이트 모드로 전환" }).click();
+  await expect(html).toHaveAttribute("data-theme", "light");
 });

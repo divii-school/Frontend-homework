@@ -43,21 +43,21 @@ test.describe("product category management", () => {
     await expect(page.getByRole("heading", { name: "상품 카테고리 관리" })).toBeVisible();
     await expect(tree(page).getByText("ACE Alphabet", { exact: true })).toBeVisible();
     await expect(tree(page).getByText("[536]", { exact: true })).toBeVisible();
-    await expect(tree(page).getByText("(하위 2개)", { exact: true }).first()).toBeVisible();
+    await expect(tree(page).getByText("(2개 소분류)", { exact: true }).first()).toBeVisible();
     // A subcategory with no children shows no count.
-    await expect(tree(page).getByText("(하위 0개)", { exact: true })).toHaveCount(0);
+    await expect(tree(page).getByText("(0개 소분류)", { exact: true })).toHaveCount(0);
   });
 
   test("Fold all / Expand all and a single toggle", async ({ page }) => {
     await openWithMock(page, () => ({ status: 200, data: TREE }));
-    await page.getByRole("button", { name: "전체 접기" }).click();
+    await page.getByRole("button", { name: "모두 접기" }).click();
     await expect(tree(page).getByText("Phonics & Alphabet", { exact: true })).toBeHidden();
 
     await page.getByRole("button", { name: "Main textbook 펼치기" }).click();
     await expect(tree(page).getByText("Phonics & Alphabet", { exact: true })).toBeVisible();
     await expect(tree(page).getByText("ACE Alphabet", { exact: true })).toBeHidden();
 
-    await page.getByRole("button", { name: "전체 펼치기" }).click();
+    await page.getByRole("button", { name: "모두 펼치기" }).click();
     await expect(tree(page).getByText("ACE Alphabet", { exact: true })).toBeVisible();
   });
 

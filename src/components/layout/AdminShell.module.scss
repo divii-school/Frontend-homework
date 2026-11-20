@@ -60,7 +60,7 @@ $drawer-breakpoint: 1024px;
   border: 0;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--color-nav-brand-icon);
+  color: var(--color-icon);
   cursor: pointer;
 }
 
@@ -197,10 +197,39 @@ $drawer-breakpoint: 1024px;
   }
 }
 
-.divider {
-  width: 8px;
-  height: 1px;
-  background: var(--color-border);
+// Light / dark switch in the header.
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-text);
+  }
+}
+
+// Figma menu items outside HW3: greyed out, no pointer.
+.out-of-scope {
+  color: var(--color-text-tertiary);
+  cursor: default;
+  pointer-events: none;
+}
+
+.group-icon-placeholder {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid currentColor;
+  border-radius: 4px;
+  opacity: 0.6;
 }
 
 .user-name {

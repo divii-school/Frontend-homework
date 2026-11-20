@@ -8,6 +8,7 @@ import { useProductCategories } from "@/hooks/useProductCategories";
 import { errorMessage } from "@/lib/errors";
 import type { CategoryLevel, CategoryNode } from "@/types/category";
 import btn from "@/components/ui/Button.module.scss";
+import { MAIN_CATEGORY_LIMIT_NOTE, MAIN_CATEGORY_LIMIT_REACHED } from "@/config/categories";
 import { CategoryTree, type CategoryTreeActions } from "./CategoryTree";
 import { CategoryFormDialog, type CategoryFormTarget } from "./CategoryFormDialog";
 import { DeleteCategoryDialog } from "./DeleteCategoryDialog";
@@ -107,20 +108,29 @@ export function CategoryManagement() {
 
           <div className={styles["tree-buttons"]}>
             <button type="button" className={styles["outline-button"]} onClick={() => setCollapsed(new Set())} disabled={!nodes.length}>
-              전체 펼치기
+              모두 펼치기
             </button>
             <button type="button" className={styles["outline-button"]} onClick={() => setCollapsed(new Set(allIds))} disabled={!nodes.length}>
-              전체 접기
+              모두 접기
             </button>
           </div>
 
-          <button
-            type="button"
-            className={`${btn.button} ${btn.primary} ${styles.register}`}
-            onClick={() => setFormTarget({ mode: "create", level: 1, parent: null })}
-          >
-            등록
-          </button>
+          <div className={styles["register-wrap"]}>
+            <button
+              type="button"
+              className={`${btn.button} ${btn.primary}`}
+              onClick={() => setFormTarget({ mode: "create", level: 1, parent: null })}
+              disabled={MAIN_CATEGORY_LIMIT_REACHED}
+              aria-describedby={MAIN_CATEGORY_LIMIT_REACHED ? "main-category-limit" : undefined}
+            >
+              대분류 등록
+            </button>
+            {MAIN_CATEGORY_LIMIT_REACHED && (
+              <p id="main-category-limit" className={styles["register-note"]}>
+                {MAIN_CATEGORY_LIMIT_NOTE}
+              </p>
+            )}
+          </div>
         </div>
 
         <section className={styles.panel} aria-label="카테고리 목록" aria-busy={query.isFetching}>

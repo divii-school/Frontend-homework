@@ -175,18 +175,18 @@ function OverviewTab({ query }: { query: ReturnType<typeof useProductDetail> }) 
   const d = query.data;
   const images = (d.images ?? []).map((ref) => imagePreviewUrl(imageKey(ref)));
   const rows: Array<[string, ReactNode]> = [
-    ["상품 코드", d.productCode || "-"],
+    ["상품코드", d.productCode || "-"],
     ["판매가", formatWon(d.price)],
     ["단가", d.unitPrice != null ? formatWon(d.unitPrice) : "-"],
-    ["노출 상태", d.isVisible ? "노출" : "미노출"],
-    ["판매 상태", d.onSale ? "판매 중" : "판매 중지"],
+    ["노출상태", d.isVisible ? "예" : "아니오"],
+    ["판매상태", d.onSale ? "예" : "아니오"],
     ["카테고리", formatCategoryPath([d.category ?? null, d.subCategory ?? null, d.childCategory ?? null])],
     ["ERP 코드", d.erpCode || "-"],
-    ["ERP 상품명", d.erpName || "-"],
-    ["수량", d.quantity != null ? d.quantity.toLocaleString("ko-KR") : "-"],
-    ["면세 여부", d.taxType === "tax_free" ? "면세" : d.taxType === "tax" ? "과세" : "-"],
+    ["상품ERP명", d.erpName || "-"],
+    ["갯수", d.quantity != null ? d.quantity.toLocaleString("ko-KR") : "-"],
+    ["비과세", d.taxType === "tax_free" ? "비과세" : d.taxType === "tax" ? "과세" : "-"],
     ["ERP 단가", d.erpUnitPrice != null ? formatWon(d.erpUnitPrice) : "-"],
-    ["등록일", formatDateTime(d.createdAt)],
+    ["등록일자", formatDateTime(d.createdAt)],
   ];
 
   return (
@@ -224,7 +224,7 @@ function OverviewTab({ query }: { query: ReturnType<typeof useProductDetail> }) 
 
       <section aria-labelledby="desc-heading">
         <h2 id="desc-heading" className={styles["section-title"]}>
-          상세 설명
+          상세설명
         </h2>
         <p className={styles.description}>{d.description?.trim() || "-"}</p>
       </section>
@@ -259,7 +259,7 @@ function SessionsTab({ productId, page, onPage }: { productId: number; page: num
               <tr key={row.id}>
                 <td>{row.session?.title ?? "-"}</td>
                 <td>{row.bookType === "MAIN" ? "주교재" : row.bookType === "OPTIONAL" ? "부교재" : (row.bookType ?? "-")}</td>
-                <td>{row.isActive ? "사용" : "미사용"}</td>
+                <td>{row.isActive ? "예" : "아니오"}</td>
                 <td>{formatDateTime(row.createdAt)}</td>
               </tr>
             ))}
@@ -305,10 +305,10 @@ function RelatedTab({
           <thead>
             <tr>
               <th scope="col">상품명</th>
-              <th scope="col">상품 코드</th>
+              <th scope="col">상품코드</th>
               <th scope="col">판매가</th>
-              <th scope="col">노출 여부</th>
-              <th scope="col">판매 상태</th>
+              <th scope="col">노출여부</th>
+              <th scope="col">판매상태</th>
             </tr>
           </thead>
           <tbody>
@@ -321,8 +321,8 @@ function RelatedTab({
                 </td>
                 <td>{row.productCode || "-"}</td>
                 <td>{formatWon(row.price)}</td>
-                <td>{row.isVisible ? "노출" : "미노출"}</td>
-                <td>{row.onSale ? "판매 중" : "판매 중지"}</td>
+                <td>{row.isVisible ? "예" : "아니오"}</td>
+                <td>{row.onSale ? "예" : "아니오"}</td>
               </tr>
             ))}
           </tbody>

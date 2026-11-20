@@ -6,7 +6,6 @@
 }
 
 .register {
-  min-width: 120px;
   text-decoration: none;
 }
 
@@ -211,8 +210,9 @@
   width: 170px;
 }
 
+// Selected rows: light brand tint (the table-head colour) so they stand out from hover.
 .row-selected td {
-  background: var(--color-row-hover);
+  background: var(--color-table-head);
 }
 
 .checkbox {
@@ -286,6 +286,12 @@
   height: 240px;
   text-align: center;
   color: var(--color-text-muted);
+
+  .empty-icon {
+    display: block;
+    margin: 0 auto var(--space-3);
+    color: var(--color-icon-muted);
+  }
 
   p {
     margin: 0 0 var(--space-4);

@@ -42,7 +42,7 @@ export function ProductSearch({ initialType, initialSearch, onSearch }: Props) {
         <input
           id={searchId}
           type="search"
-          placeholder="검색어를 입력해 주세요"
+          placeholder="검색어 입력"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           maxLength={100}

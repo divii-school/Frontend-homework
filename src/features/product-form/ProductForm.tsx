@@ -78,8 +78,12 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
       goTo((step + 1) as StepIndex);
       return;
     }
+    await saveAll();
+  }
 
-    // Last step: re-check every step, then save.
+  /** Re-check every step, then save. Used by the last step and by 저장 in the header (edit, Figma 8.1.2). */
+  async function saveAll() {
+    if (save.isPending) return;
     const invalid = firstInvalidStep(values);
     if (invalid !== null) {
       setAttempted(new Set([0, 1, 2, 3]));
@@ -101,7 +105,17 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
 
   return (
     <>
-      <PageHeader title={title} crumb={title} />
+      <PageHeader
+        title={title}
+        crumb={title}
+        actions={
+          mode === "edit" ? (
+            <button type="button" className={`${btn.button} ${btn.primary}`} onClick={saveAll} disabled={busy} aria-busy={busy}>
+              {busy ? "저장 중…" : "저장"}
+            </button>
+          ) : undefined
+        }
+      />
 
       <div className={styles.content}>
         <ol className={styles.stepper} aria-label="등록 단계">
@@ -128,7 +142,7 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
                   <TextInput {...f} value={values.productName} onChange={(v) => set("productName", v)} placeholder="상품명을 입력해 주세요" maxLength={LIMITS.NAME_MAX + 20} />
                 )}
               </Field>
-              <Field label="상품 코드" error={stepErrors.productCode} hint="자동으로 생성됩니다.">
+              <Field label="상품코드" error={stepErrors.productCode} hint="상품코드는 상품 등록 시 자동으로 생성됩니다.">
                 {(f) => <TextInput {...f} value={values.productCode} readOnly />}
               </Field>
               <Field label="단가" required error={stepErrors.unitPrice}>
@@ -138,7 +152,7 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
                 {(f) => <TextInput {...f} money value={values.price} onChange={(v) => set("price", v)} placeholder="0" maxLength={12} />}
               </Field>
               <div className={styles.full}>
-                <Field label="상세 설명" required error={stepErrors.description}>
+                <Field label="상세설명" required error={stepErrors.description}>
                   {(f) => (
                     <textarea
                       id={f.id}
@@ -170,19 +184,19 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
           {step === 2 && (
             <div className={styles.stack}>
               <div className={styles.grid}>
-                <Field label="노출 상태" required hint="고객에게 상품을 보여 줄지 정합니다.">
+                <Field label="노출상태" required hint="고객에게 노출할지 여부입니다.">
                   {(f) => (
                     <select id={f.id} className={styles.select} value={values.isVisible} onChange={(e) => set("isVisible", e.target.value as "yes" | "no")} aria-describedby={f.describedBy}>
-                      <option value="yes">노출</option>
-                      <option value="no">미노출</option>
+                      <option value="yes">예</option>
+                      <option value="no">아니오</option>
                     </select>
                   )}
                 </Field>
-                <Field label="판매 상태" required hint="판매 중지로 두면 결제할 수 없습니다.">
+                <Field label="판매상태" required hint="아니오로 두면 결제할 수 없습니다.">
                   {(f) => (
                     <select id={f.id} className={styles.select} value={values.onSale} onChange={(e) => set("onSale", e.target.value as "yes" | "no")} aria-describedby={f.describedBy}>
-                      <option value="yes">판매 중</option>
-                      <option value="no">판매 중지</option>
+                      <option value="yes">예</option>
+                      <option value="no">아니오</option>
                     </select>
                   )}
                 </Field>
@@ -212,13 +226,13 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
                   {(f) => <TextInput {...f} value={values.erpCode || (mode === "create" ? "등록 후 자동으로 부여됩니다" : "-")} readOnly />}
                 </Field>
               </div>
-              <Field label="ERP 상품명" required error={stepErrors.erpName}>
-                {(f) => <TextInput {...f} value={values.erpName} onChange={(v) => set("erpName", v)} placeholder="ERP 상품명을 입력해 주세요" maxLength={LIMITS.ERP_TEXT_MAX + 10} />}
+              <Field label="상품ERP명" required error={stepErrors.erpName}>
+                {(f) => <TextInput {...f} value={values.erpName} onChange={(v) => set("erpName", v)} placeholder="상품명 입력해 주세요." maxLength={LIMITS.ERP_TEXT_MAX + 10} />}
               </Field>
-              <Field label="수량" required error={stepErrors.quantity}>
+              <Field label="갯수" required error={stepErrors.quantity}>
                 {(f) => <TextInput {...f} numeric value={values.quantity} onChange={(v) => set("quantity", v)} placeholder="1" maxLength={9} />}
               </Field>
-              <Field label="면세 여부" required error={stepErrors.taxType}>
+              <Field label="비과세" required error={stepErrors.taxType}>
                 {(f) => (
                   <select
                     id={f.id}
@@ -229,9 +243,9 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
                     aria-describedby={f.describedBy}
                     aria-required
                   >
-                    <option value="">과세 구분 선택</option>
+                    <option value="">비과세를 선택해 주세요.</option>
                     <option value="tax">과세</option>
-                    <option value="tax_free">면세</option>
+                    <option value="tax_free">비과세</option>
                   </select>
                 )}
               </Field>
@@ -248,7 +262,7 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
           )}
 
           <div className={styles.footer}>
-            <button type="button" className={`${btn.button} ${btn.outline}`} onClick={() => setConfirmCancel(true)} disabled={busy}>
+            <button type="button" className={`${btn.button} ${btn["outline-brand"]}`} onClick={() => setConfirmCancel(true)} disabled={busy}>
               취소
             </button>
             <div className={styles["footer-right"]}>

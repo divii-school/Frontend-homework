@@ -13,6 +13,7 @@ import { productService } from "@/services/products";
 import { downloadCsv } from "@/lib/csv";
 import { PRODUCT_PAGE_SIZE, PRODUCT_SELECTION_MAX, type ProductListItem, type ProductListParams } from "@/types/product";
 import btn from "@/components/ui/Button.module.scss";
+import { IconEmpty } from "@/components/icons";
 import { useProductListParams } from "./useProductListParams";
 import { DeleteProductsDialog } from "./DeleteProductsDialog";
 import { ProductSearch } from "./ProductSearch";
@@ -76,7 +77,7 @@ export function ProductList() {
   async function changeVisible(row: ProductListItem, visible: boolean) {
     try {
       await setVisible.mutateAsync({ id: row.id, visible });
-      notify("success", `“${row.productName}” 노출 여부를 ${visible ? "노출" : "미노출"}로 변경했습니다.`);
+      notify("success", `“${row.productName}” 노출여부를 ${visible ? "예" : "아니오"}로 변경했습니다.`);
     } catch (error) {
       notify("error", errorMessage(error));
     }
@@ -88,14 +89,14 @@ export function ProductList() {
       const all = await productService.listAll(params, total);
       downloadCsv(
         `products-${new Date().toISOString().slice(0, 10)}.csv`,
-        ["ID", "상품 코드", "상품명", "판매가", "카테고리", "노출 여부", "등록일"],
+        ["ID", "상품코드", "상품명", "판매금액", "카테고리(과정)", "노출여부", "등록일자"],
         all.map((p) => [
           p.id,
           p.productCode,
           p.productName,
           p.price,
           formatCategoryPath([p.category, p.subCategory, p.childCategory]),
-          p.isVisible ? "노출" : "미노출",
+          p.isVisible ? "예" : "아니오",
           formatDateTime(p.createdAt),
         ]),
       );
@@ -155,7 +156,7 @@ export function ProductList() {
                 {exporting ? "내보내는 중…" : "CSV 내보내기"}
               </button>
               <span className={styles.total} aria-live="polite">
-                전체 {query.data ? total.toLocaleString("ko-KR") : "–"}건
+                총 게시물 : {query.data ? total.toLocaleString("ko-KR") : "–"}
               </span>
             </div>
           </div>
@@ -185,14 +186,14 @@ export function ProductList() {
                   </th>
                   <th scope="col">상품명</th>
                   <th scope="col" className={styles["col-price"]}>
-                    판매가
+                    판매금액
                   </th>
-                  <th scope="col">카테고리(코스)</th>
+                  <th scope="col">카테고리(과정)</th>
                   <th scope="col" className={styles["col-status"]}>
-                    노출 여부
+                    노출여부
                   </th>
                   <th scope="col" className={styles["col-date"]}>
-                    등록일
+                    등록일자
                   </th>
                 </tr>
               </thead>
@@ -217,6 +218,7 @@ export function ProductList() {
                 ) : rows.length === 0 ? (
                   <tr>
                     <td colSpan={7} className={styles.message} role="status">
+                      <IconEmpty className={styles["empty-icon"]} />
                       <p>
                         {query.data?.hiddenDeleted
                           ? "이 페이지에는 삭제된 상품만 있어 표시할 상품이 없습니다. 다른 페이지를 확인해 주세요."
@@ -260,10 +262,10 @@ export function ProductList() {
                           className={styles.status}
                           value={row.isVisible ? "yes" : "no"}
                           onChange={(e) => changeVisible(row, e.target.value === "yes")}
-                          aria-label={`${row.productName} 노출 여부`}
+                          aria-label={`${row.productName} 노출여부`}
                         >
-                          <option value="yes">노출</option>
-                          <option value="no">미노출</option>
+                          <option value="yes">예</option>
+                          <option value="no">아니오</option>
                         </select>
                       </td>
                       <td className={styles.date}>

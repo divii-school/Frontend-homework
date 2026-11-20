@@ -154,3 +154,37 @@ export function IconCheck(props: IconProps) {
     </svg>
   );
 }
+
+/** Empty-state icon (an empty box), 40px. */
+export function IconEmpty(props: IconProps) {
+  return (
+    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden focusable={false} {...props}>
+      <path d="M6 22l5-12h18l5 12v8a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-8z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M6 22h9l2 3h6l2-3h9" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/** Light-mode icon for the theme switch. */
+export function IconSun(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="9" cy="9" r="3.2" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        d="M9 1.5v1.8M9 14.7v1.8M1.5 9h1.8M14.7 9h1.8M3.7 3.7l1.3 1.3M13 13l1.3 1.3M3.7 14.3L5 13M13 5l1.3-1.3"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+/** Dark-mode icon for the theme switch. */
+export function IconMoon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M15.5 10.6A6.6 6.6 0 0 1 7.4 2.5a6.6 6.6 0 1 0 8.1 8.1z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+    </svg>
+  );
+}

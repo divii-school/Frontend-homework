@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, type ReactNode } from "react";
+import { formatMoneyInput } from "@/lib/format";
 import styles from "./ProductForm.module.scss";
 
 interface FieldProps {
@@ -76,8 +77,10 @@ export function TextInput({
       )}
       <input
         id={id}
-        value={value}
-        onChange={(e) => onChange?.(numeric || money ? e.target.value.replace(/[^\d,]/g, "") : e.target.value)}
+        value={money ? formatMoneyInput(value) : value}
+        onChange={(e) =>
+          onChange?.(money ? formatMoneyInput(e.target.value) : numeric ? e.target.value.replace(/[^\d,]/g, "") : e.target.value)
+        }
         placeholder={placeholder}
         maxLength={maxLength}
         readOnly={readOnly}

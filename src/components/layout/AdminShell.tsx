@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { NAVIGATION, navigationFor } from "@/config/navigation";
+import { NAVIGATION, OUT_OF_SCOPE_MENU, navigationFor } from "@/config/navigation";
+import { ThemeToggle } from "./ThemeToggle";
 import { useAuth } from "@/features/auth/AuthProvider";
 import { LOGIN_PATH } from "@/lib/auth/redirect";
 import { IconArrowDown, IconBars, IconLogout } from "@/components/icons";
@@ -58,6 +59,9 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
         <nav>
           <ul className={styles.menu}>
+            {OUT_OF_SCOPE_MENU.before.map((label) => (
+              <OutOfScope key={label} label={label} />
+            ))}
             {menu.map((group) => {
               const GroupIcon = group.icon;
               const active = group.pages.some((p) => pathname.startsWith(p.href));
@@ -94,11 +98,23 @@ export function AdminShell({ children }: { children: ReactNode }) {
                           </li>
                         );
                       })}
+                      {OUT_OF_SCOPE_MENU.shoppingPages.map((label) => (
+                        <li key={label}>
+                          <span className={`${styles["sub-link"]} ${styles["out-of-scope"]}`}>
+                            <span className={styles.bullet} aria-hidden />
+                            {label}
+                            <span className="visually-hidden"> (사용할 수 없음)</span>
+                          </span>
+                        </li>
+                      ))}
                     </ul>
                   )}
                 </li>
               );
             })}
+            {OUT_OF_SCOPE_MENU.after.map((label) => (
+              <OutOfScope key={label} label={label} />
+            ))}
           </ul>
         </nav>
       </aside>
@@ -118,10 +134,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
             <IconBars />
           </button>
           <div className={styles["header-right"]}>
+            <ThemeToggle />
             <button type="button" className={styles.logout} onClick={handleLogout} aria-label="로그아웃" title="로그아웃">
               <IconLogout />
             </button>
-            <span className={styles.divider} aria-hidden />
             <span className={styles["user-name"]}>{user?.fullName || "관리자"}</span>
           </div>
         </header>
@@ -131,5 +147,18 @@ export function AdminShell({ children }: { children: ReactNode }) {
         </main>
       </div>
     </div>
+  );
+}
+
+/** A Figma menu item outside HW3: greyed out, not a link. */
+function OutOfScope({ label }: { label: string }) {
+  return (
+    <li>
+      <span className={`${styles["group-button"]} ${styles["out-of-scope"]}`}>
+        <span className={styles["group-icon-placeholder"]} aria-hidden />
+        <span className={styles["group-label"]}>{label}</span>
+        <span className="visually-hidden"> (사용할 수 없음)</span>
+      </span>
+    </li>
   );
 }

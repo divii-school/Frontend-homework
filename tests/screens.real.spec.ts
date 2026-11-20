@@ -34,7 +34,7 @@ const SCREENS: Screen[] = [
     name: "product-new",
     path: "/shopping/products/new",
     needsLogin: true,
-    ready: async (p) => expect(p.getByLabel("상품 코드")).toHaveValue(/PRD-/, { timeout: 20_000 }),
+    ready: async (p) => expect(p.getByLabel("상품코드")).toHaveValue(/PRD-/, { timeout: 20_000 }),
   },
   {
     name: "product-detail",

@@ -101,7 +101,7 @@ export function ImageUploader({ images, onChange, error }: Props) {
           disabled={slotsLeft <= 0}
           aria-describedby={hintId}
         >
-          파일 추가
+          파일추가
         </button>
         <p id={hintId} className={styles.hint}>
           권장 크기: 800×800px(정사각형) · JPG, PNG, WebP {MB}MB 이하 · 최대 {PRODUCT_IMAGE_MAX}장. 첫 번째 이미지가 썸네일로

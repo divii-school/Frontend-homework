@@ -73,10 +73,17 @@ const confirmDialog = (page: Page) => page.getByRole("alertdialog");
 const inTree = (page: Page, text: string) => page.getByRole("region", { name: "카테고리 목록" }).getByText(text, { exact: true });
 
 test.describe("product category add / edit / delete (mocked API)", () => {
-  test("register a main category: name required, trimmed, then added with a toast", async ({ page }) => {
+  test("대분류 등록 is disabled with the reason (the API refuses new main categories)", async ({ page }) => {
+    await setup(page);
+    const register = page.getByRole("button", { name: "대분류 등록" });
+    await expect(register).toBeDisabled();
+    await expect(register).toHaveAccessibleDescription("대분류는 등록 가능한 최대 개수에 도달해 더 등록할 수 없습니다.");
+  });
+
+  test("add a 중분류: name required, trimmed, then added with a toast", async ({ page }) => {
     const { calls } = await setup(page);
-    await page.getByRole("button", { name: "등록" }).click();
-    await expect(dialog(page).getByText("대분류 추가")).toBeVisible();
+    await page.getByRole("button", { name: "Main에 중분류 추가" }).click();
+    await expect(dialog(page).getByText("중분류 추가")).toBeVisible();
     await expect(dialog(page).getByLabel("카테고리명")).toBeFocused();
 
     // Empty / spaces only → validation message, no request.
@@ -91,19 +98,19 @@ test.describe("product category add / edit / delete (mocked API)", () => {
     await expect(dialog(page)).toBeHidden();
     await expect(page.getByText("“HW3-Sandip-Books” 카테고리를 추가했습니다.")).toBeVisible();
     await expect(inTree(page, "HW3-Sandip-Books")).toBeVisible();
-    expect(calls).toEqual([{ method: "POST", path: "/add", body: { name: "HW3-Sandip-Books" } }]);
+    expect(calls).toEqual([{ method: "POST", path: "/subcategory/add", body: { name: "HW3-Sandip-Books", categoryId: 74 } }]);
   });
 
   test("add a subcategory and a child send the parent id in the right field", async ({ page }) => {
     const { calls } = await setup(page);
 
-    await page.getByRole("button", { name: "Main 하위 카테고리", exact: true }).click();
+    await page.getByRole("button", { name: "Main에 중분류 추가" }).click();
     await expect(dialog(page).getByText("상위 카테고리:")).toContainText("[74] Main");
     await dialog(page).getByLabel("카테고리명").fill("HW3-Sandip-Sub");
     await dialog(page).getByRole("button", { name: "추가" }).click();
     await expect(dialog(page)).toBeHidden();
 
-    await page.getByRole("button", { name: "Phonics & Alphabet 하위 카테고리" }).click();
+    await page.getByRole("button", { name: "Phonics & Alphabet에 소분류 추가" }).click();
     await expect(dialog(page).getByText("소분류 추가")).toBeVisible();
     await dialog(page).getByLabel("카테고리명").fill("HW3-Sandip-Child");
     await dialog(page).getByRole("button", { name: "추가" }).click();
@@ -133,7 +140,7 @@ test.describe("product category add / edit / delete (mocked API)", () => {
 
   test("API error keeps the dialog open with the typed name", async ({ page }) => {
     await setup(page, { failWrites: true });
-    await page.getByRole("button", { name: "등록" }).click();
+    await page.getByRole("button", { name: "Main에 중분류 추가" }).click();
     await dialog(page).getByLabel("카테고리명").fill("HW3-Sandip-Dup");
     await dialog(page).getByRole("button", { name: "추가" }).click();
 
@@ -145,7 +152,7 @@ test.describe("product category add / edit / delete (mocked API)", () => {
 
   test("a known API key gets its own Korean message, never the key", async ({ page }) => {
     await setup(page, { failWrites: true, failKey: "maximumCategoryLimitReached" });
-    await page.getByRole("button", { name: "등록" }).click();
+    await page.getByRole("button", { name: "Main에 중분류 추가" }).click();
     await dialog(page).getByLabel("카테고리명").fill("HW3-Sandip-Limit");
     await dialog(page).getByRole("button", { name: "추가" }).click();
 
@@ -173,7 +180,7 @@ test.describe("product category add / edit / delete (mocked API)", () => {
 
   test("Escape closes the dialog without saving", async ({ page }) => {
     const { calls } = await setup(page);
-    await page.getByRole("button", { name: "등록" }).click();
+    await page.getByRole("button", { name: "Main에 중분류 추가" }).click();
     await dialog(page).getByLabel("카테고리명").fill("HW3-Sandip-Esc");
     await page.keyboard.press("Escape");
     await expect(dialog(page)).toBeHidden();

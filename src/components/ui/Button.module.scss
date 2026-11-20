@@ -5,9 +5,8 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  min-width: 80px;
   height: 40px;
-  padding: 0 16px;
+  padding: 0 24px;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   font: inherit;
@@ -47,6 +46,23 @@
   }
 
   &:disabled {
+    color: var(--color-text-tertiary);
+  }
+}
+
+// Figma 8.1.1 #21 취소: red outline, red text.
+.outline-brand {
+  border-color: var(--color-brand);
+  background: var(--color-surface);
+  color: var(--color-brand);
+  font-weight: 500;
+
+  &:hover:not(:disabled) {
+    background: var(--color-table-head);
+  }
+
+  &:disabled {
+    border-color: var(--color-border-subtle);
     color: var(--color-text-tertiary);
   }
 }

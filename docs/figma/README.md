@@ -18,6 +18,19 @@ Each frame includes the spec header and the numbered DESCRIPTION panel on the ri
 Links: [Login section](https://www.figma.com/design/4wQgaju5jbb5BNRCeNmGZ0/Talking-club?node-id=4019-78447&m=dev) ·
 [Shopping mall management section](https://www.figma.com/design/4wQgaju5jbb5BNRCeNmGZ0/Talking-club?node-id=5498-98250&m=dev)
 
+## Korean frames (used for design-compare since 2026-11-20)
+
+Exported 2026-11-20 at 1x from the same file, page "1. DEV ( Admin_v0.4_Eng )", the Korean sections. The design review
+asked to follow these, not the English ones.
+
+| File | Figma node | Frame |
+| --- | --- | --- |
+| `ko-login-1.1.0.png` | 4019:78451 | 1.1.0 로그인 |
+| `ko-shop-8.1.0-product-list.png` | 8010:59065 | 8.1.0 쇼핑몰 관리 (상품관리) |
+| `ko-shop-8.1.1-product-registration.png` | 8010:57833 | 8.1.1 쇼핑몰 관리_상품 등록 |
+| `ko-shop-8.1.2-product-editing.png` | 5498:84860 | 8.1.2 쇼핑몰 관리_상품 수정 |
+| `ko-shop-8.2.0-product-category-management.png` | 5498:84158 | 8.2.0 쇼핑몰 관리_상품 카테고리 관리 |
+
 ## Gaps to raise as design questions
 
 - Only desktop frames exist (1886 px wide spec sheets). No 768 or 375 frames were found in either section.

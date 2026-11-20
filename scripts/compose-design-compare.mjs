@@ -12,11 +12,11 @@ fs.mkdirSync(out, { recursive: true });
 
 // App area of each Figma export (px in the 1x export): skips the spec header and the DESCRIPTION column.
 const FRAMES = {
-  login: { file: "login-1.1.0.png", node: "1.1.0 Login", crop: [20, 100, 1465, 951] },
-  categories: { file: "shop-8.2.0-product-category-management.png", node: "8.2.0 Product Category Management", crop: [20, 100, 1465, 1399] },
-  products: { file: "shop-8.1.0-product-list.png", node: "8.1.0 Product Management", crop: [20, 100, 1465, 1399] },
-  "product-new": { file: "shop-8.1.1-product-registration.png", node: "8.1.1 Product Registration", crop: [20, 100, 1465, 3320] },
-  "product-edit": { file: "shop-8.1.2-product-editing.png", node: "8.1.2 Product Editing", crop: [20, 100, 1465, 2450] },
+  login: { file: "ko-login-1.1.0.png", node: "1.1.0 로그인 (Korean frame)", crop: [20, 100, 1465, 951] },
+  categories: { file: "ko-shop-8.2.0-product-category-management.png", node: "8.2.0 상품 카테고리 관리 (Korean frame)", crop: [20, 100, 1465, 1691] },
+  products: { file: "ko-shop-8.1.0-product-list.png", node: "8.1.0 상품관리 (Korean frame)", crop: [20, 100, 1465, 1399] },
+  "product-new": { file: "ko-shop-8.1.1-product-registration.png", node: "8.1.1 상품 등록 (Korean frame)", crop: [20, 100, 1465, 3320] },
+  "product-edit": { file: "ko-shop-8.1.2-product-editing.png", node: "8.1.2 상품 수정 (Korean frame)", crop: [20, 100, 1465, 2450] },
   "product-detail": null, // no Figma frame exists for this page
 };
 const WIDTHS = [1440, 768, 375];

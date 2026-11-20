@@ -57,8 +57,8 @@ test.describe("product details tabs (mocked API)", () => {
     const panel = page.getByRole("tabpanel");
     await expect(panel).toContainText("₩19,000");
     await expect(panel).toContainText("Main > Phonics > ACE Alphabet");
-    await expect(panel).toContainText("면세");
-    await expect(panel).toContainText("2026-11-16 12:00 PM");
+    await expect(panel).toContainText("비과세");
+    await expect(panel).toContainText("2026/11/16 12:00");
     await expect(panel).toContainText("등록된 이미지가 없습니다.");
     expect(hits.sessions).toBe(0);
     expect(hits.related).toBe(0);
