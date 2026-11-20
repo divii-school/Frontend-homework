@@ -1,0 +1,69 @@
+// Design tokens (WM Light/Dark Mode Color System). Components use ONLY these vars.
+:root,
+[data-theme='light'] {
+  --color-primary: #e8335a;
+  --color-primary-hover: #cf2148;
+  --color-primary-contrast: #ffffff;
+  --color-accent: #7b3ff2;
+  --color-accent-contrast: #ffffff;
+
+  --color-bg: #ffffff;
+  --color-bg-subtle: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-surface-raised: #ffffff;
+  --color-table-head: #fdeef1;
+  --color-row-hover: #fafafb;
+  --color-sidebar-active: #fdf2f4;
+
+  --color-text: #1f2329;
+  --color-text-muted: #5f6672;
+  --color-text-placeholder: #8b919c;
+  --color-border: #e1e4e8;
+  --color-border-strong: #c4c9d0;
+
+  --color-danger: #d62d20;
+  --color-success: #1e8e3e;
+  --color-focus: #2f6fed;
+  --color-overlay: rgba(0, 0, 0, 0.45);
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --font-sans: 'Pretendard', 'Noto Sans KR', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --shadow-1: 0 1px 3px rgba(16, 24, 40, 0.08);
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --color-primary: #ff5c7c;
+  --color-primary-hover: #ff7a94;
+  --color-primary-contrast: #16181d;
+  --color-accent: #a78bfa;
+  --color-accent-contrast: #16181d;
+
+  --color-bg: #121418;
+  --color-bg-subtle: #1a1d23;
+  --color-surface: #1a1d23;
+  --color-surface-raised: #23272f;
+  --color-table-head: #2a2025;
+  --color-row-hover: #22262d;
+  --color-sidebar-active: #2a2025;
+
+  --color-text: #e8eaed;
+  --color-text-muted: #a9afb9;
+  --color-text-placeholder: #858c97;
+  --color-border: #333842;
+  --color-border-strong: #4a515d;
+
+  --color-danger: #ff6b5f;
+  --color-success: #4cc27a;
+  --color-focus: #7aa7ff;
+  --color-overlay: rgba(0, 0, 0, 0.6);
+  --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
+}
