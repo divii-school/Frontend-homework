@@ -9,8 +9,8 @@ A hand-over to QA (Archana): everything needed to test is on this page or linked
 | --- | --- |
 | Repository | https://github.com/divii-school/Frontend-homework |
 | Branch | `hw3/sandip` (PR to `main`, never merged) |
-| Commit (deployed app) | `beb0bad`. Later commits only add docs, screenshots and the published HTML report; the app code is identical. |
-| Date | 2026-11-17 |
+| Commit (deployed app) | `29e011f` (Korean error messages, Kakali's 11-18 points). Later commits only add docs and the published HTML report. |
+| Date | 2026-11-20 (first build `beb0bad` 2026-11-17) |
 | Demo | https://hw3-sandip.vercel.app — own Vercel account, only `NEXT_PUBLIC_API_BASE_URL` set (QA API), no deployment protection |
 | API | Talking Club **QA** API (`tkclub-admn-api-qa.dvconsulting.org`). Never production. |
 | HTML report | https://hw3-sandip.vercel.app/playwright-report/index.html (run against the demo, see part 9) |
@@ -43,6 +43,8 @@ A hand-over to QA (Archana): everything needed to test is on this page or linked
 | "Total Posts: 0" while loading | Shows "–" until the data is there |
 | WM: camelCase CSS classes (flagged in the HW1 review) | 71 classes renamed to lowercase-with-hyphens |
 | WM: date format | `YYYY-MM-DD h:mm AM` in KST (design question D3) |
+| Kakali 11-18: API errors showed English text or the raw key (e.g. `productCodeAlreadyExists`) | Every error is a Korean message by API code or HTTP status; raw keys never shown (tests assert it) |
+| A page of only deleted rows (API A2) said "No search results found" | Says the page has only deleted products and keeps the pagination |
 | HTML report could contain the QA login (Playwright records typed values) | Real-API tests log in through an API request; the published report was scanned: no ID, password or token |
 
 ## 5. Test accounts / roles
@@ -125,7 +127,7 @@ Route (app): /, /login, /shopping/categories, /shopping/products, /shopping/prod
 exit code: 0
 
 $ PLAYWRIGHT_BASE_URL=https://hw3-sandip.vercel.app npx playwright test   # both projects, against the demo
-58 passed (5.0m)    # chromium 57 = mocked UI tests 49 · real-QA read-only 3 · screenshots 4 · smoke 1
+59 passed (5.2m)    # chromium 58 = mocked UI tests 50 · real-QA read-only 3 · screenshots 4 · smoke 1
                     # mutation 1 (register with a real image upload → edit → exposure → delete, HW3-Sandip-E2E-*)
 exit code: 0
 ```

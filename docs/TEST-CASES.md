@@ -3,7 +3,7 @@
 Format follows the WM QA Template (ID, type, precondition, steps, expected result), as in HW2.
 Google Sheet version: `docs/TEST-CASES.csv` (same rows; File → Import in Google Sheets).
 
-**Build:** `beb0bad` on branch `hw3/sandip` · **URL:** https://hw3-sandip.vercel.app (or `npm run dev` → http://localhost:3003)
+**Build:** `29e011f` on branch `hw3/sandip` · **URL:** https://hw3-sandip.vercel.app (or `npm run dev` → http://localhost:3003)
 **Account:** QA admin login from the DM (role SUPER_ADMIN). **Data:** Talking Club **QA** server, shared by 5 people —
 create / edit / delete only records named `HW3-Sandip-…` and delete them afterwards.
 **Type:** **P** = positive (the happy path works) · **N** = negative (wrong input, wrong role, missing data, failure handled).
@@ -16,11 +16,11 @@ create / edit / delete only records named `HW3-Sandip-…` and delete them after
 | LG-01 | P | Logged out | Open `/login` | Card with Talking Club logo + "Admin", ID and Password fields, Auto login (checked), Log in button disabled | login.spec › login button stays disabled… |
 | LG-02 | N | `/login` | Type only an ID | Log in stays disabled until both fields are filled; spaces-only ID counts as empty | login.spec › login button stays disabled… |
 | LG-03 | P | `/login` | Type a password → click the eye icon → click again | Password shown as text, then hidden again; button label switches Show / Hide password | login.spec › password visibility toggle |
-| LG-04 | N | `/login` | Wrong ID or password → Log in | Red underline on both fields and "The ID and password do not match. Please check and try again."; still on `/login`; typing again clears the message | login.spec › wrong ID/password… |
+| LG-04 | N | `/login` | Wrong ID or password → Log in | Red underline on both fields and "아이디와 비밀번호가 일치하지 않습니다. 다시 확인해 주세요."; still on `/login`; typing again clears the message | login.spec › wrong ID/password… |
 | LG-05 | P | Logged out | Open `/shopping/categories?search=abc` → log in with the DM account | Redirected to `/login?next=…`; after login back on `/shopping/categories?search=abc`; header shows the admin's name | auth-roles.spec › successful login… · login.spec › protected page redirects… |
 | LG-06 | N | Account without an admin role | Log in | Popup "You don't have admin permission. Please contact customer service. 02-2014-8374"; stays logged out (server session ended too) | auth-roles.spec › an account without an admin role… |
 | LG-07 | P | Logged in | Header → Log out icon | `/login`; protected pages ask for login again; the old token no longer works on the API | auth-roles.spec › logout calls the API… |
-| LG-08 | N | Logged in, token revoked or expired (24 h) | Do anything that calls the API | Sent to `/login?next=<same page>&expired=1` with "Your session has ended. Please log in again."; after login back on the same page | auth-roles.spec › a 401 from the API… · an expired token in storage… |
+| LG-08 | N | Logged in, token revoked or expired (24 h) | Do anything that calls the API | Sent to `/login?next=<same page>&expired=1` with "로그인이 만료되었습니다. 다시 로그인해 주세요."; after login back on the same page | auth-roles.spec › a 401 from the API… · an expired token in storage… |
 | LG-09 | P | Auto login checked / unchecked | Log in, close the browser, open the app again | Checked: still logged in (localStorage). Unchecked: logged out (sessionStorage) | manual |
 
 ## 2. Roles and menu
@@ -44,7 +44,7 @@ create / edit / delete only records named `HW3-Sandip-…` and delete them after
 | CA-07 | N | Registration dialog | Leave the name empty / spaces only → Add | "Please enter a category name."; nothing sent | categories-crud.spec › register a main category… |
 | CA-08 | P | Own main + sub category | "+ Subcategory" on a main row, then on a sub row | Dialog shows "Parent: [id] name"; sub sent with `categoryId`, child with `subCategoryId` | categories-crud.spec › add a subcategory and a child… |
 | CA-09 | P | Own category | Pencil → change the name → Save | Save disabled until the name changes; saved with its parent id | categories-crud.spec › edit keeps the parent id… |
-| CA-10 | N | Dialog open | API rejects the save | API message in the dialog; typed name kept | categories-crud.spec › API error keeps the dialog… |
+| CA-10 | N | Dialog open | API rejects the save | Korean message in the dialog (never the API's own text); typed name kept | categories-crud.spec › API error keeps the dialog… |
 | CA-11 | N | Category with subcategories | Trash icon | "Can't delete this category — It still has N subcategories"; nothing deleted | categories-crud.spec › delete: blocked… |
 | CA-12 | P | Own leaf category | Trash → Delete | Confirm dialog (focus on Cancel) → toast, row gone | categories-crud.spec › delete: … a leaf is deleted |
 | CA-13 | N | Any dialog open | Press Escape | Dialog closes, nothing saved | categories-crud.spec › Escape closes the dialog… |
@@ -61,7 +61,7 @@ create / edit / delete only records named `HW3-Sandip-…` and delete them after
 | PL-06 | P | Own `HW3-Sandip-…` products | Select rows on page 1 and 2 → Delete → Delete | "N selected"; confirm dialog (focus on Cancel); `DELETE {ids:[…numbers]}`; toast; total drops | products.spec › select rows… · products.mutation.spec |
 | PL-07 | N | 100 rows selected | Select one more | "You can select up to 100 products at once."; not added | manual |
 | PL-08 | P | Own product | Exposure dropdown Yes ↔ No | Changes at once, toast "… is now shown / hidden"; survives reload | products.spec › exposure status changes… · products.mutation.spec |
-| PL-09 | N | API fails | Change exposure | Error toast; dropdown goes back to the old value | products.spec › exposure status rolls back… |
+| PL-09 | N | API fails | Change exposure | Korean error toast ("서버에 문제가 발생했습니다…"); dropdown goes back to the old value | products.spec › exposure status rolls back… |
 | PL-10 | P | Any search | Export CSV | Downloads `products-YYYY-MM-DD.csv` with every matching row (all pages), Korean readable in Excel | products.spec › export downloads… |
 | PL-11 | N | A name starting with `=` | Export CSV | Cell starts with `'` (no spreadsheet formula) | products.spec › CSV guards… |
 | PL-12 | N | Category-name search returns deleted rows (API) | Search by category | Rows marked deleted by the API are not shown | products.spec › soft-deleted rows… |
@@ -77,11 +77,11 @@ create / edit / delete only records named `HW3-Sandip-…` and delete them after
 | PF-05 | N | Step 3 | Next without categories | "Please select a major category." (etc.) | product-form.spec › full create… |
 | PF-06 | P | Step 3 | Pick Major → Medium → Minor, then change Major | Medium and Minor reset | product-form.spec › full create… |
 | PF-07 | P | All steps valid | Register | Request body as the API expects; toast "… was registered."; back on the list | product-form.spec › full create… · products.mutation.spec |
-| PF-08 | N | Save fails (API error) | Register | API message + "Your input is kept"; every step still filled (images too) | product-form.spec › a failed save keeps… |
+| PF-08 | N | Save fails (API error) | Register | Korean message for the API code (e.g. "이미 사용 중인 상품 코드입니다…") + "입력한 내용은 그대로 남아 있습니다."; raw key never shown; every step still filled (images too) | product-form.spec › a failed save keeps… |
 | PF-09 | P | Own product | Edit | Form filled from the details; product code read-only; PUT without productCode; image keys (not URLs) sent | product-form.spec › edit loads the product… · products.mutation.spec |
 | PF-10 | P | Any | Step 4 ERP code | Read-only ("Assigned automatically after registration" / the assigned code); never sent | product-form.spec › ERP code is server-assigned… |
 | PF-11 | N | Typed values | Cancel → No / Yes | No keeps the form; Yes goes to the list | product-form.spec › cancel asks first… |
-| PF-12 | N | `/shopping/products/404404/edit` | Open | "This product doesn't exist or was deleted." | product-form.spec › unknown product… |
+| PF-12 | N | `/shopping/products/404404/edit` | Open | "상품을 찾을 수 없습니다. 이미 삭제되었을 수 있습니다." | product-form.spec › unknown product… |
 
 ## 6. Images (form step 2)
 

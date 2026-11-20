@@ -17,7 +17,7 @@ Service + hook pattern: component → TanStack Query hook (`src/hooks`) → serv
 
 ### Checks (real output in `docs/results/`)
 - `npm run lint` ✔ · `npm run typecheck` ✔ · `npm run build` ✔
-- Playwright against the demo: 58 passed (57 chromium + 1 mutation on QA, `HW3-Sandip-E2E-*`, cleaned up)
+- Playwright against the demo: 59 passed (58 chromium + 1 mutation on QA, `HW3-Sandip-E2E-*`, cleaned up)
 - HTML report: https://hw3-sandip.vercel.app/playwright-report/index.html
 
 ### Open questions / known items
