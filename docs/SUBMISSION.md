@@ -12,7 +12,7 @@ Then comment on the TL page: "HW3 submitted" + link to this page, tagging Kakali
 - PR to `main` (review only, never merged): https://github.com/divii-school/Frontend-homework/pull/3
 
 ## 2. Vercel link (latest build)
-https://hw3-sandip.vercel.app — build `3002f93` (app code, Korean UI). Logins from DM.
+https://hw3-sandip.vercel.app — build `8498009` (app code, Korean UI). Logins from DM.
 
 ## 3. How to run it (no secrets; "logins from DM")
 ```bash
@@ -37,7 +37,7 @@ Real-API tests need `E2E_LOGIN_ID` / `E2E_PASSWORD` in `.env.local` (from the DM
 
 ## 5. lint / type-check / build / Playwright output + HTML report
 - Output: `docs/results/lint-typecheck-build.txt` and `docs/results/playwright-vercel.txt` (summary in Build report part 9)
-- lint ✔ exit 0 · type-check ✔ exit 0 · build ✔ exit 0 · Playwright **59 passed** against the demo (58 chromium + 1 mutation)
+- lint ✔ exit 0 · type-check ✔ exit 0 · build ✔ exit 0 · Playwright **60 passed** against the demo (59 chromium + 1 mutation)
 - HTML report: https://hw3-sandip.vercel.app/playwright-report/index.html
 
 ## 6. Unit test case sheet link

@@ -3,7 +3,7 @@
 Format follows the WM QA Template (ID, type, precondition, steps, expected result), as in HW2.
 Google Sheet version: `docs/TEST-CASES.csv` (same rows; File → Import in Google Sheets).
 
-**Build:** `3002f93` (Korean UI) on branch `hw3/sandip` · **URL:** https://hw3-sandip.vercel.app (or `npm run dev` → http://localhost:3003)
+**Build:** `8498009` (Korean UI) on branch `hw3/sandip` · **URL:** https://hw3-sandip.vercel.app (or `npm run dev` → http://localhost:3003)
 **Account:** QA admin login from the DM (role SUPER_ADMIN). **Data:** Talking Club **QA** server, shared by 5 people —
 create / edit / delete only records named `HW3-Sandip-…` and delete them afterwards.
 **Type:** **P** = positive (the happy path works) · **N** = negative (wrong input, wrong role, missing data, failure handled).

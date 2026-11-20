@@ -9,7 +9,7 @@ A hand-over to QA (Archana): everything needed to test is on this page or linked
 | --- | --- |
 | Repository | https://github.com/divii-school/Frontend-homework |
 | Branch | `hw3/sandip` (PR to `main`, never merged) |
-| Commit (deployed app) | `3002f93` (Korean UI on every screen, Kakali's 11-20 DM). Later commits only add docs and the published HTML report. |
+| Commit (deployed app) | `8498009` (Korean UI on every screen `3002f93` + Korean text for more API keys, Kakali's 11-20 points). Later commits only add docs and the published HTML report. |
 | Date | 2026-11-20 (first build `beb0bad` 2026-11-17; Korean error messages `29e011f`; Korean UI `3002f93`) |
 | Demo | https://hw3-sandip.vercel.app — own Vercel account, only `NEXT_PUBLIC_API_BASE_URL` set (QA API), no deployment protection |
 | API | Talking Club **QA** API (`tkclub-admn-api-qa.dvconsulting.org`). Never production. |
@@ -132,7 +132,7 @@ Route (app): /, /login, /shopping/categories, /shopping/products, /shopping/prod
 exit code: 0
 
 $ PLAYWRIGHT_BASE_URL=https://hw3-sandip.vercel.app npx playwright test   # both projects, against the demo
-59 passed (6.6m)    # chromium 58 = mocked UI tests 50 · real-QA read-only 3 · screenshots 4 · smoke 1
+60 passed (5.6m)    # chromium 59 = mocked UI tests 51 · real-QA read-only 3 · screenshots 4 · smoke 1
                     # mutation 1 (register with a real image upload → edit → exposure → delete, HW3-Sandip-E2E-*)
 exit code: 0
 ```
