@@ -12,6 +12,7 @@ import { useCan } from '@/features/auth/AuthProvider';
 import { formatDateTime, formatNumber, formatWon } from '@/lib/format';
 import { Thumb } from './components/Thumb';
 import { useProductDetail, useRelatedProducts } from './useProducts';
+import { taxLabel } from './types';
 import styles from './ProductDetailPage.module.scss';
 
 const TABS = ['info', 'images', 'related'] as const;
@@ -69,7 +70,7 @@ function InfoTab({ id }: { id: number }) {
     ['판매 상태', data.onSale === 'yes' ? 'Yes' : 'No'],
     ['ERP 상품명', data.erpName || '-'],
     ['수량', formatNumber(data.quantity)],
-    ['과세 구분', data.taxType || '-'],
+    ['과세 구분', taxLabel(data.taxType)],
     ['ERP 단가', formatWon(data.erpUnitPrice)],
     ['등록일', formatDateTime(data.createdAt)],
     ['수정일', formatDateTime(data.updatedAt)],

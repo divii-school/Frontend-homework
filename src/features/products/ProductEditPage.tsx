@@ -8,6 +8,16 @@ import { useProductDetail } from './useProducts';
 import { imageUrl } from './productService';
 import { EMPTY_PRODUCT_FORM, type ProductFormValues } from './types';
 
+/** Details returns full S3 URLs; the edit DTO expects keys like products/abc.png. */
+function toKey(urlOrKey: string): string {
+  if (!/^https?:/.test(urlOrKey)) return urlOrKey;
+  try {
+    return decodeURIComponent(new URL(urlOrKey).pathname.replace(/^\//, ''));
+  } catch {
+    return urlOrKey;
+  }
+}
+
 export function ProductCreatePage() {
   return (
     <>
@@ -28,7 +38,7 @@ export function ProductEditPage({ id }: { id: number }) {
             unitPrice: data.unitPrice,
             price: data.price,
             description: data.description,
-            images: data.images.map((k) => ({ key: k, previewUrl: imageUrl(k) ?? '' })),
+            images: data.images.map((k) => ({ key: toKey(k), previewUrl: imageUrl(k) ?? '' })),
             isVisible: data.isVisible,
             onSale: data.onSale,
             categoryId: data.categoryId ?? null,

@@ -86,9 +86,13 @@ export interface Option {
 }
 
 export const TAX_TYPES = [
-  { label: '과세', value: '과세' },
-  { label: '면세', value: '면세' },
+  { label: '과세', value: 'tax' },
+  { label: '비과세', value: 'tax_free' },
 ];
+
+export function taxLabel(v: string): string {
+  return TAX_TYPES.find((t) => t.value === v)?.label ?? (v || '-');
+}
 export const YES_NO_OPTIONS = [
   { label: 'Yes', value: 'yes' },
   { label: 'No', value: 'no' },

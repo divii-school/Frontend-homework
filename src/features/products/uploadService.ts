@@ -15,7 +15,7 @@ function findSigned(body: unknown): { url: string; key?: string } | null {
   if (typeof first === 'string') return { url: first };
   if (isObject(first)) {
     const url = pickString(first, ['url', 'signedUrl', 'uploadUrl', 'presignedUrl']);
-    if (url) return { url, key: pickString(first, ['key', 'path', 'fileKey', 'fileName']) };
+    if (url) return { url, key: pickString(first, ['filePath', 'key', 'path', 'fileKey']) };
   }
   return null;
 }

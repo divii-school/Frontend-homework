@@ -88,7 +88,7 @@ The Swagger spec documents requests but **not response bodies**, so `lib/api/nor
 | Category tree keys | `subCategories` / `childCategories` | `features/categories/categoryService.ts` |
 | Status endpoint value | `/update-status/{id}/yes|no` | `productService.updateStatus` |
 | Signed URL response | `[{ url, key }]` | `features/products/uploadService.ts` |
-| Tax type values | `과세` / `면세` | `features/products/types.ts` `TAX_TYPES` |
+| Tax type values | `tax` / `tax_free` (confirmed on QA) | `features/products/types.ts` `TAX_TYPES` |
 
 ## Design / API questions (WM)
 

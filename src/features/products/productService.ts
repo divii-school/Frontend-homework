@@ -7,6 +7,7 @@ const IMAGE_BASE = (process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? '').replace(/\/$/,
 export function imageUrl(keyOrUrl: string | undefined): string | undefined {
   if (!keyOrUrl) return undefined;
   if (/^(https?:|blob:|data:)/.test(keyOrUrl)) return keyOrUrl;
+  // Keys only: no base configured → no preview (placeholder is shown).
   return IMAGE_BASE ? `${IMAGE_BASE}/${keyOrUrl.replace(/^\//, '')}` : undefined;
 }
 
@@ -33,6 +34,9 @@ function categoryPath(raw: unknown): string {
 }
 
 function firstImage(raw: unknown): string | undefined {
+  // The list API sends a full `image` URL next to the S3 keys in `images`.
+  const full = pickString(raw, ['image', 'thumbnail']);
+  if (full) return full;
   const imgs = pickArray(raw, ['images', 'productImages']);
   const first = imgs[0];
   return typeof first === 'string' ? first : pickString(first, ['url', 'image', 'path', 'key']) ?? pickString(raw, ['thumbnail', 'image']);

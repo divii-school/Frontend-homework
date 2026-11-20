@@ -8,3 +8,5 @@ test-results
 e2e/.auth
 *.tsbuildinfo
 next-env.d.ts
+
+.vercel
