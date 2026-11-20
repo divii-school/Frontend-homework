@@ -38,19 +38,19 @@ export function AdminShell({ children }: { children: ReactNode }) {
   return (
     <div className={styles.shell}>
       <a href="#main" className={styles.skip}>
-        Skip to content
+        본문 바로가기
       </a>
 
-      <aside id="admin-nav" className={`${styles.sidebar} ${drawerOpen ? styles["sidebar-open"] : ""}`} aria-label="Main menu">
+      <aside id="admin-nav" className={`${styles.sidebar} ${drawerOpen ? styles["sidebar-open"] : ""}`} aria-label="주 메뉴">
         <div className={styles["brand-row"]}>
           <Link href="/shopping/products" className={styles.brand} onClick={() => setDrawerOpen(false)}>
-            <Image src="/images/talkingclub-logo@2x.png" alt="Talking Club Admin" width={158} height={30} className={styles.logo} priority />
+            <Image src="/images/talkingclub-logo@2x.png" alt="토킹클럽 관리자" width={158} height={30} className={styles.logo} priority />
           </Link>
           <button
             type="button"
             className={`${styles["icon-button"]} ${styles["mobile-only"]}`}
             onClick={() => setDrawerOpen(false)}
-            aria-label="Close menu"
+            aria-label="메뉴 닫기"
           >
             <IconBars />
           </button>
@@ -62,7 +62,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
               const GroupIcon = group.icon;
               const active = group.pages.some((p) => pathname.startsWith(p.href));
               const open = openGroups[group.label] ?? false;
-              const listId = `nav-${group.label.replace(/\W+/g, "-").toLowerCase()}`;
+              const listId = `nav-${group.pages[0]?.href.replace(/\W+/g, "-") ?? "group"}`;
               return (
                 <li key={group.label}>
                   <button
@@ -111,18 +111,18 @@ export function AdminShell({ children }: { children: ReactNode }) {
             type="button"
             className={`${styles["icon-button"]} ${styles["mobile-only"]}`}
             onClick={() => setDrawerOpen(true)}
-            aria-label="Open menu"
+            aria-label="메뉴 열기"
             aria-expanded={drawerOpen}
             aria-controls="admin-nav"
           >
             <IconBars />
           </button>
           <div className={styles["header-right"]}>
-            <button type="button" className={styles.logout} onClick={handleLogout} aria-label="Log out" title="Log out">
+            <button type="button" className={styles.logout} onClick={handleLogout} aria-label="로그아웃" title="로그아웃">
               <IconLogout />
             </button>
             <span className={styles.divider} aria-hidden />
-            <span className={styles["user-name"]}>{user?.fullName || "Admin"}</span>
+            <span className={styles["user-name"]}>{user?.fullName || "관리자"}</span>
           </div>
         </header>
 

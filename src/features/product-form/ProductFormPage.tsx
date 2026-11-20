@@ -16,14 +16,14 @@ export function ProductFormPage({ productId }: { productId: number | null }) {
   const code = useGeneratedCode(!isEdit);
   const detail = useProductDetail(productId);
   const query = isEdit ? detail : code;
-  const title = isEdit ? "Edit Product" : "Product Registration";
+  const title = isEdit ? "상품 수정" : "상품 등록";
 
   if (query.isPending) {
     return (
       <>
         <PageHeader title={title} crumb={title} />
         <p className={styles["page-state"]} role="status">
-          Loading…
+          불러오는 중…
         </p>
       </>
     );
@@ -38,7 +38,7 @@ export function ProductFormPage({ productId }: { productId: number | null }) {
           <p>{notFound ? "상품을 찾을 수 없습니다. 이미 삭제되었을 수 있습니다." : errorMessage(query.error)}</p>
           {!notFound && (
             <button type="button" className={`${btn.button} ${btn.outline}`} onClick={() => query.refetch()}>
-              Try again
+              다시 시도
             </button>
           )}
         </div>

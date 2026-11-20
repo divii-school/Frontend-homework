@@ -10,29 +10,29 @@ test.describe("login", () => {
 
   test("login button stays disabled until ID and password are both filled", async ({ page }) => {
     await page.goto("/login");
-    const submit = page.getByRole("button", { name: "Log in" });
+    const submit = page.getByRole("button", { name: "로그인" });
     await expect(submit).toBeDisabled();
 
-    await page.getByLabel("ID").fill("someone");
+    await page.getByLabel("아이디").fill("someone");
     await expect(submit).toBeDisabled();
 
-    await page.getByLabel("Password", { exact: true }).fill("x");
+    await page.getByLabel("비밀번호", { exact: true }).fill("x");
     await expect(submit).toBeEnabled();
 
-    await page.getByLabel("ID").fill("   ");
+    await page.getByLabel("아이디").fill("   ");
     await expect(submit).toBeDisabled();
   });
 
   test("password visibility toggle", async ({ page }) => {
     await page.goto("/login");
-    const password = page.getByLabel("Password", { exact: true });
+    const password = page.getByLabel("비밀번호", { exact: true });
     await password.fill("secret");
     await expect(password).toHaveAttribute("type", "password");
 
-    await page.getByRole("button", { name: "Show password" }).click();
+    await page.getByRole("button", { name: "비밀번호 보기" }).click();
     await expect(password).toHaveAttribute("type", "text");
 
-    await page.getByRole("button", { name: "Hide password" }).click();
+    await page.getByRole("button", { name: "비밀번호 숨기기" }).click();
     await expect(password).toHaveAttribute("type", "password");
   });
 
@@ -46,16 +46,16 @@ test.describe("login", () => {
       }),
     );
     await page.goto("/login");
-    await page.getByLabel("ID").fill("HW3-Sandip-no-such-user");
-    await page.getByLabel("Password", { exact: true }).fill("wrong-password-1");
-    await page.getByRole("button", { name: "Log in" }).click();
+    await page.getByLabel("아이디").fill("HW3-Sandip-no-such-user");
+    await page.getByLabel("비밀번호", { exact: true }).fill("wrong-password-1");
+    await page.getByRole("button", { name: "로그인" }).click();
 
     await expect(page.locator("form").getByRole("alert")).toHaveText("아이디와 비밀번호가 일치하지 않습니다. 다시 확인해 주세요.");
-    await expect(page.getByLabel("ID")).toHaveAttribute("aria-invalid", "true");
+    await expect(page.getByLabel("아이디")).toHaveAttribute("aria-invalid", "true");
     await expect(page).toHaveURL(/\/login/);
 
     // Typing again clears the error.
-    await page.getByLabel("Password", { exact: true }).fill("wrong-password-2");
+    await page.getByLabel("비밀번호", { exact: true }).fill("wrong-password-2");
     await expect(page.locator("form").getByRole("alert")).toHaveText("");
   });
 });

@@ -17,12 +17,12 @@ interface Screen {
 }
 
 const SCREENS: Screen[] = [
-  { name: "login", path: "/login", needsLogin: false, ready: async (p) => expect(p.getByRole("button", { name: "Log in" })).toBeVisible() },
+  { name: "login", path: "/login", needsLogin: false, ready: async (p) => expect(p.getByRole("button", { name: "로그인" })).toBeVisible() },
   {
     name: "categories",
     path: "/shopping/categories",
     needsLogin: true,
-    ready: async (p) => expect(p.getByRole("region", { name: "Category tree" }).getByRole("listitem").first()).toBeVisible({ timeout: 20_000 }),
+    ready: async (p) => expect(p.getByRole("region", { name: "카테고리 목록" }).getByRole("listitem").first()).toBeVisible({ timeout: 20_000 }),
   },
   {
     name: "products",
@@ -34,7 +34,7 @@ const SCREENS: Screen[] = [
     name: "product-new",
     path: "/shopping/products/new",
     needsLogin: true,
-    ready: async (p) => expect(p.getByLabel("Product Code")).toHaveValue(/PRD-/, { timeout: 20_000 }),
+    ready: async (p) => expect(p.getByLabel("상품 코드")).toHaveValue(/PRD-/, { timeout: 20_000 }),
   },
   {
     name: "product-detail",
@@ -46,7 +46,7 @@ const SCREENS: Screen[] = [
     name: "product-edit",
     path: "/shopping/products/12139/edit",
     needsLogin: true,
-    ready: async (p) => expect(p.getByLabel("Product Name")).not.toHaveValue("", { timeout: 20_000 }),
+    ready: async (p) => expect(p.getByLabel("상품명")).not.toHaveValue("", { timeout: 20_000 }),
   },
 ];
 

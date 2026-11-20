@@ -28,7 +28,7 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   if (status !== "authenticated" || !user) {
     return (
       <div role="status" aria-live="polite" className="visually-hidden">
-        Checking your session…
+        로그인 상태를 확인하는 중…
       </div>
     );
   }

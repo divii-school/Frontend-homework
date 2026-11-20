@@ -14,7 +14,7 @@ export type AuthStatus = "checking" | "authenticated" | "anonymous";
 /** Thrown by login() when the account is valid but has no admin role (Figma "권한없음" popup). */
 export class NotAdminError extends Error {
   constructor() {
-    super("This account has no admin permission.");
+    super("관리자 권한이 없는 계정입니다.");
     this.name = "NotAdminError";
   }
 }

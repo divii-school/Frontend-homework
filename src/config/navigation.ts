@@ -24,11 +24,11 @@ export interface NavGroup {
 
 export const NAVIGATION: readonly NavGroup[] = [
   {
-    label: "Shopping Mall Management",
+    label: "쇼핑몰 관리",
     icon: IconCart,
     pages: [
-      { label: "Product Management", href: "/shopping/products", roles: ["SUPER_ADMIN", "GENERAL_ADMIN"] },
-      { label: "Product Category Management", href: "/shopping/categories", roles: ["SUPER_ADMIN"] },
+      { label: "상품 관리", href: "/shopping/products", roles: ["SUPER_ADMIN", "GENERAL_ADMIN"] },
+      { label: "상품 카테고리 관리", href: "/shopping/categories", roles: ["SUPER_ADMIN"] },
     ],
   },
 ];

@@ -22,30 +22,30 @@ export function CategoryPicker({ categoryId, subCategoryId, childCategoryId, onC
   return (
     <div className={styles["category-columns"]}>
       <Column
-        title="Major Category"
+        title="대분류"
         query={majors}
         value={categoryId}
         error={errors.categoryId}
         onSelect={(id) => onChange({ categoryId: id, subCategoryId: null, childCategoryId: null })}
-        emptyText="No categories."
+        emptyText="카테고리가 없습니다."
       />
       <Column
-        title="Medium Category"
+        title="중분류"
         query={categoryId === null ? null : subs}
         value={subCategoryId}
         error={errors.subCategoryId}
         onSelect={(id) => onChange({ categoryId, subCategoryId: id, childCategoryId: null })}
-        emptyText="No medium categories."
-        waitText="Select a major category first."
+        emptyText="중분류가 없습니다."
+        waitText="대분류를 먼저 선택해 주세요."
       />
       <Column
-        title="Minor Category"
+        title="소분류"
         query={subCategoryId === null ? null : children}
         value={childCategoryId}
         error={errors.childCategoryId}
         onSelect={(id) => onChange({ categoryId, subCategoryId, childCategoryId: id })}
-        emptyText="No minor categories."
-        waitText="Select a medium category first."
+        emptyText="소분류가 없습니다."
+        waitText="중분류를 먼저 선택해 주세요."
       />
     </div>
   );
@@ -90,13 +90,13 @@ function Column({
           <p className={styles["column-note"]}>{waitText}</p>
         ) : query.isPending ? (
           <p className={styles["column-note"]} role="status">
-            Loading…
+            불러오는 중…
           </p>
         ) : query.isError ? (
           <p className={styles["column-note"]} role="alert">
             불러오지 못했습니다.{" "}
             <button type="button" className={styles["link-button"]} onClick={() => query.refetch()}>
-              Try again
+              다시 시도
             </button>
           </p>
         ) : !query.data?.length ? (

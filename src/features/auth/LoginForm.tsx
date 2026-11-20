@@ -59,7 +59,7 @@ export function LoginForm() {
       <div className={styles.brand}>
         <Image
           src="/images/talkingclub-logo@2x.png"
-          alt="Talking Club"
+          alt="토킹클럽"
           width={158}
           height={30}
           priority
@@ -70,7 +70,7 @@ export function LoginForm() {
       </div>
 
       <form className={styles.form} onSubmit={handleSubmit} noValidate>
-        <h1 className="visually-hidden">Log in to Talking Club Admin</h1>
+        <h1 className="visually-hidden">토킹클럽 관리자 로그인</h1>
         {expired && !error && (
           <p className={styles.notice} role="status">
             로그인이 만료되었습니다. 다시 로그인해 주세요.
@@ -82,14 +82,14 @@ export function LoginForm() {
             <div className={`${styles.input} ${invalid ? styles["input-invalid"] : ""}`}>
               <IconAdmin className={styles.icon} />
               <label htmlFor={idFieldId} className="visually-hidden">
-                ID
+                아이디
               </label>
               <input
                 id={idFieldId}
                 name="loginId"
                 type="text"
                 autoComplete="username"
-                placeholder="ID"
+                placeholder="아이디"
                 value={loginId}
                 onChange={(e) => {
                   setLoginId(e.target.value);
@@ -107,14 +107,14 @@ export function LoginForm() {
             <div className={`${styles.input} ${invalid ? styles["input-invalid"] : ""}`}>
               <IconLock className={styles.icon} />
               <label htmlFor={pwFieldId} className="visually-hidden">
-                Password
+                비밀번호
               </label>
               <input
                 id={pwFieldId}
                 name="password"
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
-                placeholder="Password"
+                placeholder="비밀번호"
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
@@ -129,7 +129,7 @@ export function LoginForm() {
                 type="button"
                 className={styles.reveal}
                 onClick={() => setShowPassword((v) => !v)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
                 aria-pressed={showPassword}
               >
                 {showPassword ? <IconEye /> : <IconEyeOff />}
@@ -145,32 +145,32 @@ export function LoginForm() {
             <span className={styles["check-box"]} aria-hidden>
               <IconCheck />
             </span>
-            <span>Auto login</span>
+            <span>자동 로그인</span>
           </label>
         </div>
 
         <button type="submit" className={styles.submit} disabled={!canSubmit} aria-busy={submitting}>
-          {submitting ? "Logging in…" : "Log in"}
+          {submitting ? "로그인 중…" : "로그인"}
         </button>
       </form>
 
       {/* Figma "권한없음" popup: valid account without an admin role. */}
       <Dialog
         visible={notAdmin}
-        header="No admin permission"
+        header="권한 없음"
         onHide={() => setNotAdmin(false)}
         draggable={false}
         resizable={false}
         footer={
           <button type="button" className={`${btn.button} ${btn.primary}`} onClick={() => setNotAdmin(false)}>
-            OK
+            확인
           </button>
         }
       >
         <p className={styles["popup-body"]}>
-          You don&apos;t have admin permission.
+          관리자 권한이 없습니다.
           <br />
-          Please contact customer service.
+          고객센터로 문의해 주세요.
           <br />
           <br />
           02-2014-8374

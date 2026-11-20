@@ -89,7 +89,7 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
     try {
       await save.mutateAsync(values);
       dirty.current = false;
-      notify("success", mode === "create" ? `“${values.productName.trim()}” was registered.` : `Saved “${values.productName.trim()}”.`);
+      notify("success", mode === "create" ? `“${values.productName.trim()}” 상품을 등록했습니다.` : `“${values.productName.trim()}” 상품을 저장했습니다.`);
       router.push(LIST_PATH);
     } catch (error) {
       setApiError(errorMessage(error));
@@ -97,55 +97,55 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
   }
 
   const busy = save.isPending;
-  const title = mode === "create" ? "Product Registration" : "Edit Product";
+  const title = mode === "create" ? "상품 등록" : "상품 수정";
 
   return (
     <>
       <PageHeader title={title} crumb={title} />
 
       <div className={styles.content}>
-        <ol className={styles.stepper} aria-label="Steps">
+        <ol className={styles.stepper} aria-label="등록 단계">
           {STEPS.map((s, i) => (
             <li key={s.key} className={`${styles["step-item"]} ${i === step ? styles["step-current"] : ""} ${i < step ? styles["step-done"] : ""}`}>
               <span className={styles["step-number"]} aria-hidden>
                 {i + 1}
               </span>
               <span className={styles["step-label"]}>{s.label}</span>
-              {i === step && <span className="visually-hidden"> (current step)</span>}
+              {i === step && <span className="visually-hidden"> (현재 단계)</span>}
             </li>
           ))}
         </ol>
 
         <form className={styles.card} onSubmit={next} noValidate aria-busy={busy}>
           <h2 ref={headingRef} tabIndex={-1} className={styles["step-heading"]}>
-            Step {step + 1} of {STEPS.length}: {STEPS[step].label}
+            {STEPS.length}단계 중 {step + 1}단계: {STEPS[step].label}
           </h2>
 
           {step === 0 && (
             <div className={styles.grid}>
-              <Field label="Product Name" required error={stepErrors.productName}>
+              <Field label="상품명" required error={stepErrors.productName}>
                 {(f) => (
-                  <TextInput {...f} value={values.productName} onChange={(v) => set("productName", v)} placeholder="Product Name" maxLength={LIMITS.NAME_MAX + 20} />
+                  <TextInput {...f} value={values.productName} onChange={(v) => set("productName", v)} placeholder="상품명을 입력해 주세요" maxLength={LIMITS.NAME_MAX + 20} />
                 )}
               </Field>
-              <Field label="Product Code" error={stepErrors.productCode} hint="Generated automatically.">
+              <Field label="상품 코드" error={stepErrors.productCode} hint="자동으로 생성됩니다.">
                 {(f) => <TextInput {...f} value={values.productCode} readOnly />}
               </Field>
-              <Field label="Unit Price" required error={stepErrors.unitPrice}>
+              <Field label="단가" required error={stepErrors.unitPrice}>
                 {(f) => <TextInput {...f} money value={values.unitPrice} onChange={(v) => set("unitPrice", v)} placeholder="0" maxLength={12} />}
               </Field>
-              <Field label="Selling Price" required error={stepErrors.price} hint="The price the customer pays.">
+              <Field label="판매가" required error={stepErrors.price} hint="고객이 결제하는 금액입니다.">
                 {(f) => <TextInput {...f} money value={values.price} onChange={(v) => set("price", v)} placeholder="0" maxLength={12} />}
               </Field>
               <div className={styles.full}>
-                <Field label="Detailed Description" required error={stepErrors.description}>
+                <Field label="상세 설명" required error={stepErrors.description}>
                   {(f) => (
                     <textarea
                       id={f.id}
                       className={`${styles.textarea} ${f.invalid ? styles.invalid : ""}`}
                       value={values.description}
                       onChange={(e) => set("description", e.target.value)}
-                      placeholder="Enter the product description."
+                      placeholder="상품 설명을 입력해 주세요."
                       rows={8}
                       maxLength={LIMITS.DESCRIPTION_MAX + 50}
                       aria-invalid={f.invalid}
@@ -161,7 +161,7 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
           {step === 1 && (
             <div>
               <p className={styles.label} id="images-label">
-                Images<span className={styles.required} aria-hidden>*</span>
+                이미지<span className={styles.required} aria-hidden>*</span>
               </p>
               <ImageUploader images={values.images} onChange={(images) => set("images", images)} error={stepErrors.images} />
             </div>
@@ -170,26 +170,26 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
           {step === 2 && (
             <div className={styles.stack}>
               <div className={styles.grid}>
-                <Field label="Exposure Status" required hint="Show the product to customers.">
+                <Field label="노출 상태" required hint="고객에게 상품을 보여 줄지 정합니다.">
                   {(f) => (
                     <select id={f.id} className={styles.select} value={values.isVisible} onChange={(e) => set("isVisible", e.target.value as "yes" | "no")} aria-describedby={f.describedBy}>
-                      <option value="yes">Yes</option>
-                      <option value="no">No</option>
+                      <option value="yes">노출</option>
+                      <option value="no">미노출</option>
                     </select>
                   )}
                 </Field>
-                <Field label="Sales Status" required hint="When No, the product can't be paid for.">
+                <Field label="판매 상태" required hint="판매 중지로 두면 결제할 수 없습니다.">
                   {(f) => (
                     <select id={f.id} className={styles.select} value={values.onSale} onChange={(e) => set("onSale", e.target.value as "yes" | "no")} aria-describedby={f.describedBy}>
-                      <option value="yes">Yes</option>
-                      <option value="no">No</option>
+                      <option value="yes">판매 중</option>
+                      <option value="no">판매 중지</option>
                     </select>
                   )}
                 </Field>
               </div>
               <div>
                 <p className={styles.label}>
-                  Registration Category<span className={styles.required} aria-hidden>*</span>
+                  등록 카테고리<span className={styles.required} aria-hidden>*</span>
                 </p>
                 <CategoryPicker
                   categoryId={values.categoryId}
@@ -208,17 +208,17 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
           {step === 3 && (
             <div className={styles.grid}>
               <div className={styles.full}>
-                <Field label="ERP Code" hint="Assigned by the server; it can't be entered or changed here.">
-                  {(f) => <TextInput {...f} value={values.erpCode || (mode === "create" ? "Assigned automatically after registration" : "-")} readOnly />}
+                <Field label="ERP 코드" hint="서버에서 부여하는 값으로, 여기서 입력하거나 바꿀 수 없습니다.">
+                  {(f) => <TextInput {...f} value={values.erpCode || (mode === "create" ? "등록 후 자동으로 부여됩니다" : "-")} readOnly />}
                 </Field>
               </div>
-              <Field label="Product ERP Name" required error={stepErrors.erpName}>
-                {(f) => <TextInput {...f} value={values.erpName} onChange={(v) => set("erpName", v)} placeholder="Please enter the product name" maxLength={LIMITS.ERP_TEXT_MAX + 10} />}
+              <Field label="ERP 상품명" required error={stepErrors.erpName}>
+                {(f) => <TextInput {...f} value={values.erpName} onChange={(v) => set("erpName", v)} placeholder="ERP 상품명을 입력해 주세요" maxLength={LIMITS.ERP_TEXT_MAX + 10} />}
               </Field>
-              <Field label="Quantity" required error={stepErrors.quantity}>
+              <Field label="수량" required error={stepErrors.quantity}>
                 {(f) => <TextInput {...f} numeric value={values.quantity} onChange={(v) => set("quantity", v)} placeholder="1" maxLength={9} />}
               </Field>
-              <Field label="Tax Exemption" required error={stepErrors.taxType}>
+              <Field label="면세 여부" required error={stepErrors.taxType}>
                 {(f) => (
                   <select
                     id={f.id}
@@ -229,13 +229,13 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
                     aria-describedby={f.describedBy}
                     aria-required
                   >
-                    <option value="">Select tax type</option>
-                    <option value="tax">Taxable</option>
-                    <option value="tax_free">Tax-free</option>
+                    <option value="">과세 구분 선택</option>
+                    <option value="tax">과세</option>
+                    <option value="tax_free">면세</option>
                   </select>
                 )}
               </Field>
-              <Field label="ERP Unit Price" required error={stepErrors.erpUnitPrice}>
+              <Field label="ERP 단가" required error={stepErrors.erpUnitPrice}>
                 {(f) => <TextInput {...f} money value={values.erpUnitPrice} onChange={(v) => set("erpUnitPrice", v)} placeholder="0" maxLength={12} />}
               </Field>
             </div>
@@ -249,16 +249,16 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
 
           <div className={styles.footer}>
             <button type="button" className={`${btn.button} ${btn.outline}`} onClick={() => setConfirmCancel(true)} disabled={busy}>
-              Cancel
+              취소
             </button>
             <div className={styles["footer-right"]}>
               {step > 0 && (
                 <button type="button" className={`${btn.button} ${btn.outline}`} onClick={() => goTo((step - 1) as StepIndex)} disabled={busy}>
-                  Back
+                  이전
                 </button>
               )}
               <button type="submit" className={`${btn.button} ${btn.primary}`} disabled={busy} aria-busy={busy}>
-                {step < 3 ? "Next" : busy ? "Saving…" : mode === "create" ? "Register" : "Save"}
+                {step < 3 ? "다음" : busy ? "저장 중…" : mode === "create" ? "등록" : "저장"}
               </button>
             </div>
           </div>
@@ -268,7 +268,7 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
       {/* Figma 8.1.1 #21: confirm before throwing the input away. */}
       <Dialog
         visible={confirmCancel}
-        header="Cancel?"
+        header="취소할까요?"
         onHide={() => setConfirmCancel(false)}
         draggable={false}
         resizable={false}
@@ -278,7 +278,7 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
         footer={
           <>
             <button type="button" ref={keepEditingRef} className={`${btn.button} ${btn.outline}`} onClick={() => setConfirmCancel(false)}>
-              No
+              아니오
             </button>
             <button
               type="button"
@@ -288,12 +288,12 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
                 router.push(LIST_PATH);
               }}
             >
-              Yes
+              예
             </button>
           </>
         }
       >
-        <p className={styles["dialog-text"]}>All entered information will be deleted. Do you want to cancel?</p>
+        <p className={styles["dialog-text"]}>입력한 정보가 모두 삭제됩니다. 취소하시겠습니까?</p>
       </Dialog>
     </>
   );

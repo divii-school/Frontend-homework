@@ -14,7 +14,7 @@ export function PageHeader({ title, actions, crumb }: { title: string; actions?:
       <div className={styles["title-row"]}>
         <h1 className={styles.title}>{title}</h1>
         {crumbs.length > 0 && (
-          <nav aria-label="Breadcrumb">
+          <nav aria-label="현재 위치">
             <ol className={styles.crumbs}>
               {crumbs.map((crumb, i) => (
                 <li key={crumb} aria-current={i === crumbs.length - 1 ? "page" : undefined}>

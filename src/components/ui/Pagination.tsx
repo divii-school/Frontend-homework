@@ -18,13 +18,13 @@ export function Pagination({ page, totalPages, onChange, window: size = 10 }: Pr
   const pages = Array.from({ length: end - start + 1 }, (_, i) => start + i);
 
   return (
-    <nav className={styles.pagination} aria-label="Pagination">
+    <nav className={styles.pagination} aria-label="페이지 이동">
       <button
         type="button"
         className={styles.arrow}
         onClick={() => onChange(page - 1)}
         disabled={page <= 1}
-        aria-label="Previous page"
+        aria-label="이전 페이지"
       >
         ‹
       </button>
@@ -36,7 +36,7 @@ export function Pagination({ page, totalPages, onChange, window: size = 10 }: Pr
               className={`${styles.page} ${n === page ? styles.current : ""}`}
               onClick={() => onChange(n)}
               aria-current={n === page ? "page" : undefined}
-              aria-label={`Page ${n}`}
+              aria-label={`${n} 페이지`}
             >
               {n}
             </button>
@@ -48,7 +48,7 @@ export function Pagination({ page, totalPages, onChange, window: size = 10 }: Pr
         className={styles.arrow}
         onClick={() => onChange(page + 1)}
         disabled={page >= totalPages}
-        aria-label="Next page"
+        aria-label="다음 페이지"
       >
         ›
       </button>

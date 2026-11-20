@@ -16,9 +16,9 @@ import btn from "@/components/ui/Button.module.scss";
 import styles from "./ProductDetail.module.scss";
 
 const TABS = [
-  { key: "overview", label: "Overview" },
-  { key: "sessions", label: "Sessions" },
-  { key: "related", label: "Same category" },
+  { key: "overview", label: "기본 정보" },
+  { key: "sessions", label: "연결된 수업" },
+  { key: "related", label: "같은 카테고리" },
 ] as const;
 type TabKey = (typeof TABS)[number]["key"];
 
@@ -77,16 +77,16 @@ export function ProductDetail({ productId }: { productId: number }) {
   return (
     <>
       <PageHeader
-        title={name ?? "Product Details"}
-        crumb="Product Details"
+        title={name ?? "상품 상세"}
+        crumb="상품 상세"
         actions={
           <>
             <Link href="/shopping/products" className={`${btn.button} ${btn.outline} ${styles["link-button"]}`}>
-              Back to list
+              목록으로
             </Link>
             {detail.data && (
               <Link href={`/shopping/products/${productId}/edit`} className={`${btn.button} ${btn.primary} ${styles["link-button"]}`}>
-                Edit
+                수정
               </Link>
             )}
           </>
@@ -94,7 +94,7 @@ export function ProductDetail({ productId }: { productId: number }) {
       />
 
       <div className={styles.content}>
-        <div className={styles.tablist} role="tablist" aria-label="Product details">
+        <div className={styles.tablist} role="tablist" aria-label="상품 상세 탭">
           {TABS.map((t) => (
             <button
               key={t.key}
@@ -136,11 +136,11 @@ export function ProductDetail({ productId }: { productId: number }) {
 
 // ---------- shared tab states ----------
 
-function Loading({ label }: { label: string }) {
+function Loading() {
   return (
     <div className={styles.state} role="status">
       <span className={styles.spinner} aria-hidden />
-      Loading {label}…
+      불러오는 중…
     </div>
   );
 }
@@ -150,7 +150,7 @@ function ErrorState({ error, onRetry }: { error: unknown; onRetry: () => void })
     <div className={styles.state} role="alert">
       <p>{errorMessage(error)}</p>
       <button type="button" className={`${btn.button} ${btn.outline}`} onClick={onRetry}>
-        Try again
+        다시 시도
       </button>
     </div>
   );
@@ -167,7 +167,7 @@ function Empty({ children }: { children: ReactNode }) {
 // ---------- Overview ----------
 
 function OverviewTab({ query }: { query: ReturnType<typeof useProductDetail> }) {
-  if (query.isPending) return <Loading label="product" />;
+  if (query.isPending) return <Loading />;
   if (query.isError) {
     const gone = query.error instanceof ApiError && (query.error.status === 404 || query.error.status === 400);
     return gone ? <Empty>상품을 찾을 수 없습니다. 이미 삭제되었을 수 있습니다.</Empty> : <ErrorState error={query.error} onRetry={() => query.refetch()} />;
@@ -175,42 +175,42 @@ function OverviewTab({ query }: { query: ReturnType<typeof useProductDetail> }) 
   const d = query.data;
   const images = (d.images ?? []).map((ref) => imagePreviewUrl(imageKey(ref)));
   const rows: Array<[string, ReactNode]> = [
-    ["Product code", d.productCode || "-"],
-    ["Selling price", formatWon(d.price)],
-    ["Unit price", d.unitPrice != null ? formatWon(d.unitPrice) : "-"],
-    ["Exposure status", d.isVisible ? "Yes" : "No"],
-    ["Sales status", d.onSale ? "Yes" : "No"],
-    ["Category", formatCategoryPath([d.category ?? null, d.subCategory ?? null, d.childCategory ?? null])],
-    ["ERP code", d.erpCode || "-"],
-    ["Product ERP name", d.erpName || "-"],
-    ["Quantity", d.quantity != null ? d.quantity.toLocaleString("en-US") : "-"],
-    ["Tax exemption", d.taxType === "tax_free" ? "Tax-free" : d.taxType === "tax" ? "Taxable" : "-"],
-    ["ERP unit price", d.erpUnitPrice != null ? formatWon(d.erpUnitPrice) : "-"],
-    ["Registration date", formatDateTime(d.createdAt)],
+    ["상품 코드", d.productCode || "-"],
+    ["판매가", formatWon(d.price)],
+    ["단가", d.unitPrice != null ? formatWon(d.unitPrice) : "-"],
+    ["노출 상태", d.isVisible ? "노출" : "미노출"],
+    ["판매 상태", d.onSale ? "판매 중" : "판매 중지"],
+    ["카테고리", formatCategoryPath([d.category ?? null, d.subCategory ?? null, d.childCategory ?? null])],
+    ["ERP 코드", d.erpCode || "-"],
+    ["ERP 상품명", d.erpName || "-"],
+    ["수량", d.quantity != null ? d.quantity.toLocaleString("ko-KR") : "-"],
+    ["면세 여부", d.taxType === "tax_free" ? "면세" : d.taxType === "tax" ? "과세" : "-"],
+    ["ERP 단가", d.erpUnitPrice != null ? formatWon(d.erpUnitPrice) : "-"],
+    ["등록일", formatDateTime(d.createdAt)],
   ];
 
   return (
     <div className={styles.overview}>
       <section aria-labelledby="images-heading">
         <h2 id="images-heading" className={styles["section-title"]}>
-          Images
+          이미지
         </h2>
         {images.length ? (
           <ul className={styles.gallery}>
             {images.map((src, i) => (
               <li key={src} className={styles["gallery-item"]}>
-                <Image src={src} alt={`${d.productName} image ${i + 1}`} fill sizes="160px" className={styles["gallery-img"]} />
+                <Image src={src} alt={`${d.productName} 이미지 ${i + 1}`} fill sizes="160px" className={styles["gallery-img"]} />
               </li>
             ))}
           </ul>
         ) : (
-          <p className={styles.muted}>No images.</p>
+          <p className={styles.muted}>등록된 이미지가 없습니다.</p>
         )}
       </section>
 
       <section aria-labelledby="info-heading">
         <h2 id="info-heading" className={styles["section-title"]}>
-          Information
+          상품 정보
         </h2>
         <dl className={styles.info}>
           {rows.map(([label, value]) => (
@@ -224,7 +224,7 @@ function OverviewTab({ query }: { query: ReturnType<typeof useProductDetail> }) 
 
       <section aria-labelledby="desc-heading">
         <h2 id="desc-heading" className={styles["section-title"]}>
-          Detailed description
+          상세 설명
         </h2>
         <p className={styles.description}>{d.description?.trim() || "-"}</p>
       </section>
@@ -236,30 +236,30 @@ function OverviewTab({ query }: { query: ReturnType<typeof useProductDetail> }) 
 
 function SessionsTab({ productId, page, onPage }: { productId: number; page: number; onPage: (page: number) => void }) {
   const query = useProductSessions(productId, page, true);
-  if (query.isPending) return <Loading label="sessions" />;
+  if (query.isPending) return <Loading />;
   if (query.isError) return <ErrorState error={query.error} onRetry={() => query.refetch()} />;
-  if (!query.data.rows.length) return <Empty>This product isn&apos;t linked to any class session yet.</Empty>;
+  if (!query.data.rows.length) return <Empty>이 상품과 연결된 수업이 없습니다.</Empty>;
 
   return (
     <>
-      <p className={styles.count}>Total: {query.data.totalRecords.toLocaleString("en-US")}</p>
+      <p className={styles.count}>전체 {query.data.totalRecords.toLocaleString("ko-KR")}건</p>
       <div className={styles["table-wrap"]}>
         <table className={styles.table}>
-          <caption className="visually-hidden">Class sessions that use this product</caption>
+          <caption className="visually-hidden">이 상품을 사용하는 수업</caption>
           <thead>
             <tr>
-              <th scope="col">Session</th>
-              <th scope="col">Book type</th>
-              <th scope="col">Active</th>
-              <th scope="col">Linked on</th>
+              <th scope="col">수업</th>
+              <th scope="col">교재 구분</th>
+              <th scope="col">사용 여부</th>
+              <th scope="col">연결일</th>
             </tr>
           </thead>
           <tbody>
             {query.data.rows.map((row) => (
               <tr key={row.id}>
                 <td>{row.session?.title ?? "-"}</td>
-                <td>{row.bookType === "MAIN" ? "Main" : row.bookType === "OPTIONAL" ? "Optional" : (row.bookType ?? "-")}</td>
-                <td>{row.isActive ? "Yes" : "No"}</td>
+                <td>{row.bookType === "MAIN" ? "주교재" : row.bookType === "OPTIONAL" ? "부교재" : (row.bookType ?? "-")}</td>
+                <td>{row.isActive ? "사용" : "미사용"}</td>
                 <td>{formatDateTime(row.createdAt)}</td>
               </tr>
             ))}
@@ -287,28 +287,28 @@ function RelatedTab({
   onPage: (page: number) => void;
 }) {
   const query = useSameCategoryProducts(childCategoryId, page, detailState === "ready");
-  if (detailState === "loading") return <Loading label="products" />;
-  if (detailState === "error") return <Empty>상품 정보를 불러오지 못해 같은 카테고리 상품을 표시할 수 없습니다. Overview 탭을 확인해 주세요.</Empty>;
-  if (childCategoryId === null) return <Empty>This product has no category.</Empty>;
-  if (query.isPending) return <Loading label="products" />;
+  if (detailState === "loading") return <Loading />;
+  if (detailState === "error") return <Empty>상품 정보를 불러오지 못해 같은 카테고리 상품을 표시할 수 없습니다. 기본 정보 탭을 확인해 주세요.</Empty>;
+  if (childCategoryId === null) return <Empty>이 상품에는 카테고리가 없습니다.</Empty>;
+  if (query.isPending) return <Loading />;
   if (query.isError) return <ErrorState error={query.error} onRetry={() => query.refetch()} />;
 
   const rows = query.data.rows.filter((row) => row.id !== productId);
-  if (!rows.length) return <Empty>No other products in this category.</Empty>;
+  if (!rows.length) return <Empty>같은 카테고리에 다른 상품이 없습니다.</Empty>;
 
   return (
     <>
-      <p className={styles.count}>Products in the same minor category: {Math.max(query.data.totalRecords - 1, rows.length).toLocaleString("en-US")}</p>
+      <p className={styles.count}>같은 소분류의 상품: {Math.max(query.data.totalRecords - 1, rows.length).toLocaleString("ko-KR")}건</p>
       <div className={styles["table-wrap"]}>
         <table className={styles.table}>
-          <caption className="visually-hidden">Other products in the same category</caption>
+          <caption className="visually-hidden">같은 카테고리의 다른 상품</caption>
           <thead>
             <tr>
-              <th scope="col">Product name</th>
-              <th scope="col">Code</th>
-              <th scope="col">Selling price</th>
-              <th scope="col">Exposure</th>
-              <th scope="col">On sale</th>
+              <th scope="col">상품명</th>
+              <th scope="col">상품 코드</th>
+              <th scope="col">판매가</th>
+              <th scope="col">노출 여부</th>
+              <th scope="col">판매 상태</th>
             </tr>
           </thead>
           <tbody>
@@ -321,8 +321,8 @@ function RelatedTab({
                 </td>
                 <td>{row.productCode || "-"}</td>
                 <td>{formatWon(row.price)}</td>
-                <td>{row.isVisible ? "Yes" : "No"}</td>
-                <td>{row.onSale ? "Yes" : "No"}</td>
+                <td>{row.isVisible ? "노출" : "미노출"}</td>
+                <td>{row.onSale ? "판매 중" : "판매 중지"}</td>
               </tr>
             ))}
           </tbody>

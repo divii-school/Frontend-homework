@@ -29,25 +29,25 @@ export function ProductSearch({ initialType, initialSearch, onSearch }: Props) {
   return (
     <form role="search" className={styles.search} onSubmit={submit}>
       <label htmlFor={typeId} className="visually-hidden">
-        Search by
+        검색 조건
       </label>
       <select id={typeId} className={styles.type} value={type} onChange={(e) => setType(e.target.value as ProductSearchType)}>
-        <option value="productName">Product Name</option>
-        <option value="categoryName">Category Name</option>
+        <option value="productName">상품명</option>
+        <option value="categoryName">카테고리명</option>
       </select>
       <div className={styles["input-wrap"]}>
         <label htmlFor={searchId} className="visually-hidden">
-          Search term
+          검색어
         </label>
         <input
           id={searchId}
           type="search"
-          placeholder="Enter Search Term"
+          placeholder="검색어를 입력해 주세요"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           maxLength={100}
         />
-        <button type="submit" className={styles["search-button"]} aria-label="Search">
+        <button type="submit" className={styles["search-button"]} aria-label="검색">
           <IconSearch16 />
         </button>
       </div>

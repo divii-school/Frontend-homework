@@ -17,8 +17,8 @@ const MB = PRODUCT_IMAGE_MAX_BYTES / 1024 / 1024;
 
 /** Client-side check before anything is uploaded. Returns a message or null. */
 export function checkImageFile(file: File): string | null {
-  if (!(PRODUCT_IMAGE_TYPES as readonly string[]).includes(file.type)) return `“${file.name}” is not a JPG, PNG or WebP image.`;
-  if (file.size > PRODUCT_IMAGE_MAX_BYTES) return `“${file.name}” is larger than ${MB} MB.`;
+  if (!(PRODUCT_IMAGE_TYPES as readonly string[]).includes(file.type)) return `“${file.name}”: JPG, PNG, WebP 이미지만 올릴 수 있습니다.`;
+  if (file.size > PRODUCT_IMAGE_MAX_BYTES) return `“${file.name}”: ${MB}MB 이하 이미지만 올릴 수 있습니다.`;
   return null;
 }
 
@@ -43,7 +43,7 @@ export function ImageUploader({ images, onChange, error }: Props) {
       const problem = checkImageFile(file);
       if (problem) messages.push(problem);
       else if (accepted.length < slotsLeft) accepted.push(file);
-      else messages.push(`Only ${PRODUCT_IMAGE_MAX} images can be registered; “${file.name}” was skipped.`);
+      else messages.push(`이미지는 최대 ${PRODUCT_IMAGE_MAX}장까지 등록할 수 있어 “${file.name}” 파일은 제외했습니다.`);
     }
     setProblems(messages);
     if (inputRef.current) inputRef.current.value = "";
@@ -60,16 +60,16 @@ export function ImageUploader({ images, onChange, error }: Props) {
 
   return (
     <div className={styles.images}>
-      <ul className={styles["image-grid"]} aria-label="Product images">
+      <ul className={styles["image-grid"]} aria-label="상품 이미지">
         {images.map((image, index) => (
           <li key={image.filePath} className={styles["image-tile"]}>
-            <Image src={image.preview} alt={`Product image ${index + 1}`} fill sizes="140px" className={styles["image-img"]} />
-            {index === 0 && <span className={styles["main-badge"]}>Thumbnail</span>}
+            <Image src={image.preview} alt={`상품 이미지 ${index + 1}`} fill sizes="140px" className={styles["image-img"]} />
+            {index === 0 && <span className={styles["main-badge"]}>썸네일</span>}
             <button
               type="button"
               className={styles["remove-image"]}
               onClick={() => onChange(images.filter((_, i) => i !== index))}
-              aria-label={`Remove image ${index + 1}`}
+              aria-label={`이미지 ${index + 1} 삭제`}
             >
               ×
             </button>
@@ -77,7 +77,7 @@ export function ImageUploader({ images, onChange, error }: Props) {
         ))}
         {Array.from({ length: uploading }, (_, i) => (
           <li key={`up-${i}`} className={`${styles["image-tile"]} ${styles["image-uploading"]}`} role="status">
-            Uploading…
+            업로드 중…
           </li>
         ))}
       </ul>
@@ -101,11 +101,11 @@ export function ImageUploader({ images, onChange, error }: Props) {
           disabled={slotsLeft <= 0}
           aria-describedby={hintId}
         >
-          Add File
+          파일 추가
         </button>
         <p id={hintId} className={styles.hint}>
-          Recommended size: 800×800px (square) · JPG, PNG or WebP up to {MB} MB · Up to {PRODUCT_IMAGE_MAX} images. The first image is the
-          thumbnail.
+          권장 크기: 800×800px(정사각형) · JPG, PNG, WebP {MB}MB 이하 · 최대 {PRODUCT_IMAGE_MAX}장. 첫 번째 이미지가 썸네일로
+          사용됩니다.
         </p>
       </div>
 

@@ -17,16 +17,16 @@ export function Forbidden() {
         403
       </p>
       <h1 id="forbidden-title" className={styles.title}>
-        You don&apos;t have permission to open this page.
+        이 페이지에 접근할 권한이 없습니다.
       </h1>
       <p className={styles.body}>
-        Please contact customer service.
+        고객센터로 문의해 주세요.
         <br />
         <a href="tel:0220148374">02-2014-8374</a>
       </p>
       {home && (
         <Link href={home} className={`${btn.button} ${btn.primary}`}>
-          Go to my admin home
+          관리자 홈으로 이동
         </Link>
       )}
     </section>

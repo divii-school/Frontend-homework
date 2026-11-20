@@ -87,7 +87,7 @@ test.describe("product list (mocked API)", () => {
     await setup(page);
     await page.goto("/shopping/products");
     await expect(body(page).locator("tr")).toHaveCount(10);
-    await expect(page.getByText("Total Posts: 25")).toBeVisible();
+    await expect(page.getByText("전체 25건")).toBeVisible();
     const first = body(page).locator("tr").first();
     await expect(first).toContainText("₩4,000");
     await expect(first).toContainText("2025-09-12 5:10 PM");
@@ -99,46 +99,46 @@ test.describe("product list (mocked API)", () => {
   test("paging and search live in the URL and survive reload", async ({ page }) => {
     await setup(page);
     await page.goto("/shopping/products");
-    await page.getByRole("button", { name: "Page 3" }).click();
+    await page.getByRole("button", { name: "3 페이지" }).click();
     await expect(page).toHaveURL("/shopping/products?page=3");
     await expect(body(page).locator("tr")).toHaveCount(5);
     await page.reload();
-    await expect(page.getByRole("button", { name: "Page 3" })).toHaveAttribute("aria-current", "page");
+    await expect(page.getByRole("button", { name: "3 페이지" })).toHaveAttribute("aria-current", "page");
 
-    await page.getByLabel("Search term").fill("Product 1");
+    await page.getByLabel("검색어").fill("Product 1");
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL("/shopping/products?search=Product+1");
-    await expect(page.getByText(/^Total Posts: \d+$/)).toHaveText("Total Posts: 10"); // Product 10–19 (row 1 is "=SUM(A1) tricky")
+    await expect(page.getByText(/^전체 \d+건$/)).toHaveText("전체 10건"); // Product 10–19 (row 1 is "=SUM(A1) tricky")
 
     await page.goBack();
     await expect(page).toHaveURL("/shopping/products?page=3");
-    await expect(page.getByLabel("Search term")).toHaveValue("");
+    await expect(page.getByLabel("검색어")).toHaveValue("");
   });
 
   test("no results message", async ({ page }) => {
     await setup(page);
     await page.goto("/shopping/products?search=nothing-matches");
-    await expect(body(page)).toContainText("No search results found.");
+    await expect(body(page)).toContainText("검색 결과가 없습니다.");
   });
 
   test("select rows (incl. across pages) and bulk delete sends numeric ids", async ({ page }) => {
     const { calls } = await setup(page);
     await page.goto("/shopping/products");
-    await expect(page.getByRole("button", { name: "Delete" })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "삭제" })).toBeDisabled();
 
-    await page.getByLabel("Select all products on this page").check();
-    await page.getByRole("button", { name: "Page 2" }).click();
-    await page.getByLabel("Select Product 12").check();
-    await expect(page.getByText("11 selected")).toBeVisible();
+    await page.getByLabel("이 페이지의 상품 전체 선택").check();
+    await page.getByRole("button", { name: "2 페이지" }).click();
+    await page.getByLabel("Product 12 선택").check();
+    await expect(page.getByText("11개 선택됨")).toBeVisible();
 
-    await page.getByRole("button", { name: "Delete", exact: true }).click();
+    await page.getByRole("button", { name: "삭제", exact: true }).click();
     const dialog = page.getByRole("alertdialog");
-    await expect(dialog).toContainText("Delete 11 products?");
-    await expect(dialog.getByRole("button", { name: "Cancel" })).toBeFocused();
-    await dialog.getByRole("button", { name: "Delete" }).click();
+    await expect(dialog).toContainText("상품 11개를 삭제할까요?");
+    await expect(dialog.getByRole("button", { name: "취소" })).toBeFocused();
+    await dialog.getByRole("button", { name: "삭제" }).click();
 
-    await expect(page.getByText("Deleted 11 products.")).toBeVisible();
-    await expect(page.getByText("Total Posts: 14")).toBeVisible();
+    await expect(page.getByText("상품 11개를 삭제했습니다.")).toBeVisible();
+    await expect(page.getByText("전체 14건")).toBeVisible();
     expect(calls).toHaveLength(1);
     expect(calls[0].url).toBe("/api/v1/products/delete");
     expect(calls[0].body).toEqual({ ids: [...Array.from({ length: 10 }, (_, i) => 1000 + i), 1011] });
@@ -147,15 +147,15 @@ test.describe("product list (mocked API)", () => {
   test("exposure status changes inline with a toast", async ({ page }) => {
     const { calls } = await setup(page);
     await page.goto("/shopping/products");
-    await page.getByLabel("Exposure status of Product 2").selectOption("yes");
-    await expect(page.getByText("“Product 2” is now shown.")).toBeVisible();
+    await page.getByLabel("Product 2 노출 여부").selectOption("yes");
+    await expect(page.getByText("“Product 2” 노출 여부를 노출로 변경했습니다.")).toBeVisible();
     expect(calls).toEqual([{ method: "PUT", url: "/api/v1/products/update-status/1001/yes", body: null }]);
   });
 
   test("exposure status rolls back when the API fails", async ({ page }) => {
     await setup(page, 25, { failStatus: true });
     await page.goto("/shopping/products");
-    const select = page.getByLabel("Exposure status of Product 2");
+    const select = page.getByLabel("Product 2 노출 여부");
     await select.selectOption("yes");
     await expect(page.getByText("서버에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.")).toBeVisible();
     await expect(select).toHaveValue("no");
@@ -165,21 +165,21 @@ test.describe("product list (mocked API)", () => {
     await setup(page);
     await page.goto("/shopping/products?search=Product+1");
     const downloadPromise = page.waitForEvent("download");
-    await page.getByRole("button", { name: "Export CSV" }).click();
+    await page.getByRole("button", { name: "CSV 내보내기" }).click();
     const download = await downloadPromise;
     expect(download.suggestedFilename()).toMatch(/^products-\d{4}-\d{2}-\d{2}\.csv$/);
     const csv = (await readFile(await download.path())).toString("utf8");
     const lines = csv.replace(/^﻿/, "").trim().split("\r\n");
-    expect(lines[0]).toBe("ID,Product code,Product name,Selling price,Category,Exposure,Registration date");
+    expect(lines[0]).toBe("ID,상품 코드,상품명,판매가,카테고리,노출 여부,등록일");
     expect(lines).toHaveLength(11); // header + Product 10–19, across two pages of the list
-    await expect(page.getByText("Exported 10 products.")).toBeVisible();
+    await expect(page.getByText("상품 10개를 내보냈습니다.")).toBeVisible();
   });
 
   test("CSV guards against spreadsheet formulas", async ({ page }) => {
     await setup(page);
     await page.goto("/shopping/products");
     const downloadPromise = page.waitForEvent("download");
-    await page.getByRole("button", { name: "Export CSV" }).click();
+    await page.getByRole("button", { name: "CSV 내보내기" }).click();
     const csv = (await readFile(await (await downloadPromise).path())).toString("utf8");
     expect(csv).toContain("'=SUM(A1) tricky");
   });
@@ -224,5 +224,5 @@ test("a page with only deleted rows says so instead of 'No search results'", asy
   );
   await page.goto("/shopping/products?search=ACE&type=categoryName");
   await expect(page.getByText("이 페이지에는 삭제된 상품만 있어 표시할 상품이 없습니다.", { exact: false })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Page 2" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "2 페이지" })).toBeVisible();
 });

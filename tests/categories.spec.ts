@@ -30,7 +30,7 @@ async function openWithMock(page: Page, handler: (search: string | null) => { st
   await page.goto(path);
 }
 
-const tree = (page: Page) => page.getByRole("region", { name: "Category tree" });
+const tree = (page: Page) => page.getByRole("region", { name: "카테고리 목록" });
 
 test.describe("product category management", () => {
   test("logged-out user is sent to login", async ({ page }) => {
@@ -40,24 +40,24 @@ test.describe("product category management", () => {
 
   test("renders the 3-level tree expanded, with codes and child counts", async ({ page }) => {
     await openWithMock(page, () => ({ status: 200, data: TREE }));
-    await expect(page.getByRole("heading", { name: "Product Category Management" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "상품 카테고리 관리" })).toBeVisible();
     await expect(tree(page).getByText("ACE Alphabet", { exact: true })).toBeVisible();
     await expect(tree(page).getByText("[536]", { exact: true })).toBeVisible();
-    await expect(tree(page).getByText("(2 subcategories)", { exact: true }).first()).toBeVisible();
+    await expect(tree(page).getByText("(하위 2개)", { exact: true }).first()).toBeVisible();
     // A subcategory with no children shows no count.
-    await expect(tree(page).getByText("(0 subcategories)", { exact: true })).toHaveCount(0);
+    await expect(tree(page).getByText("(하위 0개)", { exact: true })).toHaveCount(0);
   });
 
   test("Fold all / Expand all and a single toggle", async ({ page }) => {
     await openWithMock(page, () => ({ status: 200, data: TREE }));
-    await page.getByRole("button", { name: "Fold all" }).click();
+    await page.getByRole("button", { name: "전체 접기" }).click();
     await expect(tree(page).getByText("Phonics & Alphabet", { exact: true })).toBeHidden();
 
-    await page.getByRole("button", { name: "Expand Main textbook" }).click();
+    await page.getByRole("button", { name: "Main textbook 펼치기" }).click();
     await expect(tree(page).getByText("Phonics & Alphabet", { exact: true })).toBeVisible();
     await expect(tree(page).getByText("ACE Alphabet", { exact: true })).toBeHidden();
 
-    await page.getByRole("button", { name: "Expand all" }).click();
+    await page.getByRole("button", { name: "전체 펼치기" }).click();
     await expect(tree(page).getByText("ACE Alphabet", { exact: true })).toBeVisible();
   });
 
@@ -67,7 +67,7 @@ test.describe("product category management", () => {
       seen.push(search);
       return { status: 200, data: search ? [TREE[1]] : TREE };
     });
-    await page.getByPlaceholder("Category search...").fill("Main");
+    await page.getByPlaceholder("카테고리 검색...").fill("Main");
     await page.keyboard.press("Enter");
 
     await expect(page).toHaveURL("/shopping/categories?search=Main");
@@ -76,13 +76,13 @@ test.describe("product category management", () => {
     expect(seen).toContain("Main");
 
     await page.reload();
-    await expect(page.getByPlaceholder("Category search...")).toHaveValue("Main");
+    await expect(page.getByPlaceholder("카테고리 검색...")).toHaveValue("Main");
     await expect(tree(page).getByText("Booster", { exact: true })).toBeVisible();
   });
 
   test("empty search result message", async ({ page }) => {
     await openWithMock(page, () => ({ status: 200, data: [] }), "/shopping/categories?search=nothing");
-    await expect(tree(page).getByText("No search results found.", { exact: true })).toBeVisible();
+    await expect(tree(page).getByText("검색 결과가 없습니다.", { exact: true })).toBeVisible();
   });
 
   test("server error shows a message and Try again", async ({ page }) => {
@@ -91,7 +91,7 @@ test.describe("product category management", () => {
     await openWithMock(page, () => (failing ? { status: 500, data: null } : { status: 200, data: TREE }));
     await expect(tree(page).getByRole("alert")).toContainText("서버에 문제가 발생했습니다", { timeout: 10_000 });
     failing = false;
-    await page.getByRole("button", { name: "Try again" }).click();
+    await page.getByRole("button", { name: "다시 시도" }).click();
     await expect(tree(page).getByText("Main textbook", { exact: true })).toBeVisible();
   });
 });

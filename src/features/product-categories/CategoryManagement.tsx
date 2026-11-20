@@ -84,33 +84,33 @@ export function CategoryManagement() {
 
   return (
     <>
-      <PageHeader title="Product Category Management" />
+      <PageHeader title="상품 카테고리 관리" />
 
       <div className={styles.content}>
         <div className={styles.toolbar}>
           <form role="search" className={styles.search} onSubmit={submitSearch}>
             <label htmlFor="category-search" className="visually-hidden">
-              Search categories
+              카테고리 검색
             </label>
             <input
               id="category-search"
               type="search"
-              placeholder="Category search..."
+              placeholder="카테고리 검색..."
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
               maxLength={100}
             />
-            <button type="submit" className={styles["search-button"]} aria-label="Search">
+            <button type="submit" className={styles["search-button"]} aria-label="검색">
               <IconSearch16 />
             </button>
           </form>
 
           <div className={styles["tree-buttons"]}>
             <button type="button" className={styles["outline-button"]} onClick={() => setCollapsed(new Set())} disabled={!nodes.length}>
-              Expand all
+              전체 펼치기
             </button>
             <button type="button" className={styles["outline-button"]} onClick={() => setCollapsed(new Set(allIds))} disabled={!nodes.length}>
-              Fold all
+              전체 접기
             </button>
           </div>
 
@@ -119,14 +119,14 @@ export function CategoryManagement() {
             className={`${btn.button} ${btn.primary} ${styles.register}`}
             onClick={() => setFormTarget({ mode: "create", level: 1, parent: null })}
           >
-            Registration
+            등록
           </button>
         </div>
 
-        <section className={styles.panel} aria-label="Category tree" aria-busy={query.isFetching}>
+        <section className={styles.panel} aria-label="카테고리 목록" aria-busy={query.isFetching}>
           {query.isPending ? (
             <div className={styles.skeleton} role="status">
-              <span className="visually-hidden">Loading categories…</span>
+              <span className="visually-hidden">카테고리를 불러오는 중…</span>
               {Array.from({ length: 6 }, (_, i) => (
                 <div key={i} className={styles["skeleton-row"]} aria-hidden />
               ))}
@@ -135,12 +135,12 @@ export function CategoryManagement() {
             <div className={styles.message} role="alert">
               <p>{errorMessage(query.error)}</p>
               <button type="button" className={styles["outline-button"]} onClick={() => query.refetch()}>
-                Try again
+                다시 시도
               </button>
             </div>
           ) : nodes.length === 0 ? (
             <div className={styles.message} role="status">
-              <p>{search ? "No search results found." : "No categories yet."}</p>
+              <p>{search ? "검색 결과가 없습니다." : "등록된 카테고리가 없습니다."}</p>
             </div>
           ) : (
             <CategoryTree nodes={nodes} expanded={expanded} onToggle={toggle} actions={actions} />

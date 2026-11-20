@@ -70,26 +70,26 @@ async function setup(page: Page, opts: { failWrites?: boolean } = {}) {
 
 const dialog = (page: Page) => page.getByRole("dialog");
 const confirmDialog = (page: Page) => page.getByRole("alertdialog");
-const inTree = (page: Page, text: string) => page.getByRole("region", { name: "Category tree" }).getByText(text, { exact: true });
+const inTree = (page: Page, text: string) => page.getByRole("region", { name: "카테고리 목록" }).getByText(text, { exact: true });
 
 test.describe("product category add / edit / delete (mocked API)", () => {
   test("register a main category: name required, trimmed, then added with a toast", async ({ page }) => {
     const { calls } = await setup(page);
-    await page.getByRole("button", { name: "Registration" }).click();
-    await expect(dialog(page).getByText("Add main category")).toBeVisible();
-    await expect(dialog(page).getByLabel("Category name")).toBeFocused();
+    await page.getByRole("button", { name: "등록" }).click();
+    await expect(dialog(page).getByText("대분류 추가")).toBeVisible();
+    await expect(dialog(page).getByLabel("카테고리명")).toBeFocused();
 
     // Empty / spaces only → validation message, no request.
-    await dialog(page).getByLabel("Category name").fill("   ");
-    await dialog(page).getByRole("button", { name: "Add" }).click();
-    await expect(dialog(page).getByRole("alert")).toHaveText("Please enter a category name.");
+    await dialog(page).getByLabel("카테고리명").fill("   ");
+    await dialog(page).getByRole("button", { name: "추가" }).click();
+    await expect(dialog(page).getByRole("alert")).toHaveText("카테고리명을 입력해 주세요.");
     expect(calls).toHaveLength(0);
 
-    await dialog(page).getByLabel("Category name").fill("  HW3-Sandip-Books  ");
-    await dialog(page).getByRole("button", { name: "Add" }).click();
+    await dialog(page).getByLabel("카테고리명").fill("  HW3-Sandip-Books  ");
+    await dialog(page).getByRole("button", { name: "추가" }).click();
 
     await expect(dialog(page)).toBeHidden();
-    await expect(page.getByText("“HW3-Sandip-Books” was added.")).toBeVisible();
+    await expect(page.getByText("“HW3-Sandip-Books” 카테고리를 추가했습니다.")).toBeVisible();
     await expect(inTree(page, "HW3-Sandip-Books")).toBeVisible();
     expect(calls).toEqual([{ method: "POST", path: "/add", body: { name: "HW3-Sandip-Books" } }]);
   });
@@ -97,16 +97,16 @@ test.describe("product category add / edit / delete (mocked API)", () => {
   test("add a subcategory and a child send the parent id in the right field", async ({ page }) => {
     const { calls } = await setup(page);
 
-    await page.getByRole("button", { name: "Subcategory under Main", exact: true }).click();
-    await expect(dialog(page).getByText("Parent:")).toContainText("[74] Main");
-    await dialog(page).getByLabel("Category name").fill("HW3-Sandip-Sub");
-    await dialog(page).getByRole("button", { name: "Add" }).click();
+    await page.getByRole("button", { name: "Main 하위 카테고리", exact: true }).click();
+    await expect(dialog(page).getByText("상위 카테고리:")).toContainText("[74] Main");
+    await dialog(page).getByLabel("카테고리명").fill("HW3-Sandip-Sub");
+    await dialog(page).getByRole("button", { name: "추가" }).click();
     await expect(dialog(page)).toBeHidden();
 
-    await page.getByRole("button", { name: "Subcategory under Phonics & Alphabet" }).click();
-    await expect(dialog(page).getByText("Add child category")).toBeVisible();
-    await dialog(page).getByLabel("Category name").fill("HW3-Sandip-Child");
-    await dialog(page).getByRole("button", { name: "Add" }).click();
+    await page.getByRole("button", { name: "Phonics & Alphabet 하위 카테고리" }).click();
+    await expect(dialog(page).getByText("소분류 추가")).toBeVisible();
+    await dialog(page).getByLabel("카테고리명").fill("HW3-Sandip-Child");
+    await dialog(page).getByRole("button", { name: "추가" }).click();
     await expect(dialog(page)).toBeHidden();
 
     expect(calls).toEqual([
@@ -118,14 +118,14 @@ test.describe("product category add / edit / delete (mocked API)", () => {
 
   test("edit keeps the parent id; Save stays disabled until the name changes", async ({ page }) => {
     const { calls } = await setup(page);
-    await page.getByRole("button", { name: "Edit Phonics & Alphabet" }).click();
+    await page.getByRole("button", { name: "Phonics & Alphabet 수정" }).click();
 
-    const name = dialog(page).getByLabel("Category name");
+    const name = dialog(page).getByLabel("카테고리명");
     await expect(name).toHaveValue("Phonics & Alphabet");
-    await expect(dialog(page).getByRole("button", { name: "Save" })).toBeDisabled();
+    await expect(dialog(page).getByRole("button", { name: "저장" })).toBeDisabled();
 
     await name.fill("HW3-Sandip-Phonics");
-    await dialog(page).getByRole("button", { name: "Save" }).click();
+    await dialog(page).getByRole("button", { name: "저장" }).click();
     await expect(dialog(page)).toBeHidden();
     await expect(inTree(page, "HW3-Sandip-Phonics")).toBeVisible();
     expect(calls).toEqual([{ method: "PUT", path: "/subcategory/edit/72", body: { name: "HW3-Sandip-Phonics", categoryId: 67 } }]);
@@ -133,29 +133,29 @@ test.describe("product category add / edit / delete (mocked API)", () => {
 
   test("API error keeps the dialog open with the typed name", async ({ page }) => {
     await setup(page, { failWrites: true });
-    await page.getByRole("button", { name: "Registration" }).click();
-    await dialog(page).getByLabel("Category name").fill("HW3-Sandip-Dup");
-    await dialog(page).getByRole("button", { name: "Add" }).click();
+    await page.getByRole("button", { name: "등록" }).click();
+    await dialog(page).getByLabel("카테고리명").fill("HW3-Sandip-Dup");
+    await dialog(page).getByRole("button", { name: "추가" }).click();
 
     // The API's own English sentence must not be shown; a Korean message by status instead.
     await expect(dialog(page).getByRole("alert")).toHaveText("요청을 처리하지 못했습니다. 입력한 내용을 확인해 주세요.");
     await expect(dialog(page)).not.toContainText("Category name already exists");
-    await expect(dialog(page).getByLabel("Category name")).toHaveValue("HW3-Sandip-Dup");
+    await expect(dialog(page).getByLabel("카테고리명")).toHaveValue("HW3-Sandip-Dup");
   });
 
   test("delete: blocked while it has subcategories; a leaf is deleted after confirm", async ({ page }) => {
     const { calls } = await setup(page);
 
-    await page.getByRole("button", { name: "Delete Main textbook" }).click();
-    await expect(confirmDialog(page).getByText("Can't delete this category")).toBeVisible();
-    await expect(confirmDialog(page)).toContainText("It still has 1 subcategory");
-    await confirmDialog(page).getByRole("button", { name: "OK" }).click();
+    await page.getByRole("button", { name: "Main textbook 삭제" }).click();
+    await expect(confirmDialog(page).getByText("삭제할 수 없는 카테고리")).toBeVisible();
+    await expect(confirmDialog(page)).toContainText("하위 카테고리가 1개 있습니다");
+    await confirmDialog(page).getByRole("button", { name: "확인" }).click();
     expect(calls).toHaveLength(0);
 
-    await page.getByRole("button", { name: "Delete ACE Alphabet" }).click();
-    await expect(confirmDialog(page).getByText("Delete category?")).toBeVisible();
-    await expect(confirmDialog(page).getByRole("button", { name: "Cancel" })).toBeFocused();
-    await confirmDialog(page).getByRole("button", { name: "Delete" }).click();
+    await page.getByRole("button", { name: "ACE Alphabet 삭제" }).click();
+    await expect(confirmDialog(page).getByText("카테고리를 삭제할까요?")).toBeVisible();
+    await expect(confirmDialog(page).getByRole("button", { name: "취소" })).toBeFocused();
+    await confirmDialog(page).getByRole("button", { name: "삭제" }).click();
     await expect(confirmDialog(page)).toBeHidden();
     await expect(inTree(page, "ACE Alphabet")).toBeHidden();
     expect(calls).toEqual([{ method: "DELETE", path: "/subcategory-child/delete/536", body: null }]);
@@ -163,8 +163,8 @@ test.describe("product category add / edit / delete (mocked API)", () => {
 
   test("Escape closes the dialog without saving", async ({ page }) => {
     const { calls } = await setup(page);
-    await page.getByRole("button", { name: "Registration" }).click();
-    await dialog(page).getByLabel("Category name").fill("HW3-Sandip-Esc");
+    await page.getByRole("button", { name: "등록" }).click();
+    await dialog(page).getByLabel("카테고리명").fill("HW3-Sandip-Esc");
     await page.keyboard.press("Escape");
     await expect(dialog(page)).toBeHidden();
     expect(calls).toHaveLength(0);

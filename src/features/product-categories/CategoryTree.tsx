@@ -48,7 +48,7 @@ function TreeItem({ node, expanded, onToggle, actions }: Omit<Props, "nodes"> & 
               className={styles.toggle}
               aria-expanded={isOpen}
               aria-controls={groupId}
-              aria-label={`${isOpen ? "Collapse" : "Expand"} ${node.name}`}
+              aria-label={`${node.name} ${isOpen ? "접기" : "펼치기"}`}
               onClick={() => onToggle(node.id)}
             >
               <IconChevronDown16 className={isOpen ? undefined : styles.collapsed} />
@@ -60,7 +60,7 @@ function TreeItem({ node, expanded, onToggle, actions }: Omit<Props, "nodes"> & 
           <span className={styles.name}>{node.name}</span>
           {hasChildren && (
             <span className={styles.count}>
-              ({node.children.length} {node.children.length === 1 ? "subcategory" : "subcategories"})
+              (하위 {node.children.length}개)
             </span>
           )}
         </div>
@@ -68,17 +68,20 @@ function TreeItem({ node, expanded, onToggle, actions }: Omit<Props, "nodes"> & 
         {actions && (
           <div className={styles.actions}>
             {node.level < 3 && (
-              <button type="button" className={styles["add-button"]} onClick={() => actions.onAddChild(node)}>
+              <button
+                type="button"
+                className={styles["add-button"]}
+                onClick={() => actions.onAddChild(node)}
+                aria-label={`${node.name} 하위 카테고리`}
+              >
                 <IconPlus16 />
-                <span>
-                  Subcategory<span className="visually-hidden"> under {node.name}</span>
-                </span>
+                <span>하위 카테고리</span>
               </button>
             )}
-            <button type="button" className={styles["icon-button"]} onClick={() => actions.onEdit(node)} aria-label={`Edit ${node.name}`}>
+            <button type="button" className={styles["icon-button"]} onClick={() => actions.onEdit(node)} aria-label={`${node.name} 수정`}>
               <IconPencil16 />
             </button>
-            <button type="button" className={styles["icon-button"]} onClick={() => actions.onDelete(node)} aria-label={`Delete ${node.name}`}>
+            <button type="button" className={styles["icon-button"]} onClick={() => actions.onDelete(node)} aria-label={`${node.name} 삭제`}>
               <IconTrash16 />
             </button>
           </div>

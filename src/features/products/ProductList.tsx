@@ -51,7 +51,7 @@ export function ProductList() {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else if (next.size < PRODUCT_SELECTION_MAX) next.add(id);
-      else notify("error", `You can select up to ${PRODUCT_SELECTION_MAX} products at once.`);
+      else notify("error", `상품은 한 번에 최대 ${PRODUCT_SELECTION_MAX}개까지 선택할 수 있습니다.`);
       return next;
     });
   }
@@ -63,7 +63,7 @@ export function ProductList() {
       else {
         for (const id of pageIds) {
           if (next.size >= PRODUCT_SELECTION_MAX) {
-            notify("error", `You can select up to ${PRODUCT_SELECTION_MAX} products at once.`);
+            notify("error", `상품은 한 번에 최대 ${PRODUCT_SELECTION_MAX}개까지 선택할 수 있습니다.`);
             break;
           }
           next.add(id);
@@ -76,7 +76,7 @@ export function ProductList() {
   async function changeVisible(row: ProductListItem, visible: boolean) {
     try {
       await setVisible.mutateAsync({ id: row.id, visible });
-      notify("success", `“${row.productName}” is now ${visible ? "shown" : "hidden"}.`);
+      notify("success", `“${row.productName}” 노출 여부를 ${visible ? "노출" : "미노출"}로 변경했습니다.`);
     } catch (error) {
       notify("error", errorMessage(error));
     }
@@ -88,18 +88,18 @@ export function ProductList() {
       const all = await productService.listAll(params, total);
       downloadCsv(
         `products-${new Date().toISOString().slice(0, 10)}.csv`,
-        ["ID", "Product code", "Product name", "Selling price", "Category", "Exposure", "Registration date"],
+        ["ID", "상품 코드", "상품명", "판매가", "카테고리", "노출 여부", "등록일"],
         all.map((p) => [
           p.id,
           p.productCode,
           p.productName,
           p.price,
           formatCategoryPath([p.category, p.subCategory, p.childCategory]),
-          p.isVisible ? "Yes" : "No",
+          p.isVisible ? "노출" : "미노출",
           formatDateTime(p.createdAt),
         ]),
       );
-      notify("success", `Exported ${all.length.toLocaleString("en-US")} products.`);
+      notify("success", `상품 ${all.length.toLocaleString("ko-KR")}개를 내보냈습니다.`);
     } catch (error) {
       notify("error", errorMessage(error));
     } finally {
@@ -110,10 +110,10 @@ export function ProductList() {
   return (
     <>
       <PageHeader
-        title="Product Management"
+        title="상품 관리"
         actions={
           <Link href="/shopping/products/new" className={`${btn.button} ${btn.primary} ${styles.register}`}>
-            Register
+            등록
           </Link>
         }
       />
@@ -131,9 +131,9 @@ export function ProductList() {
             <div className={styles.tools}>
               {selected.size > 0 && (
                 <span className={styles["selected-count"]} aria-live="polite">
-                  {selected.size} selected
+                  {selected.size}개 선택됨
                   <button type="button" className={styles.clear} onClick={() => setSelected(new Set())}>
-                    Clear
+                    선택 해제
                   </button>
                 </span>
               )}
@@ -143,7 +143,7 @@ export function ProductList() {
                 onClick={() => setConfirmDelete(true)}
                 disabled={selected.size === 0}
               >
-                Delete
+                삭제
               </button>
               <button
                 type="button"
@@ -152,10 +152,10 @@ export function ProductList() {
                 disabled={exporting || total === 0}
                 aria-busy={exporting}
               >
-                {exporting ? "Exporting…" : "Export CSV"}
+                {exporting ? "내보내는 중…" : "CSV 내보내기"}
               </button>
               <span className={styles.total} aria-live="polite">
-                Total Posts: {query.data ? total.toLocaleString("en-US") : "–"}
+                전체 {query.data ? total.toLocaleString("ko-KR") : "–"}건
               </span>
             </div>
           </div>
@@ -163,7 +163,7 @@ export function ProductList() {
           <div className={styles["table-wrap"]} aria-busy={query.isFetching}>
             <table className={styles.table}>
               <caption className="visually-hidden">
-                Products, page {params.page} of {totalPages}
+                상품 목록, {totalPages}페이지 중 {params.page}페이지
               </caption>
               <thead>
                 <tr>
@@ -177,22 +177,22 @@ export function ProductList() {
                       }}
                       onChange={togglePage}
                       disabled={rows.length === 0}
-                      aria-label="Select all products on this page"
+                      aria-label="이 페이지의 상품 전체 선택"
                     />
                   </th>
                   <th scope="col" className={styles["col-thumb"]}>
-                    Thumbnail
+                    썸네일
                   </th>
-                  <th scope="col">Product Name</th>
+                  <th scope="col">상품명</th>
                   <th scope="col" className={styles["col-price"]}>
-                    Selling Price
+                    판매가
                   </th>
-                  <th scope="col">Category (Course)</th>
+                  <th scope="col">카테고리(코스)</th>
                   <th scope="col" className={styles["col-status"]}>
-                    Exposure Status
+                    노출 여부
                   </th>
                   <th scope="col" className={styles["col-date"]}>
-                    Registration Date
+                    등록일
                   </th>
                 </tr>
               </thead>
@@ -210,7 +210,7 @@ export function ProductList() {
                     <td colSpan={7} className={styles.message} role="alert">
                       <p>{errorMessage(query.error)}</p>
                       <button type="button" className={`${btn.button} ${btn.outline}`} onClick={() => query.refetch()}>
-                        Try again
+                        다시 시도
                       </button>
                     </td>
                   </tr>
@@ -221,8 +221,8 @@ export function ProductList() {
                         {query.data?.hiddenDeleted
                           ? "이 페이지에는 삭제된 상품만 있어 표시할 상품이 없습니다. 다른 페이지를 확인해 주세요."
                           : params.search
-                            ? "No search results found."
-                            : "No products yet."}
+                            ? "검색 결과가 없습니다."
+                            : "등록된 상품이 없습니다."}
                       </p>
                     </td>
                   </tr>
@@ -235,7 +235,7 @@ export function ProductList() {
                           className={styles.checkbox}
                           checked={selected.has(row.id)}
                           onChange={() => toggleRow(row.id)}
-                          aria-label={`Select ${row.productName}`}
+                          aria-label={`${row.productName} 선택`}
                         />
                       </td>
                       <td>
@@ -243,7 +243,7 @@ export function ProductList() {
                           {row.image ? (
                             <Image src={row.image} alt="" fill sizes="64px" className={styles["thumb-img"]} />
                           ) : (
-                            <span className="visually-hidden">No image</span>
+                            <span className="visually-hidden">이미지 없음</span>
                           )}
                         </div>
                         <span className={styles.code}>{row.productCode || "-"}</span>
@@ -260,10 +260,10 @@ export function ProductList() {
                           className={styles.status}
                           value={row.isVisible ? "yes" : "no"}
                           onChange={(e) => changeVisible(row, e.target.value === "yes")}
-                          aria-label={`Exposure status of ${row.productName}`}
+                          aria-label={`${row.productName} 노출 여부`}
                         >
-                          <option value="yes">Yes</option>
-                          <option value="no">No</option>
+                          <option value="yes">노출</option>
+                          <option value="no">미노출</option>
                         </select>
                       </td>
                       <td className={styles.date}>

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProductDetail } from "@/features/product-detail/ProductDetail";
 
-export const metadata: Metadata = { title: "Product Details · Talking Club Admin" };
+export const metadata: Metadata = { title: "상품 상세 · 토킹클럽 관리자" };
 
 export default async function ProductDetailPage({ params }: PageProps<"/shopping/products/[id]">) {
   const { id } = await params;

@@ -13,12 +13,12 @@ export type CategoryFormTarget =
   | { mode: "create"; level: CategoryLevel; parent: CategoryNode | null }
   | { mode: "edit"; node: CategoryNode };
 
-const LEVEL_NAME: Record<CategoryLevel, string> = { 1: "main category", 2: "subcategory", 3: "child category" };
+const LEVEL_NAME: Record<CategoryLevel, string> = { 1: "대분류", 2: "중분류", 3: "소분류" };
 
 export function validateCategoryName(raw: string): string | null {
   const name = raw.trim();
-  if (!name) return "Please enter a category name.";
-  if (name.length > CATEGORY_NAME_MAX) return `Use ${CATEGORY_NAME_MAX} characters or fewer.`;
+  if (!name) return "카테고리명을 입력해 주세요.";
+  if (name.length > CATEGORY_NAME_MAX) return `${CATEGORY_NAME_MAX}자 이내로 입력해 주세요.`;
   return null;
 }
 
@@ -47,7 +47,7 @@ export function CategoryFormDialog({ target, onClose }: { target: CategoryFormTa
   const unchanged = target.mode === "edit" && name.trim() === target.node.name;
 
   const title =
-    target.mode === "create" ? `Add ${LEVEL_NAME[level]}` : `Edit ${LEVEL_NAME[level]}`;
+    target.mode === "create" ? `${LEVEL_NAME[level]} 추가` : `${LEVEL_NAME[level]} 수정`;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -57,13 +57,13 @@ export function CategoryFormDialog({ target, onClose }: { target: CategoryFormTa
     try {
       if (target.mode === "create") {
         await create.mutateAsync({ level, name, parentId: parent?.id ?? null });
-        notify("success", `“${name.trim()}” was added.`);
+        notify("success", `“${name.trim()}” 카테고리를 추가했습니다.`);
       } else {
         await update.mutateAsync({
           id: target.node.id,
           input: { level, name, parentId: target.node.parentId },
         });
-        notify("success", `Saved “${name.trim()}”.`);
+        notify("success", `“${name.trim()}” 카테고리를 저장했습니다.`);
       }
       onClose();
     } catch (error) {
@@ -87,7 +87,7 @@ export function CategoryFormDialog({ target, onClose }: { target: CategoryFormTa
       footer={
         <>
           <button type="button" className={`${btn.button} ${btn.outline}`} onClick={onClose} disabled={pending}>
-            Cancel
+            취소
           </button>
           <button
             type="submit"
@@ -96,7 +96,7 @@ export function CategoryFormDialog({ target, onClose }: { target: CategoryFormTa
             disabled={pending || unchanged}
             aria-busy={pending}
           >
-            {pending ? "Saving…" : target.mode === "create" ? "Add" : "Save"}
+            {pending ? "저장 중…" : target.mode === "create" ? "추가" : "저장"}
           </button>
         </>
       }
@@ -104,11 +104,11 @@ export function CategoryFormDialog({ target, onClose }: { target: CategoryFormTa
       <form id={formId} onSubmit={handleSubmit} noValidate className={styles.form}>
         {parent && (
           <p className={styles.parent}>
-            Parent: <span className={styles.code}>[{parent.id}]</span> {parent.name}
+            상위 카테고리: <span className={styles.code}>[{parent.id}]</span> {parent.name}
           </p>
         )}
         <label htmlFor={inputId} className={styles.label}>
-          Category name <span aria-hidden>*</span>
+          카테고리명 <span aria-hidden>*</span>
         </label>
         <input
           id={inputId}

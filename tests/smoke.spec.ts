@@ -8,6 +8,6 @@ test("root sends a logged-out user to the login page with no console errors", as
 
   await page.goto("/");
   await expect(page).toHaveURL(/\/login\?next=%2Fshopping%2Fproducts$/);
-  await expect(page.getByRole("button", { name: "Log in" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "로그인" })).toBeVisible();
   expect(errors).toEqual([]);
 });

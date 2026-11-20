@@ -26,7 +26,7 @@ export function DeleteCategoryDialog({ node, onClose }: { node: CategoryNode; on
     setApiError(null);
     try {
       await remove.mutateAsync({ id: node.id, level: node.level });
-      notify("success", `“${node.name}” was deleted.`);
+      notify("success", `“${node.name}” 카테고리를 삭제했습니다.`);
       onClose();
     } catch (error) {
       setApiError(errorMessage(error));
@@ -36,7 +36,7 @@ export function DeleteCategoryDialog({ node, onClose }: { node: CategoryNode; on
   return (
     <Dialog
       visible
-      header={blocked ? "Can't delete this category" : "Delete category?"}
+      header={blocked ? "삭제할 수 없는 카테고리" : "카테고리를 삭제할까요?"}
       onHide={() => !pending && onClose()}
       draggable={false}
       resizable={false}
@@ -47,15 +47,15 @@ export function DeleteCategoryDialog({ node, onClose }: { node: CategoryNode; on
       footer={
         blocked ? (
           <button type="button" className={`${btn.button} ${btn.primary}`} onClick={onClose} ref={safeButton}>
-            OK
+            확인
           </button>
         ) : (
           <>
             <button type="button" className={`${btn.button} ${btn.outline}`} onClick={onClose} disabled={pending} ref={safeButton}>
-              Cancel
+              취소
             </button>
             <button type="button" className={`${btn.button} ${btn.danger}`} onClick={confirm} disabled={pending} aria-busy={pending}>
-              {pending ? "Deleting…" : "Delete"}
+              {pending ? "삭제 중…" : "삭제"}
             </button>
           </>
         )
@@ -66,10 +66,10 @@ export function DeleteCategoryDialog({ node, onClose }: { node: CategoryNode; on
       </p>
       {blocked ? (
         <p className={styles.body}>
-          It still has {node.children.length} {node.children.length === 1 ? "subcategory" : "subcategories"}. Delete those first.
+          하위 카테고리가 {node.children.length}개 있습니다. 하위 카테고리를 먼저 삭제해 주세요.
         </p>
       ) : (
-        <p className={styles.body}>This can&apos;t be undone.</p>
+        <p className={styles.body}>삭제한 후에는 되돌릴 수 없습니다.</p>
       )}
       {apiError && (
         <p className={styles.error} role="alert">

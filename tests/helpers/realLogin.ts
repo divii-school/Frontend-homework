@@ -26,6 +26,6 @@ export async function realLogin(page: Page, next = "/shopping/products"): Promis
 
 /** Logs out through the header so the QA token is revoked at the end of the test. */
 export async function realLogout(page: Page): Promise<void> {
-  await page.getByRole("button", { name: "Log out" }).click();
+  await page.getByRole("button", { name: "로그아웃" }).click();
   await expect(page).toHaveURL("/login");
 }

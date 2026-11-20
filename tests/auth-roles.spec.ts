@@ -13,9 +13,9 @@ test.describe("login, roles and session expiry", () => {
 
     await page.goto("/shopping/categories?search=abc");
     await expect(page).toHaveURL("/login?next=%2Fshopping%2Fcategories%3Fsearch%3Dabc");
-    await page.getByLabel("ID").fill("someone");
-    await page.getByLabel("Password", { exact: true }).fill("secret");
-    await page.getByRole("button", { name: "Log in" }).click();
+    await page.getByLabel("아이디").fill("someone");
+    await page.getByLabel("비밀번호", { exact: true }).fill("secret");
+    await page.getByRole("button", { name: "로그인" }).click();
 
     await expect(page).toHaveURL("/shopping/categories?search=abc");
     await expect(page.getByRole("banner")).toContainText("HW3 Tester");
@@ -30,11 +30,11 @@ test.describe("login, roles and session expiry", () => {
     });
 
     await page.goto("/login");
-    await page.getByLabel("ID").fill("student");
-    await page.getByLabel("Password", { exact: true }).fill("secret");
-    await page.getByRole("button", { name: "Log in" }).click();
+    await page.getByLabel("아이디").fill("student");
+    await page.getByLabel("비밀번호", { exact: true }).fill("secret");
+    await page.getByRole("button", { name: "로그인" }).click();
 
-    await expect(page.getByRole("dialog")).toContainText("You don't have admin permission.");
+    await expect(page.getByRole("dialog")).toContainText("관리자 권한이 없습니다.");
     await expect(page).toHaveURL("/login");
     expect(loggedOutServerSide).toBe(true);
     expect(await page.evaluate(() => sessionStorage.getItem("tc-admin-auth") ?? localStorage.getItem("tc-admin-auth"))).toBeNull();
@@ -43,13 +43,13 @@ test.describe("login, roles and session expiry", () => {
   test("GENERAL_ADMIN: category page is not in the menu and its URL shows 403", async ({ page }) => {
     await fakeSession(page, "GENERAL_ADMIN");
     await page.goto("/shopping/products");
-    const menu = page.getByRole("complementary", { name: "Main menu" });
-    await expect(menu.getByRole("link", { name: "Product Management", exact: true })).toBeVisible();
-    await expect(menu.getByRole("link", { name: "Product Category Management" })).toHaveCount(0);
+    const menu = page.getByRole("complementary", { name: "주 메뉴" });
+    await expect(menu.getByRole("link", { name: "상품 관리", exact: true })).toBeVisible();
+    await expect(menu.getByRole("link", { name: "상품 카테고리 관리" })).toHaveCount(0);
 
     await page.goto("/shopping/categories");
-    await expect(page.getByRole("heading", { name: "You don't have permission to open this page." })).toBeVisible();
-    await page.getByRole("link", { name: "Go to my admin home" }).click();
+    await expect(page.getByRole("heading", { name: "이 페이지에 접근할 권한이 없습니다." })).toBeVisible();
+    await page.getByRole("link", { name: "관리자 홈으로 이동" }).click();
     await expect(page).toHaveURL("/shopping/products");
   });
 
@@ -82,7 +82,7 @@ test.describe("login, roles and session expiry", () => {
       return route.fulfill({ status: 200, contentType: "application/json", body: envelope({}, 200, "adminLogout") });
     });
     await page.goto("/shopping/products");
-    await page.getByRole("button", { name: "Log out" }).click();
+    await page.getByRole("button", { name: "로그아웃" }).click();
     await expect(page).toHaveURL("/login");
     expect(called).toBe(true);
   });

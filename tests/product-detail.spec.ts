@@ -53,34 +53,34 @@ test.describe("product details tabs (mocked API)", () => {
     const { hits } = await setup(page);
     await page.goto("/shopping/products/7");
     await expect(page.getByRole("heading", { level: 1, name: "HW3-Sandip-Detail" })).toBeVisible();
-    await expect(page.getByRole("tab", { name: "Overview" })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("tab", { name: "기본 정보" })).toHaveAttribute("aria-selected", "true");
     const panel = page.getByRole("tabpanel");
     await expect(panel).toContainText("₩19,000");
     await expect(panel).toContainText("Main > Phonics > ACE Alphabet");
-    await expect(panel).toContainText("Tax-free");
+    await expect(panel).toContainText("면세");
     await expect(panel).toContainText("2026-11-16 12:00 PM");
-    await expect(panel).toContainText("No images.");
+    await expect(panel).toContainText("등록된 이미지가 없습니다.");
     expect(hits.sessions).toBe(0);
     expect(hits.related).toBe(0);
-    await expect(page.getByRole("link", { name: "Edit" })).toHaveAttribute("href", "/shopping/products/7/edit");
+    await expect(page.getByRole("link", { name: "수정" })).toHaveAttribute("href", "/shopping/products/7/edit");
   });
 
   test("active tab lives in the URL, survives reload; tab paging too", async ({ page }) => {
     await setup(page);
     await page.goto("/shopping/products/7");
-    await page.getByRole("tab", { name: "Sessions" }).click();
+    await page.getByRole("tab", { name: "연결된 수업" }).click();
     await expect(page).toHaveURL("/shopping/products/7?tab=sessions");
     await expect(page.getByRole("tabpanel").locator("tbody tr")).toHaveCount(10);
-    await expect(page.getByRole("tabpanel")).toContainText("Total: 12");
+    await expect(page.getByRole("tabpanel")).toContainText("전체 12건");
 
-    await page.getByRole("button", { name: "Page 2" }).click();
+    await page.getByRole("button", { name: "2 페이지" }).click();
     await expect(page).toHaveURL("/shopping/products/7?tab=sessions&page=2");
     await page.reload();
-    await expect(page.getByRole("tab", { name: "Sessions" })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("tab", { name: "연결된 수업" })).toHaveAttribute("aria-selected", "true");
     await expect(page.getByRole("tabpanel").locator("tbody tr")).toHaveCount(2);
 
     // Changing tab resets the tab's page.
-    await page.getByRole("tab", { name: "Same category" }).click();
+    await page.getByRole("tab", { name: "같은 카테고리" }).click();
     await expect(page).toHaveURL("/shopping/products/7?tab=related");
   });
 
@@ -98,49 +98,49 @@ test.describe("product details tabs (mocked API)", () => {
     const panel = page.getByRole("tabpanel");
     await expect(panel.getByRole("alert")).toContainText("서버에 문제가 발생했습니다", { timeout: 10_000 });
 
-    await page.getByRole("tab", { name: "Overview" }).click();
+    await page.getByRole("tab", { name: "기본 정보" }).click();
     await expect(page.getByRole("tabpanel")).toContainText("₩19,000");
 
-    // Back on Sessions it fails again; then the API recovers and "Try again" loads it.
-    await page.getByRole("tab", { name: "Sessions" }).click();
+    // Back on Sessions it fails again; then the API recovers and "다시 시도" loads it.
+    await page.getByRole("tab", { name: "연결된 수업" }).click();
     await expect(page.getByRole("tabpanel").getByRole("alert")).toBeVisible({ timeout: 10_000 });
     setSessionsFail(false);
-    await page.getByRole("tabpanel").getByRole("button", { name: "Try again" }).click();
+    await page.getByRole("tabpanel").getByRole("button", { name: "다시 시도" }).click();
     await expect(page.getByRole("tabpanel").locator("tbody tr")).toHaveCount(10);
   });
 
   test("empty sessions tab message", async ({ page }) => {
     await setup(page, { sessionsEmpty: true });
     await page.goto("/shopping/products/7?tab=sessions");
-    await expect(page.getByRole("tabpanel")).toContainText("This product isn't linked to any class session yet.");
+    await expect(page.getByRole("tabpanel")).toContainText("이 상품과 연결된 수업이 없습니다.");
   });
 
   test("overview error does not block the sessions tab", async ({ page }) => {
     await setup(page, { detailFail: true });
     await page.goto("/shopping/products/7");
     await expect(page.getByRole("tabpanel").getByRole("alert")).toBeVisible({ timeout: 10_000 });
-    await expect(page.getByRole("heading", { level: 1, name: "Product Details" })).toBeVisible();
-    await page.getByRole("tab", { name: "Sessions" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "상품 상세" })).toBeVisible();
+    await page.getByRole("tab", { name: "연결된 수업" }).click();
     await expect(page.getByRole("tabpanel").locator("tbody tr")).toHaveCount(10);
   });
 
   test("keyboard: arrow keys move between tabs", async ({ page }) => {
     await setup(page);
     await page.goto("/shopping/products/7");
-    await page.getByRole("tab", { name: "Overview" }).focus();
+    await page.getByRole("tab", { name: "기본 정보" }).focus();
     await page.keyboard.press("ArrowRight");
-    await expect(page.getByRole("tab", { name: "Sessions" })).toBeFocused();
+    await expect(page.getByRole("tab", { name: "연결된 수업" })).toBeFocused();
     await expect(page).toHaveURL("/shopping/products/7?tab=sessions");
     await page.keyboard.press("End");
-    await expect(page.getByRole("tab", { name: "Same category" })).toBeFocused();
+    await expect(page.getByRole("tab", { name: "같은 카테고리" })).toBeFocused();
     await page.keyboard.press("ArrowRight");
-    await expect(page.getByRole("tab", { name: "Overview" })).toBeFocused();
+    await expect(page.getByRole("tab", { name: "기본 정보" })).toBeFocused();
     await expect(page).toHaveURL("/shopping/products/7");
   });
 
   test("unknown tab in the URL falls back to Overview", async ({ page }) => {
     await setup(page);
     await page.goto("/shopping/products/7?tab=nope");
-    await expect(page.getByRole("tab", { name: "Overview" })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("tab", { name: "기본 정보" })).toHaveAttribute("aria-selected", "true");
   });
 });

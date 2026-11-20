@@ -14,13 +14,13 @@ export function DeleteProductsDialog({ ids, onClose, onDeleted }: { ids: number[
   const { notify } = useToast();
   const [apiError, setApiError] = useState<string | null>(null);
   const cancelRef = useRef<HTMLButtonElement>(null);
-  const label = `${ids.length} ${ids.length === 1 ? "product" : "products"}`;
+  const label = `상품 ${ids.length}개`;
 
   async function confirm() {
     setApiError(null);
     try {
       await remove.mutateAsync(ids);
-      notify("success", `Deleted ${label}.`);
+      notify("success", `${label}를 삭제했습니다.`);
       onDeleted();
       onClose();
     } catch (error) {
@@ -31,7 +31,7 @@ export function DeleteProductsDialog({ ids, onClose, onDeleted }: { ids: number[
   return (
     <Dialog
       visible
-      header={`Delete ${label}?`}
+      header={`${label}를 삭제할까요?`}
       onHide={() => !remove.isPending && onClose()}
       draggable={false}
       resizable={false}
@@ -42,15 +42,15 @@ export function DeleteProductsDialog({ ids, onClose, onDeleted }: { ids: number[
       footer={
         <>
           <button type="button" ref={cancelRef} className={`${btn.button} ${btn.outline}`} onClick={onClose} disabled={remove.isPending}>
-            Cancel
+            취소
           </button>
           <button type="button" className={`${btn.button} ${btn.danger}`} onClick={confirm} disabled={remove.isPending} aria-busy={remove.isPending}>
-            {remove.isPending ? "Deleting…" : "Delete"}
+            {remove.isPending ? "삭제 중…" : "삭제"}
           </button>
         </>
       }
     >
-      <p className={styles["dialog-body"]}>The selected {label} will be deleted. This can&apos;t be undone.</p>
+      <p className={styles["dialog-body"]}>선택한 {label}가 삭제됩니다. 삭제한 후에는 되돌릴 수 없습니다.</p>
       {apiError && (
         <p className={styles["dialog-error"]} role="alert">
           {apiError}

@@ -14,13 +14,13 @@ const pretendard = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Talking Club Admin",
-  description: "Talking Club admin: shopping management (HW3)",
+  title: "토킹클럽 관리자",
+  description: "토킹클럽 관리자: 쇼핑몰 관리 (HW3)",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={pretendard.variable}>
+    <html lang="ko" className={pretendard.variable}>
       <body>
         <AppProviders>{children}</AppProviders>
       </body>
