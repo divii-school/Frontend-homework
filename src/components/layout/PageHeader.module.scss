@@ -1,0 +1,32 @@
+.wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+.titleRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+.crumbs {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+.actions {
+  display: flex;
+  gap: var(--space-2);
+}
+@media (max-width: 480px) {
+  .title {
+    font-size: 20px;
+  }
+}
