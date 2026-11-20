@@ -9,7 +9,7 @@ A hand-over to QA (Archana): everything needed to test is on this page or linked
 | --- | --- |
 | Repository | https://github.com/divii-school/Frontend-homework |
 | Branch | `hw3/sandip` (PR to `main`, never merged) |
-| Commit (deployed app) | `8572d0c`: Korean UI on every screen (`3002f93`), Korean text for more API keys (`8498009`) and Korean upload-route messages (`8572d0c`, Kakali's 11-20 note). Full Playwright run in part 9 is on `8498009`; on `8572d0c` the mocked tests (52) and the real upload test (mutation) passed again. Later commits only add docs and the published HTML report. |
+| Commit (deployed app) | `424f8a6`: design review fixes (Bhagyashree 11-20: follow the Korean Figma frames). Before: Korean UI `3002f93`, more API keys `8498009`, Korean upload-route messages `8572d0c`. Later commits only add docs and the published HTML report. |
 | Date | 2026-11-20 (first build `beb0bad` 2026-11-17; Korean error messages `29e011f`; Korean UI `3002f93`) |
 | Demo | https://hw3-sandip.vercel.app — own Vercel account, only `NEXT_PUBLIC_API_BASE_URL` set (QA API), no deployment protection |
 | API | Talking Club **QA** API (`tkclub-admn-api-qa.dvconsulting.org`). Never production. |
@@ -47,6 +47,9 @@ A hand-over to QA (Archana): everything needed to test is on this page or linked
 | Kakali 11-20: the screens still showed English (login, menu, breadcrumb, form labels, page titles, "Saving…", `lang="en"`) | Whole UI in Korean: login (아이디, 비밀번호, 자동 로그인, 권한 없음), menu / breadcrumb (쇼핑몰 관리 › 상품 관리), all form labels and validation messages, buttons and busy text (저장 중…, 삭제 중…, 내보내는 중…), tables, tabs, dialogs, toasts, aria-labels, CSV headers, page titles (상품 관리 · 토킹클럽 관리자), dialog close button (닫기); `<html lang="ko">`. Tests now find every control by its Korean name |
 | Kakali 11-20 (should fix): only 5 API keys had their own Korean text | Added 6 more: category name already used (대분류 / 중분류 / 소분류), category limit reached, unit price must be less than selling price, file required. Others still fall back to a Korean message by HTTP status |
 | Kakali 11-20 (should fix): empty `sandip.txt` in the repo | Deleted |
+| Design 11-20 (must fix): screens followed the English Figma frames | Labels, values and formats from the Korean frames: 판매금액, 카테고리(과정), 노출여부 (예 / 아니오), 등록일자, dates `YYYY/MM/DD HH:MM` (24 h, KST), "총 게시물 : N" (8.1.0); 모두 펼치기 / 모두 접기, 대분류 등록, + 중분류 / + 소분류, (N개 중분류) (8.2.0); 상품코드, 상세설명, 노출상태, 판매상태, 상품ERP명, 갯수, 비과세, 파일추가 (8.1.1 / 8.1.2); login shows the logo only. Side-by-side images redone with the Korean frames (`docs/figma/ko-*.png`) |
+| Design 11-20 (should fix) | `word-break: keep-all` (WM 5.4); 저장 in the 상품 수정 header (checks every step); prices with thousands commas while typing; 대분류 등록 disabled with the reason (API `maximumCategoryLimitReached`); light / dark switch in the header (remembered); 취소 red outline + red text; button width from padding |
+| Design 11-20 (minor) | Full Figma menu with the items outside HW3 greyed out; selected rows tinted; empty-state icon; stray divider removed; menu icon grey |
 | A page of only deleted rows (API A2) said "No search results found" | Says the page has only deleted products and keeps the pagination |
 | HTML report could contain the QA login (Playwright records typed values) | Real-API tests log in through an API request; the published report was scanned: no ID, password or token |
 
@@ -67,7 +70,7 @@ A hand-over to QA (Archana): everything needed to test is on this page or linked
 
 ## 7. What to test, numbered
 
-Full cases (68, each P or N, with the automated test that covers it): [`docs/TEST-CASES.md`](TEST-CASES.md) · Google Sheet import: `docs/TEST-CASES.csv`.
+Full cases (72, each P or N, with the automated test that covers it): [`docs/TEST-CASES.md`](TEST-CASES.md) · Google Sheet import: `docs/TEST-CASES.csv`.
 
 1. `/login`: empty / wrong / correct login; Auto login on and off; Log out.
 2. Open `/shopping/products?page=3` logged out → login → you land on page 3.
@@ -87,9 +90,9 @@ Full cases (68, each P or N, with the automated test that covers it): [`docs/TES
 - **Token refresh** not possible from the browser (A4) → re-login with return to the same page.
 - Only desktop Figma frames exist; 768 / 375 and dark mode are our interpretation (D1, D2).
 - **px values** in component SCSS are not yet all tokens (colours are); spacing tokens exist for the shared parts only.
-- "전체 N건" (total) can be slightly high on category-name searches (API A2).
-- Dates keep the WM format `YYYY-MM-DD h:mm AM` (design question D3), so AM / PM stay in Latin letters.
-- The Figma frames themselves are in English; the screens follow the Korean wording from the Figma notes and Kakali's 11-20 list.
+- "총 게시물 : N" can be slightly high on category-name searches (API A2).
+- 대분류 등록 is disabled because the QA API refuses new main categories (`maximumCategoryLimitReached`); switch `MAIN_CATEGORY_LIMIT_REACHED` in `src/config/categories.ts` when that changes.
+- The product form stays a 4-step form (HW3 requirement); the Korean 8.1.1 frame is one long page.
 - The browser logs "Failed to load resource: 400" when the API rejects a wrong login — a network log, not an app error.
 - A 1×1 test image (`HW3-Sandip-probe.png`) was uploaded to the QA bucket during the upload check; it is not linked to any product.
 - Browsers: Chromium (Playwright) and Chrome on Windows 11; Safari / Firefox not checked.
@@ -132,7 +135,7 @@ Route (app): /, /login, /shopping/categories, /shopping/products, /shopping/prod
 exit code: 0
 
 $ PLAYWRIGHT_BASE_URL=https://hw3-sandip.vercel.app npx playwright test   # both projects, against the demo
-60 passed (5.6m)    # chromium 59 = mocked UI tests 51 · real-QA read-only 3 · screenshots 4 · smoke 1
+63 passed (5.3m)    # chromium 62 = mocked UI tests 54 · real-QA read-only 3 · screenshots 4 · smoke 1
                     # mutation 1 (register with a real image upload → edit → exposure → delete, HW3-Sandip-E2E-*)
 exit code: 0
 ```

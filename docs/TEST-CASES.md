@@ -3,7 +3,7 @@
 Format follows the WM QA Template (ID, type, precondition, steps, expected result), as in HW2.
 Google Sheet version: `docs/TEST-CASES.csv` (same rows; File → Import in Google Sheets).
 
-**Build:** `8498009` (Korean UI) on branch `hw3/sandip` · **URL:** https://hw3-sandip.vercel.app (or `npm run dev` → http://localhost:3003)
+**Build:** `424f8a6` (Korean Figma frames) on branch `hw3/sandip` · **URL:** https://hw3-sandip.vercel.app (or `npm run dev` → http://localhost:3003)
 **Account:** QA admin login from the DM (role SUPER_ADMIN). **Data:** Talking Club **QA** server, shared by 5 people —
 create / edit / delete only records named `HW3-Sandip-…` and delete them afterwards.
 **Type:** **P** = positive (the happy path works) · **N** = negative (wrong input, wrong role, missing data, failure handled).
@@ -37,32 +37,33 @@ create / edit / delete only records named `HW3-Sandip-…` and delete them after
 | ID | Type | Precondition | Steps | Expected result | Automation |
 | --- | --- | --- | --- | --- | --- |
 | CA-01 | P | Logged in | Open `/shopping/categories` | 3-level tree, all open: `[code] name (하위 N개)`; main rows tinted; no count on rows without children | categories.spec › renders the 3-level tree… · products.real.spec › category tree… |
-| CA-02 | P | CA-01 | 전체 접기 → toggle one main row → 전체 펼치기 | All collapse; only that row opens; all open again | categories.spec › Fold all / Expand all… |
+| CA-02 | P | CA-01 | 모두 접기 → toggle one main row → 모두 펼치기 | All collapse; only that row opens; all open again | categories.spec › Fold all / Expand all… |
 | CA-03 | P | CA-01 | Type a name → Enter (or the magnifier) → reload | Server search; URL `?search=…`; reload keeps the term and the result | categories.spec › search goes to the server… |
 | CA-04 | N | CA-01 | Search a term that matches nothing | "검색 결과가 없습니다." | categories.spec › empty search result message |
 | CA-05 | N | API down / 500 | Open the page | Error message + 다시 시도; 다시 시도 reloads | categories.spec › server error… |
-| CA-06 | P | CA-01 | 등록 → name `HW3-Sandip-Main` → 추가 | Toast "“HW3-Sandip-Main” 카테고리를 추가했습니다."; tree reloads with it | categories-crud.spec › register a main category… |
-| CA-07 | N | 등록 dialog | Leave the name empty / spaces only → 추가 | "카테고리명을 입력해 주세요."; nothing sent | categories-crud.spec › register a main category… |
-| CA-08 | P | Own main + sub category | "+ 하위 카테고리" on a main row, then on a sub row | Dialog shows "상위 카테고리: [id] name"; sub sent with `categoryId`, child with `subCategoryId` | categories-crud.spec › add a subcategory and a child… |
+| CA-06 | P | CA-01 | "+ 중분류" on a 대분류 row → name `HW3-Sandip-Sub` → 추가 | Toast "“HW3-Sandip-Sub” 카테고리를 추가했습니다."; tree reloads with it | categories-crud.spec › add a 중분류… |
+| CA-07 | N | 중분류 추가 dialog | Leave the name empty / spaces only → 추가 | "카테고리명을 입력해 주세요."; nothing sent | categories-crud.spec › add a 중분류… |
+| CA-08 | P | Own main + sub category | "+ 중분류" on a 대분류 row, then "+ 소분류" on a 중분류 row | Dialog shows "상위 카테고리: [id] name"; sub sent with `categoryId`, child with `subCategoryId` | categories-crud.spec › add a subcategory and a child… |
 | CA-09 | P | Own category | Pencil → change the name → 저장 | 저장 disabled until the name changes; saved with its parent id | categories-crud.spec › edit keeps the parent id… |
 | CA-10 | N | Dialog open | API rejects the save | Korean message in the dialog (never the API's own text); typed name kept | categories-crud.spec › API error keeps the dialog… |
 | CA-11 | N | Category with subcategories | Trash icon | "삭제할 수 없는 카테고리 — 하위 카테고리가 N개 있습니다…"; nothing deleted | categories-crud.spec › delete: blocked… |
 | CA-12 | P | Own leaf category | Trash → 삭제 | Confirm dialog (focus on 취소) → toast, row gone | categories-crud.spec › delete: … a leaf is deleted |
 | CA-13 | N | Any dialog open | Press Escape | Dialog closes, nothing saved | categories-crud.spec › Escape closes the dialog… |
-| CA-14 | N | 등록 dialog | API rejects with a known key (e.g. `maximumCategoryLimitReached`) | That key's own Korean message ("카테고리를 더 등록할 수 없습니다…"); the key itself never shown | categories-crud.spec › a known API key gets its own Korean message… |
+| CA-14 | N | 중분류 추가 dialog | API rejects with a known key (e.g. `maximumCategoryLimitReached`) | That key's own Korean message ("카테고리를 더 등록할 수 없습니다…"); the key itself never shown | categories-crud.spec › a known API key gets its own Korean message… |
+| CA-15 | N | Logged in | Look at 대분류 등록 | Disabled, with "대분류는 등록 가능한 최대 개수에 도달해 더 등록할 수 없습니다." (the QA API answers `maximumCategoryLimitReached`) | categories-crud.spec › 대분류 등록 is disabled… |
 
 ## 4. Product list (8.1.0)
 
 | ID | Type | Precondition | Steps | Expected result | Automation |
 | --- | --- | --- | --- | --- | --- |
-| PL-01 | P | Logged in | Open `/shopping/products` | 10 rows: checkbox, thumbnail (+ code), name, `₩4,000`, Major > Middle > Sub (or `-`), 노출/미노출, `YYYY-MM-DD h:mm AM` (KST); "전체 N건"; pages 1–10 | products.spec › renders 10 rows… · products.real.spec › product list… |
+| PL-01 | P | Logged in | Open `/shopping/products` | 10 rows: checkbox, thumbnail (+ code), name, `₩4,000`, Major > Middle > Sub (or `-`), 노출여부 예/아니오, `YYYY/MM/DD HH:MM` (KST); "총 게시물 : N"; pages 1–10 | products.spec › renders 10 rows… · products.real.spec › product list… |
 | PL-02 | P | PL-01 | 2 page → reload → browser Back | URL `?page=2`; reload keeps page 2; Back returns to the previous page | products.spec › paging and search live in the URL… |
 | PL-03 | P | PL-01 | Search by 상품명 / 카테고리명 → Enter | URL `?search=…&type=…`; results from the server; Back restores the previous search in the box | products.spec › paging and search… · products.real.spec |
 | PL-04 | N | PL-01 | Search a term with no match | "검색 결과가 없습니다." | products.spec › no results message |
 | PL-05 | N | URL `?page=999` | Open it | Jumps to the last page | products.spec › a page past the end… |
 | PL-06 | P | Own `HW3-Sandip-…` products | Select rows on page 1 and 2 → 삭제 → 삭제 | "N개 선택됨"; confirm dialog (focus on 취소); `DELETE {ids:[…numbers]}`; toast; total drops | products.spec › select rows… · products.mutation.spec |
 | PL-07 | N | 100 rows selected | Select one more | "상품은 한 번에 최대 100개까지 선택할 수 있습니다."; not added | manual |
-| PL-08 | P | Own product | 노출 여부 dropdown 노출 ↔ 미노출 | Changes at once, toast "… 노출 여부를 노출 / 미노출로 변경했습니다."; survives reload | products.spec › exposure status changes… · products.mutation.spec |
+| PL-08 | P | Own product | 노출여부 dropdown 예 ↔ 아니오 | Changes at once, toast "… 노출여부를 예 / 아니오로 변경했습니다."; survives reload | products.spec › exposure status changes… · products.mutation.spec |
 | PL-09 | N | API fails | Change exposure | Korean error toast ("서버에 문제가 발생했습니다…"); dropdown goes back to the old value | products.spec › exposure status rolls back… |
 | PL-10 | P | Any search | CSV 내보내기 | Downloads `products-YYYY-MM-DD.csv` with every matching row (all pages), Korean readable in Excel | products.spec › export downloads… |
 | PL-11 | N | A name starting with `=` | CSV 내보내기 | Cell starts with `'` (no spreadsheet formula) | products.spec › CSV guards… |
@@ -84,6 +85,8 @@ create / edit / delete only records named `HW3-Sandip-…` and delete them after
 | PF-10 | P | Any | Step 4 ERP code | Read-only ("등록 후 자동으로 부여됩니다" / the assigned code); never sent | product-form.spec › ERP code is server-assigned… |
 | PF-11 | N | Typed values | 취소 → 아니오 / 예 | 아니오 keeps the form; 예 goes to the list | product-form.spec › cancel asks first… |
 | PF-12 | N | `/shopping/products/404404/edit` | Open | "상품을 찾을 수 없습니다. 이미 삭제되었을 수 있습니다." | product-form.spec › unknown product… |
+| PF-13 | P | Own product, any step of 수정 | 저장 in the page header | Every step is checked (first invalid step opens); otherwise saved and back on the list | product-form.spec › edit: 저장 in the page header… |
+| PF-14 | P | Step 1 | Type `1980000` in 판매가 | Shows `1,980,000` (₩ prefix); the API gets 1980000 | product-form.spec › edit: 저장 in the page header… |
 
 ## 6. Images (form step 2)
 
@@ -117,5 +120,6 @@ create / edit / delete only records named `HW3-Sandip-…` and delete them after
 | SZ-02 | P | OS dark mode | Open any screen | Dark colours from the design tokens; logo readable | screens.real.spec |
 | SZ-03 | P | Keyboard only | Tab through login, list, form, dialogs | Visible focus ring; dialogs focus the name field or the safe button; Escape closes | manual + categories-crud.spec / products.spec focus checks |
 | SZ-04 | P | Any page | Open DevTools console | No errors or warnings from the app (the browser's own "Failed to load resource: 400" on a wrong login is a network log) | smoke.spec · products.real.spec (console check) |
+| SZ-05 | P | Logged in | Header → moon / sun button, then reload | Switches light ↔ dark; the choice stays after reload | products.spec › the header switch… |
 
-**Totals:** 68 cases — 35 P · 33 N (counted from the tables; the CSV has the same 68 rows).
+**Totals:** 72 cases — 38 P · 34 N (counted from the tables; the CSV has the same 72 rows).
