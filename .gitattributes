@@ -1,0 +1,5 @@
+# Keep LF in the repo on every OS; binaries untouched
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.ico binary

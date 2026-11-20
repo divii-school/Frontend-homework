@@ -1,0 +1,448 @@
+// Shared pieces used by more than one page.
+@use "variables" as *;
+@use "mixins" as *;
+
+// ---- Page heading ---------------------------------------------------
+.page-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  margin-bottom: $space-6;
+}
+
+.page-heading-text {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: $space-2 $space-4;
+}
+
+.page-heading-title {
+  color: token("black-b1");
+  font-size: $font-size-title;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-title;
+
+  @include mq-down("mobile") {
+    font-size: $font-size-xl;
+  }
+}
+
+.page-heading-breadcrumb {
+  color: token("grey-b2");
+  font-size: $font-size-sm;
+}
+
+.page-heading-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+}
+
+// ---- Logo -----------------------------------------------------------
+// One logo file per theme (design review, 18 Nov): the dark-mode file has light text and no white background,
+// so the logo swaps 1:1 with the theme and never sits in a white box.
+.brand-logo {
+  display: inline-flex;
+}
+
+.brand-logo-night,
+[data-theme="night"] .brand-logo-day {
+  display: none;
+}
+
+[data-theme="night"] .brand-logo-night {
+  display: block;
+}
+
+// ---- Panel ----------------------------------------------------------
+.panel {
+  @include panel;
+  padding: $space-5;
+
+  @include mq-down("mobile") {
+    padding: $space-3;
+  }
+}
+
+// A link that looks like a button (navigation is a link, an action is a button)
+.link-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: $control-height;
+  padding: $space-2 $space-5;
+  background: transparent;
+  color: token("black-b2");
+  border: $border-width solid token("grey-b3");
+  border-radius: $radius-sm;
+  font-weight: $font-weight-bold;
+  text-decoration: none;
+
+  &:hover {
+    background: token("grey-b6");
+  }
+}
+
+.link-button-primary {
+  background: token("pink-b1");
+  border-color: token("pink-b1");
+  color: token("white-b2");
+
+  &:hover {
+    background: token("pink-b2");
+  }
+}
+
+// ---- Loading / empty / error / 403 / 404 ------------------------------
+.state-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-16 $space-4;
+  text-align: center;
+}
+
+.state-block-icon {
+  font-size: $icon-size-lg;
+  color: token("grey-b2");
+}
+
+.state-block-error .state-block-icon,
+.state-block-forbidden .state-block-icon {
+  color: token("red-b1");
+}
+
+.state-block-title {
+  color: token("black-b1");
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+}
+
+.state-block-description {
+  color: token("grey-b1");
+}
+
+// ---- List toolbar ---------------------------------------------------
+.list-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  margin-bottom: $space-4;
+}
+
+.list-toolbar-filters,
+.list-toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2;
+}
+
+// The actions stay at the right end, as in the frames, also when they wrap under the filters; on phones the
+// toolbar stacks from the left
+.list-toolbar-actions {
+  margin-left: auto;
+
+  @include mq-down("mobile") {
+    margin-left: 0;
+  }
+}
+
+// A dropdown in a toolbar has a fixed width (the base style fills its box, which would push the buttons beside it
+// onto a second line)
+.list-toolbar-filters .p-dropdown,
+.list-toolbar-actions .p-dropdown {
+  width: $select-width;
+}
+
+.list-toolbar-filters {
+  @include mq-down("xs") {
+    width: 100%;
+
+    .p-dropdown,
+    .list-toolbar-search {
+      width: 100%;
+    }
+  }
+}
+
+// A note on its own line under the toolbar, at the right end under the button it explains (e.g. why 대분류 등록 is
+// disabled); on phones, where the toolbar stacks, it starts at the left
+.list-toolbar-hint {
+  flex-basis: 100%;
+  text-align: right;
+
+  @include mq-down("mobile") {
+    text-align: left;
+  }
+}
+
+.list-toolbar-search {
+  width: $search-width;
+}
+
+// A search field whose magnifier, at the right end, submits the search (Enter does too)
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .p-inputtext {
+    width: 100%;
+    padding-right: $space-10;
+  }
+}
+
+.search-box-button.p-button {
+  position: absolute;
+  right: 0;
+  width: $space-10;
+  height: 100%;
+  color: token("grey-b2");
+}
+
+.list-toolbar-count {
+  margin-left: $space-2;
+  color: token("black-b1");
+  white-space: nowrap;
+}
+
+// Small grey outlined button (design 8.1.0: 삭제 above the product table)
+.button-small.p-button {
+  min-height: $space-8;
+  padding: 0 $space-4;
+  font-size: $font-size-sm;
+}
+
+.button-neutral.p-button.p-button-outlined {
+  border-color: token("grey-b1");
+  background: token("white-b1");
+  color: token("grey-b1");
+}
+
+// The table scrolls sideways inside this box; the page itself never does
+.table-scroll {
+  overflow-x: auto;
+}
+
+.data-table-nowrap {
+  white-space: nowrap;
+}
+
+// Figma 8.1.0: product names are plain bold text; the underline shows only on hover or keyboard focus
+.data-table-link {
+  color: token("black-b1");
+  font-weight: $font-weight-bold;
+  text-decoration: none;
+  text-underline-offset: $space-1;
+
+  &:hover,
+  &:focus-visible {
+    color: token("pink-b1");
+    text-decoration: underline;
+  }
+}
+
+// Figma 8.1.0: the product code under each thumbnail
+.product-thumbnail-cell {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-1;
+}
+
+.product-thumbnail-code {
+  color: token("black-b1");
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  white-space: nowrap;
+}
+
+// Inline 예 / 아니오 dropdown of 노출여부 in a row
+.visibility-select.p-dropdown {
+  min-width: $space-16 + $space-6;
+}
+
+.product-thumbnail {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  background: token("grey-b6");
+  border-radius: $radius-sm;
+  color: token("grey-b2");
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+// ---- Forms ----------------------------------------------------------
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  min-width: 0;
+}
+
+.form-field-label {
+  color: token("black-b1");
+  font-weight: $font-weight-bold;
+}
+
+.form-field-label-required::after {
+  content: "*";
+  margin-left: $space-1;
+  color: token("red-b1");
+}
+
+.form-field-hint {
+  color: token("grey-b1");
+  font-size: $font-size-sm;
+}
+
+.form-field-error {
+  color: token("red-b1");
+  font-size: $font-size-sm;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(#{$grid-min-column}, 100%), 1fr));
+  gap: $space-5;
+}
+
+// The three category selects side by side on wide screens, one under another on phones
+.form-grid-three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  @include mq-down("mobile") {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: $space-2;
+  margin-top: $space-6;
+}
+
+.error-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-2;
+  margin-bottom: $space-4;
+  padding: $space-3 $space-4;
+  background: token("red-b2");
+  color: token("red-b1");
+  border-radius: $radius-sm;
+
+  ul {
+    list-style: disc;
+    padding-left: $space-4;
+  }
+}
+
+// ---- Dialog body ----------------------------------------------------
+.confirm-dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.confirm-dialog-list {
+  max-height: $space-16 * 2;
+  padding-left: $space-5;
+  list-style: disc;
+  overflow-y: auto;
+}
+
+// Login alert (wrong ID or password, no admin rights): one line per sentence, closed with 확인.
+.login-alert-line {
+  margin: 0;
+}
+
+.login-alert-line + .login-alert-line {
+  margin-top: $space-2;
+  color: token("grey-b1");
+}
+
+// A short note above a list, e.g. that sorting covers only the current page.
+.list-hint {
+  margin: 0 0 $space-2;
+  color: token("grey-b1");
+  font-size: $font-size-sm;
+}
+
+// ---- Tabs -----------------------------------------------------------
+.tabs {
+  display: flex;
+  gap: $space-1;
+  border-bottom: $border-width solid token("grey-b4");
+  overflow-x: auto;
+  // No scrollbar with arrows under the tabs (design review, 18 Nov); at phone width the three tabs fit anyway
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @include mq-down("mobile") {
+    gap: 0;
+
+    .tabs-tab {
+      flex: 1 1 0;
+      padding: $space-3 $space-2;
+      font-size: $font-size-sm;
+      white-space: normal;
+      word-break: keep-all;
+    }
+  }
+}
+
+.tabs-tab {
+  padding: $space-3 $space-5;
+  background: transparent;
+  border: 0;
+  border-bottom: $border-width-strong solid transparent;
+  color: token("grey-b1");
+  font-weight: $font-weight-bold;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover {
+    color: token("black-b1");
+  }
+}
+
+// The tab bar scrolls sideways on narrow screens, which would cut off a ring drawn outside the tab,
+// so the focus ring of a tab is drawn just inside it.
+.tabs-tab:focus-visible {
+  outline-offset: -$focus-ring-width;
+}
+
+.tabs-tab-active {
+  color: token("pink-b1");
+  border-bottom-color: token("pink-b1");
+}
+
+.tabs-panel {
+  padding-top: $space-5;
+}

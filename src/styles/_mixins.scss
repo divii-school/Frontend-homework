@@ -1,0 +1,41 @@
+@use "sass:map";
+@use "variables" as *;
+
+// Styles for viewports BELOW a WM breakpoint: @include mq-down("mobile") => max-width: 767px
+@mixin mq-down($key) {
+  $width: map.get($breakpoints, $key);
+  @if not $width {
+    @error "Unknown breakpoint #{$key}. Use a key of $breakpoints.";
+  }
+  @media (max-width: ($width - 1px)) {
+    @content;
+  }
+}
+
+// Hidden on screen, still read by screen readers
+@mixin visually-hidden {
+  position: absolute;
+  width: $border-width;
+  height: $border-width;
+  margin: -$border-width;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+// Keyboard focus ring in the brand colour
+@mixin focus-ring {
+  outline: $focus-ring-width solid token("pink-b1");
+  outline-offset: $focus-ring-offset;
+  box-shadow: none;
+}
+
+// A white box with a border: list panels, the login card, dialogs
+@mixin panel {
+  background: token("white-b1");
+  border: $border-width solid token("grey-b4");
+  border-radius: $radius-md;
+}

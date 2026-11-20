@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(npx tsc --noEmit*)",
+      "Bash(npm run typecheck*)",
+      "Bash(npm run lint*)",
+      "Bash(npm run build*)",
+      "Bash(npm run check*)",
+      "Bash(npx playwright test*)",
+      "Bash(npm run test:e2e*)",
+      "Bash(npm run screenshots*)"
+    ],
+    "deny": [
+      "Bash(git push*)",
+      "Bash(git reset --hard*)",
+      "Bash(rm -rf*)",
+      "Bash(npx vercel*)"
+    ]
+  }
+}

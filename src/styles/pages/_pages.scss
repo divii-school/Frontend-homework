@@ -1,0 +1,439 @@
+// Styles that belong to one screen only.
+@use "../variables" as *;
+@use "../mixins" as *;
+
+// ---- Login ----------------------------------------------------------
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: $space-4;
+}
+
+.login-card {
+  @include panel;
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+  width: 100%;
+  max-width: $login-card-width;
+  padding: $space-10;
+  border-radius: $radius-sm;
+  box-shadow: 0 $space-2 $space-8 token("shadow-b1");
+
+  @include mq-down("xxs") {
+    padding: $space-6 $space-4;
+  }
+}
+
+.login-logo {
+  align-self: center;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+}
+
+// Icon + underlined input, as in the design: no box, only a line under the field
+.login-input {
+  position: relative;
+  display: block;
+
+  > i {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    color: token("black-b2");
+    font-size: $font-size-lg;
+  }
+
+  .p-inputtext {
+    min-height: $login-control-height;
+    padding-left: $space-8;
+    background: transparent;
+    border: 0;
+    border-bottom: $border-width solid token("grey-b3");
+    border-radius: 0;
+    font-size: $font-size-lg;
+
+    &.p-invalid {
+      border-bottom-color: token("red-b1");
+    }
+  }
+}
+
+// Room for the eye button at the right end of the password field
+.login-input-password .p-inputtext {
+  padding-right: $space-10 + $space-2;
+}
+
+.login-password-toggle.p-button {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: $space-10;
+  height: $space-10;
+  transform: translateY(-50%);
+  color: token("grey-b2");
+}
+
+.login-remember {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  align-self: flex-start;
+  color: token("black-b1");
+  cursor: pointer;
+}
+
+.login-submit {
+  min-height: $login-control-height;
+  border-radius: $radius-md;
+  font-size: $font-size-lg;
+}
+
+// ---- Product form ---------------------------------------------------
+.stepper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2 $space-5;
+  margin-bottom: $space-6;
+  padding-bottom: $space-4;
+  border-bottom: $border-width solid token("grey-b4");
+}
+
+.stepper-item {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  color: token("grey-b1");
+}
+
+.stepper-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $stepper-number-size;
+  height: $stepper-number-size;
+  background: token("grey-b6");
+  border: $border-width solid token("grey-b3");
+  border-radius: $radius-round;
+  font-weight: $font-weight-bold;
+}
+
+.stepper-item-active {
+  color: token("pink-b1");
+  font-weight: $font-weight-bold;
+
+  .stepper-number {
+    background: token("pink-b1");
+    border-color: token("pink-b1");
+    color: token("white-b2");
+  }
+}
+
+.stepper-item-done .stepper-number {
+  background: token("pink-b3");
+  border-color: token("pink-b1");
+  color: token("pink-b1");
+}
+
+.product-form-legend {
+  margin-bottom: $space-5;
+  color: token("black-b1");
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+}
+
+.image-uploader {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.image-uploader-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-3;
+}
+
+.image-uploader-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-4;
+}
+
+.image-uploader-item {
+  position: relative;
+  border: $border-width solid token("grey-b4");
+  border-radius: $radius-sm;
+
+  img {
+    object-fit: cover;
+    border-radius: $radius-sm;
+  }
+}
+
+.image-uploader-remove.p-button {
+  position: absolute;
+  top: -$space-2;
+  right: -$space-2;
+  min-width: $space-6;
+  min-height: $space-6;
+  padding: 0;
+}
+
+// ---- Product details ------------------------------------------------
+.details-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(#{$grid-min-column}, 100%), 1fr));
+  gap: 0 $space-6;
+}
+
+.details-row {
+  display: flex;
+  gap: $space-4;
+  padding: $space-3 0;
+  border-bottom: $border-width solid token("grey-b4");
+
+  dt {
+    flex: 0 0 $field-label-width;
+    color: token("grey-b1");
+    font-weight: $font-weight-bold;
+  }
+
+  dd {
+    min-width: 0;
+    color: token("black-b1");
+  }
+
+  @include mq-down("xxs") {
+    flex-direction: column;
+    gap: $space-1;
+
+    dt {
+      flex-basis: auto;
+    }
+  }
+}
+
+.details-row-wide {
+  grid-column: 1 / -1;
+}
+
+.details-description {
+  white-space: pre-wrap;
+}
+
+.details-subtitle {
+  margin: $space-6 0 $space-3;
+  color: token("black-b1");
+  font-size: $font-size-lg;
+}
+
+.details-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3;
+}
+
+.related-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.related-item {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  padding: $space-3 0;
+  border-bottom: $border-width solid token("grey-b4");
+
+  .data-table-link {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}
+
+// ---- Categories -----------------------------------------------------
+.category-tree {
+  border: $border-width solid token("grey-b4");
+  border-radius: $radius-md;
+  overflow: hidden;
+
+  ul {
+    padding-left: $space-8;
+
+    @include mq-down("xxs") {
+      padding-left: $space-4;
+    }
+  }
+
+  li + li,
+  li > ul {
+    border-top: $border-width solid token("grey-b4");
+  }
+}
+
+.category-tree-empty {
+  padding: $space-3 $space-4;
+  color: token("grey-b2");
+}
+
+.category-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-2 $space-3;
+}
+
+.category-row-category {
+  background: token("grey-b6");
+}
+
+.category-row-spacer {
+  width: $control-height;
+}
+
+.category-row-id,
+.category-row-count {
+  color: token("grey-b2");
+  font-size: $font-size-sm;
+}
+
+.category-row-name {
+  color: token("black-b1");
+  font-weight: $font-weight-bold;
+}
+
+.category-row-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  margin-left: auto;
+
+  // Design 8.2.0: pencil and trash in the same quiet grey
+  .p-button.p-button-text {
+    color: token("grey-b2");
+  }
+}
+
+// Design 8.2.0: "+ 중분류 / + 소분류" is a small violet button with a + icon
+.category-add-button.p-button {
+  min-height: 28px;
+  padding: 0 $space-3;
+  border-color: token("violet-b1");
+  background: token("violet-b1");
+  color: token("white-b2");
+  font-size: $font-size-xs;
+
+  &:not(:disabled):hover {
+    border-color: token("violet-b2");
+    background: token("violet-b2");
+  }
+}
+
+// ---- Product form: Figma 8.1.1 / 8.1.2 ------------------------------
+// One column of about 630px; underlined fields and grey labels; 취소 and 등록 centred.
+.product-form-step {
+  max-width: $product-form-width;
+
+  .form-field-label {
+    color: token("grey-b1");
+    font-size: $font-size-sm;
+    font-weight: $font-weight-regular;
+  }
+
+  .form-field-label-required::after {
+    margin-left: 0;
+  }
+
+  // Text fields and dropdowns are a line, not a box (the 상세설명 box stays a box, as drawn).
+  .p-inputtext:not(textarea),
+  .p-dropdown {
+    border-width: 0 0 1px;
+    border-radius: 0;
+    background: transparent;
+  }
+}
+
+// 노출상태 and 판매상태 side by side
+.form-grid-pair {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  @include mq-down("mobile") {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.product-form .form-actions {
+  justify-content: center;
+  gap: $space-4;
+
+  .p-button {
+    min-width: $space-16 * 2 - $space-2;
+  }
+}
+
+.button-cancel.p-button.p-button-outlined {
+  border-color: token("pink-b1");
+  color: token("pink-b1");
+}
+
+// Category picker: three lists under one 카테고리* label, each with a grey title row
+.category-picker-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $space-3;
+
+  @include mq-down("mobile") {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.category-picker-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid token("grey-b3");
+  border-radius: $radius-sm;
+  overflow: hidden;
+
+  .p-listbox {
+    border: 0;
+    border-radius: 0;
+  }
+
+  .p-listbox-list-wrapper {
+    height: $category-picker-height;
+  }
+}
+
+.category-picker-title {
+  margin: 0;
+  padding: $space-3 $space-4;
+  border-bottom: 1px solid token("grey-b3");
+  background: token("grey-b6");
+  color: token("black-b1");
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+}
+
+// ---- Phone width (design review, 18 Nov) ----------------------------
+@include mq-down("mobile") {
+  // The stepper stays on one line: the current step shows its name, the others only their number
+  .stepper {
+    flex-wrap: nowrap;
+    gap: $space-2;
+  }
+
+  .stepper-item:not(.stepper-item-active) .stepper-label {
+    @include visually-hidden;
+  }
+}

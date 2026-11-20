@@ -1,0 +1,465 @@
+// Skin for the PrimeReact parts this app uses. No PrimeReact theme file is loaded: every colour here is a
+// token, so light and dark mode stay consistent and no hex value comes from a third-party theme.
+@use "variables" as *;
+@use "mixins" as *;
+
+// ---- Button ---------------------------------------------------------
+.p-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  min-height: $control-height;
+  padding: $space-2 $space-5;
+  background: token("pink-b1");
+  color: token("white-b2");
+  border: $border-width solid token("pink-b1");
+  border-radius: $radius-sm;
+  font-weight: $font-weight-bold;
+  cursor: pointer;
+  transition: background-color $transition-fast, color $transition-fast;
+
+  &:not(:disabled):hover {
+    background: token("pink-b2");
+    border-color: token("pink-b2");
+  }
+
+  &:disabled,
+  &.p-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .p-button-label {
+    flex: 0 1 auto;
+  }
+
+  &.p-button-icon-only {
+    min-width: $control-height;
+    padding: $space-2;
+
+    .p-button-label {
+      @include visually-hidden;
+    }
+  }
+
+  &.p-button-sm {
+    min-height: $space-8;
+    padding: $space-1 $space-3;
+    font-size: $font-size-sm;
+  }
+
+  &.p-button-rounded {
+    border-radius: $radius-round;
+  }
+
+  &.p-button-outlined,
+  &.p-button-text {
+    background: transparent;
+    color: token("black-b2");
+    border-color: token("grey-b3");
+
+    &:not(:disabled):hover {
+      background: token("grey-b6");
+      border-color: token("grey-b3");
+    }
+  }
+
+  &.p-button-text {
+    border-color: transparent;
+
+    &:not(:disabled):hover {
+      border-color: transparent;
+    }
+  }
+
+  &.p-button-danger {
+    background: token("red-b1");
+    border-color: token("red-b1");
+    color: token("white-b1");
+
+    &:not(:disabled):hover {
+      background: token("red-b1");
+      border-color: token("red-b1");
+      opacity: 0.9;
+    }
+
+    &.p-button-text {
+      background: transparent;
+      border-color: transparent;
+      color: token("red-b1");
+
+      // Out-ranks the solid red hover of a filled danger button, which would hide the red icon
+      &:not(:disabled):hover {
+        background: token("red-b2");
+        border-color: transparent;
+        opacity: 1;
+      }
+    }
+  }
+}
+
+// ---- Text inputs ----------------------------------------------------
+.p-inputtext,
+.p-dropdown {
+  width: 100%;
+  min-height: $control-height;
+  background: token("white-b1");
+  color: token("black-b2");
+  border: $border-width solid token("grey-b3");
+  border-radius: $radius-sm;
+  transition: border-color $transition-fast;
+
+  &:hover {
+    border-color: token("grey-b2");
+  }
+
+  &.p-invalid {
+    border-color: token("red-b1");
+  }
+}
+
+.p-inputtext {
+  padding: $space-2 $space-3;
+
+  &::placeholder {
+    color: token("grey-b2");
+  }
+
+  &:read-only {
+    background: token("grey-b6");
+  }
+}
+
+.p-inputtextarea {
+  resize: vertical;
+}
+
+.p-input-icon-left {
+  position: relative;
+  display: inline-block;
+
+  > i {
+    position: absolute;
+    top: 50%;
+    left: $space-3;
+    transform: translateY(-50%);
+    color: token("grey-b2");
+  }
+
+  > .p-inputtext {
+    display: block;
+    padding-left: $space-8;
+  }
+}
+
+// ---- Dropdown -------------------------------------------------------
+.p-dropdown {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+
+  &.p-focus {
+    @include focus-ring;
+  }
+
+  &.p-disabled {
+    background: token("grey-b6");
+    cursor: not-allowed;
+  }
+
+  .p-dropdown-label {
+    flex: 1 1 auto;
+    min-height: auto;
+    padding: $space-2 $space-3;
+    background: transparent;
+    border: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &.p-placeholder {
+      color: token("grey-b2");
+    }
+  }
+
+  .p-dropdown-trigger,
+  .p-dropdown-clear-icon {
+    flex: 0 0 auto;
+    margin-right: $space-3;
+    color: token("grey-b2");
+  }
+}
+
+.p-dropdown-panel {
+  margin-top: $space-1;
+  background: token("white-b1");
+  border: $border-width solid token("grey-b3");
+  border-radius: $radius-sm;
+  box-shadow: 0 $space-1 $space-4 token("shadow-b1");
+
+  .p-dropdown-items {
+    padding: $space-1 0;
+  }
+
+  .p-dropdown-item,
+  .p-dropdown-empty-message {
+    padding: $space-2 $space-3;
+    color: token("black-b2");
+  }
+
+  .p-dropdown-item {
+    cursor: pointer;
+
+    &:hover,
+    &.p-focus {
+      background: token("grey-b6");
+    }
+
+    &.p-highlight {
+      background: token("pink-b3");
+      color: token("pink-b1");
+      font-weight: $font-weight-bold;
+    }
+  }
+}
+
+// ---- Checkbox (table selection) --------------------------------------
+.p-checkbox {
+  position: relative;
+  display: inline-flex;
+  width: $space-5;
+  height: $space-5;
+
+  .p-checkbox-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .p-checkbox-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: token("white-b1");
+    border: $border-width solid token("grey-b2");
+    border-radius: $radius-sm;
+    color: token("white-b2");
+  }
+
+  &.p-highlight .p-checkbox-box {
+    background: token("pink-b1");
+    border-color: token("pink-b1");
+  }
+
+  .p-checkbox-input:focus-visible + .p-checkbox-box {
+    @include focus-ring;
+  }
+}
+
+// ---- Data table -----------------------------------------------------
+.p-datatable {
+  table {
+    width: 100%;
+    min-width: $table-min-width;
+    border-collapse: collapse;
+  }
+
+  .p-datatable-thead > tr > th {
+    padding: $space-4 $space-3;
+    background: token("pink-b3");
+    color: token("grey-b1");
+    font-weight: $font-weight-bold;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .p-sortable-column {
+    cursor: pointer;
+
+    .p-sortable-column-icon {
+      margin-left: $space-2;
+      vertical-align: middle;
+    }
+
+    &.p-highlight {
+      color: token("pink-b1");
+    }
+  }
+
+  .p-column-header-content {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .p-datatable-tbody > tr {
+    border-bottom: $border-width solid token("grey-b4");
+
+    &:hover {
+      background: token("grey-b6");
+    }
+
+    // A selected row is highlighted, not only its checkbox (design review, 18 Nov)
+    &.p-highlight,
+    &.p-highlight:hover {
+      background: token("pink-b3");
+    }
+
+    > td {
+      padding: $space-3;
+      vertical-align: middle;
+    }
+  }
+}
+
+// ---- Paginator ------------------------------------------------------
+.p-paginator {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: $space-1;
+  padding: $space-4;
+
+  .p-paginator-page,
+  .p-paginator-first,
+  .p-paginator-prev,
+  .p-paginator-next,
+  .p-paginator-last {
+    min-width: $space-8;
+    height: $space-8;
+    background: transparent;
+    border: 0;
+    border-radius: $radius-round;
+    color: token("grey-b1");
+    cursor: pointer;
+
+    &:not(.p-disabled):hover {
+      background: token("grey-b6");
+    }
+
+    &.p-disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+
+  // The current page keeps its colours under the pointer too (the hover rule would otherwise win)
+  .p-paginator-page.p-highlight,
+  .p-paginator-page.p-highlight:not(.p-disabled):hover {
+    background: token("pink-b1");
+    color: token("white-b2");
+    font-weight: $font-weight-bold;
+  }
+
+  .p-paginator-pages {
+    display: inline-flex;
+    gap: $space-1;
+  }
+
+  .p-dropdown {
+    width: auto;
+    margin-left: $space-3;
+  }
+}
+
+// ---- Dialog ---------------------------------------------------------
+.p-component-overlay {
+  background: token("overlay-b1");
+}
+
+.p-dialog {
+  width: $dialog-width;
+  max-width: calc(100vw - #{$space-8});
+  background: token("white-b1");
+  color: token("black-b2");
+  border-radius: $radius-md;
+  box-shadow: 0 $space-2 $space-8 token("shadow-b1");
+
+  .p-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $space-5 $space-6 $space-3;
+  }
+
+  .p-dialog-title {
+    color: token("black-b1");
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+  }
+
+  .p-dialog-header-icon {
+    width: $space-8;
+    height: $space-8;
+    background: transparent;
+    border: 0;
+    border-radius: $radius-round;
+    color: token("grey-b2");
+    cursor: pointer;
+  }
+
+  .p-dialog-content {
+    padding: $space-3 $space-6 $space-5;
+    overflow-y: auto;
+  }
+
+  .p-dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: $space-2;
+    padding: 0 $space-6 $space-5;
+  }
+}
+
+// ---- Toast ----------------------------------------------------------
+.p-toast {
+  width: min(#{$dialog-width - $space-16}, calc(100vw - #{$space-8}));
+
+  .p-toast-message {
+    margin-bottom: $space-2;
+    background: token("white-b1");
+    color: token("black-b2");
+    border-left: $border-width-strong solid token("grey-b2");
+    border-radius: $radius-sm;
+    box-shadow: 0 $space-1 $space-4 token("shadow-b1");
+  }
+
+  .p-toast-message-success {
+    background: token("green-b2");
+    border-left-color: token("green-b1");
+  }
+
+  .p-toast-message-error {
+    background: token("red-b2");
+    border-left-color: token("red-b1");
+  }
+
+  .p-toast-message-content {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-3;
+    padding: $space-3 $space-4;
+  }
+
+  .p-toast-message-text {
+    flex: 1 1 auto;
+  }
+
+  .p-toast-summary {
+    font-weight: $font-weight-bold;
+  }
+
+  .p-toast-icon-close {
+    background: transparent;
+    border: 0;
+    color: inherit;
+    cursor: pointer;
+  }
+}

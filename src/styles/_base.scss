@@ -1,0 +1,114 @@
+@use "variables" as *;
+@use "mixins" as *;
+
+// Every colour token becomes a CSS variable; [data-theme="night"] swaps the whole set.
+:root {
+  @each $name, $value in $colors-day {
+    --#{$name}: #{$value};
+  }
+  @each $name, $value in $colors-constant {
+    --#{$name}: #{$value};
+  }
+  color-scheme: light;
+}
+
+[data-theme="night"] {
+  @each $name, $value in $colors-night {
+    --#{$name}: #{$value};
+  }
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: token("grey-b5");
+  color: token("black-b2");
+  font-family: $font-family;
+  font-size: $font-size-md;
+  line-height: $line-height;
+  // WM: Korean text breaks between words, not inside them
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+h1,
+h2,
+h3,
+p,
+ul,
+ol,
+dl,
+dd,
+fieldset {
+  margin: 0;
+  padding: 0;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+fieldset {
+  border: 0;
+  min-width: 0;
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  @include focus-ring;
+}
+
+.visually-hidden {
+  @include visually-hidden;
+}
+
+// First stop for keyboard users: jump over the menu
+.skip-link {
+  position: absolute;
+  top: -$space-16;
+  left: $space-4;
+  z-index: $z-sidebar + 1;
+  padding: $space-2 $space-4;
+  background: token("pink-b1");
+  color: token("white-b2");
+  border-radius: $radius-sm;
+
+  &:focus {
+    top: $space-2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0s !important;
+    transition-duration: 0s !important;
+  }
+}
