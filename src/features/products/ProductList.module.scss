@@ -1,0 +1,358 @@
+// Figma 8.1.0: card 1188 wide (border #eaeaea, r8), top bar 80 tall, header row #fff1f3,
+// body rows 106 tall with a 64×78 thumbnail and the product code under it.
+
+.content {
+  padding: 0 24px 40px;
+}
+
+.register {
+  min-width: 120px;
+  text-decoration: none;
+}
+
+.card {
+  border: 1px solid var(--color-border-card);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  padding: 20px;
+  border-bottom: 1px solid var(--color-border-card);
+}
+
+.search {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-width: 0;
+}
+
+.type,
+.input-wrap {
+  height: 40px;
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.type {
+  width: 136px;
+  padding: 8px 0;
+  color: var(--color-text-input);
+  font: inherit;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 300px;
+  max-width: 100%;
+
+  input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 8px 28px 8px 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-text-input);
+    font: inherit;
+    font-size: 16px;
+
+    &::placeholder {
+      color: var(--color-placeholder);
+    }
+
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  &:focus-within {
+    border-bottom-color: var(--color-border-strong);
+  }
+}
+
+.type:focus-visible,
+.input-wrap:focus-within {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.search-button {
+  position: absolute;
+  right: -4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.selected-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.clear {
+  padding: 2px 4px;
+  border: 0;
+  background: transparent;
+  color: var(--color-brand);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.small-button {
+  height: 30px;
+  padding: 0 15px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-border-strong);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: var(--color-surface-muted);
+  }
+
+  &:disabled {
+    border-color: var(--color-border);
+    color: var(--color-text-tertiary);
+    cursor: not-allowed;
+  }
+}
+
+.total {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+// Wide table scrolls inside its card on small screens; the page itself never scrolls sideways.
+.table-wrap {
+  overflow-x: auto;
+  padding: 20px 10px 0;
+}
+
+.table {
+  width: 100%;
+  min-width: 960px;
+  border-collapse: collapse;
+  font-size: 14px;
+  line-height: 20px;
+
+  th {
+    padding: 16px 12px;
+    border-bottom: 1px solid var(--color-border-card);
+    background: var(--color-table-head);
+    color: var(--color-border-strong);
+    font-weight: 700;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  td {
+    height: 106px;
+    padding: 6px 12px;
+    border-bottom: 1px solid var(--color-border-card);
+    color: var(--color-text-input);
+    vertical-align: middle;
+  }
+}
+
+.col-select {
+  width: 64px;
+}
+
+.col-thumb {
+  width: 104px;
+}
+
+.col-price {
+  width: 130px;
+}
+
+.col-status {
+  width: 140px;
+}
+
+.col-date {
+  width: 170px;
+}
+
+.row-selected td {
+  background: var(--color-row-hover);
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-brand);
+  cursor: pointer;
+}
+
+.thumb {
+  position: relative;
+  width: 64px;
+  height: 78px;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--color-thumb-placeholder);
+}
+
+.thumb-img {
+  object-fit: cover;
+}
+
+.code {
+  display: block;
+  width: 64px;
+  margin-top: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 12px;
+  text-align: center;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+.name {
+  color: var(--color-text-input);
+  font-weight: 700;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--color-brand);
+    text-decoration: underline;
+  }
+}
+
+.price,
+.category,
+.date {
+  font-weight: 700;
+}
+
+.price,
+.date {
+  white-space: nowrap;
+}
+
+.status {
+  width: 96px;
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text-input);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.message {
+  height: 240px;
+  text-align: center;
+  color: var(--color-text-muted);
+
+  p {
+    margin: 0 0 var(--space-4);
+  }
+}
+
+.skeleton-row td span {
+  display: block;
+  height: 78px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--color-surface) 0%, var(--color-surface-muted) 50%, var(--color-surface) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-row td span {
+    animation: none;
+  }
+}
+
+.dialog-body {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.dialog-error {
+  margin: var(--space-3) 0 0;
+  font-size: 12px;
+  color: var(--color-danger);
+}
+
+@media (max-width: 768px) {
+  .toolbar {
+    padding: var(--space-4);
+  }
+
+  .search,
+  .input-wrap {
+    flex: 1 1 100%;
+    width: auto;
+  }
+
+  .type {
+    flex: 0 0 136px;
+  }
+
+  .input-wrap {
+    flex: 1 1 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 0 var(--space-4) 32px;
+  }
+
+  .table-wrap {
+    padding: var(--space-3) 0 0;
+  }
+}

@@ -1,0 +1,56 @@
+# Results at commit 8498009 (2026-11-20 11:25 IST)
+
+$ npm run lint
+
+> hw3-sandip@0.1.0 lint
+> eslint
+
+exit code: 0
+
+$ npm run typecheck
+
+> hw3-sandip@0.1.0 typecheck
+> next typegen && tsc --noEmit
+
+Generating route types...
+✓ Types generated successfully
+exit code: 0
+
+$ npm run build
+
+> hw3-sandip@0.1.0 build
+> next build
+
+▲ Next.js 16.3.8 (Turbopack)
+- Environments: .env.local
+✓ Running next.config.ts took 31ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 3.4s
+  Running TypeScript ...
+  Finished TypeScript in 2.1s ...
+  Collecting page data using 12 workers ...
+  Generating static pages using 12 workers (0/9) ...
+  Generating static pages using 12 workers (2/9) 
+  Generating static pages using 12 workers (4/9) 
+  Generating static pages using 12 workers (6/9) 
+✓ Generating static pages using 12 workers (9/9) in 956ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/upload
+├ ○ /login
+├ ○ /shopping/categories
+├ ○ /shopping/products
+├ ƒ /shopping/products/[id]
+├ ƒ /shopping/products/[id]/edit
+└ ○ /shopping/products/new
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+exit code: 0
+

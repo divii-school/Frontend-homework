@@ -1,0 +1,138 @@
+// Design tokens. Components use only these CSS variables, never raw colours.
+// Light values come from the Talking Club Figma (login 1.1.0, product list 8.1.0).
+// Dark values are ours: Figma has no dark frames (listed as a design question).
+
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  // Surfaces
+  --color-bg: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f5f5f5;
+  --color-border: #d9d9d9;
+  --color-border-strong: #505050;
+  --color-border-card: #eaeaea;
+
+  // Text
+  --color-text: #181818;
+  --color-text-input: #313131;
+  --color-text-muted: #737373;
+  --color-placeholder: #afafaf;
+  --color-divider: #afafaf;
+
+  // Brand / states
+  --color-brand: #ef325b;
+  --color-brand-hover: #d92a50;
+  --color-brand-contrast: #ffffff;
+  --color-disabled-bg: #d9d9d9;
+  --color-disabled-text: #ffffff;
+  --color-danger: #e66565;
+  --color-icon: #737373;
+  --color-icon-muted: #afafaf;
+  --color-focus-ring: #ef325b;
+
+  // Admin shell + category tree (Figma 8.1.0 / 8.2.0)
+  --color-nav-text: #293241;
+  --color-nav-sub-bg: #fafafa;
+  --color-nav-brand-icon: #2d2f8e;
+  --color-heading: #101828;
+  --color-text-secondary: #6a7282;
+  --color-text-tertiary: #99a1af;
+  --color-button-text: #364153;
+  --color-border-subtle: #e0e0e0;
+  --color-surface-group: #f5f7fa;
+  --color-input-bg: #f3f3f5;
+  --color-input-placeholder: #717182;
+  --color-accent: #7c3aed;
+  --color-accent-contrast: #ffffff;
+  --color-row-hover: #fafafb;
+  --color-table-head: #fff1f3;
+  --color-thumb-placeholder: #f3f4f6;
+
+  --color-success: #2f9e44;
+  --color-overlay: rgb(0 0 0 / 45%);
+  --shadow-dialog: 0 12px 32px rgb(0 0 0 / 20%);
+  --shadow-toast: 0 6px 20px rgb(0 0 0 / 15%);
+
+  --shadow-card: 0 4px 4px rgb(0 0 0 / 25%);
+  --logo-filter: none;
+  --logo-blend: normal;
+
+  // Shape and spacing
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  --font-sans: var(--font-pretendard), -apple-system, "Segoe UI", sans-serif;
+}
+
+@mixin dark-tokens {
+  color-scheme: dark;
+
+  --color-bg: #121214;
+  --color-surface: #1c1c1f;
+  --color-surface-muted: #26262a;
+  --color-border: #3a3a40;
+  --color-border-strong: #a8a8b0;
+  --color-border-card: #2e2e33;
+
+  --color-text: #f1f1f3;
+  --color-text-input: #e6e6e9;
+  --color-text-muted: #a8a8b0;
+  --color-placeholder: #7c7c84;
+  --color-divider: #5a5a60;
+
+  --color-brand: #ff4d73;
+  --color-brand-hover: #ff6b8b;
+  --color-brand-contrast: #ffffff;
+  --color-disabled-bg: #3a3a40;
+  --color-disabled-text: #8a8a92;
+  --color-danger: #ff8a8a;
+  --color-icon: #a8a8b0;
+  --color-icon-muted: #7c7c84;
+  --color-focus-ring: #ff6b8b;
+
+  --color-nav-text: #d6d8de;
+  --color-nav-sub-bg: #232327;
+  --color-nav-brand-icon: #a5a7ff;
+  --color-heading: #f1f1f3;
+  --color-text-secondary: #a3abb8;
+  --color-text-tertiary: #7f8896;
+  --color-button-text: #d6d8de;
+  --color-border-subtle: #34343a;
+  --color-surface-group: #232327;
+  --color-input-bg: #26262a;
+  --color-input-placeholder: #8b8b96;
+  --color-accent: #9f6bff;
+  --color-accent-contrast: #ffffff;
+  --color-row-hover: #222226;
+  --color-table-head: #2a1d21;
+  --color-thumb-placeholder: #2a2a2f;
+
+  --color-success: #51cf66;
+  --color-overlay: rgb(0 0 0 / 65%);
+  --shadow-dialog: 0 12px 32px rgb(0 0 0 / 60%);
+  --shadow-toast: 0 6px 20px rgb(0 0 0 / 50%);
+
+  --shadow-card: 0 4px 12px rgb(0 0 0 / 50%);
+  // The Figma logo is a dark-text PNG on white: invert lightness but keep the hues,
+  // then "screen" blends the (now black) background into the dark surface.
+  --logo-filter: invert(1) hue-rotate(180deg);
+  --logo-blend: screen;
+}
+
+[data-theme="dark"] {
+  @include dark-tokens;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    @include dark-tokens;
+  }
+}

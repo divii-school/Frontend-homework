@@ -1,0 +1,156 @@
+// Icons from the Talking Club Figma (icon_adminstrator, icon_lock, icon_eyeBan), recoloured with currentColor.
+import type { SVGProps } from "react";
+
+type IconProps = SVGProps<SVGSVGElement>;
+
+const base = { width: 18, height: 18, viewBox: "0 0 18 18", fill: "none", "aria-hidden": true, focusable: false } as const;
+
+export function IconAdmin(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path
+        fill="currentColor"
+        d="M13.408 9.331c.177-.315.559-.427.856-.24l.644.397c.34.203.46.668.262 1.028-.099.18-.142.352-.142.502 0 .374.276.63.757.63.396 0 .715.337.715.75v.704c0 .413-.319.75-.715.75-.481 0-.757.255-.757.63 0 .15.043.322.142.502.063.12.098.247.098.375 0 .262-.133.517-.36.652l-.644.398c-.297.187-.679.074-.856-.24l-.043-.076c-.34-.622-.89-.622-1.23 0l-.043.075c-.17.315-.559.428-.849.24l-.651-.397c-.34-.202-.46-.667-.262-1.027.099-.18.148-.352.148-.502 0-.375-.282-.63-.763-.63-.389 0-.715-.337-.715-.75v-.705c0-.412.326-.75.715-.75.481 0 .763-.255.763-.63 0-.15-.049-.322-.148-.502a.776.776 0 0 1-.099-.375c0-.262.134-.517.36-.652l.652-.397c.29-.187.679-.075.849.24l.043.075c.34.622.89.622 1.23 0l.043-.075ZM7.125 10.887c.52 0 1.025.015 1.506.049A4.484 4.484 0 0 0 8.25 12.75c0 1.1.396 2.109 1.052 2.89-.675.078-1.412.11-2.177.11-3.05 0-5.625-.503-5.625-2.44 0-1.938 2.59-2.423 5.625-2.423Zm5.625.573c-.672 0-1.217.578-1.217 1.29 0 .712.545 1.29 1.217 1.29.672 0 1.217-.578 1.217-1.29 0-.712-.545-1.29-1.217-1.29ZM7.125 1.5c2.066 0 3.722 1.678 3.722 3.77 0 2.093-1.656 3.77-3.722 3.77S3.403 7.364 3.403 5.27C3.403 3.178 5.06 1.5 7.125 1.5Z"
+      />
+    </svg>
+  );
+}
+
+export function IconLock(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path
+        fill="currentColor"
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M13.142 5.547v1.15c1.292.403 2.233 1.573 2.233 2.97v3.702c0 1.729-1.433 3.131-3.2 3.131H5.826c-1.768 0-3.201-1.402-3.201-3.131V9.666c0-1.396.942-2.566 2.233-2.97v-1.15C4.866 3.312 6.718 1.5 8.989 1.5c2.301 0 4.153 1.811 4.153 4.047ZM9.004 2.804c1.547 0 2.804 1.23 2.804 2.743v.988H6.192v-1.003c.007-1.506 1.265-2.728 2.812-2.728Zm.663 9.537a.663.663 0 0 1-.671.656.663.663 0 0 1-.663-.656v-1.655c0-.357.297-.648.663-.648.373 0 .671.29.671.648v1.655Z"
+      />
+    </svg>
+  );
+}
+
+export function IconEyeOff(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path
+        fill="currentColor"
+        d="M8.205 4.56A5.4 5.4 0 0 1 9 4.5c2.385 0 4.627 1.718 5.932 4.5a9.94 9.94 0 0 1-.675 1.23.747.747 0 0 0 1.275.788c.35-.55.653-1.126.908-1.725a.75.75 0 0 0 0-.593C14.925 5.183 12.075 3 9 3a6.66 6.66 0 0 0-1.05.09.75.75 0 1 0 .255 1.47ZM2.782 1.718a.753.753 0 0 0-1.065 1.064L4.042 5.1A10.763 10.763 0 0 0 1.56 8.7a.75.75 0 0 0 0 .6C3.075 12.818 5.925 15 9 15a6.97 6.97 0 0 0 3.787-1.155l2.43 2.438a.75.75 0 0 0 1.065 0 .75.75 0 0 0 0-1.066l-13.5-13.5Zm4.77 6.892 1.838 1.838a1.5 1.5 0 0 1-1.838-1.838ZM9 13.5c-2.385 0-4.628-1.718-5.925-4.5A9.33 9.33 0 0 1 5.1 6.158L6.427 7.5a3 3 0 0 0 4.073 4.073l1.192 1.177A5.355 5.355 0 0 1 9 13.5Z"
+      />
+    </svg>
+  );
+}
+
+export function IconEye(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path
+        fill="currentColor"
+        d="M16.44 8.7C14.925 5.183 12.075 3 9 3S3.075 5.183 1.56 8.7a.75.75 0 0 0 0 .6C3.075 12.818 5.925 15 9 15s5.925-2.182 7.44-5.7a.75.75 0 0 0 0-.6ZM9 13.5c-2.377 0-4.627-1.718-5.925-4.5C4.373 6.218 6.623 4.5 9 4.5s4.627 1.718 5.925 4.5C13.627 11.782 11.377 13.5 9 13.5ZM9 6a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm0 4.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z"
+      />
+    </svg>
+  );
+}
+
+// ---- Admin shell (Figma "Main menu_admin", "header") ----
+
+export function IconBars(props: IconProps) {
+  return (
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden focusable={false} {...props}>
+      <path d="M6.7 10h18.6M6.7 16h18.6M6.7 22h18.6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function IconCart(props: IconProps) {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden focusable={false} {...props}>
+      <path
+        fill="currentColor"
+        d="M19 6h-2c0-2.8-2.2-5-5-5S7 3.2 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2Zm-7-3c1.7 0 3 1.3 3 3H9c0-1.7 1.3-3 3-3Zm7 17H5V8h14v12Zm-7-8c-1.7 0-3-1.3-3-3H7c0 2.8 2.2 5 5 5s5-2.2 5-5h-2c0 1.7-1.3 3-3 3Z"
+      />
+    </svg>
+  );
+}
+
+export function IconArrowDown(props: IconProps) {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden focusable={false} {...props}>
+      <path d="M19 8.5 12 15.5 5 8.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function IconLogout(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path
+        fill="currentColor"
+        d="M3 9a.75.75 0 0 0 .75.75h5.693l-1.726 1.718a.75.75 0 0 0 1.066 1.064l3-3a.75.75 0 0 0 0-1.064l-3-3a.753.753 0 0 0-1.066 1.064L9.443 8.25H3.75A.75.75 0 0 0 3 9Zm9.75-7.5h-7.5A2.25 2.25 0 0 0 3 3.75V6a.75.75 0 0 0 1.5 0V3.75A.75.75 0 0 1 5.25 3h7.5a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-7.5a.75.75 0 0 1-.75-.75V12a.75.75 0 0 0-1.5 0v2.25a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 15 14.25V3.75a2.25 2.25 0 0 0-2.25-2.25Z"
+      />
+    </svg>
+  );
+}
+
+// ---- Category tree (Figma 8.2.0), 16px stroke icons ----
+
+const stroke16 = {
+  width: 16,
+  height: 16,
+  viewBox: "0 0 16 16",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 1.333,
+  strokeLinecap: "round",
+  strokeLinejoin: "round",
+  "aria-hidden": true,
+  focusable: false,
+} as const;
+
+export function IconChevronDown16(props: IconProps) {
+  return (
+    <svg {...stroke16} {...props}>
+      <path d="M4 6l4 4 4-4" />
+    </svg>
+  );
+}
+
+export function IconSearch16(props: IconProps) {
+  return (
+    <svg {...stroke16} {...props}>
+      <path d="M14 14l-2.9-2.9" />
+      <circle cx="7.333" cy="7.333" r="5.333" />
+    </svg>
+  );
+}
+
+export function IconPlus16(props: IconProps) {
+  return (
+    <svg {...stroke16} {...props}>
+      <path d="M3.333 8h9.334M8 3.336v9.333" />
+    </svg>
+  );
+}
+
+export function IconPencil16(props: IconProps) {
+  return (
+    <svg {...stroke16} {...props}>
+      <path d="M14.117 4.544a1.88 1.88 0 0 0-2.658-2.658l-8.897 8.9a1.333 1.333 0 0 0-.334.553l-.88 2.901a.333.333 0 0 0 .415.415l2.902-.88c.209-.063.399-.177.554-.331l8.898-8.9Z" />
+    </svg>
+  );
+}
+
+export function IconTrash16(props: IconProps) {
+  return (
+    <svg {...stroke16} {...props}>
+      <path d="M6.666 7.336v4M9.334 7.336v4M12.667 4v9.333a1.333 1.333 0 0 1-1.333 1.334H4.667a1.333 1.333 0 0 1-1.333-1.334V4M2 4h12M5.334 4V2.67a1.333 1.333 0 0 1 1.333-1.334h2.667a1.333 1.333 0 0 1 1.333 1.333V4" />
+    </svg>
+  );
+}
+
+export function IconCheck(props: IconProps) {
+  return (
+    <svg width="10" height="8" viewBox="0 0 10 8" fill="none" aria-hidden focusable={false} {...props}>
+      <path d="M1 4l2.8 2.8L9 1.2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}

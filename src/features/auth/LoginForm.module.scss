@@ -1,0 +1,228 @@
+// Figma 1.1.0 login: card 460×518, padding 80/54, logo → form gap 70, fields 352 wide.
+
+.card {
+  width: 460px;
+  max-width: 100%;
+  min-height: 518px;
+  padding: 80px 54px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 70px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 30px;
+}
+
+.logo {
+  display: block;
+  filter: var(--logo-filter);
+  mix-blend-mode: var(--logo-blend);
+}
+
+.brand-divider {
+  width: 1px;
+  height: 12px;
+  background: var(--color-divider);
+}
+
+.brand-label {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 54px;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 60px;
+}
+
+.input {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-icon-muted);
+  transition: border-color 0.15s ease;
+
+  &:focus-within {
+    border-bottom-color: var(--color-border-strong);
+    color: var(--color-icon);
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 8px 0 8px 6px;
+    border: 0;
+    background: transparent;
+    color: var(--color-text-input);
+    font: inherit;
+    font-size: 16px;
+    line-height: 24px;
+    caret-color: var(--color-brand);
+    outline: none;
+
+    &::placeholder {
+      color: var(--color-placeholder);
+    }
+  }
+}
+
+.input-invalid,
+.input-invalid:focus-within {
+  border-bottom-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.icon {
+  flex: 0 0 18px;
+}
+
+.reveal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-right: -7px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-icon-muted);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-icon);
+  }
+}
+
+.error {
+  min-height: 18px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-danger);
+}
+
+.check {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 5px;
+  min-height: 28px;
+  padding-left: 5px;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-text);
+  cursor: pointer;
+
+  input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+}
+
+.check-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: transparent;
+
+  input:checked + & {
+    border-color: var(--color-brand);
+    background: var(--color-brand);
+    color: var(--color-brand-contrast);
+  }
+
+  input:focus-visible + & {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.submit {
+  height: 40px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--color-brand);
+  color: var(--color-brand-contrast);
+  font: inherit;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: var(--color-brand-hover);
+  }
+
+  &:disabled {
+    background: var(--color-disabled-bg);
+    color: var(--color-disabled-text);
+    cursor: not-allowed;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    min-height: 0;
+    padding: 48px 24px;
+    gap: 48px;
+  }
+
+  .form {
+    gap: 40px;
+  }
+}
+
+.notice {
+  margin: -30px 0 0;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-group);
+  color: var(--color-text);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.popup-body {
+  margin: 0;
+  text-align: center;
+  color: var(--color-text);
+}

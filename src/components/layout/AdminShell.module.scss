@@ -1,0 +1,257 @@
+// Figma 8.1.0: sidebar 230 wide, rows 54 tall (padding 15, gap 10), header 54 tall with bottom border.
+
+$sidebar-width: 230px;
+$drawer-breakpoint: 1024px;
+
+.shell {
+  display: flex;
+  min-height: 100dvh;
+  background: var(--color-bg);
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  z-index: 100;
+
+  &:focus {
+    left: var(--space-4);
+    top: var(--space-4);
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-surface);
+    color: var(--color-text);
+    border-radius: var(--radius-sm);
+  }
+}
+
+.sidebar {
+  flex: 0 0 $sidebar-width;
+  width: $sidebar-width;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border-card);
+}
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 55px;
+  padding: 0 15px;
+}
+
+.brand {
+  display: inline-flex;
+  border-radius: var(--radius-sm);
+}
+
+.logo {
+  display: block;
+  filter: var(--logo-filter);
+  mix-blend-mode: var(--logo-blend);
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-nav-brand-icon);
+  cursor: pointer;
+}
+
+.mobile-only {
+  display: none;
+}
+
+.menu,
+.sub-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.group-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 58px;
+  padding: 15px;
+  border: 0;
+  background: var(--color-surface);
+  color: var(--color-nav-text);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 14px;
+  text-align: left;
+  cursor: pointer;
+
+  &.active {
+    color: var(--color-brand);
+  }
+}
+
+.group-icon {
+  flex: 0 0 24px;
+}
+
+.group-label {
+  flex: 1;
+}
+
+.chevron {
+  flex: 0 0 24px;
+  color: var(--color-nav-text);
+  transition: transform 0.15s ease;
+}
+
+.chevron-open {
+  transform: rotate(180deg);
+
+  .active & {
+    color: var(--color-brand);
+  }
+}
+
+.sub-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 10px 8px 10px 24px;
+  color: var(--color-nav-text);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 14px;
+  text-decoration: none;
+
+  &:hover {
+    background: var(--color-nav-sub-bg);
+  }
+}
+
+.sub-link-active {
+  background: var(--color-nav-sub-bg);
+  color: var(--color-brand);
+}
+
+.bullet {
+  flex: 0 0 6px;
+  width: 6px;
+  height: 6px;
+  margin: 0 1px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.backdrop {
+  display: none;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 54px;
+  padding: 0 24px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border-card);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+}
+
+.logout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin: -7px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-text);
+  }
+}
+
+.divider {
+  width: 8px;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+  color: var(--color-text-muted);
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  outline: none;
+}
+
+// Tablet and phone: sidebar becomes a drawer opened from the header.
+@media (max-width: $drawer-breakpoint) {
+  .mobile-only {
+    display: inline-flex;
+  }
+
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    box-shadow: var(--shadow-card);
+    overflow-y: auto;
+  }
+
+  .sidebar-open {
+    transform: translateX(0);
+  }
+
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: var(--color-overlay);
+  }
+
+  .header {
+    padding: 0 var(--space-4) 0 var(--space-2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .chevron {
+    transition: none;
+  }
+}
