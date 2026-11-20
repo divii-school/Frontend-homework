@@ -98,5 +98,6 @@ export const YES_NO_OPTIONS = [
   { label: 'No', value: 'no' },
 ];
 export const MAX_IMAGES = 4;
-export const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+/** 4MB: uploads pass through our /api/upload route and Vercel caps request bodies at 4.5MB. */
+export const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 export const IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'];

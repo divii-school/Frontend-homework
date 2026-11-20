@@ -106,7 +106,7 @@ export function ImageUploader({
           disabled={value.length + uploading.length >= MAX_IMAGES}
         />
         <small id="product-images-help" className="muted">
-          권장 크기: 800x800px (정사각형) / 최대 {MAX_IMAGES}개 / PNG·JPG·WEBP, 10MB 이하
+          권장 크기: 800x800px (정사각형) / 최대 {MAX_IMAGES}개 / PNG·JPG·WEBP, 4MB 이하
         </small>
       </div>
       {msg && (

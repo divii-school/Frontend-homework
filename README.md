@@ -66,9 +66,9 @@ To add a screen, I change only this file.
 
 **Multi-step form.** `ProductForm` owns one `values` object for all 3 steps (기본 정보 → 이미지·노출 → 카테고리·ERP). The steps only render parts of it, so going back never loses input. Each step is validated before 다음, and 등록 re-validates everything and jumps to the first bad step. `values` is also mirrored to `sessionStorage`, so an API error or a refresh keeps the input. The draft is cleared only on success or 취소.
 
-**Image upload.** The file is checked first (PNG/JPG/WEBP, ≤10MB, max 4 images) and shown as a preview straight away. Then:
+**Image upload.** The file is checked first (PNG/JPG/WEBP, ≤4MB, max 4 images) and shown as a preview straight away. Then:
 1. `POST /utils/upload-file-urls` returns a signed S3 URL.
-2. The browser `PUT`s the file to that URL.
+2. The file goes to our own `/api/upload` route, which `PUT`s it to S3 from the server (the bucket's CORS blocks a browser PUT from vercel.app; Vercel's 4.5MB body limit is why the max is 4MB).
 3. The S3 key goes into `images[]` of the product DTO.
 
 Remove deletes the image from the list.
