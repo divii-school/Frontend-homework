@@ -137,7 +137,9 @@ test.describe("product category add / edit / delete (mocked API)", () => {
     await dialog(page).getByLabel("Category name").fill("HW3-Sandip-Dup");
     await dialog(page).getByRole("button", { name: "Add" }).click();
 
-    await expect(dialog(page).getByRole("alert")).toHaveText("Category name already exists");
+    // The API's own English sentence must not be shown; a Korean message by status instead.
+    await expect(dialog(page).getByRole("alert")).toHaveText("요청을 처리하지 못했습니다. 입력한 내용을 확인해 주세요.");
+    await expect(dialog(page)).not.toContainText("Category name already exists");
     await expect(dialog(page).getByLabel("Category name")).toHaveValue("HW3-Sandip-Dup");
   });
 

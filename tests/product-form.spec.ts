@@ -177,7 +177,9 @@ test.describe("product form (mocked API)", () => {
     await page.getByLabel("ERP Unit Price").fill("8000");
     await page.getByRole("button", { name: "Register" }).click();
 
-    await expect(page.getByRole("alert").filter({ hasText: "productCodeAlreadyExists" })).toContainText("Your input is kept");
+    // Known API code → Korean text; the raw key is never shown.
+    await expect(page.getByRole("alert").filter({ hasText: "이미 사용 중인 상품 코드입니다" })).toContainText("입력한 내용은 그대로 남아 있습니다.");
+    await expect(page.getByText("productCodeAlreadyExists")).toHaveCount(0);
     await expect(page.getByLabel("Product ERP Name")).toHaveValue("Form ERP");
     await page.getByRole("button", { name: "Back" }).click();
     await page.getByRole("button", { name: "Back" }).click();
@@ -234,6 +236,6 @@ test.describe("product form (mocked API)", () => {
     await setup(page);
     await page.route("**/api/v1/products/details/404404", (r) => r.fulfill({ status: 404, contentType: "application/json", body: envelope(null, 404, "productNotFound") }));
     await page.goto("/shopping/products/404404/edit");
-    await expect(page.getByText("This product doesn't exist or was deleted.")).toBeVisible();
+    await expect(page.getByText("상품을 찾을 수 없습니다. 이미 삭제되었을 수 있습니다.")).toBeVisible();
   });
 });

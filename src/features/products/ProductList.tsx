@@ -217,7 +217,13 @@ export function ProductList() {
                 ) : rows.length === 0 ? (
                   <tr>
                     <td colSpan={7} className={styles.message} role="status">
-                      <p>{params.search ? "No search results found." : "No products yet."}</p>
+                      <p>
+                        {query.data?.hiddenDeleted
+                          ? "이 페이지에는 삭제된 상품만 있어 표시할 상품이 없습니다. 다른 페이지를 확인해 주세요."
+                          : params.search
+                            ? "No search results found."
+                            : "No products yet."}
+                      </p>
                     </td>
                   </tr>
                 ) : (

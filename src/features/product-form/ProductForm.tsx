@@ -243,7 +243,7 @@ export function ProductForm({ mode, productId, initialValues }: Props) {
 
           {apiError && (
             <p className={styles["api-error"]} role="alert">
-              {apiError} Your input is kept — fix the problem and try again.
+              {apiError} 입력한 내용은 그대로 남아 있습니다.
             </p>
           )}
 

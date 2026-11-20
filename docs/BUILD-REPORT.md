@@ -87,6 +87,23 @@ Full cases (67, each P or N, with the automated test that covers it): [`docs/TES
 - A 1×1 test image (`HW3-Sandip-probe.png`) was uploaded to the QA bucket during the upload check; it is not linked to any product.
 - Browsers: Chromium (Playwright) and Chrome on Windows 11; Safari / Firefox not checked.
 
+### 8a. API issues (QA API, as Kakali asked on 2026-11-18: not fixed in the frontend, listed here)
+
+These are **API issues, not frontend bugs**. The API is left as it is. Every error on screen is a Korean message
+(`src/lib/errors.ts`) — never the API's raw key or English text.
+
+| # | What I saw | Request | Answer | What the screen does |
+| --- | --- | --- | --- | --- |
+| A1 | No server-side sort for products | `GET /api/v1/products?page=1&limit=3&sortBy=price&order=ASC` (also `sort`, `orderBy`, `sortField`) | 200, same order as without sort | No sort controls (8.1.0 has none either) |
+| A2 | Category-name search returns deleted products. On 2026-11-20 the whole first page of "ACE" was deleted test products of other developers | `GET /api/v1/products?page=1&limit=10&type=categoryName&search=ACE` | 200, `totalRecords: 335`, all 10 rows `isDeleted: true` | Deleted rows hidden; a page with only deleted rows says "이 페이지에는 삭제된 상품만 있어…" and keeps the pagination; "Total Posts" is the API's number (can be high) |
+| A3 | Details return image URLs, add / edit expect keys | `GET /api/v1/products/details/{id}` | `images: ["https://talking-club-dev.s3…/products/…"]`; sending these back makes the server store a doubled URL | Edit converts URLs to keys (`products/…`) |
+| A4 | Refresh token can't be used from the browser | `POST /api/v1/auth/login` | `Set-Cookie: refreshToken=…; Domain=.dvconsulting.org; HttpOnly; SameSite=None`; CORS `Access-Control-Allow-Origin: *`, no credentials | On 401: "로그인이 만료되었습니다. 다시 로그인해 주세요." and back to the same page after login |
+| A5 | Image bucket CORS only allows `http://localhost:3000` | `OPTIONS` on the signed S3 URL with `Origin: https://hw3-sandip.vercel.app` | 403, no `Access-Control-Allow-Origin` | Upload goes through the app's `/api/upload` route |
+| A6 | ERP code is ignored when sent | `POST /api/v1/products/add` with `erpCode` | 201; the saved product has a different, server-assigned code | ERP code read-only in the form |
+| A7 | One code for unknown ID and wrong password | `POST /api/v1/auth/login` with a wrong ID or password | 400 `invalidCredentials` (empty body: 401 `Unauthorized`) | "아이디와 비밀번호가 일치하지 않습니다. 다시 확인해 주세요." |
+| A8 | Refresh with an access token fails | `GET /api/v1/auth/get-access-token` with `Authorization: Bearer <access token>` | 500 "Something went wrong" | Not used (see A4) |
+| A9 | QA server down for some hours | any request, 2026-11-13 afternoon | Cloudflare 521 | "네트워크 오류가 발생했습니다…" + Try again on every list |
+
 ## 9. Results of lint, type-check, build and tests
 
 Real output, full text in `docs/results/`:

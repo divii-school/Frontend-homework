@@ -170,7 +170,7 @@ function OverviewTab({ query }: { query: ReturnType<typeof useProductDetail> }) 
   if (query.isPending) return <Loading label="product" />;
   if (query.isError) {
     const gone = query.error instanceof ApiError && (query.error.status === 404 || query.error.status === 400);
-    return gone ? <Empty>This product doesn&apos;t exist or was deleted.</Empty> : <ErrorState error={query.error} onRetry={() => query.refetch()} />;
+    return gone ? <Empty>상품을 찾을 수 없습니다. 이미 삭제되었을 수 있습니다.</Empty> : <ErrorState error={query.error} onRetry={() => query.refetch()} />;
   }
   const d = query.data;
   const images = (d.images ?? []).map((ref) => imagePreviewUrl(imageKey(ref)));
@@ -288,7 +288,7 @@ function RelatedTab({
 }) {
   const query = useSameCategoryProducts(childCategoryId, page, detailState === "ready");
   if (detailState === "loading") return <Loading label="products" />;
-  if (detailState === "error") return <Empty>Product information couldn&apos;t be loaded, so related products can&apos;t be shown. See the Overview tab.</Empty>;
+  if (detailState === "error") return <Empty>상품 정보를 불러오지 못해 같은 카테고리 상품을 표시할 수 없습니다. Overview 탭을 확인해 주세요.</Empty>;
   if (childCategoryId === null) return <Empty>This product has no category.</Empty>;
   if (query.isPending) return <Loading label="products" />;
   if (query.isError) return <ErrorState error={query.error} onRetry={() => query.refetch()} />;

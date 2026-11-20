@@ -96,7 +96,7 @@ test.describe("product details tabs (mocked API)", () => {
     const { setSessionsFail } = await setup(page, { sessionsFail: true });
     await page.goto("/shopping/products/7?tab=sessions");
     const panel = page.getByRole("tabpanel");
-    await expect(panel.getByRole("alert")).toContainText("Something went wrong on the server", { timeout: 10_000 });
+    await expect(panel.getByRole("alert")).toContainText("서버에 문제가 발생했습니다", { timeout: 10_000 });
 
     await page.getByRole("tab", { name: "Overview" }).click();
     await expect(page.getByRole("tabpanel")).toContainText("₩19,000");

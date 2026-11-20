@@ -61,7 +61,7 @@ test.describe("login, roles and session expiry", () => {
     await page.goto("/shopping/categories?search=x");
 
     await expect(page).toHaveURL("/login?next=%2Fshopping%2Fcategories%3Fsearch%3Dx&expired=1");
-    await expect(page.getByRole("status").filter({ hasText: "Your session has ended" })).toBeVisible();
+    await expect(page.getByRole("status").filter({ hasText: "로그인이 만료되었습니다" })).toBeVisible();
   });
 
   test("an expired token in storage counts as logged out", async ({ page }) => {

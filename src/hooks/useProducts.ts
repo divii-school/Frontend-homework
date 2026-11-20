@@ -34,9 +34,9 @@ export function useSetProductVisible(params: ProductListParams) {
     mutationFn: ({ id, visible }: { id: number; visible: boolean }) => productService.setVisible(id, visible),
     onMutate: async ({ id, visible }) => {
       await queryClient.cancelQueries({ queryKey: key });
-      const previous = queryClient.getQueryData<PagedResult<ProductListItem>>(key);
+      const previous = queryClient.getQueryData<PagedResult<ProductListItem> & { hiddenDeleted: number }>(key);
       if (previous) {
-        queryClient.setQueryData<PagedResult<ProductListItem>>(key, {
+        queryClient.setQueryData<PagedResult<ProductListItem> & { hiddenDeleted: number }>(key, {
           ...previous,
           rows: previous.rows.map((row) => (row.id === id ? { ...row, isVisible: visible } : row)),
         });

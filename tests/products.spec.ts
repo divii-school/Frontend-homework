@@ -157,7 +157,7 @@ test.describe("product list (mocked API)", () => {
     await page.goto("/shopping/products");
     const select = page.getByLabel("Exposure status of Product 2");
     await select.selectOption("yes");
-    await expect(page.getByText("Something went wrong on the server. Please try again later.")).toBeVisible();
+    await expect(page.getByText("서버에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.")).toBeVisible();
     await expect(select).toHaveValue("no");
   });
 
@@ -207,4 +207,22 @@ test("soft-deleted rows returned by the API are not shown", async ({ page }) => 
   await page.goto("/shopping/products?search=ACE&type=categoryName");
   await expect(page.getByRole("link", { name: "Live product" })).toBeVisible();
   await expect(page.getByText("Deleted product")).toHaveCount(0);
+});
+
+test("a page with only deleted rows says so instead of 'No search results'", async ({ page }) => {
+  await fakeSession(page);
+  const deleted = (id: number) => ({
+    id, productName: `Deleted ${id}`, productCode: `P-${id}`, price: 1000, isVisible: true, image: null,
+    category: null, subCategory: null, childCategory: null, createdAt: "2026-11-16T00:00:00.000Z", isDeleted: true,
+  });
+  await page.route("**/api/v1/products**", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ success: true, message: "Success", data: [deleted(1), deleted(2)], totalRecords: 30, totalPage: 3, page: 1 }),
+    }),
+  );
+  await page.goto("/shopping/products?search=ACE&type=categoryName");
+  await expect(page.getByText("이 페이지에는 삭제된 상품만 있어 표시할 상품이 없습니다.", { exact: false })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Page 2" })).toBeVisible();
 });

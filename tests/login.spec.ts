@@ -50,7 +50,7 @@ test.describe("login", () => {
     await page.getByLabel("Password", { exact: true }).fill("wrong-password-1");
     await page.getByRole("button", { name: "Log in" }).click();
 
-    await expect(page.locator("form").getByRole("alert")).toHaveText("The ID and password do not match. Please check and try again.");
+    await expect(page.locator("form").getByRole("alert")).toHaveText("아이디와 비밀번호가 일치하지 않습니다. 다시 확인해 주세요.");
     await expect(page.getByLabel("ID")).toHaveAttribute("aria-invalid", "true");
     await expect(page).toHaveURL(/\/login/);
 

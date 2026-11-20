@@ -73,7 +73,7 @@ export function LoginForm() {
         <h1 className="visually-hidden">Log in to Talking Club Admin</h1>
         {expired && !error && (
           <p className={styles.notice} role="status">
-            Your session has ended. Please log in again.
+            로그인이 만료되었습니다. 다시 로그인해 주세요.
           </p>
         )}
 

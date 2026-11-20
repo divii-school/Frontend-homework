@@ -89,7 +89,7 @@ test.describe("product category management", () => {
     // Fail until the error is on screen (covers React Query's single retry), then recover.
     let failing = true;
     await openWithMock(page, () => (failing ? { status: 500, data: null } : { status: 200, data: TREE }));
-    await expect(tree(page).getByRole("alert")).toContainText("Something went wrong on the server", { timeout: 10_000 });
+    await expect(tree(page).getByRole("alert")).toContainText("서버에 문제가 발생했습니다", { timeout: 10_000 });
     failing = false;
     await page.getByRole("button", { name: "Try again" }).click();
     await expect(tree(page).getByText("Main textbook", { exact: true })).toBeVisible();

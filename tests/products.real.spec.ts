@@ -26,10 +26,11 @@ test.describe("real QA API (read-only)", () => {
     await expect(page.getByRole("button", { name: "Page 2" })).toHaveAttribute("aria-current", "page");
 
     await page.getByLabel("Search by").selectOption("categoryName");
-    await page.getByLabel("Search term").fill("ACE");
+    // "ACE" is avoided: its first page is only deleted test products (API issue A2). 주교재 = a main category.
+    await page.getByLabel("Search term").fill("주교재");
     await page.keyboard.press("Enter");
-    await expect(page).toHaveURL("/shopping/products?search=ACE&type=categoryName");
-    await expect(table.locator("tbody tr").first()).toContainText("ACE");
+    await expect(page).toHaveURL(`/shopping/products?search=${encodeURIComponent("주교재")}&type=categoryName`);
+    await expect(table.locator("tbody tr").first()).toContainText("주교재");
 
     await realLogout(page);
     expect(errors).toEqual([]);

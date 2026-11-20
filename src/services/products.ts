@@ -51,12 +51,15 @@ function filterQuery({ search, type }: Pick<ProductListParams, "search" | "type"
 const EXPORT_MAX = 5000;
 
 export const productService = {
-  async list(params: ProductListParams, signal?: AbortSignal): Promise<PagedResult<ProductListItem>> {
+  /** `hiddenDeleted`: rows on this page the API returned although they are deleted (API issue, see above). */
+  async list(params: ProductListParams, signal?: AbortSignal): Promise<PagedResult<ProductListItem> & { hiddenDeleted: number }> {
     const result = await pagedRequest("/api/v1/products", {
       query: { page: params.page, limit: PRODUCT_PAGE_SIZE, ...filterQuery(params) },
       signal,
     });
-    return { ...result, rows: live(z.array(rowSchema).parse(result.rows)).map(toItem) };
+    const all = z.array(rowSchema).parse(result.rows);
+    const rows = live(all);
+    return { ...result, rows: rows.map(toItem), hiddenDeleted: all.length - rows.length };
   },
 
   /** Every row matching the current search (for export). */

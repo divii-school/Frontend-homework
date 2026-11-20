@@ -35,7 +35,7 @@ export function ProductFormPage({ productId }: { productId: number | null }) {
       <>
         <PageHeader title={title} crumb={title} />
         <div className={styles["page-state"]} role="alert">
-          <p>{notFound ? "This product doesn't exist or was deleted." : errorMessage(query.error)}</p>
+          <p>{notFound ? "상품을 찾을 수 없습니다. 이미 삭제되었을 수 있습니다." : errorMessage(query.error)}</p>
           {!notFound && (
             <button type="button" className={`${btn.button} ${btn.outline}`} onClick={() => query.refetch()}>
               Try again

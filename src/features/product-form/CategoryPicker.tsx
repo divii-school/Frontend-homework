@@ -94,7 +94,7 @@ function Column({
           </p>
         ) : query.isError ? (
           <p className={styles["column-note"]} role="alert">
-            Couldn&apos;t load.{" "}
+            불러오지 못했습니다.{" "}
             <button type="button" className={styles["link-button"]} onClick={() => query.refetch()}>
               Try again
             </button>
