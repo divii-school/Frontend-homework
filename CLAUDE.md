@@ -22,6 +22,9 @@ npm run test:e2e:mutations # *.mutation.spec.ts only (E2E_ALLOW_MUTATIONS=1) —
 npm run test:e2e:report    # open the HTML report
 ```
 
+115 Playwright tests in 15 files: guest 15 (auth.spec 10, roles.spec 5), mocked 76, setup 1, chromium 23 (live; 4 of them
+in the two `*.mutation.spec.ts` files).
+
 Playwright is pinned to 1.64.1 on purpose: its Chromium build (rev 1248) is already trusted on this laptop;
 newer downloads are blocked by Windows Smart App Control ("spawn UNKNOWN").
 
@@ -46,7 +49,11 @@ src/components/                         PageHeader, StateWrapper, EmptyState, Er
 src/utils/                              session, jwt, api-messages, query-keys, format, confirm, constants, theme,
                                         image-file.ts (image rules used by browser AND upload route; safeFileName removes commas),
                                         query-client.ts (QueryClient + default error toast, SHOWS_OWN_ERROR)
-src/styles/                             _tokens.scss (ALL values), _mixins.scss, globals.scss, components/, pages/
+src/styles/                             _tokens.scss (ALL values; light colours = Figma styles), _mixins.scss, globals.scss,
+                                        pretendard-font.css (the @font-face rules of the Pretendard dynamic subset), components/, pages/
+public/brand/talkingclub-logo.png       the TalkingClub logo image (512 × 107, transparent) — used only by BrandLogo
+public/fonts/pretendard/                92 small font files (Pretendard dynamic subset, pretendard 1.3.9, SIL OFL 1.1)
+src/app/icon.png                        favicon = the logo mark
 e2e/                                    helpers.ts, auth.setup.ts, auth.spec.ts, roles.spec.ts, <feature>.spec.ts, <feature>-states.spec.ts
                                         (mocked), <feature>.mutation.spec.ts, upload-route-states.spec.ts, default-error-toast-states.spec.ts
 docs/                                   hw3-plan.md (spec), design/ (Korean Figma PNGs), design-questions.md,
@@ -62,10 +69,30 @@ docs/                                   hw3-plan.md (spec), design/ (Korean Figm
   Never auto-run `git commit`, `git push`, deletes or deploys.
 - **Reuse** `src/components/*`, the hooks and PrimeReact before creating anything. New components stay small.
 - **Class names** lowercase-with-hyphens: `product-list-toolbar` ✅ `productListToolbar` ❌ `product_list` ❌.
-- **Colours only through tokens.** Palette in `src/styles/_tokens.scss` is named colour + code (`$red-b2`
+- **Colours only through tokens.** Palette in `src/styles/_tokens.scss` is named colour + code (`$red-b1`
   light / `$red-n2` dark); components use only the semantic CSS variables `var(--color-*)` (`--color-surface`,
   `--color-text`, `--color-primary`, `--color-table-head`, `--color-accent-purple`, …). Every light colour has
   exactly one dark colour (`$theme-colors` map). No hex / rgb anywhere else.
+- **Colours come only from the Figma styles** (design review, 18 Nov). Every light colour in `_tokens.scss` is the hex
+  of a Figma style, and its comment starts with the style name (`Grayscale/Gray 130`, `Primary/Primary 80`, …).
+  A new colour: read the hex from the Figma style first, write the style name in the comment, add one line with a dark
+  value to `$theme-colors`. "frame fill" = the frame uses the hex without a style; "kept" = Figma gives no value
+  (success, warning, info, overlay, shadow). The dark palette is ours (no dark frames). Some Figma colours are below
+  WCAG AA; that is design question 27 — do not change them until it is answered.
+- **Font: Pretendard** (the font of the Figma frames), self-hosted as the dynamic subset: `@font-face` rules with
+  `unicode-range` in `src/styles/pretendard-font.css` (imported in `src/app/layout.tsx`), files in
+  `public/fonts/pretendard/`. The family `'Pretendard Variable'` is first in `$font-family-base`; PrimeReact uses it
+  too (`globals.scss`). No `next/font`, no single big font file (it made the Vercel link slow), no CDN font,
+  no 'Inter var'.
+- **Logo only through `BrandLogo`** (`src/components/BrandLogo.tsx`): the TalkingClub logo image of the Figma frames,
+  with no text next to it. Accessible name of the image `TalkingClub`; the header link is `토킹클럽 홈`. The wordmark
+  takes `currentColor` (`--color-logo-text`), the mark is brightened in dark mode (`$logo-mark-dark-filter`).
+  Never draw the logo or write it as text in a screen.
+- **Korean line breaks:** `word-break: keep-all` on `body` (`globals.scss`), so Korean text breaks between words.
+  `overflow-wrap: break-word` next to it lets one very long word (a code, a URL) still break.
+- **Fields:** underline-only where the frames draw them — class `field-underline` on the form / block (product search,
+  product form); a textarea stays boxed. Disabled buttons are muted (grey fill, same-colour border, white label), never
+  a faded danger outline. The focus ring is the brand colour (`--color-focus-ring`).
 - **No hardcoded numbers in SCSS:** `$space-*`, `$font-size-*`, `$radius-*`, sizes in `_tokens.scss`;
   breakpoints only via `@include upto('sm-md')` (≤ 991px) / `above(…)` from `_mixins.scss`.
 - **Breakpoints (WM):** 1920 → 1600 → 1366 → 1280 → 1024 → 991 → 768 → 640 → 480 → 375. Must work at
@@ -92,6 +119,13 @@ docs/                                   hw3-plan.md (spec), design/ (Korean Figm
   drafts have no such check.
 - **URL state:** list filters / page / sort, form step and details tab live in the query string.
 - **Formats (WM):** dates `formatDateTime` → `YYYY/MM/DD HH:mm`; money `formatWon` → `₩1,000`; `-` when empty.
+- **Dates are always KST** (`Asia/Seoul`) for every viewer, via `src/utils/format.ts` (`formatDateTime` / `formatDate`,
+  `DISPLAY_TIME_ZONE`). Never call `dayjs(...).format()` for a shown date in a screen (QA round, 18 Nov).
+- **Prices:** `판매가` (selling price, list / CSV caption `판매금액`) = API `price` (the cart and the order charge it);
+  `단가` (unit price) = API `unitPrice`; the API requires `unitPrice < price` (`unitPriceMustBeLessThanPrice`).
+  Step 1 shows `단가` first, then `판매가`. The step-4 ERP field is `ERP 단가`.
+- **Titles:** browser tab title `%s | 토킹클럽 관리자` (`app/layout.tsx`). No text next to the logo (the design review
+  of 18 Nov removed the suffix `관리자`); the login page keeps its screen-reader heading `토킹클럽 관리자 로그인`.
 - **Where data lives:** server data only in TanStack Query hooks; keys only from `src/utils/query-keys.ts`;
   screen-only state in `useState` / the URL. Mutations already invalidate the right keys.
 - **PrimeReact 10.2:** no `invalid` prop — `className="p-invalid"`. One global Toast (`useToast()`) and

@@ -2,6 +2,10 @@
 
 This file gives the exact Korean text for every user-visible string under `src/`, so that the UI can be switched from English to Korean consistently. One engineer takes one section (A, B, C or D). Section E lists the open points.
 
+**Update after the QA round (18 Nov, commit `586b91a`).** Two things changed. (1) The price fields: `판매가` (selling price) and the list / CSV caption `판매금액` now mean the API field `price`, the amount the shopping cart and the order charge; `단가` (unit price) now means the API field `unitPrice`, which the API requires to be lower than `price` (see E7). The earlier glossary had it the other way round. (2) `Admin` in Latin letters is gone: the browser tab title is `토킹클럽 관리자` and the logo suffix is `관리자`; only the wordmark `TalkingClub` stays Latin (see E31). Changed rows: A2, A3, A6, A11, A42, A71, A72, A79, A84, A134, C55 (removed from the code), C74, C75, C107, C108, D50 to D54, D84, D85, D87, D88, D158, D159, D184. Their "English now" column still shows the old English text (it is what the code said before the Korean switch); the "Korean to use" column is what the code says now.
+
+**Update after the design review (18 Nov, after commit `733655c`).** (1) The logo is the TalkingClub logo image of the frames (three-ring mark + wordmark, one image with the accessible name `TalkingClub`); the visible suffix `관리자` next to it is removed on every screen (rows A6, A11, A72, A79, A84), because frame 1.1.0 shows the logo alone. The browser tab title `%s | 토킹클럽 관리자` (A2, A3), the screen-reader heading of the login page `토킹클럽 관리자 로그인` (A71) and the link name `토킹클럽 홈` (A42) are unchanged. (2) New strings: the phone-only button `필터` (Filters) of the product list and its accessible name with the number of active filters, `필터 ${n}개 적용 중` (Filters, n in use): rows C145, C146. Changed rows: A6, A11, A41, A72, A79, A84 and the terminology row "admin".
+
 ## How to read the tables
 
 - **File** is the path under `src/`.
@@ -54,7 +58,7 @@ Short file names used for `admin-frontend` (all under `talking-club-admin-fronte
 3. Text copied from a Korean frame keeps the frame's spelling, spacing and punctuation even where it is unusual: `문의해주세요` (no space), `갯수`, `파일추가`, `상품코드`, `상세설명`, `총 게시물 : `, `등록된 아이디가 아닙니다` (no full stop).
 4. Korean has no plural. Remove the `s` logic and use a counter after the number: `건` for rows of a list (frame: "최대 100건"), `개` for a count of categories or options (frame: "(2개 중분류)"), `장` for images (frame: "최대 4장"), `자` for characters.
 5. A Korean particle changes with the last sound of the word before it. Every sentence with a variable is written so that the particle follows a fixed word, never the variable. Keep the word order given in the table.
-6. Keep as they are: `TalkingClub`, `Admin`, `ERP`, `CSV`, `ID` (CSV column), the `₩` sign, the date format `YYYY/MM/DD HH:mm`, the `-` for an empty value, and the phone number `02-2014-8374`.
+6. Keep as they are: `TalkingClub` (the logo wordmark only; see E31), `ERP`, `CSV`, `ID` (CSV column), the `₩` sign, the date format `YYYY/MM/DD HH:mm` (always Korea time since 18 Nov, see E20), the `-` for an empty value, and the phone number `02-2014-8374`. `Admin` is no longer kept: since 18 Nov it is `관리자`.
 7. The ellipsis is the single character `…` as in the code today.
 
 ## Terminology decisions (one Korean term per concept)
@@ -80,9 +84,10 @@ Short file names used for `admin-frontend` (all under `talking-club-admin-fronte
 | list | 목록 | `8010:59065` desc |
 | exposure status | 노출상태. The column caption of the list (header, mobile label, CSV column) is 노출여부 because frame 8.1.0 says so | `8010:57833`; `8010:59065` |
 | sale status | 판매상태 | `8010:57833` |
-| selling price | 판매가. The column caption of the list (header, CSV column) is 판매금액 because frame 8.1.0 says so | `8010:57833`; `8010:59065` |
-| unit price (list price before discount, API field `price`) | 단가 | `8010:57833` |
-| ERP unit price | 단가 as the field label inside the ERP block; written ERP 단가 in sentences and outside the ERP block | `8010:57833` (label; desc uses "ERP 단가") |
+| selling price (API field `price`: the amount the shopping cart and the order charge) | 판매가. The column caption of the list (header, CSV column) is 판매금액 because frame 8.1.0 says so; it shows the same value `price` | `8010:57833`; `8010:59065` |
+| unit price (API field `unitPrice`; the API requires `unitPrice < price`) | 단가 | `8010:57833`; mapping to the API fields: QA round 18 Nov (see E7) |
+| ERP unit price | ERP 단가, also as the field label in step 4 since 18 Nov (before: 단가 inside the ERP block) | `8010:57833` desc ("ERP 단가") |
+| admin (browser tab title, screen-reader heading of the login page; no longer a logo suffix since the design review of 18 Nov) | 관리자; the tab title is 토킹클럽 관리자 | QA round 18 Nov; `17108:76615` (관리자 권한이 없습니다, 토킹클럽 홈으로) |
 | option | 옵션 | `8010:57833` |
 | single-item option | 단권 옵션 | `8034:61058` |
 | category option | 카테고리 옵션 | `8010:57833` |
@@ -108,16 +113,16 @@ Short file names used for `admin-frontend` (all under `talking-club-admin-fronte
 | # | File (path under src) | English now (exact) | Korean to use | Source |
 |---|---|---|---|---|
 | A1 | `app/layout.tsx` | `lang="en"` | `lang="ko"` — HTML attribute, not screen text; needed so that browsers and screen readers treat the page as Korean | new |
-| A2 | `app/layout.tsx` | `default: "TalkingClub Admin"` | `TalkingClub Admin` — keep, brand name | new |
-| A3 | `app/layout.tsx` | `template: "%s \| TalkingClub Admin"` | `%s \| TalkingClub Admin` — keep; `%s` is the Korean page title | new |
+| A2 | `app/layout.tsx` | `default: "TalkingClub Admin"` | `토킹클럽 관리자` — changed 18 Nov (QA round), was `TalkingClub Admin` | new, based on 17108:76615 |
+| A3 | `app/layout.tsx` | `template: "%s \| TalkingClub Admin"` | `%s \| 토킹클럽 관리자` — changed 18 Nov (QA round); `%s` is the Korean page title | new, based on 17108:76615 |
 | A4 | `app/layout.tsx` | `Talking Club admin — Shopping Mall: product and product category management (HW3).` | `토킹클럽 관리자 — 쇼핑몰 관리: 상품 관리 및 상품 카테고리 관리 (HW3).` | new |
 | A5 | `app/error.tsx` | `title="Something went wrong"` | `오류가 발생했습니다` | new |
-| A6 | `app/error.tsx` | `suffix="Admin"` | `Admin` — keep | 4019:78535 |
+| A6 | `app/error.tsx` | `suffix="Admin"` | (none) — removed 18 Nov (design review): the logo stands alone, as in frame 1.1.0 (`4019:78451`); before that the suffix was `관리자` (QA round), and `Admin` before that | 4019:78451 |
 | A7 | `app/(main)/error.tsx` | `title="Something went wrong"` | `오류가 발생했습니다` | new |
 | A8 | `app/not-found.tsx` | `Page not found` | `페이지를 찾을 수 없습니다` — metadata title and page title | admin-frontend · notfound/page.tsx:24 |
 | A9 | `app/not-found.tsx` | `The page you are looking for does not exist or has moved.` | `요청하신 페이지가 존재하지 않거나 이동되었습니다.` | admin-frontend · notfound/page.tsx:26 |
 | A10 | `app/not-found.tsx` | `Go to Product Management` | `상품 관리로 이동` | new |
-| A11 | `app/not-found.tsx` | `suffix="Admin"` | `Admin` — keep | 4019:78535 |
+| A11 | `app/not-found.tsx` | `suffix="Admin"` | (none) — removed 18 Nov (design review): the logo stands alone, as in frame 1.1.0 (`4019:78451`); before that the suffix was `관리자` (QA round), and `Admin` before that | 4019:78451 |
 | A12 | `app/(full-page)/login/page.tsx` | `title: "Login"` | `로그인` | 4019:78451 |
 | A13 | `app/(full-page)/login/page.tsx` | `label="Loading login…"` | `로그인 화면을 불러오는 중…` | new |
 | A14 | `app/(full-page)/403/page.tsx` | `title: "No permission"` | `권한 없음` | new |
@@ -147,8 +152,8 @@ Short file names used for `admin-frontend` (all under `talking-club-admin-fronte
 | A38 | `components/layout/AppTopbar.tsx` | `aria-label="Open menu"` | `메뉴 열기` | new |
 | A39 | `components/layout/AppTopbar.tsx` | `Log out` | `로그아웃` — `aria-label` and `title` | new |
 | A40 | `components/layout/AppTopbar.tsx` | `Signed in as ` | `로그인 계정: ` — screen-reader text placed before the user name | new |
-| A41 | `components/BrandLogo.tsx` | `TalkingClub` | `TalkingClub` — keep, word mark (in the frames the logo is a picture, not text) | new |
-| A42 | `components/BrandLogo.tsx` | `aria-label="TalkingClub home"` | `TalkingClub 홈` | new |
+| A41 | `components/BrandLogo.tsx` | `TalkingClub` | `TalkingClub` — keep. Since the design review of 18 Nov it is no longer text on screen: it is the accessible name (`aria-label`) of the logo image, and the wordmark is part of that image, as in the frames | 4019:78451, 8010:59065 (layer "image 6") |
+| A42 | `components/BrandLogo.tsx` | `aria-label="TalkingClub home"` | `토킹클럽 홈` — the sidebar logo link; changed 18 Nov (QA round), was `TalkingClub 홈` | new, based on 17108:76615 |
 | A43 | `components/AlertDialog.tsx` | `title = "Notice"` | `알림` | admin-frontend · CurriculumForm.tsx:88 |
 | A44 | `components/AlertDialog.tsx` | `confirmLabel = "OK"` | `확인` | 4019:78451 desc |
 | A45 | `components/ComingSoon.tsx` | `Coming soon` | `준비 중` — `aria-label` and title | new |
@@ -177,20 +182,20 @@ Short file names used for `admin-frontend` (all under `talking-club-admin-fronte
 | A68 | `components/auth/LoginForm.tsx` | `passwordRequired: "Please enter your password."` | `비밀번호를 입력해 주세요.` | new, based on 4019:78451 |
 | A69 | `components/auth/LoginForm.tsx` | `loginIdUnknown: "This ID is not registered."` | `등록된 아이디가 아닙니다` — no full stop in the frame | 4019:78535 |
 | A70 | `components/auth/LoginForm.tsx` | `passwordMismatch: "The password does not match."` | `비밀번호가 일치하지 않습니다` — no full stop in the frame | 4019:78592 |
-| A71 | `components/auth/LoginForm.tsx` | `TalkingClub Admin login` | `TalkingClub Admin 로그인` — screen-reader heading | new |
-| A72 | `components/auth/LoginForm.tsx` | `suffix="Admin"` | `Admin` — keep | 4019:78535 |
+| A71 | `components/auth/LoginForm.tsx` | `TalkingClub Admin login` | `토킹클럽 관리자 로그인` — screen-reader heading; changed 18 Nov (QA round), was the Latin brand + `로그인` | new |
+| A72 | `components/auth/LoginForm.tsx` | `suffix="Admin"` | (none) — removed 18 Nov (design review): the logo stands alone, as in frame 1.1.0 (`4019:78451`); before that the suffix was `관리자` (QA round), and `Admin` before that | 4019:78451 |
 | A73 | `components/auth/LoginForm.tsx` | `placeholder="ID"` | `아이디` — the hidden `<label>` text `ID` gets the same word | 4019:78451 |
 | A74 | `components/auth/LoginForm.tsx` | `placeholder="Password"` | `비밀번호` — the hidden `<label>` text `Password` gets the same word | 4019:78451 |
 | A75 | `components/auth/LoginForm.tsx` | `"Hide password"` | `비밀번호 숨기기` | new |
 | A76 | `components/auth/LoginForm.tsx` | `"Show password"` | `비밀번호 표시` | new |
 | A77 | `components/auth/LoginForm.tsx` | `Auto login` | `자동 로그인` | 4019:78451 |
 | A78 | `components/auth/LoginForm.tsx` | `label="Login"` | `로그인` | 4019:78451 |
-| A79 | `components/auth/NoPermissionDialog.tsx` | `suffix="Admin"` | `Admin` — keep | 17108:76615 |
+| A79 | `components/auth/NoPermissionDialog.tsx` | `suffix="Admin"` | (none) — removed 18 Nov (design review): the logo stands alone, as in frame 1.1.0 (`4019:78451`); before that the suffix was `관리자` (QA round), and `Admin` before that | 4019:78451 |
 | A80 | `components/auth/NoPermissionDialog.tsx` | `You do not have admin permission.` | `관리자 권한이 없습니다.` | 17108:76615 |
 | A81 | `components/auth/NoPermissionDialog.tsx` | `Please contact the customer center.` | `고객센터로 문의해주세요.` — no space before 주세요 in the frame | 17108:76615 |
 | A82 | `components/auth/NoPermissionDialog.tsx` | `label="Go to Talking Club home"` | `토킹클럽 홈으로` — lit. "To Talking Club home" | 17108:76615 |
 | A83 | `components/auth/ForbiddenView.tsx` | `No permission` | `권한 없음` — `aria-label` and `title` | new |
-| A84 | `components/auth/ForbiddenView.tsx` | `suffix="Admin"` | `Admin` — keep | 4019:78535 |
+| A84 | `components/auth/ForbiddenView.tsx` | `suffix="Admin"` | (none) — removed 18 Nov (design review): the logo stands alone, as in frame 1.1.0 (`4019:78451`); before that the suffix was `관리자` (QA round), and `Admin` before that | 4019:78451 |
 | A85 | `components/auth/ForbiddenView.tsx` | `Your account cannot open “${refusedLabel}”. Ask a super admin if you need access.` | `“${refusedLabel}” 화면을 열 수 있는 권한이 없습니다. 권한이 필요하면 최고관리자에게 문의해 주세요.` — the menu name comes first, then the fixed word 화면을 | new |
 | A86 | `components/auth/ForbiddenView.tsx` | `"Your account cannot open this page. Ask a super admin if you need access."` | `이 페이지를 열 수 있는 권한이 없습니다. 권한이 필요하면 최고관리자에게 문의해 주세요.` | new |
 | A87 | `components/auth/ForbiddenView.tsx` | `Go to {homeLabel}` | `{homeLabel}로 이동` — the menu name first, then `로 이동`; correct for both possible names (상품 관리, 상품 카테고리 관리) | new |
@@ -240,7 +245,7 @@ Short file names used for `admin-frontend` (all under `talking-club-admin-fronte
 | A131 | `utils/api-messages.ts` | `childSubcategoryDeletedSuccessFull: "Minor category deleted."` | `소분류가 삭제되었습니다.` | new |
 | A132 | `utils/api-messages.ts` | `orderSwappedSuccessfully: "Order saved."` | `카테고리 순서가 변경되었습니다.` | admin-frontend · category/page.tsx:344 |
 | A133 | `utils/api-messages.ts` | `productNotFound: "This product no longer exists."` | `존재하지 않는 상품입니다.` | new |
-| A134 | `utils/api-messages.ts` | `unitPriceMustBeLessThanPrice: "The selling price must be lower than the unit price."` | `판매가는 단가보다 낮아야 합니다.` — see E7 | new |
+| A134 | `utils/api-messages.ts` | `unitPriceMustBeLessThanPrice: "The selling price must be lower than the unit price."` | `단가는 판매가보다 낮아야 합니다.` — lit. "The unit price must be lower than the selling price."; changed 18 Nov (QA round), the words were the other way round before; see E7 | new |
 | A135 | `utils/api-messages.ts` | `someProductDoesNotExist: "One of the selected option products no longer exists."` | `선택한 옵션 상품 중 존재하지 않는 상품이 있습니다.` | new |
 | A136 | `utils/api-messages.ts` | `productOptionsRequired: "Add at least one option."` | `옵션을 1개 이상 추가해 주세요.` | new |
 | A137 | `utils/api-messages.ts` | `productCreatedSucessFully: "Product saved."` | `상품이 저장되었습니다.` — the API sends this key for add and for edit | new |
@@ -397,7 +402,7 @@ Short file names used for `admin-frontend` (all under `talking-club-admin-fronte
 | C52 | `components/products/list/ProductTable.tsx` | `Exposure Status` | `노출여부` — lit. "exposed or not"; list column caption only | 8010:59065 |
 | C53 | `components/products/list/ProductTable.tsx` | `label="Registration Date"` | `등록일자` | 8010:59065 |
 | C54 | `components/products/list/ProductTable.tsx` | `Select ${row.productName}` | `${row.productName} 선택` | new, based on 8010:59065 |
-| C55 | `components/products/list/ProductTable.tsx` | `List price </span>` | `단가 ` — screen-reader text before the crossed-out price; keep the trailing space | 8010:57833 |
+| C55 | `components/products/list/ProductTable.tsx` | `List price </span>` | removed from the code on 18 Nov (QA round): the list shows one price only, `판매금액` = `price`, with no crossed-out second price | 8010:59065 |
 | C56 | `components/products/list/ProductTable.tsx` | `data-label="Category"` | `카테고리(과정)` — label of the cell in the phone card layout | 8010:59065 |
 | C57 | `components/products/list/ProductTable.tsx` | `data-label="Exposure"` | `노출여부` | 8010:59065 |
 | C58 | `components/products/list/ProductTable.tsx` | `data-label="Registered"` | `등록일자` | 8010:59065 |
@@ -416,8 +421,8 @@ Short file names used for `admin-frontend` (all under `talking-club-admin-fronte
 | C71 | `components/products/list/export-csv.ts` | `"ID"` | `ID` — keep | new |
 | C72 | `components/products/list/export-csv.ts` | `"Product code"` | `상품코드` | 8010:57833 |
 | C73 | `components/products/list/export-csv.ts` | `"Product name"` | `상품명` | 8010:59065 |
-| C74 | `components/products/list/export-csv.ts` | `"List price"` | `단가` | 8010:57833 |
-| C75 | `components/products/list/export-csv.ts` | `"Selling price"` | `판매금액` — the CSV repeats the list's column captions | 8010:59065 |
+| C74 | `components/products/list/export-csv.ts` | `"List price"` | `단가` — the column value is the API field `unitPrice` since 18 Nov (before: `price`) | 8010:57833 |
+| C75 | `components/products/list/export-csv.ts` | `"Selling price"` | `판매금액` — the CSV repeats the list's column captions; the column value is the API field `price` since 18 Nov (before: `unitPrice`) | 8010:59065 |
 | C76 | `components/products/list/export-csv.ts` | `"Category path"` | `카테고리(과정)` | 8010:59065 |
 | C77 | `components/products/list/export-csv.ts` | `"Visible"` | `노출여부` | 8010:59065 |
 | C78 | `components/products/list/export-csv.ts` | `"On sale"` | `판매상태` | 8010:57833 |
@@ -449,8 +454,8 @@ Short file names used for `admin-frontend` (all under `talking-club-admin-fronte
 | C104 | `components/products/details/OverviewTab.tsx` | `label: "Registered"` | `등록일자` | 8010:59065 |
 | C105 | `components/products/details/OverviewTab.tsx` | `label: "Last updated"` | `수정일자` | new |
 | C106 | `components/products/details/OverviewTab.tsx` | `title="Price and status"` | `가격 및 상태` | new |
-| C107 | `components/products/details/OverviewTab.tsx` | `label: "List price"` | `단가` | 8010:57833 |
-| C108 | `components/products/details/OverviewTab.tsx` | `label: "Selling price"` | `판매가` | 8010:57833 |
+| C107 | `components/products/details/OverviewTab.tsx` | `label: "List price"` | `단가` — shows the API field `unitPrice` since 18 Nov (before: `price`) | 8010:57833 |
+| C108 | `components/products/details/OverviewTab.tsx` | `label: "Selling price"` | `판매가` — shows the API field `price` since 18 Nov (before: `unitPrice`) | 8010:57833 |
 | C109 | `components/products/details/OverviewTab.tsx` | `label: "Exposure status"` | `노출상태` | 8010:57833 |
 | C110 | `components/products/details/OverviewTab.tsx` | `label: "Sales status"` | `판매상태` | 8010:57833 |
 | C111 | `components/products/details/OverviewTab.tsx` | `title="ERP"` | `ERP` — keep | 8010:57833 |
@@ -487,6 +492,8 @@ Short file names used for `admin-frontend` (all under `talking-club-admin-fronte
 | C142 | `components/products/details/ProductGallery.tsx` | `No image registered` | `등록된 이미지가 없습니다` | new |
 | C143 | `components/products/details/ProductGallery.tsx` | `aria-label="Product images"` | `상품 이미지` | new |
 | C144 | `components/products/details/ProductGallery.tsx` | `Show image ${position + 1}` | `이미지 ${position + 1} 보기` | admin-frontend · shop-details/page.tsx:509 |
+| C145 | `components/products/list/ProductListToolbar.tsx` | `Filters` — button, only at 768 px and below: opens and closes the filter block (added 18 Nov, design review) | `필터` — the same word as the name of the filter group (C40) | new |
+| C146 | `components/products/list/ProductListToolbar.tsx` | ``aria-label={`Filters, ${activeFilterCount} applied`}`` — accessible name of the `필터` button while filters are set; on screen the button shows `필터` and the number (added 18 Nov, design review) | `필터 ${activeFilterCount}개 적용 중` — lit. "Filters, N in use" | new |
 
 ## D. Product register / edit form
 
@@ -541,11 +548,11 @@ Short file names used for `admin-frontend` (all under `talking-club-admin-fronte
 | D47 | `components/products/form/product-form.model.ts` | `productNameRequired: "Enter the product name."` | `상품명을 입력해 주세요.` | admin-frontend · ProductRegisterForm/index.tsx:158 |
 | D48 | `components/products/form/product-form.model.ts` | `The product name can be up to ${FORM_LIMITS.productNameMax} characters.` | `상품명은 최대 ${FORM_LIMITS.productNameMax}자까지 입력할 수 있습니다.` | admin-frontend · ProductRegisterForm/index.tsx:161 |
 | D49 | `components/products/form/product-form.model.ts` | `productCodeMissing: "The product code could not be generated. Press Regenerate."` | `상품코드를 생성하지 못했습니다. [다시 생성] 버튼을 눌러 주세요.` | new |
-| D50 | `components/products/form/product-form.model.ts` | `priceRequired: "Enter the unit price."` | `단가를 입력해 주세요.` | new |
-| D51 | `components/products/form/product-form.model.ts` | `pricePositive: "The unit price must be greater than ₩0."` | `단가는 0보다 큰 값을 입력해 주세요.` | new, based on admin-frontend · ProductRegisterForm/index.tsx:192 |
-| D52 | `components/products/form/product-form.model.ts` | `unitPriceRequired: "Enter the selling price."` | `판매가를 입력해 주세요.` | new |
-| D53 | `components/products/form/product-form.model.ts` | `unitPricePositive: "The selling price must be greater than ₩0."` | `판매가는 0보다 큰 값을 입력해 주세요.` | new, based on admin-frontend · ProductRegisterForm/index.tsx:192 |
-| D54 | `components/products/form/product-form.model.ts` | `unitPriceNotLower: "The selling price must be lower than the unit price."` | `판매가는 단가보다 낮아야 합니다.` — see E7 | new |
+| D50 | `components/products/form/product-form.model.ts` | `priceRequired: "Enter the unit price."` | `판매가를 입력해 주세요.` — `price` is the selling price since 18 Nov (QA round); before: `단가를 입력해 주세요.`; see E7 | new |
+| D51 | `components/products/form/product-form.model.ts` | `pricePositive: "The unit price must be greater than ₩0."` | `판매가는 0보다 큰 값을 입력해 주세요.` — changed 18 Nov (QA round), before it started with `단가는`; see E7 | new, based on admin-frontend · ProductRegisterForm/index.tsx:192 |
+| D52 | `components/products/form/product-form.model.ts` | `unitPriceRequired: "Enter the selling price."` | `단가를 입력해 주세요.` — `unitPrice` is the unit price since 18 Nov (QA round); before: `판매가를 입력해 주세요.`; see E7 | new |
+| D53 | `components/products/form/product-form.model.ts` | `unitPricePositive: "The selling price must be greater than ₩0."` | `단가는 0보다 큰 값을 입력해 주세요.` — changed 18 Nov (QA round), before it started with `판매가는`; see E7 | new, based on admin-frontend · ProductRegisterForm/index.tsx:192 |
+| D54 | `components/products/form/product-form.model.ts` | `unitPriceNotLower: "The selling price must be lower than the unit price."` | `단가는 판매가보다 낮아야 합니다.` — lit. "The unit price must be lower than the selling price."; changed 18 Nov (QA round), the words were the other way round before; see E7 | new |
 | D55 | `components/products/form/product-form.model.ts` | `moneyTooLarge: "The amount can be up to ₩2,147,483,647."` | `금액은 최대 ₩2,147,483,647까지 입력할 수 있습니다.` | new |
 | D56 | `components/products/form/product-form.model.ts` | `descriptionRequired: "Enter the detailed description."` | `상세설명을 입력해 주세요.` | new |
 | D57 | `components/products/form/product-form.model.ts` | `imagesRequired: "Add at least one image."` | `이미지를 1장 이상 등록해 주세요.` | new |
@@ -575,11 +582,11 @@ Short file names used for `admin-frontend` (all under `talking-club-admin-fronte
 | D81 | `components/products/form/StepBasicInfo.tsx` | `"Generating…"` | `생성 중…` | new |
 | D82 | `components/products/form/StepBasicInfo.tsx` | `"Product code"` | `상품코드` — placeholder of the read-only field | 8010:57833 |
 | D83 | `components/products/form/StepBasicInfo.tsx` | `label="Regenerate"` | `다시 생성` | new |
-| D84 | `components/products/form/StepBasicInfo.tsx` | `label="Unit price"` | `단가` | 8010:57833 |
-| D85 | `components/products/form/StepBasicInfo.tsx` | `hint="List price before discount."` | `할인 전 정가입니다.` | new |
+| D84 | `components/products/form/StepBasicInfo.tsx` | `label="Unit price"` | `단가` — the field `unitPrice` since 18 Nov (before: `price`); shown first, then 판매가 (frame 8.1.1 order) | 8010:57833 |
+| D85 | `components/products/form/StepBasicInfo.tsx` | `hint="List price before discount."` | `판매가보다 낮은 금액이어야 합니다.` — lit. "Must be lower than the selling price."; changed 18 Nov (QA round), was `할인 전 정가입니다.` ("List price before discount.") | new |
 | D86 | `components/products/form/StepBasicInfo.tsx` | `placeholder="₩0"` | `₩0` — keep | 8010:57833 |
-| D87 | `components/products/form/StepBasicInfo.tsx` | `label="Selling price"` | `판매가` — see E3 for the edit screen | 8010:57833 |
-| D88 | `components/products/form/StepBasicInfo.tsx` | `hint="The price the customer pays — lower than the unit price."` | `고객이 결제하는 실제 판매가입니다. 단가보다 낮아야 합니다.` | new, based on 8010:57833 desc |
+| D87 | `components/products/form/StepBasicInfo.tsx` | `label="Selling price"` | `판매가` — the field `price` since 18 Nov (before: `unitPrice`); see E3 for the edit screen | 8010:57833 |
+| D88 | `components/products/form/StepBasicInfo.tsx` | `hint="The price the customer pays — lower than the unit price."` | `고객이 결제하는 금액입니다.` — lit. "The amount the customer pays."; changed 18 Nov (QA round), the old hint also said "lower than the unit price" | new, based on 8010:57833 desc |
 | D89 | `components/products/form/StepBasicInfo.tsx` | `label="Detailed description"` | `상세설명` | 8010:57833 |
 | D90 | `components/products/form/StepBasicInfo.tsx` | `placeholder="Describe the product"` | `상품 상세설명을 입력해 주세요.` | new, based on admin-frontend · ProductRegisterForm/index.tsx:1055 |
 | D91 | `components/products/form/StepImagesStatus.tsx` | `label="Images"` | `이미지` | 8010:57833 |
@@ -649,8 +656,8 @@ Short file names used for `admin-frontend` (all under `talking-club-admin-fronte
 | D155 | `components/products/form/OptionPickerDialog.tsx` | `Showing the newest {rows.length} of {total}. Type a name to narrow the list.` | `전체 {total}건 중 최신 {rows.length}건만 표시됩니다. 상품명을 입력하여 검색해 주세요.` — the total comes first | new |
 | D156 | `components/products/form/StepErpReview.tsx` | `"Product name"` | `상품명` | 8010:57833 |
 | D157 | `components/products/form/StepErpReview.tsx` | `"Product code"` | `상품코드` | 8010:57833 |
-| D158 | `components/products/form/StepErpReview.tsx` | `"Unit price"` | `단가` | 8010:57833 |
-| D159 | `components/products/form/StepErpReview.tsx` | `"Selling price"` | `판매가` | 8010:57833 |
+| D158 | `components/products/form/StepErpReview.tsx` | `"Unit price"` | `단가` — summary row; shows `unitPrice` since 18 Nov (before: `price`) | 8010:57833 |
+| D159 | `components/products/form/StepErpReview.tsx` | `"Selling price"` | `판매가` — summary row; shows `price` since 18 Nov (before: `unitPrice`) | 8010:57833 |
 | D160 | `components/products/form/StepErpReview.tsx` | `"Detailed description"` | `상세설명` | 8010:57833 |
 | D161 | `components/products/form/StepErpReview.tsx` | `"Images"` | `이미지` | 8010:57833 |
 | D162 | `components/products/form/StepErpReview.tsx` | `${values.images?.length ?? 0} image${values.images?.length === 1 ? "" : "s"}` | `${values.images?.length ?? 0}장` — no "s" choice | new |
@@ -675,7 +682,7 @@ Short file names used for `admin-frontend` (all under `talking-club-admin-fronte
 | D181 | `components/products/form/StepErpReview.tsx` | `>pcs<` | `개` — unit after the quantity field | new |
 | D182 | `components/products/form/StepErpReview.tsx` | `"Tax type"` | `비과세` — summary row and field label; lit. "tax-exempt" (see E9) | 8010:57833 |
 | D183 | `components/products/form/StepErpReview.tsx` | `placeholder="Select taxable or tax-exempt"` | `비과세를 선택해 주세요.` — lit. "Please select tax-exempt." | 8010:57833 |
-| D184 | `components/products/form/StepErpReview.tsx` | `label="ERP unit price"` | `단가` — field label inside the ERP block; lit. "unit price" (see E10) | 8010:57833 |
+| D184 | `components/products/form/StepErpReview.tsx` | `label="ERP unit price"` | `ERP 단가` — field label in step 4; changed 18 Nov (QA round), was `단가` (see E10) | 8010:57833 desc |
 | D185 | `components/products/form/StepErpReview.tsx` | `["ERP unit price", formatWon(values.erpUnitPrice)]` | `ERP 단가` — summary row | 8010:57833 desc |
 | D186 | `components/products/form/StepErpReview.tsx` | `placeholder="₩0"` | `₩0` — keep | 8010:57833 |
 | D187 | `components/products/form/StepErpReview.tsx` | `Review before {mode === "create" ? "registering" : "saving"}` | `{mode === "create" ? "등록" : "저장"} 전 입력 내용 확인` — gives "등록 전 입력 내용 확인" | new |
@@ -695,10 +702,10 @@ Short file names used for `admin-frontend` (all under `talking-club-admin-fronte
 - **E4. Category label on the edit screen.** Frame 8.1.1 says `등록 카테고리*`; frame 8.1.2 says `카테고리*` followed by `등록 후 변경 불가`. The glossary gives `등록 카테고리` for both modes (one string in the code) and `등록 후 변경 불가` for the note.
 - **E5. Exposure status has two words.** List header (8.1.0): `노출여부` ("exposed or not"). Form label (8.1.1, 8.1.2): `노출상태` ("exposure status"). The glossary uses `노출여부` only as the list column caption (table header, phone card label, CSV column, the `aria-label` of the select in that column) and `노출상태` everywhere else. The toast after the inline change says only `저장 완료`, as the real admin frontend does, so the two words never meet in one message.
 - **E6. Required marks.** In frame 8.1.1 `판매가` has no `*`; the app marks "Selling price" as required. In frame 8.1.2 `ERP 코드`, `상품ERP명` and `갯수` have no `*`, in frame 8.1.1 they have one. This is not text, but it shows next to the labels.
-- **E7. Price rule.** The description of frame 8.1.2 says `판매가 ≤ 정가` (the selling price may be equal). The app and the API key `unitPriceMustBeLessThanPrice` say "must be lower". The glossary translates what the app does: `판매가는 단가보다 낮아야 합니다.` The same description calls the unit price `정가` once and `단가가` (a typing mistake) once; the label in the screen area is `단가`.
+- **E7. Price rule and the API fields (changed 18 Nov, QA round).** The API has two price fields. `price` is what the shopping cart and the order charge (backend `release/qa`: `sellingPrice: product.price`, `lineTotal(product.price, quantity, …)`). `unitPrice` must be lower: the API refuses a product unless `unitPrice < price` (key `unitPriceMustBeLessThanPrice`). So the app maps `판매가` (selling price) and the list / CSV caption `판매금액` to `price`, and `단가` (unit price) to `unitPrice`. The rule text is `단가는 판매가보다 낮아야 합니다.` ("The unit price must be lower than the selling price."), on step 1 and for the API key. Step 1 shows `단가` first and `판매가` second, the order of frame 8.1.1. Until 18 Nov this glossary said the opposite (단가 = list price before discount = `price`), because the description of frame 8.1.2 says `판매가 ≤ 정가` (the selling price may be equal to the list price, so 단가 would be the higher one). The app now follows the API and the backend; the conflict with the frame is design question 25. The same description calls the unit price `정가` once and `단가가` (a typing mistake) once; the label in the screen area is `단가`.
 - **E8. Fields the Korean frames have and the app does not.** 8.1.1: `티켓유무*` with the value `없음` (ticket yes / no); a second picker `옵션 카테고리` (대분류 / 중분류 / 소분류) under the heading `옵션선택`; the button `카테고리 옵션 추가`; an `ERP 코드*` input with the placeholder `ERP 코드를 검색하세요` (in the app the ERP code is read-only and given by the server); the buttons `취소` and `등록` also at the top right of the page header. 8.1.2: `배송비설정*` with the value `무료배송` (description: dropdown 무료배송 / 조건부 / 개별); `옵션 카테고리*` with `등록 후 변경 불가`. If one of these is added later, use the frame text given here.
 - **E9. Tax field.** The app says "Tax type"; the frame label is `비과세`, which literally means "tax-exempt", with the placeholder `비과세를 선택해 주세요.` and the two values `과세` (taxable) and `비과세` (tax-exempt). On the details page the row then reads "비과세: 과세" for a taxable product. The glossary keeps the frame word everywhere so that one concept has one word. A neutral label such as `과세 구분` would read better on the details page, but it is not in any frame; that is the reviewer's decision.
-- **E10. Two fields are called 단가.** In frame 8.1.1 the first price field and the last ERP field both have the label `단가`. The description panel calls the second one `ERP 단가`. The glossary gives `단가` for the ERP field label in the form (D184) and `ERP 단가` in the summary, on the details page and in the validation message (D185, C116, D72).
+- **E10. Two fields are called 단가.** In frame 8.1.1 the first price field and the last ERP field both have the label `단가`. The description panel calls the second one `ERP 단가`. Since 18 Nov (QA round) the app uses `ERP 단가` everywhere for the ERP field: the field label in step 4 (D184), the summary, the details page and the validation message (D185, C116, D72). So the form no longer has two fields with the same label.
 - **E11. 갯수.** The frame writes `갯수`; the standard spelling is `개수`. The glossary copies the frame. The description of frame 8.1.1 calls the same field `수량` in the older variant.
 - **E12. Placeholders that are not a translation of the English.** `placeholder="ERP product name"` → frame `상품명 입력해 주세요.` ("Please enter the product name.", written without the particle 을). `placeholder="Select taxable or tax-exempt"` → frame `비과세를 선택해 주세요.` `placeholder="Product name"` → the current frame shows the sample value `상품 1` in the field, the older frame `5498:84592` shows `상품명`; the glossary uses `상품명`.
 - **E13. Category name field.** The frame has no add / edit dialog. It shows one inline row inside the tree with `[과정코드]` ("[course code]") and the placeholder `과정명을 입력해 주세요.` ("Please enter the course name."); its description speaks of a "명칭/코드 수정 모달" (a dialog to edit name and code). The app has a dialog with one field for all three levels and no code (the API has none; the id is shown in brackets). "과정명" fits only the third level, so the glossary uses `명칭` and `명칭을 입력해 주세요.` from the real admin frontend. If the reviewer wants the frame sentence, it is `과정명을 입력해 주세요.`
@@ -708,7 +715,7 @@ Short file names used for `admin-frontend` (all under `talking-club-admin-fronte
 - **E17. 수정 and 편집.** The frame description names the pencil action `편집` ("노드/편집(연필)") and in the next line calls the dialog `수정 모달`; frame 8.1.2 is `상품 수정`; the real admin frontend uses `수정` for the pencil and `카테고리 편집` for the dialog title. The glossary uses `수정` everywhere.
 - **E18. Total and selection.** Frame: `총 게시물 : 15` ("Total posts : 15", with a space on both sides of the colon). App: "Total: N". The frame has no page-size select, no filters, no CSV button, no selection bar and no sort; their texts are `new`.
 - **E19. Money format.** The frame shows `₩ 4,000` and `₩ 23,900` (a space after ₩) in the list and in the first form fields, `₩0` and `₩12,000` (no space) in the ERP block, and `23,000원` (no ₩, the word 원 after the number) in the option tables. The description only says "통화표기(₩, 천단위 콤마)". The app writes `₩4,000` everywhere. The glossary keeps the app format; see "could not decide" below.
-- **E20. Date format.** The rows of frame 8.1.0 show seconds (`2025/09/12 17:10:18`) on two lines; the description says `YYYY/MM/DD HH:MM`. The app follows the description.
+- **E20. Date format.** The rows of frame 8.1.0 show seconds (`2025/09/12 17:10:18`) on two lines; the description says `YYYY/MM/DD HH:MM`. The app follows the description. Since 18 Nov (QA round) every date is Korea time (KST, `Asia/Seoul`) for every viewer, whatever the computer's time zone is: list, details (`등록일자`, `수정일자`), the CSV column `등록일자`, the CSV file name and the draft "saved at" time (`src/utils/format.ts`, `DISPLAY_TIME_ZONE`).
 - **E21. Search placeholder.** The frame has one placeholder, `검색어 입력` ("Enter search term"), for both search types. The app has two English placeholders; both become `검색어 입력` (C37, C38), so the condition in the code is no longer needed.
 - **E22. Empty list.** The frame asks for `검색 결과가 없습니다` when a search finds nothing. The app shows one title, "No products found", for two cases. With one fixed Korean title one of the two cases reads wrong, so the title should depend on `filtersActive`, as `CategoryManager.tsx` already does with `searchTerm`: `검색 결과가 없습니다` with a search or filter, `등록된 상품이 없습니다` without. The two description lines (C22, C23) were rewritten to fit under these titles and are not literal translations.
 - **E23. Login.** The frame shows the placeholders `아이디` and `비밀번호`, the field errors `등록된 아이디가 아닙니다` and `비밀번호가 일치하지 않습니다` without a full stop, and the two alert sentences with a full stop. The alert has only the button `확인`; it has no title in the frame, so `알림` (A43) is from the real admin frontend. The frame also contains the sentence `아이디를 입력해 주세요.`; the matching password sentence (A68) is not in the frame and was written the same way.
@@ -719,10 +726,10 @@ Short file names used for `admin-frontend` (all under `talking-club-admin-fronte
 ### E-II. Could not decide
 
 - **E27. Product type (MAIN / SUPPLEMENTARY).** No frame shows this filter. In the code MAIN is a product that has options and SUPPLEMENTARY is a product without options (the kind that can be picked as a single-item option). The glossary proposes `메인 상품` and `단권 상품` with `상품 유형` as the label. `주교재 / 부교재` were not used because the frames use these two words as category names. Another possible pair is `세트 상품 / 단권 상품`. Please confirm with the reviewer.
-- **E28. Option price.** The app says "Option price"; the frame header of that column is `판매가` and the glossary follows it (D138, C130). The real admin frontend later renamed the column to `옵션 설정가` on the edit screen. If the reviewer finds two columns called 판매가 confusing, `옵션 설정가` is the alternative.
+- **E28. Option price.** The app says "Option price"; the frame header of that column is `판매가` and the glossary follows it (D138, C130). The real admin frontend later renamed the column to `옵션 설정가` on the edit screen. If the reviewer finds two columns called 판매가 confusing, `옵션 설정가` is the alternative. Since 18 Nov a picked single-item option starts at that product's own 판매가 (API `price`); the admin can change it in the table.
 - **E29. ₩ with or without a space** (see E19). Changing it means changing `formatWon` and `MoneyInput`, which is behaviour, not text. Not decided here.
 - **E30. Edit-screen labels** `할인가격` (E3) and `카테고리` (E4): one shared form now gives the registration wording on both screens.
-- **E31. `Admin` and `TalkingClub`** are kept in Latin letters because the frames show them so. The browser tab title `%s | TalkingClub Admin` is also kept.
+- **E31. `Admin` and `TalkingClub` (changed 18 Nov, QA round).** QA asked for no English on screen. So `Admin` became `관리자`: the logo suffix on the login page, the 403 page, the 404 page, the error page and the no-permission popup (A6, A11, A72, A79, A84), and the browser tab title is now `%s | 토킹클럽 관리자` (A2, A3). Before 18 Nov both were kept in Latin letters. The wordmark `TalkingClub` next to the rings stays in Latin letters, because the Figma logo shows it so; the designer (Bhagyashree) decides on it (design question 26). **Design review, 18 Nov:** the designer asked for the logo image of the frames, and frame 1.1.0 shows it alone, so the suffix `관리자` is no longer on screen (rows A6, A11, A72, A79, A84 are "removed"); the logo is one image with the accessible name `TalkingClub` (A41). `관리자` stays in the tab title (A2, A3) and in the screen-reader heading of the login page (A71).
 
 ### E-III. Things to change in the code together with the text
 
