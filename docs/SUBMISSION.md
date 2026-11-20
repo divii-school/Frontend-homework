@@ -12,7 +12,7 @@ Then comment on the TL page: "HW3 submitted" + link to this page, tagging Kakali
 - PR to `main` (review only, never merged): https://github.com/divii-school/Frontend-homework/pull/3
 
 ## 2. Vercel link (latest build)
-https://hw3-sandip.vercel.app — build `29e011f` (app code). Logins from DM.
+https://hw3-sandip.vercel.app — build `3002f93` (app code, Korean UI). Logins from DM.
 
 ## 3. How to run it (no secrets; "logins from DM")
 ```bash

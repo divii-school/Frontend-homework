@@ -1,4 +1,4 @@
-# Results at commit 29e011f (2026-11-20 10:28 IST)
+# Results at commit 3002f93 (2026-11-20 11:15 IST)
 
 $ npm run lint
 
@@ -17,22 +17,26 @@ Generating route types...
 exit code: 0
 
 $ npm run build
+
 > hw3-sandip@0.1.0 build
 > next build
+
 ▲ Next.js 16.3.8 (Turbopack)
 - Environments: .env.local
-✓ Running next.config.ts took 31ms
+✓ Running next.config.ts took 33ms
+
   Creating an optimized production build ...
-✓ Compiled successfully in 678ms
+✓ Compiled successfully in 562ms
   Running TypeScript ...
-  Finished TypeScript in 1893ms ...
+  Finished TypeScript in 1785ms ...
   Collecting page data using 12 workers ...
   Generating static pages using 12 workers (0/9) ...
   Generating static pages using 12 workers (2/9) 
   Generating static pages using 12 workers (4/9) 
   Generating static pages using 12 workers (6/9) 
-✓ Generating static pages using 12 workers (9/9) in 941ms
+✓ Generating static pages using 12 workers (9/9) in 889ms
   Finalizing page optimization ...
+
 Route (app)
 ┌ ○ /
 ├ ○ /_not-found
@@ -43,6 +47,10 @@ Route (app)
 ├ ƒ /shopping/products/[id]
 ├ ƒ /shopping/products/[id]/edit
 └ ○ /shopping/products/new
+
+
 ○  (Static)   prerendered as static content
 ƒ  (Dynamic)  server-rendered on demand
+
 exit code: 0
+

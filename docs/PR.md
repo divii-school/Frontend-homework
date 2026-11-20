@@ -10,6 +10,7 @@ Review PR for HW3 (never merged). Live: https://hw3-sandip.vercel.app · Build r
 - Register / edit product (8.1.1 / 8.1.2) as a 4-step form; image upload with type / size check, preview, remove
 - Product details with tabs (URL state, per-tab data and loading / empty / error)
 - Light / dark tokens, WM class names and date format, keyboard / screen-reader support
+- Korean UI on every screen (`lang="ko"`), Korean error messages by API code / HTTP status (never raw keys)
 
 ### How it's built
 Service + hook pattern: component → TanStack Query hook (`src/hooks`) → service (`src/services`, zod-validated) →

@@ -9,8 +9,8 @@ A hand-over to QA (Archana): everything needed to test is on this page or linked
 | --- | --- |
 | Repository | https://github.com/divii-school/Frontend-homework |
 | Branch | `hw3/sandip` (PR to `main`, never merged) |
-| Commit (deployed app) | `29e011f` (Korean error messages, Kakali's 11-18 points). Later commits only add docs and the published HTML report. |
-| Date | 2026-11-20 (first build `beb0bad` 2026-11-17) |
+| Commit (deployed app) | `3002f93` (Korean UI on every screen, Kakali's 11-20 DM). Later commits only add docs and the published HTML report. |
+| Date | 2026-11-20 (first build `beb0bad` 2026-11-17; Korean error messages `29e011f`; Korean UI `3002f93`) |
 | Demo | https://hw3-sandip.vercel.app — own Vercel account, only `NEXT_PUBLIC_API_BASE_URL` set (QA API), no deployment protection |
 | API | Talking Club **QA** API (`tkclub-admn-api-qa.dvconsulting.org`). Never production. |
 | HTML report | https://hw3-sandip.vercel.app/playwright-report/index.html (run against the demo, see part 9) |
@@ -44,6 +44,7 @@ A hand-over to QA (Archana): everything needed to test is on this page or linked
 | WM: camelCase CSS classes (flagged in the HW1 review) | 71 classes renamed to lowercase-with-hyphens |
 | WM: date format | `YYYY-MM-DD h:mm AM` in KST (design question D3) |
 | Kakali 11-18: API errors showed English text or the raw key (e.g. `productCodeAlreadyExists`) | Every error is a Korean message by API code or HTTP status; raw keys never shown (tests assert it) |
+| Kakali 11-20: the screens still showed English (login, menu, breadcrumb, form labels, page titles, "Saving…", `lang="en"`) | Whole UI in Korean: login (아이디, 비밀번호, 자동 로그인, 권한 없음), menu / breadcrumb (쇼핑몰 관리 › 상품 관리), all form labels and validation messages, buttons and busy text (저장 중…, 삭제 중…, 내보내는 중…), tables, tabs, dialogs, toasts, aria-labels, CSV headers, page titles (상품 관리 · 토킹클럽 관리자), dialog close button (닫기); `<html lang="ko">`. Tests now find every control by its Korean name |
 | A page of only deleted rows (API A2) said "No search results found" | Says the page has only deleted products and keeps the pagination |
 | HTML report could contain the QA login (Playwright records typed values) | Real-API tests log in through an API request; the published report was scanned: no ID, password or token |
 
@@ -74,7 +75,7 @@ Full cases (67, each P or N, with the automated test that covers it): [`docs/TES
 6. Change its Exposure Yes / No in the list, reload. Then select it → Delete.
 7. Categories: search, Fold / Expand all, add `HW3-<name>-Cat` → add a sub and a child under it → rename → try deleting the parent (blocked) → delete the child, sub, then the parent.
 8. Widths 1440 / 768 / 375 and dark mode on every screen; keyboard only (Tab, Enter, Escape, arrows).
-9. Stop the network (DevTools offline) on a list → error + Try again.
+9. Stop the network (DevTools offline) on a list → error + 다시 시도.
 
 ## 8. Known issues and what is not covered
 
@@ -84,7 +85,9 @@ Full cases (67, each P or N, with the automated test that covers it): [`docs/TES
 - **Token refresh** not possible from the browser (A4) → re-login with return to the same page.
 - Only desktop Figma frames exist; 768 / 375 and dark mode are our interpretation (D1, D2).
 - **px values** in component SCSS are not yet all tokens (colours are); spacing tokens exist for the shared parts only.
-- "Total Posts" can be slightly high on category-name searches (API A2).
+- "전체 N건" (total) can be slightly high on category-name searches (API A2).
+- Dates keep the WM format `YYYY-MM-DD h:mm AM` (design question D3), so AM / PM stay in Latin letters.
+- The Figma frames themselves are in English; the screens follow the Korean wording from the Figma notes and Kakali's 11-20 list.
 - The browser logs "Failed to load resource: 400" when the API rejects a wrong login — a network log, not an app error.
 - A 1×1 test image (`HW3-Sandip-probe.png`) was uploaded to the QA bucket during the upload check; it is not linked to any product.
 - Browsers: Chromium (Playwright) and Chrome on Windows 11; Safari / Firefox not checked.
@@ -104,7 +107,7 @@ These are **API issues, not frontend bugs**. The API is left as it is. Every err
 | A6 | ERP code is ignored when sent | `POST /api/v1/products/add` with `erpCode` | 201; the saved product has a different, server-assigned code | ERP code read-only in the form |
 | A7 | One code for unknown ID and wrong password | `POST /api/v1/auth/login` with a wrong ID or password | 400 `invalidCredentials` (empty body: 401 `Unauthorized`) | "아이디와 비밀번호가 일치하지 않습니다. 다시 확인해 주세요." |
 | A8 | Refresh with an access token fails | `GET /api/v1/auth/get-access-token` with `Authorization: Bearer <access token>` | 500 "Something went wrong" | Not used (see A4) |
-| A9 | QA server down for some hours | any request, 2026-11-13 afternoon | Cloudflare 521 | "네트워크 오류가 발생했습니다…" + Try again on every list |
+| A9 | QA server down for some hours | any request, 2026-11-13 afternoon | Cloudflare 521 | "네트워크 오류가 발생했습니다…" + 다시 시도 on every list |
 
 ## 9. Results of lint, type-check, build and tests
 
@@ -127,7 +130,7 @@ Route (app): /, /login, /shopping/categories, /shopping/products, /shopping/prod
 exit code: 0
 
 $ PLAYWRIGHT_BASE_URL=https://hw3-sandip.vercel.app npx playwright test   # both projects, against the demo
-59 passed (5.2m)    # chromium 58 = mocked UI tests 50 · real-QA read-only 3 · screenshots 4 · smoke 1
+59 passed (6.6m)    # chromium 58 = mocked UI tests 50 · real-QA read-only 3 · screenshots 4 · smoke 1
                     # mutation 1 (register with a real image upload → edit → exposure → delete, HW3-Sandip-E2E-*)
 exit code: 0
 ```
